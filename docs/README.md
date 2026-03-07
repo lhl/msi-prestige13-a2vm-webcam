@@ -11,6 +11,7 @@ Current focus:
 
 - `docs/webcam-status.md` — current Linux webcam support assessment for this laptop
 - `docs/kernel-tree-status.md` — exact local `linux-mainline` source path and current `v6.19` INT3472/TPS68470 finding
+- `docs/reprobe-harness.md` — safe snapshot/reprobe script and run-capture workflow
 
 ## Repo-Level Control Docs
 

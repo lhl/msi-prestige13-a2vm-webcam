@@ -32,6 +32,12 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
   - commit: `4ae12d8bd9a830799db335ee661d6cbc6597f838`
   - diff vs local `v6.19`: only `discrete.c` and `tps68470.c` changed
   - no observed new MSI board-data entry in `tps68470_board_data.c`
+- Safe Linux-side reprobe harness is now in-repo:
+  - script: `scripts/webcam-run.sh`
+  - usage doc: `docs/reprobe-harness.md`
+  - run archive root: `runs/`
+  - safety boundary: snapshot + module reload only, no raw PMIC/I2C register writes
+  - validated locally with `snapshot` and `reprobe-modules --dry-run` smoke tests using temporary run roots under `/tmp`
 
 Most important current log lines:
 
@@ -46,6 +52,6 @@ Most important current log lines:
 
 ## Next Actions
 
-1. Correlate MSI `OV5675` graph-setting names such as `BCAB65` and `S5VM17` with ACPI-visible identifiers or module IDs.
-2. Check whether this MSI DMI identity is supported under another variant string or in newer upstream changes beyond local `v6.19`.
-3. Run direct `media-ctl` / `v4l2-ctl` probing with full device access.
+1. Run `scripts/webcam-run.sh snapshot` and `sudo scripts/webcam-run.sh reprobe-modules` to create the first logged run set under `runs/`.
+2. Correlate MSI `OV5675` graph-setting names such as `BCAB65` and `S5VM17` with ACPI-visible identifiers or module IDs.
+3. Check whether this MSI DMI identity is supported under another variant string or in newer upstream changes beyond local `v6.19`.

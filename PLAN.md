@@ -41,6 +41,7 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 
 ### 2. Local machine evidence
 
+- [x] Build a safe snapshot/reprobe harness that records pre/post state and exact action order under `runs/`.
 - [ ] Run direct media and V4L2 probing:
   - `media-ctl -p -d /dev/media0`
   - `v4l2-ctl --list-devices`
@@ -63,9 +64,9 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 
 ## Near-Term Priority
 
-1. Inspect upstream `tps68470_board_data.c` coverage.
+1. Use `scripts/webcam-run.sh` to capture a clean `snapshot` run and a first `reprobe-modules` run.
 2. Correlate MSI `OV5675` graph-setting names such as `BCAB65` and `S5VM17` with ACPI-visible identifiers.
-3. Re-run direct `media-ctl` / `v4l2-ctl` probing now that full device access is available.
+3. Re-check whether this MSI DMI identity is supported under another variant string or newer upstream changes.
 
 ## Open Questions
 

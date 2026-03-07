@@ -1,5 +1,29 @@
 # Worklog
 
+## 2026-03-08
+
+### Build safe snapshot/reprobe harness for repeatable Linux testing
+
+- Plan: add a low-risk harness that records every meaningful reprobe attempt with enough evidence to analyze failures later, without doing raw PMIC or I2C register writes.
+- Commands:
+  - inspected current repo docs and plan files
+  - inspected current sysfs driver hooks for `int3472-tps68470` and `ov5675`
+  - inspected current module state and kernel logs
+  - `apply_patch` adding `scripts/webcam-run.sh`
+  - `apply_patch` adding `docs/reprobe-harness.md`
+  - `apply_patch` adding `runs/README.md`
+  - `apply_patch` updating `README.md`, `docs/README.md`, `PLAN.md`, and `state/CONTEXT.md`
+  - `bash -n scripts/webcam-run.sh`
+  - `scripts/webcam-run.sh snapshot --runs-root /tmp/...`
+  - `scripts/webcam-run.sh reprobe-modules --dry-run --runs-root /tmp/...`
+- Result:
+  - added `scripts/webcam-run.sh` with two actions: `snapshot` and `reprobe-modules`
+  - each run now captures pre/post state, exact step order, filtered kernel logs, media/V4L2 output, and relevant sysfs state under `runs/`
+  - the harness is explicitly limited to snapshot and module reload activity; it does not do `i2cset`, raw `i2ctransfer` writes, or address-scanning `i2cdetect`
+  - documented the run layout and usage in `docs/reprobe-harness.md`
+  - smoke-tested `snapshot` and `reprobe-modules --dry-run` successfully using temporary run roots under `/tmp`
+- Decision: keep; this gives us a repeatable low-risk testing baseline before any deeper reverse engineering or kernel patching.
+
 ## 2026-03-07
 
 ### Snapshot Torvalds `HEAD` `int3472` subtree for upstream comparison

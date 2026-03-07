@@ -21,6 +21,7 @@ Machine under test:
 - [`WORKLOG.md`](./WORKLOG.md) — reverse-chronological record of work performed
 - [`docs/README.md`](./docs/README.md) — documentation index
 - [`docs/kernel-tree-status.md`](./docs/kernel-tree-status.md) — local `linux-mainline` source location and current board-data finding
+- [`docs/reprobe-harness.md`](./docs/reprobe-harness.md) — safe snapshot/reprobe harness and run capture workflow
 - [`reference/README.md`](./reference/README.md) — captured upstream references
 
 ## Repo Layout
@@ -31,10 +32,15 @@ msi-prestige13-a2vm-webcam/
 ├── AGENTS.md
 ├── PLAN.md
 ├── WORKLOG.md
+├── scripts/
+│   └── webcam-run.sh
+├── runs/
+│   └── README.md
 ├── state/
 │   └── CONTEXT.md
 ├── docs/
 │   ├── README.md
+│   ├── reprobe-harness.md
 │   └── webcam-status.md
 └── reference/
     ├── README.md
@@ -47,6 +53,8 @@ msi-prestige13-a2vm-webcam/
 - `README.md` stays accurate and points to the current doc structure.
 - `PLAN.md` is the forward-looking source of truth for open questions and next steps.
 - `WORKLOG.md` records every meaningful work session, including commands, evidence, and outcomes.
+- `scripts/webcam-run.sh` is the safe harness for repeatable snapshot and reprobe runs.
+- `runs/` stores timestamped run outputs from the harness.
 - `state/CONTEXT.md` is the one-screen restart capsule for the next session.
 - `reference/` holds captured external sources with stable filenames, source URLs, and capture dates.
 - `docs/` holds our synthesized conclusions and state-of-project documents.
@@ -61,6 +69,7 @@ msi-prestige13-a2vm-webcam/
 
 - [`docs/webcam-status.md`](./docs/webcam-status.md) — current Linux support assessment for this laptop
 - [`docs/kernel-tree-status.md`](./docs/kernel-tree-status.md) — exact local kernel-source path and 6.19 board-data status
+- [`docs/reprobe-harness.md`](./docs/reprobe-harness.md) — safe module reprobe/capture workflow for repeatable experiments
 - [`reference/intel-ipu7-drivers-issue-17.md`](./reference/intel-ipu7-drivers-issue-17.md) — Intel upstream issue note
 - [`reference/intel-control-logic-microsoft-update-catalog-71.26100.23.20279.md`](./reference/intel-control-logic-microsoft-update-catalog-71.26100.23.20279.md) — exact `ACPI\INT3472` Windows control-logic package entry and CAB URL
 - [`reference/jeremy-grosser-prestige13-notes.md`](./reference/jeremy-grosser-prestige13-notes.md) — MSI-specific Debian/gist note
@@ -69,3 +78,4 @@ msi-prestige13-a2vm-webcam/
 - [`reference/msi-ov5675-microsoft-update-catalog-70.26100.19939.1.md`](./reference/msi-ov5675-microsoft-update-catalog-70.26100.19939.1.md) — exact MSI `OV5675` Windows package entry and CAB URL
 - [`reference/tps68470.pdf`](./reference/tps68470.pdf) — local TPS68470 datasheet copy
 - [`reference/windows-driver-packages/README.md`](./reference/windows-driver-packages/README.md) — vendored Windows package archive and extracted-tree index
+- [`runs/README.md`](./runs/README.md) — run archive layout for timestamped probe batches
