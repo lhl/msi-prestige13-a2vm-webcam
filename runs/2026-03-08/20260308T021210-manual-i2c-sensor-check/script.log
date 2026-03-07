@@ -1,0 +1,21 @@
+=== OV5675 sensor check via TPS68470 manual power-up ===
+Date: 20260308T021210
+Repo root: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam
+Run dir: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-08/20260308T021210-manual-i2c-sensor-check
+Mode: dry-run
+Bus: 1  PMIC addr: 0x4d  Device: i2c-INT3472:06
+Sensor address candidates: 0x36 0x10
+
+Planned sequence:
+  1. Verify PMIC REVID
+  2. Capture pre-write PMIC state
+  3. Program VIO/VSIO/VA/VD values explicitly
+  4. Program the full 19.2 MHz TPS68470 clock path
+  5. Put GPIO1/GPIO2 in CMOS-output mode and hold them low
+  6. Enable VA/VD while PMIC access still works
+  7. Drive GPIO1/GPIO2 high
+  8. Enable VSIO / passthrough last and immediately try OV5675 chip-ID reads
+  9. Best-effort capture of post-write PMIC state
+  10. Reset the PMIC on exit
+
+Dry-run only. Re-run with --execute to perform the writes.

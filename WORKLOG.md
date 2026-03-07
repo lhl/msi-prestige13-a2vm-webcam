@@ -2,6 +2,43 @@
 
 ## 2026-03-08
 
+### Preserve the reordered manual sensor-check batch and refresh current `linux-mainline` source status
+
+- Plan: commit the reordered manual sensor-check attempt as evidence, distinguish the dry-run from the real execute run, and re-check the current `linux-mainline` package-cache layout before moving to a patched-kernel test.
+- Commands:
+  - reviewed:
+    - `git status --short`
+    - `runs/2026-03-08/20260308T021210-manual-i2c-sensor-check/script.log`
+    - `runs/2026-03-08/20260308T021300-manual-i2c-sensor-check-second-manual-check/script.log`
+    - `runs/2026-03-08/20260308T021300-manual-i2c-sensor-check-second-manual-check/metadata.env`
+  - checked current `linux-mainline` package cache:
+    - `git -C /home/lhl/.cache/paru/clone/linux-mainline/linux-mainline describe --tags --always`
+    - `git -C /home/lhl/.cache/paru/clone/linux-mainline/linux-mainline rev-parse --short HEAD`
+    - `find /home/lhl/.cache/paru/clone/linux-mainline -maxdepth 2 -type d | sort`
+    - `git --git-dir=/home/lhl/.cache/paru/clone/linux-mainline/linux-mainline show HEAD:drivers/platform/x86/intel/int3472/tps68470_board_data.c | rg -n 'MS-13Q3|Micro-Star|Prestige|INT3472:06|driver_data =|DMI_'`
+    - `git --git-dir=/home/lhl/.cache/paru/clone/linux-mainline/linux-mainline show HEAD:drivers/platform/x86/intel/int3472/tps68470_board_data.c | tail -n 80`
+    - temp check:
+      - extracted `tps68470_board_data.c` from the bare cache into a temp tree
+      - `git apply --check /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ms13q3-int3472-tps68470-v1.patch`
+  - `apply_patch` updating:
+    - `WORKLOG.md`
+    - `state/CONTEXT.md`
+    - `docs/kernel-tree-status.md`
+- Result:
+  - `20260308T021210-manual-i2c-sensor-check` is only a dry-run confirmation of the reordered script plan
+  - `20260308T021300-manual-i2c-sensor-check-second-manual-check` is the actual second execute run, but it failed on the very first `REVID` read
+  - that means the second execute run did **not** exercise the reordered sequence at all; it only preserves evidence that the I2C controller was still wedged from the previous manual PMIC experiment
+  - the current `linux-mainline` package cache layout is now:
+    - package root: `~/.cache/paru/clone/linux-mainline`
+    - bare Git cache: `~/.cache/paru/clone/linux-mainline/linux-mainline`
+    - no editable `src/linux-mainline` worktree exists until `makepkg` prepare/build creates it
+  - the current cached upstream source is:
+    - describe: `v7.0-rc2-467-g4ae12d8bd9a8`
+    - commit: `4ae12d8bd9a8`
+  - the current cached `tps68470_board_data.c` still only contains Surface Go/2/3 and Dell 7212 entries; it still does **not** contain MSI `MS-13Q3` or `i2c-INT3472:06`
+  - the current first-pass patch candidate `reference/patches/ms13q3-int3472-tps68470-v1.patch` still applies cleanly to the current cached `v7.0-rc2` board-data source content
+- Decision: preserve this probe batch, but stop using additional manual PMIC pokes as the main path; the next highest-value test is a patched `linux-mainline` build using the current `v7.0-rc2` source worktree.
+
 ### Record first executed manual TPS68470 sensor-check run and tighten the sequence
 
 - Plan: review the first live userland PMIC-poke run, preserve the resulting evidence, and adjust the script so the next run tests the sensor immediately after passthrough enable instead of failing on a follow-up PMIC read.

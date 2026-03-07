@@ -13,8 +13,13 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
 - The strongest blocker is still MSI-specific `INT3472` / `TPS68470` board data or power sequencing.
 - The Windows `iactrllogic64.sys` control-logic driver clearly contains board-specific `TPS68470` sequencing logic; it is not just an install stub.
 - Local `linux-mainline` source path to reuse:
-  - `~/.cache/paru/clone/linux-mainline/src/linux-mainline`
-  - current inspected tag: `v6.19`
+  - package root: `~/.cache/paru/clone/linux-mainline`
+  - cached bare Git repo: `~/.cache/paru/clone/linux-mainline/linux-mainline`
+  - editable worktree path during `makepkg` prepare/build: `~/.cache/paru/clone/linux-mainline/src/linux-mainline`
+  - current cached upstream source:
+    - describe: `v7.0-rc2-467-g4ae12d8bd9a8`
+    - commit: `4ae12d8bd9a8`
+  - there is no current `src/linux-mainline` worktree until `makepkg` creates it
 - Exact MSI `OV5675` Windows package now documented:
   - Catalog entry: `Intel Corporation Driver Update (70.26100.19939.1)`
   - Scoped view: `https://www.catalog.update.microsoft.com/ScopedViewInline.aspx?updateid=8fd6696d-67b8-4bc7-a477-6d8800725426`
@@ -75,6 +80,7 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
     - `ov5675.c` only consumes `reset`
     - Windows clearly uses both PMIC GPIO1 and GPIO2
     - a second Linux patch may still be needed for `powerdown` or swapped GPIO semantics
+  - the same patch still applies cleanly to the current cached `v7.0-rc2` `tps68470_board_data.c` content extracted from the bare package cache
 - First real raw ACPI capture now exists in-repo:
   - `reference/acpi/20260308T004459-unknown-host/`
   - `dmi.txt` confirms product `Prestige 13 AI+ Evo A2VMG`, board `MS-13Q3`, BIOS `E13Q3IMS.109`, BIOS date `09/04/2024`
@@ -96,6 +102,11 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
   - the bus stayed healthy through clock setup and GPIO mode changes
   - the first PMIC transaction after `S_I2C_CTL=0x03` triggered `i2c_designware.1: controller timed out`
   - this means the initial manual sequence was non-diagnostic for sensor liveness; the next manual script revision now makes `S_I2C_CTL` the last PMIC write before direct chip-ID reads
+- Second reordered manual userland PMIC poke attempt:
+  - `runs/2026-03-08/20260308T021300-manual-i2c-sensor-check-second-manual-check/`
+  - failed immediately on the initial `REVID` read before any writes
+  - this means the controller was still wedged from the previous manual experiment
+  - it does **not** provide any new evidence about the reordered `VA -> VD -> VSIO` sequence
 - Linux-side implication:
   - `ov5675` expects `avdd`, `dovdd`, `dvdd`, `reset`, and 19.2 MHz `xvclk`
   - the likely blocker is missing MSI-specific `tps68470_board_data` for `i2c-INT3472:06` and `OVTI5675:00`, not just a missing DMI match
