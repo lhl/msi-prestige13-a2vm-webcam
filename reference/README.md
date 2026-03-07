@@ -31,6 +31,9 @@ Captured upstream sources relevant to webcam bring-up on the MSI Prestige 13 AI+
 - `reference/acpi/README.md`
   - Root-only ACPI capture area for this exact machine
   - Added: 2026-03-08
+- `reference/acpi/20260308T004459-unknown-host/README.md`
+  - First real ACPI capture from the MSI Prestige 13 AI+ Evo A2VMG / `MS-13Q3`
+  - Captured: 2026-03-08
 - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/README.md`
   - Repeatable static-analysis artifacts for the MSI package's `iactrllogic64.sys`
   - Generated: 2026-03-08

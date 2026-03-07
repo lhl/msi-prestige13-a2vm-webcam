@@ -1,0 +1,56 @@
+
+Intel ACPI Component Architecture
+ACPI Binary Table Extraction Utility version 20250404
+Copyright (c) 2000 - 2025 Intel Corporation
+
+  SSDT -     904 bytes written (0x00000388) - ssdt1.dat
+  MCFG -      60 bytes written (0x0000003C) - mcfg.dat
+  APIC -     216 bytes written (0x000000D8) - apic.dat
+  SSDT -   55318 bytes written (0x0000D816) - ssdt2.dat
+  SSDT -     286 bytes written (0x0000011E) - ssdt3.dat
+  SSDT -     165 bytes written (0x000000A5) - ssdt4.dat
+  TPM2 -      76 bytes written (0x0000004C) - tpm2.dat
+  BGRT -      56 bytes written (0x00000038) - bgrt1.dat
+  SSDT -    4386 bytes written (0x00001122) - ssdt5.dat
+  SSDT -     107 bytes written (0x0000006B) - ssdt6.dat
+  DTPR -     144 bytes written (0x00000090) - dtpr.dat
+  SSDT -     427 bytes written (0x000001AB) - ssdt7.dat
+  SSDT -    4853 bytes written (0x000012F5) - ssdt8.dat
+  NHLT -    2540 bytes written (0x000009EC) - nhlt.dat
+  SSDT -    4027 bytes written (0x00000FBB) - ssdt9.dat
+  UEFI -      72 bytes written (0x00000048) - uefi.dat
+  DSDT -  153601 bytes written (0x00025801) - dsdt.dat
+  SSDT -    1772 bytes written (0x000006EC) - ssdt10.dat
+  SSDT -    3420 bytes written (0x00000D5C) - ssdt11.dat
+  WSMT -      40 bytes written (0x00000028) - wsmt.dat
+  SSDT -    5664 bytes written (0x00001620) - ssdt12.dat
+  LPIT -     204 bytes written (0x000000CC) - lpit.dat
+  SSDT -   22659 bytes written (0x00005883) - ssdt13.dat
+  SSDT -     224 bytes written (0x000000E0) - ssdt14.dat
+  DBG2 -      84 bytes written (0x00000054) - dbg2.dat
+  SSDT -     916 bytes written (0x00000394) - ssdt15.dat
+  SSDT -    4512 bytes written (0x000011A0) - ssdt16.dat
+  SSDT -   42090 bytes written (0x0000A46A) - ssdt17.dat
+  SSDT -   36498 bytes written (0x00008E92) - ssdt18.dat
+  DMAR -     216 bytes written (0x000000D8) - dmar.dat
+  FACP -     276 bytes written (0x00000114) - facp.dat
+  BGRT -      56 bytes written (0x00000038) - bgrt2.dat
+  FPDT -      68 bytes written (0x00000044) - fpdt.dat
+  SDEV -      70 bytes written (0x00000046) - sdev.dat
+  SSDT -    9315 bytes written (0x00002463) - ssdt19.dat
+  PHAT -    1668 bytes written (0x00000684) - phat.dat
+  SSDT -    1763 bytes written (0x000006E3) - ssdt20.dat
+  SSDT -    9312 bytes written (0x00002460) - ssdt21.dat
+  SSDT -    2098 bytes written (0x00000832) - ssdt22.dat
+  MSDM -      85 bytes written (0x00000055) - msdm.dat
+  SSDT -   15319 bytes written (0x00003BD7) - ssdt23.dat
+  SSDT -    1531 bytes written (0x000005FB) - ssdt24.dat
+  SSDT -     496 bytes written (0x000001F0) - ssdt25.dat
+  DBGP -      52 bytes written (0x00000034) - dbgp.dat
+  SSDT -    4937 bytes written (0x00001349) - ssdt26.dat
+  HPET -      56 bytes written (0x00000038) - hpet.dat
+  SSDT -    3212 bytes written (0x00000C8C) - ssdt27.dat
+  SSDT -    5135 bytes written (0x0000140F) - ssdt28.dat
+  FIDT -     156 bytes written (0x0000009C) - fidt.dat
+  FACS -      64 bytes written (0x00000040) - facs.dat
+  SSDT -    7087 bytes written (0x00001BAF) - ssdt29.dat

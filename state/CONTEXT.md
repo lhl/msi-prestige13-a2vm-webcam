@@ -1,6 +1,6 @@
 # Context
 
-Updated: 2026-03-07
+Updated: 2026-03-08
 
 ## Objective
 
@@ -59,7 +59,13 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
   - recovered `StartClock` register write order: `0x0a`, `0x08`, `0x07`, `0x0b`, `0x0c`, `0x06`, `0x10`, `0x09`, `0x0d`
   - recovered a common low-level write helper at `0x140010be0` with retry behavior through `0x1400110f4`
   - recovered `VoltageWF` examples that read/modify/write registers `0x47` and `0x43`
-- Raw `acpidump` capture is still pending because ACPI table reads require root on this machine.
+- First real raw ACPI capture now exists in-repo:
+  - `reference/acpi/20260308T004459-unknown-host/`
+  - `dmi.txt` confirms product `Prestige 13 AI+ Evo A2VMG`, board `MS-13Q3`, BIOS `E13Q3IMS.109`, BIOS date `09/04/2024`
+  - raw `acpidump.txt` contains camera-relevant `INT3472` and `CLDB` strings
+  - extracted binary tables are present under `tables/`
+  - the first `iasl` pass failed because `scripts/capture-acpi.sh` expected uppercase `DSDT.dat` / `SSDT*.dat` but this run produced lowercase `dsdt.dat` / `ssdt*.dat`
+  - `camera-related-hits.txt` is therefore empty in that first capture and should not be treated as evidence of absence
 
 Most important current log lines:
 
@@ -75,6 +81,7 @@ Most important current log lines:
 
 ## Next Actions
 
-1. Run `sudo scripts/capture-acpi.sh` and inspect the resulting `reference/acpi/...` dump for camera-relevant ACPI structure.
-2. Map the recovered Windows register indices against `reference/tps68470.pdf` and Linux `int3472` abstractions.
-3. Re-check whether the Linux patch path looks like a missing board-data match or a new MSI-specific `TPS68470` definition.
+1. Review the captured `reference/acpi/20260308T004459-unknown-host/` dump and extracted tables for camera-relevant ACPI structure.
+2. Fix `scripts/capture-acpi.sh` so future captures disassemble lowercase `dsdt.dat` / `ssdt*.dat` correctly.
+3. Map the recovered Windows register indices against `reference/tps68470.pdf` and Linux `int3472` abstractions.
+4. Re-check whether the Linux patch path looks like a missing board-data match or a new MSI-specific `TPS68470` definition.

@@ -14,7 +14,9 @@ It is the place to resume from when we need to answer any of these questions:
 - Linux still fails before the sensor appears in the media graph because `int3472-tps68470` reports `No board-data found for this model`.
 - The Windows control-logic driver is not generic glue. It contains named `TPS68470` clock, voltage, GPIO, sensor, and flash control routines, plus a common low-level register-write helper.
 - We have already recovered one concrete clock write sequence from `tps68470::Tps68470Clock::StartClock`.
-- We have not yet captured a full raw `acpidump` from this session because raw ACPI tables on this machine are root-readable only.
+- We now have a full raw ACPI capture in `reference/acpi/20260308T004459-unknown-host/`.
+- That capture confirms the laptop identity as `Prestige 13 AI+ Evo A2VMG` / board `MS-13Q3` / BIOS `E13Q3IMS.109`.
+- The first `iasl` pass in that capture failed because the script assumed uppercase `DSDT.dat` / `SSDT*.dat` names while `acpixtract` emitted lowercase `dsdt.dat` / `ssdt*.dat`, so the raw dump and binary tables are usable but the generated DSL summary is incomplete.
 
 ## Reproduction
 
@@ -34,7 +36,11 @@ That writes a timestamped directory under `reference/acpi/` containing:
 - `iasl` disassembly attempts under `dsl/`
 - `camera-related-hits.txt` for `INT3472`, `OVTI5675`, `CLDB`, `_DSD`, GPIO, and I2C terms
 
-Current blocker: I could not run this directly from the current unprivileged session because `acpidump` cannot read `/sys/firmware/acpi/tables/*` without root.
+Current state:
+
+- the first successful root-collected capture is `reference/acpi/20260308T004459-unknown-host/`
+- the raw dump and extracted tables are valid
+- the scripted DSL generation from that run needs a small filename fix before future captures produce `camera-related-hits.txt` automatically
 
 ### Windows driver extraction
 

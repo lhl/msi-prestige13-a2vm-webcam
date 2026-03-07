@@ -1,0 +1,17 @@
+CMD: cat /sys/class/dmi/id/*
+== /sys/class/dmi/id/product_name ==
+Prestige 13 AI+ Evo A2VMG
+== /sys/class/dmi/id/product_version ==
+REV:1.0
+== /sys/class/dmi/id/product_family ==
+Prestige
+== /sys/class/dmi/id/board_name ==
+MS-13Q3
+== /sys/class/dmi/id/board_vendor ==
+Micro-Star International Co., Ltd.
+== /sys/class/dmi/id/board_version ==
+REV:1.0
+== /sys/class/dmi/id/bios_version ==
+E13Q3IMS.109
+== /sys/class/dmi/id/bios_date ==
+09/04/2024

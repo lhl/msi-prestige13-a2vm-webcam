@@ -2,6 +2,30 @@
 
 ## 2026-03-08
 
+### Commit first ACPI capture for MSI `MS-13Q3`
+
+- Plan: commit the first real root-collected ACPI capture from this laptop before deeper analysis, and record both the successful raw dump and the script failure that left the DSL pass incomplete.
+- Commands:
+  - `sudo scripts/capture-acpi.sh`
+  - reviewed:
+    - `reference/acpi/20260308T004459-unknown-host/metadata.env`
+    - `reference/acpi/20260308T004459-unknown-host/dmi.txt`
+    - `reference/acpi/20260308T004459-unknown-host/acpidump.txt`
+    - `reference/acpi/20260308T004459-unknown-host/acpixtract.log`
+    - `reference/acpi/20260308T004459-unknown-host/dsl/ssdt-disasm.log`
+- Result:
+  - captured the first in-repo raw ACPI dump for this exact machine under `reference/acpi/20260308T004459-unknown-host/`
+  - confirmed DMI identity from the same capture:
+    - product: `Prestige 13 AI+ Evo A2VMG`
+    - board: `MS-13Q3`
+    - BIOS: `E13Q3IMS.109`
+    - BIOS date: `09/04/2024`
+  - confirmed the raw dump contains camera-relevant `INT3472` and `CLDB` strings
+  - confirmed binary ACPI tables were extracted successfully under `tables/`
+  - confirmed the first `iasl` disassembly attempt failed because `scripts/capture-acpi.sh` expected uppercase `DSDT.dat` and `SSDT*.dat` while this run produced lowercase `dsdt.dat` and `ssdt*.dat`
+  - confirmed `camera-related-hits.txt` is empty in this first run because the DSL generation step failed
+- Decision: keep; the raw capture is valid and should be preserved now, then analyzed and followed by a script fix in a separate step.
+
 ### Add canonical ACPI plus Windows-control-logic reverse-engineering workflow
 
 - Plan: make the ACPI capture and Windows `iactrllogic64.sys` analysis reproducible in-repo, then write one canonical note that preserves the concrete reverse-engineering results.
