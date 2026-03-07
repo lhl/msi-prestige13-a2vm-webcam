@@ -1,0 +1,38 @@
+# Live Linux ACPI Camera State
+
+Captured UTC: 2026-03-07T16:02:35Z
+
+## Active camera-relevant ACPI devices from sysfs
+
+### OVTI5675:00
+
+- hid: `OVTI5675`
+- uid: `0`
+- path: `\_SB_.LNK0`
+- status: `15`
+- modalias: `acpi:OVTI5675:OVTI5675:`
+
+### INT3472:06
+
+- hid: `INT3472`
+- uid: `10`
+- path: `\_SB_.CLP0`
+- status: `15`
+- modalias: `acpi:INT3472:INT3472:`
+- physical_node: `/sys/devices/pci0000:00/0000:00:15.1/i2c_designware.1/i2c-1/i2c-INT3472:06`
+
+### INT3472:00
+
+- hid: `INT3472`
+- uid: `0`
+- path: `\_SB_.DSC0`
+- status: `0`
+- modalias: ``
+
+## Physical I2C PMIC Device
+
+- path: `/sys/devices/pci0000:00/0000:00:15.1/i2c_designware.1/i2c-1/i2c-INT3472:06`
+- name: `INT3472:06`
+- modalias: `acpi:INT3472:INT3472:`
+- waiting_for_supplier: `0`
+- firmware_node: `/sys/devices/LNXSYSTM:00/LNXSYBUS:00/INT3472:06`

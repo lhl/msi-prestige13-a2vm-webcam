@@ -1,0 +1,222 @@
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:196:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:200:                    I2cSerialBusV2 (0x0000, ControllerInitiated, 0x00061A80,
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:206:                CreateWordField (RBUF, \_SB.PC00.I2C0.PA01._CRS._Y03._ADR, PAAD)  // _ADR: Address
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:209:                Return (RBUF) /* \_SB_.PC00.I2C0.PA01._CRS.RBUF */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:327:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:331:                    I2cSerialBusV2 (0x0000, ControllerInitiated, 0x00061A80,
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:337:                CreateWordField (RBUF, \_SB.PC00.I2C0.PA02._CRS._Y04._ADR, PAAD)  // _ADR: Address
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:340:                Return (RBUF) /* \_SB_.PC00.I2C0.PA02._CRS.RBUF */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:458:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:462:                    I2cSerialBusV2 (0x0000, ControllerInitiated, 0x00061A80,
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:468:                CreateWordField (RBUF, \_SB.PC00.I2C0.PA03._CRS._Y05._ADR, PAAD)  // _ADR: Address
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:471:                Return (RBUF) /* \_SB_.PC00.I2C0.PA03._CRS.RBUF */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:589:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:593:                    I2cSerialBusV2 (0x0000, ControllerInitiated, 0x00061A80,
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:599:                CreateWordField (RBUF, \_SB.PC00.I2C0.PA04._CRS._Y06._ADR, PAAD)  // _ADR: Address
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:602:                Return (RBUF) /* \_SB_.PC00.I2C0.PA04._CRS.RBUF */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:720:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:724:                    I2cSerialBusV2 (0x0000, ControllerInitiated, 0x00061A80,
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:730:                CreateWordField (RBUF, \_SB.PC00.I2C0.PA05._CRS._Y07._ADR, PAAD)  // _ADR: Address
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:733:                Return (RBUF) /* \_SB_.PC00.I2C0.PA05._CRS.RBUF */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:851:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:855:                    I2cSerialBusV2 (0x0000, ControllerInitiated, 0x00061A80,
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:861:                CreateWordField (RBUF, \_SB.PC00.I2C0.PA06._CRS._Y08._ADR, PAAD)  // _ADR: Address
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:864:                Return (RBUF) /* \_SB_.PC00.I2C0.PA06._CRS.RBUF */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:982:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:986:                    I2cSerialBusV2 (0x0000, ControllerInitiated, 0x00061A80,
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:992:                CreateWordField (RBUF, \_SB.PC00.I2C0.PA07._CRS._Y09._ADR, PAAD)  // _ADR: Address
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:995:                Return (RBUF) /* \_SB_.PC00.I2C0.PA07._CRS.RBUF */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:1113:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:1117:                    I2cSerialBusV2 (0x0000, ControllerInitiated, 0x00061A80,
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:1123:                CreateWordField (RBUF, \_SB.PC00.I2C0.PA08._CRS._Y0A._ADR, PAAD)  // _ADR: Address
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt28.dsl:1126:                Return (RBUF) /* \_SB_.PC00.I2C0.PA08._CRS.RBUF */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt8.dsl:194:            Method (_CRS, 0, Serialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt1.dsl:54:            Name (WFCS, "\\_SB.PC00.LNK0")
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:1027:                    GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:1042:                    GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:1057:                    GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:1072:                    GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:1087:                    GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:1249:                    Return ("OVTI01AF")
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:1253:                    Return ("OVTI13B1")
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:1476:        Method (CDEP, 1, Serialized)
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:1488:                                \_SB.DSC0, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:1496:                                \_SB.DSC0, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:1504:                                \_SB.DSC0, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:1512:                                \_SB.DSC0, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:1520:                                \_SB.DSC0, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:1528:                                \_SB.DSC0, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:1536:                                \_SB.DSC0
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:1547:                        \_SB.CLP0
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:1972:        Device (DSC0)
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:1974:            Name (_HID, "INT3472")  // _HID: Hardware ID
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:1975:            Name (_CID, "INT3472")  // _CID: Compatible ID
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:1980:                Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2039:            Method (CLDB, 0, NotSerialized)
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2060:                Return (PAR) /* \_SB_.DSC0.CLDB.PAR_ */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2165:            Name (_HID, "INT3472")  // _HID: Hardware ID
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2166:            Name (_CID, "INT3472")  // _CID: Compatible ID
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2171:                Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2230:            Method (CLDB, 0, NotSerialized)
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2251:                Return (PAR) /* \_SB_.DSC1.CLDB.PAR_ */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2351:            Name (_HID, "INT3472")  // _HID: Hardware ID
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2352:            Name (_CID, "INT3472")  // _CID: Compatible ID
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2357:                Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2416:            Method (CLDB, 0, NotSerialized)
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2437:                Return (PAR) /* \_SB_.DSC2.CLDB.PAR_ */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2537:            Name (_HID, "INT3472")  // _HID: Hardware ID
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2538:            Name (_CID, "INT3472")  // _CID: Compatible ID
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2543:                Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2602:            Method (CLDB, 0, NotSerialized)
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2623:                Return (PAR) /* \_SB_.DSC3.CLDB.PAR_ */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2723:            Name (_HID, "INT3472")  // _HID: Hardware ID
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2724:            Name (_CID, "INT3472")  // _CID: Compatible ID
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2729:                Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2788:            Method (CLDB, 0, NotSerialized)
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2809:                Return (PAR) /* \_SB_.DSC4.CLDB.PAR_ */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2909:            Name (_HID, "INT3472")  // _HID: Hardware ID
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2910:            Name (_CID, "INT3472")  // _CID: Compatible ID
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2915:                Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2974:            Method (CLDB, 0, NotSerialized)
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:2995:                Return (PAR) /* \_SB_.DSC5.CLDB.PAR_ */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3093:        Device (CLP0)
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3123:            Name (_HID, "INT3472")  // _HID: Hardware ID
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3124:            Name (_CID, "INT3472")  // _CID: Compatible ID
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3126:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3144:            Method (CLDB, 0, NotSerialized)
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3164:                Return (PAR) /* \_SB_.CLP0.CLDB.PAR_ */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3180:                Return (PLDB) /* \_SB_.CLP0._PLD.PLDB */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3243:                        Return (DSMB) /* \_SB_.CLP0._DSM.DSMB */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3283:            Name (_HID, "INT3472")  // _HID: Hardware ID
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3284:            Name (_CID, "INT3472")  // _CID: Compatible ID
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3287:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3305:            Method (CLDB, 0, NotSerialized)
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3325:                Return (PAR) /* \_SB_.CLP1.CLDB.PAR_ */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3444:            Name (_HID, "INT3472")  // _HID: Hardware ID
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3445:            Name (_CID, "INT3472")  // _CID: Compatible ID
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3448:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3466:            Method (CLDB, 0, NotSerialized)
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3486:                Return (PAR) /* \_SB_.CLP2.CLDB.PAR_ */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3605:            Name (_HID, "INT3472")  // _HID: Hardware ID
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3606:            Name (_CID, "INT3472")  // _CID: Compatible ID
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3609:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3627:            Method (CLDB, 0, NotSerialized)
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3647:                Return (PAR) /* \_SB_.CLP3.CLDB.PAR_ */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3766:            Name (_HID, "INT3472")  // _HID: Hardware ID
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3767:            Name (_CID, "INT3472")  // _CID: Compatible ID
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3770:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3788:            Method (CLDB, 0, NotSerialized)
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3808:                Return (PAR) /* \_SB_.CLP4.CLDB.PAR_ */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3927:            Name (_HID, "INT3472")  // _HID: Hardware ID
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3928:            Name (_CID, "INT3472")  // _CID: Compatible ID
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3931:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3949:            Method (CLDB, 0, NotSerialized)
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:3969:                Return (PAR) /* \_SB_.CLP5.CLDB.PAR_ */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:4059:        Device (LNK0)
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:4083:                    Return (CDEP (L0CL))
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:4141:                Return (PLDB) /* \_SB_.LNK0._PLD.PLDB */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:4144:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:4243:            Method (SSDB, 0, NotSerialized)
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:4279:                Return (PAR) /* \_SB_.LNK0.SSDB.PAR_ */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:4376:                        Return (DSMB) /* \_SB_.LNK0._DSM.DSMB */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:4595:                    Return (CDEP (L1CL))
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:4656:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:4755:            Method (SSDB, 0, NotSerialized)
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:4791:                Return (PAR) /* \_SB_.LNK1.SSDB.PAR_ */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:5107:                    Return (CDEP (L2CL))
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:5168:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:5267:            Method (SSDB, 0, NotSerialized)
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:5303:                Return (PAR) /* \_SB_.LNK2.SSDB.PAR_ */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:5619:                    Return (CDEP (L3CL))
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:5680:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:5779:            Method (SSDB, 0, NotSerialized)
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:5815:                Return (PAR) /* \_SB_.LNK3.SSDB.PAR_ */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:6130:                    Return (CDEP (L4CL))
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:6192:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:6291:            Method (SSDB, 0, NotSerialized)
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:6327:                Return (PAR) /* \_SB_.LNK4.SSDB.PAR_ */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:6642:                    Return (CDEP (L5CL))
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:6704:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:6803:            Method (SSDB, 0, NotSerialized)
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:6839:                Return (PAR) /* \_SB_.LNK5.SSDB.PAR_ */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:7155:                    Return (CDEP (L0CL))
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:7161:                        \_SB.LNK0
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:7212:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:7346:                    Return (CDEP (L1CL))
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:7403:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:7537:                    Return (CDEP (L2CL))
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:7594:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:7728:                    Return (CDEP (L3CL))
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:7785:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:7919:                    Return (CDEP (L4CL))
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:7976:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:8110:                    Return (CDEP (L5CL))
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl:8167:            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt2.dsl:8114:                Method (_CRS, 0, Serialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt2.dsl:8123:                        GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt2.dsl:8129:                        GpioInt (Edge, ActiveLow, ExclusiveAndWake, PullDefault, 0x0000,
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt2.dsl:8147:                        GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt2.dsl:8158:                    CreateDWordField (SBFI, \_SB.PC00.UA00.BTH0._CRS._Y00._INT, INT4)  // _INT: Interrupts
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt2.dsl:8164:                        Return (SBFG) /* \_SB_.PC00.UA00.BTH0._CRS.SBFG */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt2.dsl:8168:                        Return (SBFI) /* \_SB_.PC00.UA00.BTH0._CRS.SBFI */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt2.dsl:8204:                Method (_CRS, 0, Serialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt2.dsl:8213:                        GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt2.dsl:8219:                        GpioInt (Edge, ActiveLow, ExclusiveAndWake, PullDefault, 0x0000,
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt2.dsl:8237:                        GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt2.dsl:8248:                    CreateDWordField (SBFI, \_SB.PC00.UA01.BTH0._CRS._Y01._INT, INT4)  // _INT: Interrupts
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt2.dsl:8254:                        Return (SBFG) /* \_SB_.PC00.UA01.BTH0._CRS.SBFG */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt2.dsl:8258:                        Return (SBFI) /* \_SB_.PC00.UA01.BTH0._CRS.SBFI */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt2.dsl:8294:                Method (_CRS, 0, Serialized)  // _CRS: Current Resource Settings
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt2.dsl:8303:                        GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt2.dsl:8309:                        GpioInt (Edge, ActiveLow, ExclusiveAndWake, PullDefault, 0x0000,
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt2.dsl:8327:                        GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt2.dsl:8338:                    CreateDWordField (SBFI, \_SB.PC00.UA02.BTH0._CRS._Y02._INT, INT4)  // _INT: Interrupts
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt2.dsl:8344:                        Return (SBFG) /* \_SB_.PC00.UA02.BTH0._CRS.SBFG */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt2.dsl:8348:                        Return (SBFI) /* \_SB_.PC00.UA02.BTH0._CRS.SBFI */
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt16.dsl:30:            Name (_DSD, Package (0x04)  // _DSD: Device-Specific Data
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt16.dsl:32:                ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt16.dsl:144:                        "LNK0"
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt16.dsl:234:                ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt16.dsl:380:                ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt16.dsl:410:                ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt16.dsl:424:                ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt16.dsl:570:                ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt16.dsl:600:                ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt16.dsl:614:                ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt16.dsl:681:                ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt16.dsl:720:                ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt16.dsl:820:                ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:971:                            Method (_DSD, 0, NotSerialized)  // _DSD: Device-Specific Data
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:973:                                ADBG ("XHC SS01 _DSD")
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:976:                                    ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:1041:                            Method (_DSD, 0, NotSerialized)  // _DSD: Device-Specific Data
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:1043:                                ADBG ("XHC SS02 _DSD")
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:1046:                                    ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:1111:                            Method (_DSD, 0, NotSerialized)  // _DSD: Device-Specific Data
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:1113:                                ADBG ("XHC SS03 _DSD")
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:1116:                                    ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:1181:                            Method (_DSD, 0, NotSerialized)  // _DSD: Device-Specific Data
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:1183:                                ADBG ("XHC SS04 _DSD")
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:1186:                                    ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:1489:            Method (_DSD, 0, NotSerialized)  // _DSD: Device-Specific Data
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:1491:                ADBG (Concatenate ("TBT _DSD IMR_VALID =", ToHexString (ITIM)))
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:1492:                ADBG (Concatenate ("TBT _DSD WAKE_SUPPORTED =", ToHexString (TIVS)))
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:2206:            Method (_DSD, 0, NotSerialized)  // _DSD: Device-Specific Data
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:2208:                ADBG (Concatenate ("TBT _DSD IMR_VALID =", ToHexString (ITIM)))
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:2209:                ADBG (Concatenate ("TBT _DSD WAKE_SUPPORTED =", ToHexString (TIVS)))
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:3154:            Method (_DSD, 0, NotSerialized)  // _DSD: Device-Specific Data
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:3156:                ADBG ("TBT RP _DSD")
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:3223:                        ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:3271:                        ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:3938:            Method (_DSD, 0, NotSerialized)  // _DSD: Device-Specific Data
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:3940:                ADBG ("TBT RP _DSD")
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:4007:                        ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:4055:                        ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:4722:            Method (_DSD, 0, NotSerialized)  // _DSD: Device-Specific Data
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:4724:                ADBG ("TBT RP _DSD")
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:4791:                        ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:4839:                        ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:5506:            Method (_DSD, 0, NotSerialized)  // _DSD: Device-Specific Data
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:5508:                ADBG ("TBT RP _DSD")
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:5575:                        ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */, 
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/acpi/20260308T004459-unknown-host/dsl/ssdt18.dsl:5623:                        ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301") /* Device Properties for _DSD */, 

@@ -33,6 +33,59 @@ require_cmd() {
   }
 }
 
+read_first_line() {
+  local path="$1"
+  if [[ -r "${path}" ]]; then
+    head -n 1 "${path}"
+  fi
+}
+
+capture_live_linux_acpi_state() {
+  local out_path="$1"
+  local dev_dir
+  local dev_name
+  local physical_target
+
+  {
+    printf '# Live Linux ACPI Camera State\n\n'
+    printf 'Captured UTC: %s\n\n' "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+    printf '## Camera-relevant ACPI devices from sysfs\n\n'
+
+    shopt -s nullglob
+    for dev_dir in /sys/bus/acpi/devices/OVTI* /sys/bus/acpi/devices/INT3472*; do
+      dev_name=$(basename "${dev_dir}")
+      printf '### %s\n\n' "${dev_name}"
+      printf -- '- hid: `%s`\n' "$(read_first_line "${dev_dir}/hid")"
+      printf -- '- uid: `%s`\n' "$(read_first_line "${dev_dir}/uid")"
+      printf -- '- path: `%s`\n' "$(read_first_line "${dev_dir}/path")"
+      printf -- '- status: `%s`\n' "$(read_first_line "${dev_dir}/status")"
+      printf -- '- modalias: `%s`\n' "$(read_first_line "${dev_dir}/modalias")"
+
+      if [[ -L "${dev_dir}/physical_node" ]]; then
+        physical_target=$(readlink -f "${dev_dir}/physical_node")
+        printf -- '- physical_node: `%s`\n' "${physical_target}"
+      fi
+
+      printf '\n'
+    done
+    shopt -u nullglob
+
+    printf '## Physical INT3472 Linux Devices\n\n'
+    shopt -s nullglob
+    for dev_dir in /sys/devices/*/*:*/i2c_designware.*/i2c-*/i2c-INT3472:*; do
+      printf -- '- path: `%s`\n' "${dev_dir}"
+      printf -- '- name: `%s`\n' "$(read_first_line "${dev_dir}/name")"
+      printf -- '- modalias: `%s`\n' "$(read_first_line "${dev_dir}/modalias")"
+      printf -- '- waiting_for_supplier: `%s`\n' "$(read_first_line "${dev_dir}/waiting_for_supplier")"
+      if [[ -L "${dev_dir}/firmware_node" ]]; then
+        printf -- '- firmware_node: `%s`\n' "$(readlink -f "${dev_dir}/firmware_node")"
+      fi
+      printf '\n'
+    done
+    shopt -u nullglob
+  } > "${out_path}"
+}
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --out-dir)
@@ -103,28 +156,40 @@ mkdir -p "${OUT_DIR}/tables" "${OUT_DIR}/dsl"
 mapfile -t DSDT_TABLES < <(find "${OUT_DIR}/tables" -maxdepth 1 -type f -iname 'dsdt.dat' | sort)
 mapfile -t SSDT_TABLES < <(find "${OUT_DIR}/tables" -maxdepth 1 -type f -iname 'ssdt*.dat' | sort)
 
+DISASM_TMP=""
+cleanup() {
+  if [[ -n "${DISASM_TMP}" && -d "${DISASM_TMP}" ]]; then
+    rm -rf "${DISASM_TMP}"
+  fi
+}
+trap cleanup EXIT
+
 if (( ${#DSDT_TABLES[@]} > 0 )); then
+  DISASM_TMP=$(mktemp -d)
+  cp "${DSDT_TABLES[@]}" "${DISASM_TMP}/"
+  if (( ${#SSDT_TABLES[@]} > 0 )); then
+    cp "${SSDT_TABLES[@]}" "${DISASM_TMP}/"
+  fi
+
   (
-    cd "${OUT_DIR}/dsl"
+    cd "${DISASM_TMP}"
+    iasl -d dsdt.dat > "${OUT_DIR}/dsl/dsdt-disasm.log" 2>&1 || true
+
     if (( ${#SSDT_TABLES[@]} > 0 )); then
-      iasl -e "${SSDT_TABLES[@]}" -d "${DSDT_TABLES[0]}" > dsdt-disasm.log 2>&1 || true
-    else
-      iasl -d "${DSDT_TABLES[0]}" > dsdt-disasm.log 2>&1 || true
+      iasl -d ssdt*.dat > "${OUT_DIR}/dsl/ssdt-disasm.log" 2>&1 || true
     fi
   )
-fi
 
-if (( ${#SSDT_TABLES[@]} > 0 )); then
-  (
-    cd "${OUT_DIR}/dsl"
-    iasl -d "${SSDT_TABLES[@]}" > ssdt-disasm.log 2>&1 || true
-  )
+  find "${OUT_DIR}/dsl" -maxdepth 1 -type f -name '*.dsl' -delete
+  find "${DISASM_TMP}" -maxdepth 1 -type f -name '*.dsl' -exec cp {} "${OUT_DIR}/dsl/" \;
 fi
 
 rg -n \
   'INT3472|OVTI5675|CLDB|TPS68470|I2cSerialBus|GpioIo|GpioInt|_DSD|_CRS|Privacy|Shutter|Camera' \
   "${OUT_DIR}/dsl" \
   > "${OUT_DIR}/camera-related-hits.txt" || true
+
+capture_live_linux_acpi_state "${OUT_DIR}/live-linux-acpi-state.txt"
 
 cat > "${OUT_DIR}/README.md" <<EOF
 # ACPI Capture
@@ -138,8 +203,9 @@ cat > "${OUT_DIR}/README.md" <<EOF
 - \`acpidump.txt\` — raw text ACPI dump
 - \`dmi.txt\` — DMI identity snapshot taken alongside the dump
 - \`tables/\` — binary tables extracted by \`acpixtract -a\`
-- \`dsl/\` — DSDT/SSDT disassembly attempts via \`iasl\`
+- \`dsl/\` — DSDT/SSDT disassembly outputs via staged \`iasl\` runs
 - \`camera-related-hits.txt\` — grep summary for camera-relevant ACPI terms
+- \`live-linux-acpi-state.txt\` — sysfs snapshot of camera-relevant ACPI devices and physical INT3472 nodes
 
 ## Regeneration
 

@@ -1,5 +1,322 @@
-Error    6092 - Could not open file "../tables/SSDT*.dat" (Source Input) - No such file or directory
+File appears to be binary: found 489 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt1.dat, Length 0x388 (904) bytes
+ACPI: SSDT 0x0000000000000000 000388 (v02 PmaxDv Pmax_Dev 00000001 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
 
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt1.dsl - 10031 bytes
+File appears to be binary: found 1105 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt10.dat, Length 0x6EC (1772) bytes
+ACPI: SSDT 0x0000000000000000 0006EC (v02 PmRef  Cpu0Ist  00003000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt10.dsl - 12859 bytes
+File appears to be binary: found 690 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt11.dat, Length 0xD5C (3420) bytes
+ACPI: SSDT 0x0000000000000000 000D5C (v02 MSI_NB PtidDevc 00001000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt11.dsl - 13042 bytes
+File appears to be binary: found 1116 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt12.dat, Length 0x1620 (5664) bytes
+ACPI: SSDT 0x0000000000000000 001620 (v02 PmRef  ApHwp    00003000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt12.dsl - 23506 bytes
+File appears to be binary: found 5509 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt13.dat, Length 0x5883 (22659) bytes
+ACPI: SSDT 0x0000000000000000 005883 (v02 DptfTb DptfTabl 00001000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt13.dsl - 107025 bytes
+File appears to be binary: found 86 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt14.dat, Length 0xE0 (224) bytes
+ACPI: SSDT 0x0000000000000000 0000E0 (v02 INTEL  IpuSsdt  00001000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt14.dsl - 2018 bytes
+File appears to be binary: found 385 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt15.dat, Length 0x394 (916) bytes
+ACPI: SSDT 0x0000000000000000 000394 (v02 PmRef  Cpu0Cst  00003001 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt15.dsl - 6042 bytes
+File appears to be binary: found 1212 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt16.dat, Length 0x11A0 (4512) bytes
+ACPI: SSDT 0x0000000000000000 0011A0 (v02 INTEL  St00Ssdt 00001000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt16.dsl - 27100 bytes
+File appears to be binary: found 11808 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt17.dat, Length 0xA46A (42090) bytes
+ACPI: SSDT 0x0000000000000000 00A46A (v02 MiCaTb MiCaTabl 00001000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt17.dsl - 285420 bytes
+File appears to be binary: found 8532 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt18.dat, Length 0x8E92 (36498) bytes
+ACPI: SSDT 0x0000000000000000 008E92 (v02 INTEL  TcssSsdt 00001000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt18.dsl - 205544 bytes
+File appears to be binary: found 2060 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt19.dat, Length 0x2463 (9315) bytes
+ACPI: SSDT 0x0000000000000000 002463 (v02 SocCmn SocCmn   00003000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt19.dsl - 33735 bytes
+File appears to be binary: found 12068 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt2.dat, Length 0xD816 (55318) bytes
+ACPI: SSDT 0x0000000000000000 00D816 (v02 INTEL  Cnv_Ssdt 00001000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt2.dsl - 279547 bytes
+File appears to be binary: found 429 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt20.dat, Length 0x6E3 (1763) bytes
+ACPI: SSDT 0x0000000000000000 0006E3 (v02 INTEL  PepoSsdt 00001000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt20.dsl - 6970 bytes
+File appears to be binary: found 3149 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt21.dat, Length 0x2460 (9312) bytes
+ACPI: SSDT 0x0000000000000000 002460 (v02 INTEL  IgfxSsdt 00003000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt21.dsl - 53407 bytes
+File appears to be binary: found 619 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt22.dat, Length 0x832 (2098) bytes
+ACPI: SSDT 0x0000000000000000 000832 (v02 INTEL  xh_lnl_m 00000000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt22.dsl - 11651 bytes
+File appears to be binary: found 3505 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt23.dat, Length 0x3BD7 (15319) bytes
+ACPI: SSDT 0x0000000000000000 003BD7 (v02 CpuRef CpuSsdt  00003000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt23.dsl - 84058 bytes
+File appears to be binary: found 805 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt24.dat, Length 0x5FB (1531) bytes
+ACPI: SSDT 0x0000000000000000 0005FB (v02 PmRef  Cpu0Hwp  00003000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt24.dsl - 15923 bytes
+File appears to be binary: found 103 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt25.dat, Length 0x1F0 (496) bytes
+ACPI: SSDT 0x0000000000000000 0001F0 (v02 MSI_NB TbtTypeC 00000000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt25.dsl - 1757 bytes
+File appears to be binary: found 998 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt26.dat, Length 0x1349 (4937) bytes
+ACPI: SSDT 0x0000000000000000 001349 (v02 PmRef  ApPsd    00003000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt26.dsl - 23292 bytes
+File appears to be binary: found 1468 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt27.dat, Length 0xC8C (3212) bytes
+ACPI: SSDT 0x0000000000000000 000C8C (v02 INTEL  PDatTabl 00001000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt27.dsl - 28635 bytes
+File appears to be binary: found 1813 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt28.dat, Length 0x140F (5135) bytes
+ACPI: SSDT 0x0000000000000000 00140F (v02 MSI_NB I2Pm_Rvp 00001000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt28.dsl - 40751 bytes
+File appears to be binary: found 1539 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt29.dat, Length 0x1BAF (7087) bytes
+ACPI: SSDT 0x0000000000000000 001BAF (v02 PmRef  ApIst    00003000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt29.dsl - 37674 bytes
+File appears to be binary: found 94 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt3.dat, Length 0x11E (286) bytes
+ACPI: SSDT 0x0000000000000000 00011E (v02 INTEL  TxtSsdt  00001000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt3.dsl - 1825 bytes
+File appears to be binary: found 44 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt4.dat, Length 0xA5 (165) bytes
+ACPI: SSDT 0x0000000000000000 0000A5 (v02 INTEL  TseSsdt  00001000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt4.dsl - 1252 bytes
+File appears to be binary: found 730 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt5.dat, Length 0x1122 (4386) bytes
+ACPI: SSDT 0x0000000000000000 001122 (v02 SocGpe SocGpe   00003000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt5.dsl - 14027 bytes
+File appears to be binary: found 24 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt6.dat, Length 0x6B (107) bytes
+ACPI: SSDT 0x0000000000000000 00006B (v02 MSI_NB MsiNvs   00003000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt6.dsl - 923 bytes
+File appears to be binary: found 170 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt7.dat, Length 0x1AB (427) bytes
+ACPI: SSDT 0x0000000000000000 0001AB (v02 PmRef  Cpu0Psd  00003000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt7.dsl - 2826 bytes
+File appears to be binary: found 1166 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt8.dat, Length 0x12F5 (4853) bytes
+ACPI: SSDT 0x0000000000000000 0012F5 (v02 MSI_NB UsbCTabl 00001000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt8.dsl - 27134 bytes
+File appears to be binary: found 774 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file ssdt9.dat, Length 0xFBB (4027) bytes
+ACPI: SSDT 0x0000000000000000 000FBB (v02 PmRef  ApCst    00003000 INTL 20210930)
+Pass 1 parse of [SSDT]
+Pass 2 parse of [SSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    ssdt9.dsl - 18449 bytes
 
 Intel ACPI Component Architecture
 ASL+ Optimizing Compiler/Disassembler version 20250404

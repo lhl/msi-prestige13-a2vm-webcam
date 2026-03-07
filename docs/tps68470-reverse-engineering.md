@@ -22,7 +22,8 @@ It is the place to resume from when we need to answer any of these questions:
   - that PMIC companion is the physical Linux I2C device `i2c-INT3472:06`
   - the inactive alternate PMIC path `INT3472:00` at `\_SB_.DSC0` also exists in firmware
 - The ACPI path selection logic shows this laptop is on the Windows PMIC companion path, not the simpler discrete path.
-- The original lowercase-table capture bug has been fixed in `scripts/capture-acpi.sh` for future runs.
+- The ACPI capture workflow now stages `iasl` inputs in a temp directory so `.dsl` outputs land under `dsl/` consistently.
+- The ACPI capture workflow now also records `live-linux-acpi-state.txt` automatically for future captures.
 
 ## Reproduction
 
@@ -46,7 +47,9 @@ Current state:
 
 - the first successful root-collected capture is `reference/acpi/20260308T004459-unknown-host/`
 - the raw dump and extracted tables are valid
-- future captures now disassemble lowercase `dsdt.dat` / `ssdt*.dat` correctly
+- the committed capture now includes regenerated `dsdt.dsl`, `ssdt*.dsl`, a valid `camera-related-hits.txt`, and `live-linux-acpi-state.txt`
+- `dsdt.dsl` is generated from a standalone `iasl -d dsdt.dat` pass because the combined namespace mode hits `AE_ALREADY_EXISTS` on this firmware
+- future captures now disassemble lowercase `dsdt.dat` / `ssdt*.dat` correctly and keep `.dsl` outputs in `dsl/`
 
 ### ACPI review findings
 

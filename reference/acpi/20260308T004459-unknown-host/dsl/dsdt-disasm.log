@@ -1,0 +1,16 @@
+File appears to be binary: found 39812 non-ASCII characters, disassembling
+Binary file appears to be a valid ACPI table, disassembling
+Input file dsdt.dat, Length 0x25801 (153601) bytes
+ACPI: DSDT 0x0000000000000000 025801 (v02 MSI_NB MEGABOOK 01072009 INTL 20210930)
+Pass 1 parse of [DSDT]
+Pass 2 parse of [DSDT]
+Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)
+
+Parsing completed
+Disassembly completed
+ASL Output:    dsdt.dsl - 980747 bytes
+
+Intel ACPI Component Architecture
+ASL+ Optimizing Compiler/Disassembler version 20250404
+Copyright (c) 2000 - 2025 Intel Corporation
+

@@ -2,6 +2,36 @@
 
 ## 2026-03-08
 
+### Complete first ACPI capture with committed DSL and live Linux state
+
+- Plan: finish the first ACPI evidence set so the repo contains the actual disassembly outputs and live ACPI/sysfs snapshot, then fix the capture script so future runs reproduce the same layout without manual cleanup.
+- Commands:
+  - regenerated DSL from the existing capture in temp:
+    - copied `reference/acpi/20260308T004459-unknown-host/tables/*.dat` to `/tmp/ms13q3-acpi-commit/`
+    - `iasl -d dsdt.dat`
+    - `iasl -d ssdt*.dat`
+  - refreshed committed analysis files:
+    - regenerated `reference/acpi/20260308T004459-unknown-host/camera-related-hits.txt`
+    - generated `reference/acpi/20260308T004459-unknown-host/live-linux-acpi-state.txt`
+    - removed accidental duplicate `reference/acpi/20260308T004459-unknown-host/tables/*.dsl`
+  - `apply_patch` updating:
+    - `scripts/capture-acpi.sh`
+    - `reference/acpi/20260308T004459-unknown-host/README.md`
+    - `docs/tps68470-reverse-engineering.md`
+    - `state/CONTEXT.md`
+- Result:
+  - committed the first full reviewed ACPI evidence set for this laptop, including `dsdt.dsl`, `ssdt*.dsl`, valid `camera-related-hits.txt`, and `live-linux-acpi-state.txt`
+  - confirmed the live Linux snapshot matches the reviewed firmware path:
+    - `OVTI5675:00` at `\_SB_.LNK0`
+    - `INT3472:06` at `\_SB_.CLP0`
+    - inactive alternate `INT3472:00` at `\_SB_.DSC0`
+  - confirmed `dsdt.dsl` disassembles cleanly only as a standalone `iasl -d dsdt.dat` pass on this firmware; the combined namespace mode fails with `AE_ALREADY_EXISTS`
+  - fixed `scripts/capture-acpi.sh` so future runs:
+    - disassemble lowercase `dsdt.dat` / `ssdt*.dat`
+    - keep `.dsl` outputs under `dsl/` instead of scattering them under `tables/`
+    - capture `live-linux-acpi-state.txt` automatically
+- Decision: keep; this turns the ACPI capture into a self-contained, reproducible reference instead of a partially reviewed raw dump.
+
 ### Review first ACPI capture and correlate it with live Linux plus Windows artifacts
 
 - Plan: disassemble the captured ACPI tables from a writable temp area, identify the machine's active camera path, map that to the live ACPI/sysfs state, and fix the capture script based on the first-run failure.

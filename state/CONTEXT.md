@@ -64,8 +64,7 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
   - `dmi.txt` confirms product `Prestige 13 AI+ Evo A2VMG`, board `MS-13Q3`, BIOS `E13Q3IMS.109`, BIOS date `09/04/2024`
   - raw `acpidump.txt` contains camera-relevant `INT3472` and `CLDB` strings
   - extracted binary tables are present under `tables/`
-  - the first `iasl` pass failed because `scripts/capture-acpi.sh` expected uppercase `DSDT.dat` / `SSDT*.dat` but that run produced lowercase `dsdt.dat` / `ssdt*.dat`
-  - `camera-related-hits.txt` is therefore empty in that first capture and should not be treated as evidence of absence
+  - the committed capture now also includes regenerated `dsdt.dsl`, `ssdt*.dsl`, a valid `camera-related-hits.txt`, and `live-linux-acpi-state.txt`
 - The committed ACPI capture has now been reviewed from regenerated temp DSL:
   - `ssdt17.dat` / `MiCaTabl` contains the camera topology with `LNK*`, `DSC*`, and `CLP*` objects
   - the live active sensor is `OVTI5675:00` at `\_SB_.LNK0`
@@ -79,7 +78,7 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
 - Linux-side implication:
   - `ov5675` expects `avdd`, `dovdd`, `dvdd`, `reset`, and 19.2 MHz `xvclk`
   - the likely blocker is missing MSI-specific `tps68470_board_data` for `i2c-INT3472:06` and `OVTI5675:00`, not just a missing DMI match
-- `scripts/capture-acpi.sh` is now fixed to disassemble lowercase `dsdt.dat` / `ssdt*.dat` in future captures
+- `scripts/capture-acpi.sh` is now fixed to disassemble lowercase `dsdt.dat` / `ssdt*.dat`, keep `.dsl` outputs under `dsl/`, and capture `live-linux-acpi-state.txt` in future runs
 
 Most important current log lines:
 
