@@ -2,6 +2,21 @@
 
 ## 2026-03-07
 
+### Document exact MSI `OV5675` Catalog package and local download path
+
+- Plan: record the exact Microsoft Update Catalog entry, direct CAB URL, and local download paths for the MSI-submitted `OV5675` package so we can reliably reopen it later.
+- Commands:
+  - opened `https://www.catalog.update.microsoft.com/Search.aspx?q=ACPI%5COVTI5675`
+  - opened `https://www.catalog.update.microsoft.com/ScopedViewInline.aspx?updateid=8fd6696d-67b8-4bc7-a477-6d8800725426`
+  - downloaded `https://catalog.s.download.windowsupdate.com/c/msdownload/update/driver/drvs/2026/02/8a77f110-818a-4dee-b65b-291e97512d0f_0e7b66ca05a48e8131f5ef36e983f419b4ebef52.cab`
+  - extracted `/tmp/ovti5675-msi/ovti5675-msi-70.26100.19939.1.cab`
+- Result:
+  - confirmed the exact MSI package entry is `Intel Corporation Driver Update (70.26100.19939.1)`
+  - confirmed company field `MICRO-STAR INTERNATIONAL CO., LTD`
+  - confirmed supported hardware ID `ACPI\\OVTI5675`
+  - documented the direct CAB URL plus local paths in `reference/msi-ov5675-microsoft-update-catalog-70.26100.19939.1.md`
+- Decision: keep; this makes the Windows package reference stable and removes the need to rediscover the exact Catalog entry.
+
 ### Tighten AGENTS progress-summary expectations
 
 - Plan: make user-facing updates state the concrete result or blocker, so status stays useful as the repo and session history grow.

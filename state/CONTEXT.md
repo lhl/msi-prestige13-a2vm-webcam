@@ -14,6 +14,12 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
 - Local `linux-mainline` source path to reuse:
   - `~/.cache/paru/clone/linux-mainline/src/linux-mainline`
   - current inspected tag: `v6.19`
+- Exact MSI `OV5675` Windows package now documented:
+  - Catalog entry: `Intel Corporation Driver Update (70.26100.19939.1)`
+  - Scoped view: `https://www.catalog.update.microsoft.com/ScopedViewInline.aspx?updateid=8fd6696d-67b8-4bc7-a477-6d8800725426`
+  - local CAB: `/tmp/ovti5675-msi/ovti5675-msi-70.26100.19939.1.cab`
+  - extracted dir: `/tmp/ovti5675-msi/extracted2`
+- This MSI package contains `ov5675.inf`, `ov5675_extension_msi.inf`, `iacamera64_ext_msi.inf`, `iactrllogic64.inf`, `iactrllogic64.sys`, and MSI/LNL graph-setting blobs.
 
 Most important current log lines:
 
@@ -28,6 +34,6 @@ Most important current log lines:
 
 ## Next Actions
 
-1. Check whether this MSI DMI identity is supported under another variant string or in newer upstream changes beyond local `v6.19`.
-2. Run direct `media-ctl` / `v4l2-ctl` probing with full device access.
-3. Pull the MSI Windows camera package and look for `iactrllogic64`, INF, registry, or sequencing clues.
+1. Correlate MSI `OV5675` graph-setting names such as `BCAB65` and `S5VM17` with ACPI-visible identifiers or module IDs.
+2. Check whether this MSI DMI identity is supported under another variant string or in newer upstream changes beyond local `v6.19`.
+3. Run direct `media-ctl` / `v4l2-ctl` probing with full device access.

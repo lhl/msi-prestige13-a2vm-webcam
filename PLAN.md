@@ -48,8 +48,8 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 
 ### 3. Vendor / Windows clue extraction
 
-- [ ] Identify the MSI Windows camera-related package(s) for this machine.
-- [ ] Inspect driver package contents for `iactrllogic64`, INF files, registry settings, GPIO hints, or regulator programming clues.
+- [x] Identify the MSI Windows camera-related package(s) for this machine.
+- [x] Inspect driver package contents for `iactrllogic64`, INF files, registry settings, GPIO hints, or regulator programming clues.
 - [ ] Map any discovered identifiers or sequencing steps back to Linux driver structures.
 
 ### 4. Patch path
@@ -61,7 +61,7 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 ## Near-Term Priority
 
 1. Inspect upstream `tps68470_board_data.c` coverage.
-2. Pull the MSI Windows camera package and look for concrete board-data clues.
+2. Correlate MSI `OV5675` graph-setting names such as `BCAB65` and `S5VM17` with ACPI-visible identifiers.
 3. Re-run direct `media-ctl` / `v4l2-ctl` probing now that full device access is available.
 
 ## Open Questions

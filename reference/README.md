@@ -10,6 +10,9 @@ Captured upstream sources relevant to webcam bring-up on the MSI Prestige 13 AI+
 - `reference/jeremy-grosser-prestige13-notes.md`
   - MSI Prestige 13 Debian notes gist with camera-related findings
   - Captured: 2026-03-07
+- `reference/msi-ov5675-microsoft-update-catalog-70.26100.19939.1.md`
+  - Exact Microsoft Update Catalog entry and direct CAB URL for the MSI-submitted `OV5675` package
+  - Captured: 2026-03-07
 
 ## Conventions
 

@@ -63,3 +63,4 @@ msi-prestige13-a2vm-webcam/
 - [`docs/kernel-tree-status.md`](./docs/kernel-tree-status.md) — exact local kernel-source path and 6.19 board-data status
 - [`reference/intel-ipu7-drivers-issue-17.md`](./reference/intel-ipu7-drivers-issue-17.md) — Intel upstream issue note
 - [`reference/jeremy-grosser-prestige13-notes.md`](./reference/jeremy-grosser-prestige13-notes.md) — MSI-specific Debian/gist note
+- [`reference/msi-ov5675-microsoft-update-catalog-70.26100.19939.1.md`](./reference/msi-ov5675-microsoft-update-catalog-70.26100.19939.1.md) — exact MSI `OV5675` Windows package entry and CAB URL
