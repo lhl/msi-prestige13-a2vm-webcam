@@ -1,0 +1,5 @@
+CMD: readlink -f /sys/bus/acpi/devices/INT3472:06/physical_node 2>/dev/null || true; readlink -f /sys/bus/acpi/devices/OVTI5675:00/physical_node 2>/dev/null || true
+/sys/devices/pci0000:00/0000:00:15.1/i2c_designware.1/i2c-1/i2c-INT3472:06
+/sys/devices/LNXSYSTM:00/LNXSYBUS:00/OVTI5675:00/physical_node
+
+EXIT_STATUS: 0

@@ -1,0 +1,50 @@
+[2026-03-07T15:18:07Z] run directory: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-08/20260308T001807-reprobe-modules-first-reprobe
+[2026-03-07T15:18:07Z] unload module ov5675
+CMD: modprobe -r ov5675
+EXIT_STATUS: 0
+
+[2026-03-07T15:18:07Z] unload module intel_ipu7_isys
+CMD: modprobe -r intel_ipu7_isys
+EXIT_STATUS: 0
+
+[2026-03-07T15:18:07Z] skip unload for intel_ipu7; module is not currently loaded
+[2026-03-07T15:18:07Z] unload module intel_skl_int3472_tps68470
+CMD: modprobe -r intel_skl_int3472_tps68470
+EXIT_STATUS: 0
+
+[2026-03-07T15:18:07Z] unload module intel_skl_int3472_discrete
+CMD: modprobe -r intel_skl_int3472_discrete
+EXIT_STATUS: 0
+
+[2026-03-07T15:18:07Z] skip unload for clk_tps68470; module is not currently loaded
+[2026-03-07T15:18:07Z] skip unload for tps68470_regulator; module is not currently loaded
+[2026-03-07T15:18:07Z] skip unload for intel_skl_int3472_common; module is not currently loaded
+[2026-03-07T15:18:07Z] settle udev after unloads
+CMD: udevadm settle
+EXIT_STATUS: 0
+
+[2026-03-07T15:18:07Z] load module intel_skl_int3472_tps68470
+CMD: modprobe intel_skl_int3472_tps68470
+EXIT_STATUS: 0
+
+[2026-03-07T15:18:07Z] load module intel_skl_int3472_discrete
+CMD: modprobe intel_skl_int3472_discrete
+EXIT_STATUS: 0
+
+[2026-03-07T15:18:07Z] load module ov5675
+CMD: modprobe ov5675
+EXIT_STATUS: 0
+
+[2026-03-07T15:18:07Z] load module intel_ipu7
+CMD: modprobe intel_ipu7
+EXIT_STATUS: 0
+
+[2026-03-07T15:18:08Z] load module intel_ipu7_isys
+CMD: modprobe intel_ipu7_isys
+EXIT_STATUS: 0
+
+[2026-03-07T15:18:08Z] settle udev after loads
+CMD: udevadm settle
+EXIT_STATUS: 0
+
+[2026-03-07T15:18:08Z] run finished with status=success

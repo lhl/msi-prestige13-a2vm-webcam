@@ -38,6 +38,11 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
   - run archive root: `runs/`
   - safety boundary: snapshot + module reload only, no raw PMIC/I2C register writes
   - validated locally with `snapshot` and `reprobe-modules --dry-run` smoke tests using temporary run roots under `/tmp`
+- First real run set is now captured under `runs/2026-03-08/`:
+  - `20260308T001800-snapshot-baseline`
+  - `20260308T001807-reprobe-modules-first-reprobe`
+  - reprobe completed cleanly but reproduced the same `No board-data found for this model` failure
+  - `media-ctl` still shows only the IPU-side topology with no sensor subdevice after reprobe
 - Additional related-MSI low-level reference now captured:
   - `reference/greymouser-summit-13-ai-evo-a2vm.md`
   - related model: `MSI Summit 13 AI+ Evo A2VMTG`
@@ -48,6 +53,7 @@ Most important current log lines:
 
 - `int3472-tps68470 i2c-INT3472:06: error -ENODEV: No board-data found for this model`
 - `intel-ipu7 0000:00:05.0: no subdev found in graph`
+- `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
 
 ## Open Questions
 
@@ -57,6 +63,6 @@ Most important current log lines:
 
 ## Next Actions
 
-1. Run `scripts/webcam-run.sh snapshot` and `sudo scripts/webcam-run.sh reprobe-modules` to create the first logged run set under `runs/`.
-2. Correlate MSI `OV5675` graph-setting names such as `BCAB65` and `S5VM17` with ACPI-visible identifiers or module IDs.
-3. Check whether this MSI DMI identity is supported under another variant string or in newer upstream changes beyond local `v6.19`.
+1. Correlate MSI `OV5675` graph-setting names such as `BCAB65` and `S5VM17` with ACPI-visible identifiers or module IDs.
+2. Check whether this MSI DMI identity is supported under another variant string or in newer upstream changes beyond local `v6.19`.
+3. Start extracting the concrete `TPS68470` sequencing logic from `iactrllogic64.sys`.

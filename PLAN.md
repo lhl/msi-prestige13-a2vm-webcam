@@ -25,7 +25,7 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 - [x] Record a current local support assessment in `docs/webcam-status.md`.
 - [x] Confirm local machine identity, kernel version, PCI binding, and loaded modules.
 - [x] Record the exact local `linux-mainline` source location and current `v6.19` board-data status in `docs/kernel-tree-status.md`.
-- [ ] Capture a clean media graph dump once direct device access is available for testing.
+- [x] Capture a clean media graph dump once direct device access is available for testing.
 - [ ] Capture ACPI and DMI details relevant to existing `INT3472` board-data matching logic.
 
 ## Workstreams
@@ -42,11 +42,11 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 ### 2. Local machine evidence
 
 - [x] Build a safe snapshot/reprobe harness that records pre/post state and exact action order under `runs/`.
-- [ ] Run direct media and V4L2 probing:
+- [x] Run direct media and V4L2 probing:
   - `media-ctl -p -d /dev/media0`
   - `v4l2-ctl --list-devices`
   - targeted `v4l2-ctl --all -d /dev/video*`
-- [ ] Save exact boot-log excerpts for successful and failed probe attempts.
+- [x] Save exact boot-log excerpts for failed probe attempts and preserve room for later successful-probe captures.
 - [ ] Record any changes across kernel versions if testing on multiple kernels.
 
 ### 3. Vendor / Windows clue extraction
@@ -64,9 +64,9 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 
 ## Near-Term Priority
 
-1. Use `scripts/webcam-run.sh` to capture a clean `snapshot` run and a first `reprobe-modules` run.
-2. Correlate MSI `OV5675` graph-setting names such as `BCAB65` and `S5VM17` with ACPI-visible identifiers.
-3. Re-check whether this MSI DMI identity is supported under another variant string or newer upstream changes.
+1. Correlate MSI `OV5675` graph-setting names such as `BCAB65` and `S5VM17` with ACPI-visible identifiers.
+2. Re-check whether this MSI DMI identity is supported under another variant string or newer upstream changes.
+3. Extract concrete `TPS68470` sequencing logic from `iactrllogic64.sys`.
 
 ## Open Questions
 

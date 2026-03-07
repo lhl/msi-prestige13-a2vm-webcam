@@ -1,0 +1,23 @@
+CMD: journalctl -k --since '2026-03-07T15:18:07Z' --no-pager | grep -En 'tps68470|INT3472|OVTI5675|ov5675|intel-ipu7|board-data|subdev|ipu7' || true
+1:Mar 08 00:18:07 p13 kernel: int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21
+2:Mar 08 00:18:07 p13 kernel: int3472-tps68470 i2c-INT3472:06: error -ENODEV: No board-data found for this model
+3:Mar 08 00:18:07 p13 kernel: intel_ipu7: module is from the staging directory, the quality is unknown, you have been warned.
+4:Mar 08 00:18:07 p13 kernel: intel-ipu7 0000:00:05.0: Device 0x645d (rev: 0x4)
+5:Mar 08 00:18:07 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 PCI BAR0 base 0x0000003014000000 BAR2 base 0x0000003016336000
+6:Mar 08 00:18:07 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 PCI BAR0 mapped at 000000004a3e9a06
+8:Mar 08 00:18:07 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 SKU 0 in secure mode mask 0x0
+9:Mar 08 00:18:08 p13 kernel: intel-ipu7 0000:00:05.0: firmware cpd file: intel/ipu/ipu7_fw.bin
+10:Mar 08 00:18:08 p13 kernel: intel-ipu7 0000:00:05.0: FW binary0 info:
+11:Mar 08 00:18:08 p13 kernel: intel-ipu7 0000:00:05.0: Name:  psys
+12:Mar 08 00:18:08 p13 kernel: intel-ipu7 0000:00:05.0: Version:  1.1.9.240627135220
+13:Mar 08 00:18:08 p13 kernel: intel-ipu7 0000:00:05.0: Timestamp:  build_id:331942702
+14:Mar 08 00:18:08 p13 kernel: intel-ipu7 0000:00:05.0: Commit:  commit_id:d84f5c35
+15:Mar 08 00:18:08 p13 kernel: intel-ipu7 0000:00:05.0: FW binary1 info:
+16:Mar 08 00:18:08 p13 kernel: intel-ipu7 0000:00:05.0: Name:  isys
+17:Mar 08 00:18:08 p13 kernel: intel-ipu7 0000:00:05.0: Version:  1.1.9.240627135318
+18:Mar 08 00:18:08 p13 kernel: intel-ipu7 0000:00:05.0: Timestamp:  build_id:3823931988
+19:Mar 08 00:18:08 p13 kernel: intel-ipu7 0000:00:05.0: Commit:  commit_id:d84f5c35
+20:Mar 08 00:18:08 p13 kernel: intel_ipu7_isys: module is from the staging directory, the quality is unknown, you have been warned.
+21:Mar 08 00:18:08 p13 kernel: intel-ipu7 0000:00:05.0: no subdev found in graph
+
+EXIT_STATUS: 0

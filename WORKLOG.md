@@ -2,6 +2,29 @@
 
 ## 2026-03-08
 
+### Commit first baseline snapshot and reprobe run set
+
+- Plan: record the first real `runs/` output from the safe harness so the baseline failure state and exact reprobe behavior are preserved in git.
+- Commands:
+  - `scripts/webcam-run.sh snapshot --label baseline --note "before first reprobe"`
+  - `sudo scripts/webcam-run.sh reprobe-modules --label first-reprobe --note "baseline reprobe after boot"`
+  - reviewed:
+    - `runs/2026-03-08/20260308T001800-snapshot-baseline/summary.env`
+    - `runs/2026-03-08/20260308T001807-reprobe-modules-first-reprobe/summary.env`
+    - `runs/2026-03-08/20260308T001807-reprobe-modules-first-reprobe/action.log`
+    - `runs/2026-03-08/20260308T001807-reprobe-modules-first-reprobe/post/journal-since-run-start.txt`
+    - `runs/2026-03-08/20260308T001807-reprobe-modules-first-reprobe/post/media-ctl-media0.txt`
+    - `runs/2026-03-08/20260308T001807-reprobe-modules-first-reprobe/post/v4l2-list-devices.txt`
+- Result:
+  - captured the first baseline snapshot and first real reprobe run under `runs/2026-03-08/`
+  - confirmed the reprobe sequence completed successfully with no module-load failures
+  - confirmed the same blocker reproduces cleanly after reprobe:
+    - `TPS68470 REVID: 0x21`
+    - `error -ENODEV: No board-data found for this model`
+    - `intel-ipu7 ... no subdev found in graph`
+  - confirmed `media-ctl` still shows an IPU-only topology with no sensor subdevice attached after reprobe
+- Decision: keep; this is the baseline evidence batch for future diffs against patched kernels or new sequencing hypotheses.
+
 ### Add related MSI Summit 13 low-level Linux repo as a future comparison reference
 
 - Plan: capture a nearby MSI Lunar Lake Linux-support repo that is not webcam-specific but may still hold useful board-level patterns for later comparison.
