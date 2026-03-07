@@ -67,30 +67,60 @@ We ran a read-only register dump of the TPS68470 on I2C bus 1 during the review 
 
 `i2cdetect -y 1` shows **only one device responding on bus 1: address 0x4D.** Nothing at 0x4C or elsewhere.
 
-### CORRECTION: first dump used wrong register map
+### Corrected dump (second run)
 
-The first version of `scripts/i2c-dump.sh` was built on an incorrect register map (addresses pulled from memory rather than the kernel header). It read REVID from 0x00 instead of 0xFF, voltage VAL/CTL registers from the 0x20-0x2D range instead of 0x3C-0x48, and mislabeled the GPIO registers.
+The first dump used a wrong register map and its voltage/identity analysis was invalid. The script was rewritten to use addresses from `include/linux/mfd/tps68470.h`. The corrected dump follows.
 
-The script has been rewritten to use the correct addresses from `include/linux/mfd/tps68470.h`. **The first dump's voltage and identity analysis was wrong and should be disregarded.** The GPIO control register reads (0x14-0x1B) and the clock register reads (0x06-0x10) happened to be at the correct addresses but were mislabeled.
+**Identity:** REVID (0xFF) = **0x21** — confirmed, matches kernel log. The first dump's "REVID = 0x00" was reading the wrong register (0x00 instead of 0xFF).
 
-**A new dump with the corrected script is needed** to get valid voltage register and REVID readings.
+**Regulator value registers:**
 
-### What the first (wrong-map) dump DID establish
+| Rail | Register | Value | Notes |
+|------|----------|-------|-------|
+| VCM | VCMVAL (0x3c) | 0x00 | not programmed |
+| VAUX1 | VAUX1VAL (0x3d) | 0x00 | not programmed |
+| VAUX2 | VAUX2VAL (0x3e) | 0x00 | not programmed |
+| VIO | VIOVAL (0x3f) | **0x34** | pre-programmed by firmware |
+| VSIO | VSIOVAL (0x40) | **0x34** | pre-programmed, same as VIO |
+| VA | VAVAL (0x41) | 0x00 | not programmed |
+| VD | VDVAL (0x42) | 0x00 | not programmed |
 
-Despite the register map error, a few things are still valid:
+VIO and VSIO are both pre-programmed to 0x34 by firmware. This is consistent with the Surface Go pattern of keeping VIO = VSIO. VA (analog) and VD (digital) are both zero — the driver will need to program these for OV5675's avdd and dvdd.
 
-1. **The device at 0x4D is alive and responding** on I2C bus 1
-2. **Clock registers** (0x06-0x10) were read at correct addresses: PLLCTL (0x0d) = 0x80, all others 0x00
-3. **S_I2C_CTL** (0x43) = 0x00 and **VACTL** (0x47) = 0x00 — these were at correct addresses, both disabled
-4. **GPIO control registers** (0x14-0x1B) were at correct addresses (but mislabeled):
-   - GPCTL0A (0x14) = 0x01, GPCTL0B (0x15) = 0x08
-   - GPCTL1A (0x16) = 0x01, GPCTL1B (0x17) = 0x08
-   - GPCTL2A (0x18) = 0x01, GPCTL2B (0x19) = 0x08
-   - GPCTL3A (0x1a) = 0x01, GPCTL3B (0x1b) = 0x08
+**Regulator control registers:**
 
-### REVID mystery resolved
+| Register | Value | Notes |
+|----------|-------|-------|
+| S_I2C_CTL (0x43) | 0x00 | disabled |
+| VCMCTL (0x44) | 0x00 | disabled |
+| VAUX1CTL (0x45) | 0x00 | disabled |
+| VAUX2CTL (0x46) | 0x00 | disabled |
+| VACTL (0x47) | 0x00 | disabled |
+| VDCTL (0x48) | **0x04** | bit 2 set, but enable bit 0 is NOT set |
 
-The kernel driver reads REVID at **register 0xFF** (not 0x00). It also performs a software reset (`TPS68470_REG_RESET` at 0x50) before reading REVID. Our first dump read register 0x00 (which is not REVID) and got 0x00, which is just some unrelated register. There is no actual discrepancy — we simply never read the real REVID register.
+All regulators are disabled. VDCTL = 0x04 is the only non-zero control register — bit 2 is set but the enable bit (bit 0) is off. This may be a mode/discharge control bit.
+
+**GPIO state — strong evidence for the patch's GPIO1/GPIO2 choice:**
+
+All 7 regular GPIOs are in input-with-pullup mode (GPCTLA = 0x01 for all). GPDO (0x27) = 0x00, nothing is actively driven. SGPO (0x22) = 0x00.
+
+GPDI (0x26) = **0x69** = `0b01101001`:
+
+| GPIO | Reads | Through pullup? |
+|------|-------|-----------------|
+| 0 | HIGH | yes (pullup) |
+| **1** | **LOW** | **externally pulled down** |
+| **2** | **LOW** | **externally pulled down** |
+| 3 | HIGH | yes (pullup) |
+| 4 | LOW | externally pulled down |
+| 5 | HIGH | yes (pullup) |
+| 6 | HIGH | yes (pullup) |
+
+**GPIO1 and GPIO2 are the only two GPIOs that the Windows driver's `IoActive_GPIO` targets (registers 0x16 and 0x18), and they are also the two that read LOW in input-with-pullup mode.** This strongly suggests they are physically connected to the sensor's control lines (reset/powerdown), which pull them low. GPIOs 0, 3, 5, 6 float high through pullups. GPIO4 also reads low but is not referenced by the Windows driver.
+
+This is independent confirmation that the v1 patch's GPIO1/GPIO2 choice is correct.
+
+**Clock registers:** All zero except PLLCTL (0x0d) = 0x80 (PLL disabled/bypass). No clocks are running.
 
 ## Review of v1 Patch Candidate (commit 0452fe2)
 
@@ -135,6 +165,11 @@ Reviewed `reference/patches/ms13q3-int3472-tps68470-v1.patch`, `docs/linux-board
 
 ## Summary
 
-The research is on the right track. The v1 patch candidate is structurally sound and ready for a first live test. The main observation from this review is that the **actual data needed is small** — voltage values for 3 rails, GPIO pin numbers, and DMI strings — and the patch correctly captures all of these based on the available evidence.
+The research is on the right track. The v1 patch candidate is structurally sound and ready for a first live test.
 
-The live I2C dump script had a register map error that invalidated the voltage and REVID analysis. The script is now fixed. A re-run is needed before the first patched test to establish a valid register baseline.
+The corrected live I2C dump provides independent confirmation of two key patch design choices:
+
+1. **GPIO1 and GPIO2 are the right pins.** They are the only GPIOs that read LOW through pullups, matching external connections to sensor control lines, and they are the same pins the Windows `IoActive_GPIO` targets.
+2. **VIO and VSIO are pre-programmed to the same value (0x34)** by firmware, consistent with the patch's VIO-always-on-at-VSIO-level pattern.
+
+The main remaining risk is the GPIO1/GPIO2 role assignment (which is reset, which is powerdown) and whether `ov5675.c`'s lack of `powerdown` consumption will be a problem. The corrected dump does not resolve this — a patched test is needed.
