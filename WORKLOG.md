@@ -2,6 +2,17 @@
 
 ## 2026-03-07
 
+### Add shared `CLAUDE.md` symlink
+
+- Plan: add a repo-local `CLAUDE.md` symlink pointing to `AGENTS.md` so Codex and Claude Code read the same instructions.
+- Commands:
+  - `ln -s AGENTS.md CLAUDE.md`
+  - `ls -l AGENTS.md CLAUDE.md`
+- Result:
+  - created relative symlink `CLAUDE.md -> AGENTS.md`
+  - repo now has one shared instruction source for both tools
+- Decision: keep; this avoids instruction drift between parallel agent environments.
+
 ### AGENTS commit-discipline update
 
 - Plan: tighten `AGENTS.md` so multi-agent and mixed human/agent work in one worktree stays safe.
