@@ -37,7 +37,7 @@ The **voltage values** and **GPIO pin number** are the two unknowns that actuall
 
 Rather than fully completing the VoltageWF extraction before testing, consider:
 
-1. **Read the TPS68470 registers live** via `i2cget` on the bus where `INT3472:06` lives. The PMIC is already powered and at REVID `0x21`. You can read the current default/reset values of the voltage control registers (`VACTL` `0x47`, `VDCTL` `0x46`, `VSIOCTL` `0x43`, etc.) to see what the PMIC reset state is.
+1. **Read the TPS68470 registers live** via `i2cget` on the bus where `INT3472:06` lives. The PMIC is already powered and at REVID `0x21`. You can read the current state of the voltage control registers (`VACTL` `0x47`, `VDCTL` `0x48`, `S_I2C_CTL` `0x43`, etc.) to see whether anything has been enabled.
 
 2. **Try the OV5675 datasheet-typical voltages first**: `avdd` = 2.8V, `dovdd` = 1.8V, `dvdd` = 1.2V. These are standard for OV5675 and map neatly to `TPS68470_ANA`, `TPS68470_VSIO`, and `TPS68470_CORE` respectively. The Surface Go pattern with INT347A (which is also an OmniVision sensor) uses very similar values.
 
@@ -85,7 +85,7 @@ The first dump used a wrong register map and its voltage/identity analysis was i
 | VA | VAVAL (0x41) | 0x00 | not programmed |
 | VD | VDVAL (0x42) | 0x00 | not programmed |
 
-VIO and VSIO are both pre-programmed to 0x34 by firmware. This is consistent with the Surface Go pattern of keeping VIO = VSIO. VA (analog) and VD (digital) are both zero — the driver will need to program these for OV5675's avdd and dvdd.
+VIO and VSIO are both at 0x34. This matches the TPS68470 reset default for these registers, so it is consistent with the PMIC being in its power-on-reset state rather than necessarily indicating firmware programming. The VIO = VSIO equality is consistent with the Surface Go pattern, but cannot be attributed to firmware intent based on the dump alone. VA and VD are both zero — the driver will need to program these for OV5675's avdd and dvdd.
 
 **Regulator control registers:**
 
@@ -98,27 +98,25 @@ VIO and VSIO are both pre-programmed to 0x34 by firmware. This is consistent wit
 | VACTL (0x47) | 0x00 | disabled |
 | VDCTL (0x48) | **0x04** | bit 2 set, but enable bit 0 is NOT set |
 
-All regulators are disabled. VDCTL = 0x04 is the only non-zero control register — bit 2 is set but the enable bit (bit 0) is off. This may be a mode/discharge control bit.
+All regulators are disabled. VDCTL = 0x04 is the only non-zero control register — bit 2 is set but the enable bit (bit 0) is off. This is likely a reset default rather than a firmware-set value.
 
-**GPIO state — strong evidence for the patch's GPIO1/GPIO2 choice:**
+**GPIO state:**
 
-All 7 regular GPIOs are in input-with-pullup mode (GPCTLA = 0x01 for all). GPDO (0x27) = 0x00, nothing is actively driven. SGPO (0x22) = 0x00.
+All 7 regular GPIOs are in input-with-pullup mode (GPCTLA = 0x01 for all), which matches the TPS68470 reset defaults. GPDO (0x27) = 0x00, nothing is actively driven. SGPO (0x22) = 0x00.
 
-GPDI (0x26) = **0x69** = `0b01101001`:
+The genuinely interesting value is GPDI (0x26) = **0x69** = `0b01101001`:
 
-| GPIO | Reads | Through pullup? |
-|------|-------|-----------------|
-| 0 | HIGH | yes (pullup) |
-| **1** | **LOW** | **externally pulled down** |
-| **2** | **LOW** | **externally pulled down** |
-| 3 | HIGH | yes (pullup) |
-| 4 | LOW | externally pulled down |
-| 5 | HIGH | yes (pullup) |
-| 6 | HIGH | yes (pullup) |
+| GPIO | Reads | Notes |
+|------|-------|-------|
+| 0 | HIGH | floating high through pullup |
+| **1** | **LOW** | pulled down externally |
+| **2** | **LOW** | pulled down externally |
+| 3 | HIGH | floating high through pullup |
+| 4 | LOW | pulled down externally |
+| 5 | HIGH | floating high through pullup |
+| 6 | HIGH | floating high through pullup |
 
-**GPIO1 and GPIO2 are the only two GPIOs that the Windows driver's `IoActive_GPIO` targets (registers 0x16 and 0x18), and they are also the two that read LOW in input-with-pullup mode.** This strongly suggests they are physically connected to the sensor's control lines (reset/powerdown), which pull them low. GPIOs 0, 3, 5, 6 float high through pullups. GPIO4 also reads low but is not referenced by the Windows driver.
-
-This is independent confirmation that the v1 patch's GPIO1/GPIO2 choice is correct.
+GPIO1 and GPIO2 reading LOW through pullups suggests they have external connections pulling them down. The Windows driver's `IoActive_GPIO` targets these same pins (registers 0x16 and 0x18). This is **strong support for GPIO1/GPIO2 as the leading candidates** for the sensor control lines, though the GPDI reading only shows observed input levels — it does not confirm line function or the reset-vs-powerdown role assignment, which is still a guess.
 
 **Clock registers:** All zero except PLLCTL (0x0d) = 0x80 (PLL disabled/bypass). No clocks are running.
 
@@ -167,9 +165,6 @@ Reviewed `reference/patches/ms13q3-int3472-tps68470-v1.patch`, `docs/linux-board
 
 The research is on the right track. The v1 patch candidate is structurally sound and ready for a first live test.
 
-The corrected live I2C dump provides independent confirmation of two key patch design choices:
-
-1. **GPIO1 and GPIO2 are the right pins.** They are the only GPIOs that read LOW through pullups, matching external connections to sensor control lines, and they are the same pins the Windows `IoActive_GPIO` targets.
-2. **VIO and VSIO are pre-programmed to the same value (0x34)** by firmware, consistent with the patch's VIO-always-on-at-VSIO-level pattern.
+The corrected live I2C dump confirms the PMIC is in its reset-default state (no regulators enabled, no GPIOs configured as outputs). The most useful observation is GPDI = 0x69, which shows GPIO1 and GPIO2 are externally pulled low — strong support for them being the sensor control lines, consistent with the Windows `IoActive_GPIO` evidence and the v1 patch GPIO choice.
 
 The main remaining risk is the GPIO1/GPIO2 role assignment (which is reset, which is powerdown) and whether `ov5675.c`'s lack of `powerdown` consumption will be a problem. The corrected dump does not resolve this — a patched test is needed.
