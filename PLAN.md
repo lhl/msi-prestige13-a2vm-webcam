@@ -57,22 +57,20 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 - [x] Inspect driver package contents for `iactrllogic64`, INF files, registry settings, GPIO hints, or regulator programming clues.
 - [x] Vendor the current Windows camera packages into the repo with Git LFS so future analysis does not depend on `/tmp`.
 - [x] Add a repeatable `iactrllogic64.sys` static-analysis extractor and generated artifacts.
-- [ ] Map recovered register-write sequences and control-flow findings back to Linux `TPS68470` driver structures.
+- [x] Map recovered register-write sequences and control-flow findings back to Linux `TPS68470` driver structures.
 
 ### 4. Patch path
 
-- [ ] If board-data matching is missing, draft the smallest possible kernel patch for this model.
+- [x] If board-data matching is missing, draft the smallest possible kernel patch for this model.
 - [ ] If additional sequencing data is needed, document exactly what is still unknown before patching.
 - [ ] Re-test after each change and record results in `WORKLOG.md`.
 
 ## Near-Term Priority
 
-1. Derive an MSI `tps68470_board_data` candidate for `i2c-INT3472:06` and `OVTI5675:00`, including regulator consumers and GPIO lookups.
-2. Continue extracting the Windows `VoltageWF::*` and sensor-class methods to pin down which TPS68470 rails and GPIO functions MSI actually uses.
-3. Decide whether the likely Linux patch is:
-   - a new MSI board-data definition only, or
-   - a board-data definition plus a small TPS68470 driver behavior change
-4. Re-test against the reprobe harness after each concrete patch hypothesis.
+1. Test the drafted `MS-13Q3` `tps68470_board_data` patch against a patched kernel or matching module build.
+2. If `No board-data found` disappears but the sensor still fails, determine whether `ov5675` needs an optional `powerdown` GPIO path.
+3. Re-test against the reprobe harness after each concrete patch hypothesis.
+4. Reduce the post-board-data failure, if any, to the next smallest patch.
 
 ## Open Questions
 

@@ -2,17 +2,18 @@
 
 - Package: `msi-ov5675-70.26100.19939.1`
 - Source binary: `/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/windows-driver-packages/msi-ov5675-70.26100.19939.1/extracted/iactrllogic64.sys`
-- Generated UTC: 2026-03-07T15:39:23Z
+- Generated UTC: 2026-03-07T16:13:51Z
 
 ## Files
 
 - `strings-tps68470.txt` — named TPS68470- and sensor-related method strings
+- `strings-tps68470-with-offsets.txt` — same string set with raw file offsets for address correlation
 - `method-string-addresses.txt` — string virtual-address mapping inside the PE image
 - `method-string-xrefs.txt` — disassembly lines that reference those method-name strings
 - `pe-header-and-imports.txt` — PE metadata and imports
 - `debug-directory.txt` — PDB path and CodeView GUID
 - `load-config.txt` — GuardCF table and related load-config metadata
-- `disasm-*.txt` — targeted disassembly windows for the current investigation
+- `disasm-*.txt` — targeted disassembly windows for the current investigation, including VoltageWF power/IO paths and CrdG2TiSensor helpers
 
 ## Regeneration
 

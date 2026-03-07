@@ -2,6 +2,65 @@
 
 ## 2026-03-08
 
+### Draft first Linux `MS-13Q3` `tps68470_board_data` patch candidate
+
+- Plan: turn the ACPI plus Windows sequencing evidence into a concrete first-pass Linux patch candidate and a test note that is specific enough for the first patched reprobe.
+- Commands:
+  - reviewed Linux consumer expectations:
+    - `/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/i2c/ov5675.c`
+    - `/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/platform_data/tps68470.h`
+    - `/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/regulator/tps68470-regulator.c`
+    - `/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/gpio/gpio-tps68470.c`
+  - generated a patch candidate from a modified temp copy of:
+    - `/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472/tps68470_board_data.c`
+  - wrote:
+    - `reference/patches/ms13q3-int3472-tps68470-v1.patch`
+    - `docs/linux-board-data-candidate.md`
+  - validated:
+    - `git apply --check /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ms13q3-int3472-tps68470-v1.patch`
+- Result:
+  - drafted the first testable Linux patch candidate for this laptop
+  - mapped regulators for `i2c-OVTI5675:00` as:
+    - `avdd` via `TPS68470_ANA`
+    - `dvdd` via `TPS68470_CORE`
+    - `dovdd` via `TPS68470_VSIO`
+  - mapped the active PMIC device as `i2c-INT3472:06`
+  - used PMIC regular GPIO 1 / GPIO 2 as the initial camera-control candidate because the Windows path reconfigures `GPCTL1A` and `GPCTL2A`
+  - recorded the main remaining risk explicitly:
+    - upstream `ov5675.c` only consumes `reset`
+    - Windows appears to use two PMIC GPIO lines
+    - board-data alone may not be sufficient for a full bring-up
+- Decision: keep; this is the minimum concrete patch path that can falsify or confirm the current MSI board-data hypothesis quickly.
+
+### Deepen `iactrllogic64.sys` extraction for `VoltageWF` and sensor-power sequencing
+
+- Plan: promote the recovered Windows `VoltageWF` and `CrdG2TiSensor` power-path behavior into first-class repo artifacts so the Linux patch-design step can rely on durable evidence instead of transient terminal analysis.
+- Commands:
+  - reviewed and extended `scripts/extract-iactrllogic64.sh`
+  - inspected targeted disassembly around:
+    - `0x140011ae0` through `0x140011ff4`
+    - `0x140012c90` through `0x14001357c`
+    - `0x1400146a8` through `0x140014b60`
+  - correlated those regions against:
+    - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/method-string-addresses.txt`
+    - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/method-string-xrefs.txt`
+    - `/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/mfd/tps68470.h`
+    - `/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/regulator/tps68470-regulator.c`
+    - `/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/gpio/gpio-tps68470.c`
+  - `apply_patch` adding:
+    - new extractor outputs for `VoltageWF::PowerOn/PowerOff`, `IoActive/IoIdle`, and `CrdG2TiSensor::*`
+    - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/power-sequencing-notes.md`
+- Result:
+  - confirmed `Tps68470VoltageWF::PowerOn` is an orchestration path, not a single register write:
+    - it stages VA, VD, VSIO, and VCM helper calls and logs steps `0x20` through `0x24`
+  - confirmed `Tps68470VoltageWF::PowerOff` tears down VA, VD, and VCM explicitly, while `VSIO` is handled through a separate IO-state path
+  - confirmed `Tps68470VoltageWF::IoActive` / `IoIdle` use a refcount around `S_I2C_CTL` `0x43`
+  - confirmed `Tps68470VoltageWF::IoActive_GPIO` reconfigures `GPCTL1A` `0x16` and `GPCTL2A` `0x18`
+  - narrowed the Linux GPIO hypothesis:
+    - this MSI path likely uses PMIC regular GPIO 1 and GPIO 2
+    - this does not look like the Surface Go style use of logical outputs `s_enable` / `s_resetn`
+- Decision: keep; this is the first durable extraction step that materially constrains the Linux board-data design.
+
 ### Complete first ACPI capture with committed DSL and live Linux state
 
 - Plan: finish the first ACPI evidence set so the repo contains the actual disassembly outputs and live ACPI/sysfs snapshot, then fix the capture script so future runs reproduce the same layout without manual cleanup.

@@ -4,8 +4,9 @@
 
 Disassembly of section .text:
 
-0000000140014a80 <.text+0x13a80>:
-   140014a80:	89 5b 08             	mov    DWORD PTR [rbx+0x8],ebx
+0000000140014a7c <.text+0x13a7c>:
+   140014a7c:	4c 8b dc             	mov    r11,rsp
+   140014a7f:	49 89 5b 08          	mov    QWORD PTR [r11+0x8],rbx
    140014a83:	49 89 6b 18          	mov    QWORD PTR [r11+0x18],rbp
    140014a87:	49 89 73 20          	mov    QWORD PTR [r11+0x20],rsi
    140014a8b:	57                   	push   rdi

@@ -261,6 +261,31 @@ The same mapping holds for the recovered Windows voltage and IO helpers:
 - `0x16` is `GPCTL1A`
 - `0x18` is `GPCTL2A`
 
+### Recovered `VoltageWF` sequencing
+
+The deeper `VoltageWF` extraction now points to a concrete board-level power
+model rather than just isolated register toggles:
+
+- `Tps68470VoltageWF::PowerOn` at `0x140013214` calls four staged helpers and
+  logs step ids `0x20` through `0x24`
+- those helper regions correspond to `SetVACtl`, `SetVDCtl`, `SetVSIOCtl`, and
+  `SetVCMCtl`
+- `Tps68470VoltageWF::PowerOff` at `0x1400133e8` calls staged teardown helpers
+  for `VA`, `VD`, and `VCM`, with `VSIO` handled separately
+- `Tps68470VoltageWF::IoActive` / `IoIdle` manage the `S_I2C_CTL` path with a
+  refcount and separate IO-vs-GPIO helper branches
+- `Tps68470VoltageWF::IoActive_GPIO` reconfigures `GPCTL1A` and `GPCTL2A`,
+  which strongly suggests this board uses PMIC regular GPIO 1 and GPIO 2 as
+  camera-control outputs
+
+This is the strongest current evidence that Linux needs MSI-specific
+`TPS68470` regulator consumer and GPIO lookup wiring, not just a generic DMI
+match.
+
+The raw supporting note is:
+
+- `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/power-sequencing-notes.md`
+
 Linux already models `VACTL` and `S_I2C_CTL` through the generic TPS68470
 regulator driver, but the Windows code also touches the GPIO control registers
 for the sensor-I2C path.

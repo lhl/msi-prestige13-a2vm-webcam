@@ -13,6 +13,7 @@ Current focus:
 - `docs/kernel-tree-status.md` — exact local `linux-mainline` source path and current `v6.19` INT3472/TPS68470 finding
 - `docs/reprobe-harness.md` — safe snapshot/reprobe script and run-capture workflow
 - `docs/tps68470-reverse-engineering.md` — canonical note for ACPI capture plus Windows `iactrllogic64.sys` analysis
+- `docs/linux-board-data-candidate.md` — current MSI `tps68470_board_data` hypothesis and first patched-test plan
 
 ## Repo-Level Control Docs
 

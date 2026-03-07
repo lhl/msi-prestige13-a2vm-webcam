@@ -58,7 +58,23 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
   - `iactrllogic64.sys` contains named `SensorInitialize`, `SensorOn`, `SensorOff`, clock, voltage, GPIO, and flash routines for `TPS68470`
   - recovered `StartClock` register write order: `0x0a`, `0x08`, `0x07`, `0x0b`, `0x0c`, `0x06`, `0x10`, `0x09`, `0x0d`
   - recovered a common low-level write helper at `0x140010be0` with retry behavior through `0x1400110f4`
-  - recovered `VoltageWF` examples that read/modify/write registers `0x47` and `0x43`
+  - recovered `VoltageWF::PowerOn`, `PowerOff`, `IoActive`, `IoActive_IO`, `IoActive_GPIO`, and `IoIdle` windows as durable artifacts under `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/`
+  - `PowerOn` orchestrates staged VA / VD / VSIO / VCM helper calls
+  - `PowerOff` tears down VA / VD / VCM while `VSIO` is handled via the IO refcount path
+  - `IoActive_GPIO` configures `GPCTL1A` `0x16` and `GPCTL2A` `0x18`, which points to PMIC regular GPIO 1 and GPIO 2 on this board
+- Current Linux patch candidate:
+  - doc: `docs/linux-board-data-candidate.md`
+  - patch: `reference/patches/ms13q3-int3472-tps68470-v1.patch`
+  - validated with `git apply --check` against local `v6.19`
+  - current first-pass mapping:
+    - `TPS68470_ANA` => `avdd` on `i2c-OVTI5675:00`
+    - `TPS68470_CORE` => `dvdd` on `i2c-OVTI5675:00`
+    - `TPS68470_VSIO` => `dovdd` on `i2c-OVTI5675:00`
+    - PMIC regular GPIO 1 / GPIO 2 as the initial camera-control guess
+  - main remaining risk:
+    - `ov5675.c` only consumes `reset`
+    - Windows clearly uses both PMIC GPIO1 and GPIO2
+    - a second Linux patch may still be needed for `powerdown` or swapped GPIO semantics
 - First real raw ACPI capture now exists in-repo:
   - `reference/acpi/20260308T004459-unknown-host/`
   - `dmi.txt` confirms product `Prestige 13 AI+ Evo A2VMG`, board `MS-13Q3`, BIOS `E13Q3IMS.109`, BIOS date `09/04/2024`
@@ -94,7 +110,9 @@ Most important current log lines:
 
 ## Next Actions
 
-1. Derive an MSI `tps68470_board_data` candidate for `i2c-INT3472:06` and `OVTI5675:00`.
-2. Continue recovering Windows `VoltageWF::*` and sensor-class behavior to confirm the exact rails and GPIO roles MSI uses.
-3. Draft the smallest plausible Linux patch and compare it against the reprobe baseline.
+1. Test `reference/patches/ms13q3-int3472-tps68470-v1.patch` against a patched kernel or matching module build.
+2. Compare the first patched run against the committed baseline harness results.
+3. If the board-data error clears but the sensor still fails, decide whether the next patch is:
+   - a GPIO1 / GPIO2 semantic swap, or
+   - optional `powerdown` support in `ov5675.c`
 4. Re-check whether any extra driver behavior beyond board-data is needed for the MSI path.

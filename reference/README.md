@@ -37,6 +37,9 @@ Captured upstream sources relevant to webcam bring-up on the MSI Prestige 13 AI+
 - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/README.md`
   - Repeatable static-analysis artifacts for the MSI package's `iactrllogic64.sys`
   - Generated: 2026-03-08
+- `reference/patches/ms13q3-int3472-tps68470-v1.patch`
+  - First-pass Linux `tps68470_board_data` candidate for `MS-13Q3` / `OVTI5675:00`
+  - Drafted: 2026-03-08
 - `reference/windows-driver-packages/README.md`
   - In-repo archive index for vendored Windows camera packages and extracted trees
   - Captured: 2026-03-07
