@@ -2,6 +2,18 @@
 
 ## 2026-03-07
 
+### Tighten AGENTS progress-summary expectations
+
+- Plan: make user-facing updates state the concrete result or blocker, so status stays useful as the repo and session history grow.
+- Commands:
+  - `nl -ba AGENTS.md | sed -n '1,220p'`
+  - `apply_patch` updating `AGENTS.md`
+- Result:
+  - added a `Communication rules` section to `AGENTS.md`
+  - future progress updates are now required to state what was actually done and what was actually learned
+  - if there is no substantive result yet, the update must say that explicitly instead of only describing activity
+- Decision: keep; this should make multi-step research sessions easier to follow and audit.
+
 ### Document local `linux-mainline` source location and board-data status
 
 - Plan: record the exact local kernel-source path and the concrete `v6.19` finding so it is easy to reopen the same files later.

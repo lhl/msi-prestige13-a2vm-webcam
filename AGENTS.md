@@ -39,6 +39,13 @@ Primary artifacts:
 - If a probe could not be run, say so explicitly rather than implying a negative result.
 - Do not invent board-data details, sensor wiring, or vendor behavior without evidence.
 
+## Communication rules
+
+- Every user-facing progress update must say what was actually done and what was actually learned, not just what command or file was touched.
+- If work is still in flight, say the current concrete result so far or explicitly say that there is no result yet.
+- When summarizing a step, lead with the substantive finding, blocker, or absence of evidence.
+- If a doc was added mainly to preserve a path, command, or reference, also restate the key technical conclusion that doc captured.
+
 ## Git hygiene
 
 - Do not use `git add .`, `git add -A`, or `git commit -a`.
