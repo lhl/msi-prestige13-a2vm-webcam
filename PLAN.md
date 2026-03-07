@@ -28,6 +28,7 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 - [x] Capture a clean media graph dump once direct device access is available for testing.
 - [x] Add a root-capable ACPI capture script for this exact machine.
 - [x] Capture ACPI and DMI details relevant to existing `INT3472` board-data matching logic.
+- [x] Identify the active live ACPI camera path and companion `INT3472` device on this machine.
 
 ## Workstreams
 
@@ -66,10 +67,12 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 
 ## Near-Term Priority
 
-1. Review the captured `reference/acpi/20260308T004459-unknown-host/` dump for `INT3472`, `OVTI5675`, `CLDB`, `_DSD`, GPIO, and I2C structure.
-2. Fix `scripts/capture-acpi.sh` so future captures disassemble lowercase `dsdt.dat` and `ssdt*.dat` correctly.
-3. Map the recovered Windows `TPS68470` register indices against `reference/tps68470.pdf` and Linux `int3472` expectations.
-4. Re-check whether this MSI DMI identity is supportable with a small board-data addition or needs a new MSI-specific `TPS68470` definition.
+1. Derive an MSI `tps68470_board_data` candidate for `i2c-INT3472:06` and `OVTI5675:00`, including regulator consumers and GPIO lookups.
+2. Continue extracting the Windows `VoltageWF::*` and sensor-class methods to pin down which TPS68470 rails and GPIO functions MSI actually uses.
+3. Decide whether the likely Linux patch is:
+   - a new MSI board-data definition only, or
+   - a board-data definition plus a small TPS68470 driver behavior change
+4. Re-test against the reprobe harness after each concrete patch hypothesis.
 
 ## Open Questions
 

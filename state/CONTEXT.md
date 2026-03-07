@@ -64,8 +64,22 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
   - `dmi.txt` confirms product `Prestige 13 AI+ Evo A2VMG`, board `MS-13Q3`, BIOS `E13Q3IMS.109`, BIOS date `09/04/2024`
   - raw `acpidump.txt` contains camera-relevant `INT3472` and `CLDB` strings
   - extracted binary tables are present under `tables/`
-  - the first `iasl` pass failed because `scripts/capture-acpi.sh` expected uppercase `DSDT.dat` / `SSDT*.dat` but this run produced lowercase `dsdt.dat` / `ssdt*.dat`
+  - the first `iasl` pass failed because `scripts/capture-acpi.sh` expected uppercase `DSDT.dat` / `SSDT*.dat` but that run produced lowercase `dsdt.dat` / `ssdt*.dat`
   - `camera-related-hits.txt` is therefore empty in that first capture and should not be treated as evidence of absence
+- The committed ACPI capture has now been reviewed from regenerated temp DSL:
+  - `ssdt17.dat` / `MiCaTabl` contains the camera topology with `LNK*`, `DSC*`, and `CLP*` objects
+  - the live active sensor is `OVTI5675:00` at `\_SB_.LNK0`
+  - the live active PMIC companion is `INT3472:06` at `\_SB_.CLP0`
+  - `INT3472:06` is the physical Linux I2C device `i2c-INT3472:06`
+  - the inactive alternate path `INT3472:00` at `\_SB_.DSC0` also exists in firmware but is not selected on this machine
+  - `CDEP()` in ACPI routes `LNK0` to `CLP0` when `C0TP > 1`, so this laptop is on the Windows PMIC path rather than the discrete `DSC0` path
+- Windows-to-Linux register mapping is now partially confirmed:
+  - Windows `StartClock` uses the same TPS68470 clock register family that Linux `clk-tps68470.c` programs
+  - recovered voltage and IO helpers touch `VACTL` `0x47`, `S_I2C_CTL` `0x43`, and GPIO control registers `0x16` / `0x18`
+- Linux-side implication:
+  - `ov5675` expects `avdd`, `dovdd`, `dvdd`, `reset`, and 19.2 MHz `xvclk`
+  - the likely blocker is missing MSI-specific `tps68470_board_data` for `i2c-INT3472:06` and `OVTI5675:00`, not just a missing DMI match
+- `scripts/capture-acpi.sh` is now fixed to disassemble lowercase `dsdt.dat` / `ssdt*.dat` in future captures
 
 Most important current log lines:
 
@@ -81,7 +95,7 @@ Most important current log lines:
 
 ## Next Actions
 
-1. Review the captured `reference/acpi/20260308T004459-unknown-host/` dump and extracted tables for camera-relevant ACPI structure.
-2. Fix `scripts/capture-acpi.sh` so future captures disassemble lowercase `dsdt.dat` / `ssdt*.dat` correctly.
-3. Map the recovered Windows register indices against `reference/tps68470.pdf` and Linux `int3472` abstractions.
-4. Re-check whether the Linux patch path looks like a missing board-data match or a new MSI-specific `TPS68470` definition.
+1. Derive an MSI `tps68470_board_data` candidate for `i2c-INT3472:06` and `OVTI5675:00`.
+2. Continue recovering Windows `VoltageWF::*` and sensor-class behavior to confirm the exact rails and GPIO roles MSI uses.
+3. Draft the smallest plausible Linux patch and compare it against the reprobe baseline.
+4. Re-check whether any extra driver behavior beyond board-data is needed for the MSI path.

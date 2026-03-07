@@ -2,6 +2,54 @@
 
 ## 2026-03-08
 
+### Review first ACPI capture and correlate it with live Linux plus Windows artifacts
+
+- Plan: disassemble the captured ACPI tables from a writable temp area, identify the machine's active camera path, map that to the live ACPI/sysfs state, and fix the capture script based on the first-run failure.
+- Commands:
+  - regenerated DSL from the committed capture in temp:
+    - copied `reference/acpi/20260308T004459-unknown-host/tables/*.dat` to `/tmp/ms13q3-acpi-review/`
+    - `iasl -e ssdt*.dat -d dsdt.dat`
+    - `iasl -d ssdt*.dat`
+  - reviewed ACPI structure:
+    - `/tmp/ms13q3-acpi-review/ssdt17.dsl`
+    - `/tmp/ms13q3-acpi-review/dsdt-disasm.log`
+    - `/tmp/ms13q3-acpi-review/ssdt-disasm.log`
+  - reviewed live ACPI/sysfs state:
+    - `/sys/bus/acpi/devices/OVTI5675:00/*`
+    - `/sys/bus/acpi/devices/INT3472:06/*`
+    - `/sys/devices/pci0000:00/0000:00:15.1/i2c_designware.1/i2c-1/i2c-INT3472:06/*`
+  - reviewed Linux-side consumers and PMIC register definitions:
+    - `drivers/media/i2c/ov5675.c`
+    - `drivers/platform/x86/intel/int3472/tps68470.c`
+    - `drivers/platform/x86/intel/int3472/tps68470_board_data.c`
+    - `drivers/clk/clk-tps68470.c`
+    - `drivers/regulator/tps68470-regulator.c`
+    - `include/linux/mfd/tps68470.h`
+  - `apply_patch` fixing `scripts/capture-acpi.sh` and updating the canonical note and state files
+- Result:
+  - confirmed the camera topology lives in `ssdt17.dat` / `MiCaTabl`, which defines six `LNK*` sensor links, six `DSC*` `INT3472` PMIC nodes, and six `CLP*` `INT3472` PMIC nodes backed by an `MNVS` operation region
+  - confirmed the live active sensor is `OVTI5675:00` at ACPI path `\_SB_.LNK0` with `status=15`
+  - confirmed the live active PMIC companion is `INT3472:06` at ACPI path `\_SB_.CLP0` with `status=15`, and its physical Linux device is `i2c-INT3472:06`
+  - confirmed the alternate `DSC0` `INT3472:00` path exists but is inactive on this machine
+  - confirmed `CDEP()` in the ACPI table selects `DSC0 + I2C bus` only when `C0TP == 1`, but returns `CLP0` when `C0TP > 1`; this laptop is therefore on the Windows PMIC companion path, not the simpler discrete path
+  - confirmed the Windows `StartClock` register sequence maps directly to Linux TPS68470 clock registers:
+    - `0x06` `POSTDIV2`
+    - `0x07` `BOOSTDIV`
+    - `0x08` `BUCKDIV`
+    - `0x09` `PLLSWR`
+    - `0x0A` `XTALDIV`
+    - `0x0B` `PLLDIV`
+    - `0x0C` `POSTDIV`
+    - `0x0D` `PLLCTL`
+    - `0x10` `CLKCFG2`
+  - confirmed `ov5675` expects regulators `avdd`, `dovdd`, and `dvdd`, plus a `reset` GPIO and a 19.2 MHz clock
+  - confirmed the likely blocker is now narrower:
+    - missing MSI-specific `tps68470_board_data` for `i2c-INT3472:06`
+    - likely with `OVTI5675:00`-specific regulator consumer mappings and GPIO policy
+    - not just a missing DMI string
+  - fixed `scripts/capture-acpi.sh` so future runs disassemble lowercase `dsdt.dat` and `ssdt*.dat` files correctly
+- Decision: keep; this is the first machine-specific ACPI-to-Linux path confirmation and it narrows the next patch-design work to MSI `TPS68470` board data and PMIC policy.
+
 ### Commit first ACPI capture for MSI `MS-13Q3`
 
 - Plan: commit the first real root-collected ACPI capture from this laptop before deeper analysis, and record both the successful raw dump and the script failure that left the DSL pass incomplete.

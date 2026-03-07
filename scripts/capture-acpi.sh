@@ -100,17 +100,26 @@ mkdir -p "${OUT_DIR}/tables" "${OUT_DIR}/dsl"
   acpixtract -a ../acpidump.txt > ../acpixtract.log 2>&1
 )
 
-if [[ -f "${OUT_DIR}/tables/DSDT.dat" ]]; then
+mapfile -t DSDT_TABLES < <(find "${OUT_DIR}/tables" -maxdepth 1 -type f -iname 'dsdt.dat' | sort)
+mapfile -t SSDT_TABLES < <(find "${OUT_DIR}/tables" -maxdepth 1 -type f -iname 'ssdt*.dat' | sort)
+
+if (( ${#DSDT_TABLES[@]} > 0 )); then
   (
     cd "${OUT_DIR}/dsl"
-    iasl -e ../tables/SSDT*.dat -d ../tables/DSDT.dat > dsdt-disasm.log 2>&1 || true
+    if (( ${#SSDT_TABLES[@]} > 0 )); then
+      iasl -e "${SSDT_TABLES[@]}" -d "${DSDT_TABLES[0]}" > dsdt-disasm.log 2>&1 || true
+    else
+      iasl -d "${DSDT_TABLES[0]}" > dsdt-disasm.log 2>&1 || true
+    fi
   )
 fi
 
-(
-  cd "${OUT_DIR}/dsl"
-  iasl -d ../tables/SSDT*.dat > ssdt-disasm.log 2>&1 || true
-)
+if (( ${#SSDT_TABLES[@]} > 0 )); then
+  (
+    cd "${OUT_DIR}/dsl"
+    iasl -d "${SSDT_TABLES[@]}" > ssdt-disasm.log 2>&1 || true
+  )
+fi
 
 rg -n \
   'INT3472|OVTI5675|CLDB|TPS68470|I2cSerialBus|GpioIo|GpioInt|_DSD|_CRS|Privacy|Shutter|Camera' \

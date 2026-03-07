@@ -16,7 +16,13 @@ It is the place to resume from when we need to answer any of these questions:
 - We have already recovered one concrete clock write sequence from `tps68470::Tps68470Clock::StartClock`.
 - We now have a full raw ACPI capture in `reference/acpi/20260308T004459-unknown-host/`.
 - That capture confirms the laptop identity as `Prestige 13 AI+ Evo A2VMG` / board `MS-13Q3` / BIOS `E13Q3IMS.109`.
-- The first `iasl` pass in that capture failed because the script assumed uppercase `DSDT.dat` / `SSDT*.dat` names while `acpixtract` emitted lowercase `dsdt.dat` / `ssdt*.dat`, so the raw dump and binary tables are usable but the generated DSL summary is incomplete.
+- The committed dump has now been reviewed from regenerated DSL:
+  - the live active sensor is `OVTI5675:00` at `\_SB_.LNK0`
+  - the live active PMIC companion is `INT3472:06` at `\_SB_.CLP0`
+  - that PMIC companion is the physical Linux I2C device `i2c-INT3472:06`
+  - the inactive alternate PMIC path `INT3472:00` at `\_SB_.DSC0` also exists in firmware
+- The ACPI path selection logic shows this laptop is on the Windows PMIC companion path, not the simpler discrete path.
+- The original lowercase-table capture bug has been fixed in `scripts/capture-acpi.sh` for future runs.
 
 ## Reproduction
 
@@ -40,7 +46,42 @@ Current state:
 
 - the first successful root-collected capture is `reference/acpi/20260308T004459-unknown-host/`
 - the raw dump and extracted tables are valid
-- the scripted DSL generation from that run needs a small filename fix before future captures produce `camera-related-hits.txt` automatically
+- future captures now disassemble lowercase `dsdt.dat` / `ssdt*.dat` correctly
+
+### ACPI review findings
+
+The committed capture was re-disassembled from a writable temp area because the
+original capture directory is root-owned.
+
+The important static result is that `ssdt17.dat` / `MiCaTabl` contains the
+camera topology for this machine. It defines:
+
+- six `LNK*` sensor-link devices
+- six `DSC*` `INT3472` PMIC devices
+- six `CLP*` `INT3472` PMIC devices
+- an `MNVS` operation region whose runtime values decide which path is active
+
+The important live result from `/sys/bus/acpi/devices/` is:
+
+- `OVTI5675:00`
+  - path `\_SB_.LNK0`
+  - `status=15`
+- `INT3472:06`
+  - path `\_SB_.CLP0`
+  - `status=15`
+  - physical Linux device `i2c-INT3472:06`
+- `INT3472:00`
+  - path `\_SB_.DSC0`
+  - `status=0`
+
+This matters because `CDEP()` in `ssdt17.dsl` chooses the PMIC dependency for
+`LNK0` like this:
+
+- if `C0TP == 1`, depend on `DSC0` plus the selected I2C controller
+- if `C0TP > 1`, depend on `CLP0`
+
+Since the live active PMIC is `CLP0`, this laptop is clearly on the Windows
+PMIC path and not the simpler `DSC0` discrete path.
 
 ### Windows driver extraction
 
@@ -190,6 +231,37 @@ What is concrete so far:
 
 This strongly suggests the Windows driver is carrying a board-specific set of stored configuration fields that decide which rails or GPIO-backed subfunctions are active on this platform.
 
+### Linux register map correlation
+
+The recovered Windows clock sequence is not an unknown vendor-only register
+block. It maps directly onto the same TPS68470 clock registers Linux already
+programs in `drivers/clk/clk-tps68470.c`:
+
+1. `0x0A` `XTALDIV`
+2. `0x08` `BUCKDIV`
+3. `0x07` `BOOSTDIV`
+4. `0x0B` `PLLDIV`
+5. `0x0C` `POSTDIV`
+6. `0x06` `POSTDIV2`
+7. `0x10` `CLKCFG2`
+8. `0x09` `PLLSWR`
+9. `0x0D` `PLLCTL`
+
+That is strong evidence that the generic Linux clock block is already in the
+right area. The remaining uncertainty is more likely in board-specific rail,
+GPIO, and sensor-I2C policy.
+
+The same mapping holds for the recovered Windows voltage and IO helpers:
+
+- `0x43` is `S_I2C_CTL`
+- `0x47` is `VACTL`
+- `0x16` is `GPCTL1A`
+- `0x18` is `GPCTL2A`
+
+Linux already models `VACTL` and `S_I2C_CTL` through the generic TPS68470
+regulator driver, but the Windows code also touches the GPIO control registers
+for the sensor-I2C path.
+
 ## SensorOn / SensorOff Shape
 
 Files:
@@ -223,21 +295,23 @@ These findings push the Linux-side hypothesis in a more precise direction:
 - The blocker is probably not "missing `ov5675` support".
 - The blocker is probably not only "missing one DMI string".
 - The Windows driver appears to encode board-specific PMIC and GPIO behavior, likely through per-board config structures plus explicit register writes.
+- The live ACPI path shows the real failing PMIC device is `i2c-INT3472:06` / `\_SB_.CLP0`.
+- `ov5675` expects regulators `avdd`, `dovdd`, and `dvdd`, plus `reset` and a 19.2 MHz clock, so the eventual Linux board-data has to wire those exact consumers to `OVTI5675:00`.
 
 That still leaves two realistic Linux outcomes:
 
-1. The MSI board is close enough to an existing `TPS68470` pattern that Linux only needs a new board-data match and config struct.
-2. The MSI board needs new regulator/GPIO/clock data derived from the Windows sequence and the ACPI tables.
+1. The MSI board is close enough to an existing `TPS68470` pattern that Linux only needs a new MSI board-data definition plus DMI entry for `i2c-INT3472:06`.
+2. The MSI board needs new regulator/GPIO policy derived from the Windows sequence and the ACPI tables in addition to the board-data definition.
 
-The raw `acpidump` is what should tell us which object graph and GPIO naming the firmware exposes on this exact laptop.
+The ACPI review has already answered which object graph is live on this laptop.
+The remaining work is to turn that into the right Linux board-data and, if
+needed, small PMIC-behavior changes.
 
 ## Immediate Next Steps
 
-1. Run `sudo scripts/capture-acpi.sh` on this laptop and commit the resulting `reference/acpi/...` directory.
-2. Compare the recovered Windows register indices against the local `reference/tps68470.pdf` register map.
+1. Derive an MSI `tps68470_board_data` candidate for `i2c-INT3472:06` and `OVTI5675:00`.
+2. Continue extracting `Tps68470VoltageWF::*` and sensor-class methods from `iactrllogic64.sys` to confirm the exact rails and GPIO roles.
 3. Decide whether the Linux patch path looks like:
-   - a missing board-data match only, or
-   - a new MSI-specific `TPS68470` data definition
-4. Correlate the Windows control logic with Linux `drivers/platform/x86/intel/int3472/` expectations in:
-   - `reference/linux-mainline-v6.19/drivers/platform/x86/intel/int3472/`
-   - `reference/linux-torvalds-head/drivers/platform/x86/intel/int3472/`
+   - a new MSI board-data definition only, or
+   - that definition plus a small TPS68470 driver behavior change
+4. Re-test every concrete patch hypothesis with the reprobe harness under `runs/`.
