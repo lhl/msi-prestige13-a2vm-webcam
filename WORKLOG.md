@@ -2,6 +2,40 @@
 
 ## 2026-03-07
 
+### Snapshot Torvalds `HEAD` `int3472` subtree for upstream comparison
+
+- Plan: capture the current upstream `drivers/platform/x86/intel/int3472/` tree from Torvalds Linux `HEAD` and compare it against the local `v6.19` snapshot.
+- Commands:
+  - opened `https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/platform/x86/intel/int3472`
+  - opened `https://github.com/torvalds/linux/tree/master/drivers/platform/x86/intel/int3472`
+  - `git ls-remote https://github.com/torvalds/linux.git HEAD`
+  - sparse-cloned Torvalds Linux `HEAD` and copied `drivers/platform/x86/intel/int3472/`
+  - `git diff --no-index --stat -- reference/linux-mainline-v6.19/drivers/platform/x86/intel/int3472 reference/linux-torvalds-head/drivers/platform/x86/intel/int3472`
+- Result:
+  - captured Torvalds `HEAD` at `4ae12d8bd9a830799db335ee661d6cbc6597f838`
+  - added an in-repo upstream snapshot under `reference/linux-torvalds-head/`
+  - confirmed that only `discrete.c` and `tps68470.c` differ from the local `v6.19` snapshot
+  - did not observe a new MSI board-data entry in `tps68470_board_data.c`
+- Decision: keep; this narrows the current upstream delta and confirms that plain upstream drift has not already fixed the MSI board-data gap.
+
+### Vendor Windows package trees, TPS68470 PDF, and local `int3472` kernel snapshot
+
+- Plan: move the active binary artifacts and local source snapshot into `reference/` so future reverse engineering does not depend on `/tmp` or the paru cache path.
+- Commands:
+  - `git lfs track 'reference/windows-driver-packages/**/*.cab' 'reference/windows-driver-packages/**/*.sys' 'reference/windows-driver-packages/**/*.dll' 'reference/windows-driver-packages/**/*.bin' 'reference/windows-driver-packages/**/*.aiqb' 'reference/windows-driver-packages/**/*.cpf' 'reference/windows-driver-packages/**/*.cat' 'reference/windows-driver-packages/**/*.bmp'`
+  - copied `/tmp/int3472-winpkg/intel-control-logic-71.26100.23.20279.cab`
+  - copied `/tmp/int3472-winpkg/extracted`
+  - copied `/tmp/ovti5675-msi/ovti5675-msi-70.26100.19939.1.cab`
+  - copied `/tmp/ovti5675-msi/extracted2`
+  - `git lfs track 'reference/**/*.pdf'`
+  - copied `~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472/`
+- Result:
+  - vendored the two Windows package trees into `reference/windows-driver-packages/`
+  - enabled Git LFS for the binary-heavy Windows-package payloads and for PDFs under `reference/`
+  - added a local reference copy of `drivers/platform/x86/intel/int3472/` from the inspected `v6.19` tree
+  - added `reference/tps68470.pdf` to the repo as a local PMIC datasheet reference
+- Decision: keep; this lowers future setup cost and gives us stable in-repo inputs for both Windows-package and kernel-source analysis.
+
 ### Document exact MSI `OV5675` Catalog package and local download path
 
 - Plan: record the exact Microsoft Update Catalog entry, direct CAB URL, and local download paths for the MSI-submitted `OV5675` package so we can reliably reopen it later.

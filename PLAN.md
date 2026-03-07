@@ -33,6 +33,8 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 ### 1. Upstream gap analysis
 
 - [x] Inspect current local `v6.19` `drivers/platform/x86/intel/int3472/tps68470_board_data.c`.
+- [x] Snapshot the local `drivers/platform/x86/intel/int3472/` subtree into `reference/` for easier side-by-side work.
+- [x] Snapshot current Torvalds `HEAD` `drivers/platform/x86/intel/int3472/` and compare it against local `v6.19`.
 - [ ] Check whether this MSI DMI identity is already supported under another variant string.
 - [ ] Search recent kernel and mailing-list activity for Lunar Lake `ov5675`, `INT3472`, or `TPS68470` additions.
 - [ ] Determine whether the blocker is only missing board-data matching or also missing regulator/GPIO sequencing details.
@@ -50,6 +52,7 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 
 - [x] Identify the MSI Windows camera-related package(s) for this machine.
 - [x] Inspect driver package contents for `iactrllogic64`, INF files, registry settings, GPIO hints, or regulator programming clues.
+- [x] Vendor the current Windows camera packages into the repo with Git LFS so future analysis does not depend on `/tmp`.
 - [ ] Map any discovered identifiers or sequencing steps back to Linux driver structures.
 
 ### 4. Patch path

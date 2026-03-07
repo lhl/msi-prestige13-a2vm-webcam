@@ -1,0 +1,9 @@
+reference/windows-driver-packages/**/*.sys filter=lfs diff=lfs merge=lfs -text
+reference/windows-driver-packages/**/*.dll filter=lfs diff=lfs merge=lfs -text
+reference/windows-driver-packages/**/*.bin filter=lfs diff=lfs merge=lfs -text
+reference/windows-driver-packages/**/*.aiqb filter=lfs diff=lfs merge=lfs -text
+reference/windows-driver-packages/**/*.cpf filter=lfs diff=lfs merge=lfs -text
+reference/windows-driver-packages/**/*.cat filter=lfs diff=lfs merge=lfs -text
+reference/windows-driver-packages/**/*.bmp filter=lfs diff=lfs merge=lfs -text
+reference/windows-driver-packages/**/*.cab filter=lfs diff=lfs merge=lfs -text
+reference/**/*.pdf filter=lfs diff=lfs merge=lfs -text

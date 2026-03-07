@@ -20,6 +20,18 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
   - local CAB: `/tmp/ovti5675-msi/ovti5675-msi-70.26100.19939.1.cab`
   - extracted dir: `/tmp/ovti5675-msi/extracted2`
 - This MSI package contains `ov5675.inf`, `ov5675_extension_msi.inf`, `iacamera64_ext_msi.inf`, `iactrllogic64.inf`, `iactrllogic64.sys`, and MSI/LNL graph-setting blobs.
+- The Windows packages are now vendored in-repo for repeatable analysis:
+  - `reference/windows-driver-packages/intel-control-logic-71.26100.23.20279/`
+  - `reference/windows-driver-packages/msi-ov5675-70.26100.19939.1/`
+  - binary-heavy files under that archive path are tracked with Git LFS
+- Additional local reference artifacts now kept in-repo:
+  - `reference/tps68470.pdf`
+  - `reference/linux-mainline-v6.19/drivers/platform/x86/intel/int3472/`
+  - `reference/linux-torvalds-head/drivers/platform/x86/intel/int3472/`
+- Current Torvalds `HEAD` snapshot details:
+  - commit: `4ae12d8bd9a830799db335ee661d6cbc6597f838`
+  - diff vs local `v6.19`: only `discrete.c` and `tps68470.c` changed
+  - no observed new MSI board-data entry in `tps68470_board_data.c`
 
 Most important current log lines:
 
