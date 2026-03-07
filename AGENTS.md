@@ -44,6 +44,18 @@ Primary artifacts:
 - Do not use `git add .`, `git add -A`, or `git commit -a`.
 - Stage only the intended files explicitly.
 - Keep commits atomic and scoped to one coherent work unit.
+- Commit frequently on logical task completion; do not wait for a large batch to accumulate.
+- For this repo, a good commit unit is one coherent evidence/doc/update bundle:
+  - reference capture
+  - status reassessment
+  - plan update
+  - hardware probe batch
+  - patch attempt
+- Before committing, make sure the related `WORKLOG.md` entry and any relevant `PLAN.md` / `state/CONTEXT.md` updates are already in place.
+- Review staged files before every commit:
+  - `git diff --staged --name-only`
+  - `git diff --staged`
+- Prefer simple commit prefixes that match the work: `docs:`, `research:`, `fix:`, `chore:`.
 - No bylines, co-author footers, or AI attribution in commit messages.
 
 ## Meta

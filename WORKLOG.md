@@ -2,6 +2,18 @@
 
 ## 2026-03-07
 
+### AGENTS commit-discipline update
+
+- Plan: tighten `AGENTS.md` so multi-agent and mixed human/agent work in one worktree stays safe.
+- Commands:
+  - `nl -ba AGENTS.md | sed -n '1,220p'`
+  - `apply_patch` updating `AGENTS.md`
+- Result:
+  - commit policy now explicitly requires frequent commits on logical task completion
+  - commit units are defined as coherent evidence/doc/probe/patch bundles
+  - staged-diff review commands are now part of the written repo policy
+- Decision: keep; this should reduce cross-agent drift and make future hardware bring-up sessions easier to isolate and review.
+
 ### Repo bootstrap and initial webcam evidence capture
 
 - Added repo-level process docs:
