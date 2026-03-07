@@ -2,6 +2,31 @@
 
 ## 2026-03-08
 
+### Harden manual TPS68470 sensor-check experiment script
+
+- Plan: keep the manual PMIC poke path available as an explicit experiment, but make it less misleading by matching the kernel clock path more closely, removing non-diagnostic `i2cdetect` scans, and defaulting to dry-run.
+- Commands:
+  - reviewed:
+    - `/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/clk/clk-tps68470.c`
+    - `/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/regulator/tps68470-regulator.c`
+    - `/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/gpio/gpio-tps68470.c`
+    - `/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/i2c/ov5675.c`
+    - `docs/reprobe-harness.md`
+  - `apply_patch` rewriting:
+    - `scripts/i2c-sensor-check.sh`
+  - validated:
+    - `bash -n scripts/i2c-sensor-check.sh`
+    - `scripts/i2c-sensor-check.sh` (dry-run only)
+- Result:
+  - the manual script now programs the full 19.2 MHz TPS68470 clock sequence instead of only toggling `PLLCTL`
+  - it explicitly writes `VIOVAL`, `VSIOVAL`, `VAVAL`, and `VDVAL`, so it no longer depends on inherited PMIC state from a previous boot or run
+  - it now uses read-modify-write updates for GPIO and regulator enable registers instead of clobbering whole register values
+  - it removed `i2cdetect` bus scans and uses direct chip-ID reads only, which makes a negative result less misleading
+  - it defaults to dry-run and requires `--execute` for actual writes
+  - it logs each run under `runs/YYYY-MM-DD/...`
+  - no live hardware execution was performed as part of this edit; only dry-run validation was done
+- Decision: keep; this is still a higher-risk experiment than the safe reprobe harness, but it is now a more controlled sanity-check path and a failed result should be easier to interpret.
+
 ### Draft first Linux `MS-13Q3` `tps68470_board_data` patch candidate
 
 - Plan: turn the ACPI plus Windows sequencing evidence into a concrete first-pass Linux patch candidate and a test note that is specific enough for the first patched reprobe.
