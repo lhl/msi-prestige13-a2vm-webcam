@@ -70,6 +70,7 @@ msi-prestige13-a2vm-webcam/
 - [`docs/webcam-status.md`](./docs/webcam-status.md) — current Linux support assessment for this laptop
 - [`docs/kernel-tree-status.md`](./docs/kernel-tree-status.md) — exact local kernel-source path and 6.19 board-data status
 - [`docs/reprobe-harness.md`](./docs/reprobe-harness.md) — safe module reprobe/capture workflow for repeatable experiments
+- [`reference/greymouser-summit-13-ai-evo-a2vm.md`](./reference/greymouser-summit-13-ai-evo-a2vm.md) — related MSI Summit 13 AI+ Evo A2VMTG Linux support repo note
 - [`reference/intel-ipu7-drivers-issue-17.md`](./reference/intel-ipu7-drivers-issue-17.md) — Intel upstream issue note
 - [`reference/intel-control-logic-microsoft-update-catalog-71.26100.23.20279.md`](./reference/intel-control-logic-microsoft-update-catalog-71.26100.23.20279.md) — exact `ACPI\INT3472` Windows control-logic package entry and CAB URL
 - [`reference/jeremy-grosser-prestige13-notes.md`](./reference/jeremy-grosser-prestige13-notes.md) — MSI-specific Debian/gist note

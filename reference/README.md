@@ -4,6 +4,9 @@ Captured upstream sources relevant to webcam bring-up on the MSI Prestige 13 AI+
 
 ## Current References
 
+- `reference/greymouser-summit-13-ai-evo-a2vm.md`
+  - Related MSI Summit 13 AI+ Evo A2VMTG repo with Linux IIO sensor and LED control work
+  - Captured: 2026-03-08
 - `reference/intel-ipu7-drivers-issue-17.md`
   - Intel IPU7 upstream issue for this laptop family
   - Captured: 2026-03-07

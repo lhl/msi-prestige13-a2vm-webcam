@@ -2,6 +2,19 @@
 
 ## 2026-03-08
 
+### Add related MSI Summit 13 low-level Linux repo as a future comparison reference
+
+- Plan: capture a nearby MSI Lunar Lake Linux-support repo that is not webcam-specific but may still hold useful board-level patterns for later comparison.
+- Commands:
+  - opened `https://github.com/greymouser/Summit-13-AI-Evo-A2VM`
+  - `apply_patch` adding `reference/greymouser-summit-13-ai-evo-a2vm.md`
+  - `apply_patch` updating `reference/README.md`, `README.md`, and `state/CONTEXT.md`
+- Result:
+  - added a reference note for the related `MSI Summit 13 AI+ Evo A2VMTG` / `MS-13P5` repo
+  - captured that its visible Linux focus is currently IIO sensor support and audio mute / speaker LED control
+  - recorded it as a future low-level comparison source rather than a direct webcam bring-up reference
+- Decision: keep; related MSI platform work may expose useful DMI, ACPI, firmware, or vendor-integration patterns later.
+
 ### Build safe snapshot/reprobe harness for repeatable Linux testing
 
 - Plan: add a low-risk harness that records every meaningful reprobe attempt with enough evidence to analyze failures later, without doing raw PMIC or I2C register writes.

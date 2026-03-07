@@ -38,6 +38,11 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
   - run archive root: `runs/`
   - safety boundary: snapshot + module reload only, no raw PMIC/I2C register writes
   - validated locally with `snapshot` and `reprobe-modules --dry-run` smoke tests using temporary run roots under `/tmp`
+- Additional related-MSI low-level reference now captured:
+  - `reference/greymouser-summit-13-ai-evo-a2vm.md`
+  - related model: `MSI Summit 13 AI+ Evo A2VMTG`
+  - board: `MS-13P5`
+  - currently interesting for IIO sensor and LED-control work, not directly webcam-specific
 
 Most important current log lines:
 
