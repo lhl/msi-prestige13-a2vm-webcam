@@ -12,6 +12,7 @@ Current focus:
 - `docs/webcam-status.md` — current Linux webcam support assessment for this laptop
 - `docs/kernel-tree-status.md` — exact local `linux-mainline` source path and current `v6.19` INT3472/TPS68470 finding
 - `docs/reprobe-harness.md` — safe snapshot/reprobe script and run-capture workflow
+- `docs/tps68470-reverse-engineering.md` — canonical note for ACPI capture plus Windows `iactrllogic64.sys` analysis
 
 ## Repo-Level Control Docs
 
@@ -31,5 +32,4 @@ As the investigation expands, add new synthesized notes here rather than burying
 
 - patch design notes
 - kernel-version comparison notes
-- Windows package reverse-engineering notes
 - media-graph and validation logs

@@ -28,6 +28,12 @@ Captured upstream sources relevant to webcam bring-up on the MSI Prestige 13 AI+
 - `reference/tps68470.pdf`
   - Local TPS68470 datasheet copy for PMIC and regulator reference
   - Captured locally: 2026-03-07
+- `reference/acpi/README.md`
+  - Root-only ACPI capture area for this exact machine
+  - Added: 2026-03-08
+- `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/README.md`
+  - Repeatable static-analysis artifacts for the MSI package's `iactrllogic64.sys`
+  - Generated: 2026-03-08
 - `reference/windows-driver-packages/README.md`
   - In-repo archive index for vendored Windows camera packages and extracted trees
   - Captured: 2026-03-07

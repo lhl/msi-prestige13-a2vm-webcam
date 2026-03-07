@@ -1,0 +1,112 @@
+
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/windows-driver-packages/msi-ov5675-70.26100.19939.1/extracted/iactrllogic64.sys:	file format coff-x86-64
+Characteristics 0x22
+	executable
+	large address aware
+
+Time/Date               Tue Sep 30 02:19:12 2025
+Magic                   020b	(PE32+)
+MajorLinkerVersion      14
+MinorLinkerVersion      38
+SizeOfCode              0000000000021400
+SizeOfInitializedData   0000000000004c00
+SizeOfUninitializedData 0000000000000000
+AddressOfEntryPoint     000000000001b910
+BaseOfCode              0000000000001000
+ImageBase               0000000140000000
+SectionAlignment        00001000
+FileAlignment           00000200
+MajorOSystemVersion     10
+MinorOSystemVersion     0
+MajorImageVersion       10
+MinorImageVersion       0
+MajorSubsystemVersion   10
+MinorSubsystemVersion   0
+Win32Version            00000000
+SizeOfImage             0002b000
+SizeOfHeaders           00000400
+CheckSum                00031791
+Subsystem               00000001	(NT native)
+DllCharacteristics      00004160
+					HIGH_ENTROPY_VA
+					DYNAMIC_BASE
+					NX_COMPAT
+					GUARD_CF
+SizeOfStackReserve      0000000000100000
+SizeOfStackCommit       0000000000001000
+SizeOfHeapReserve       0000000000100000
+SizeOfHeapCommit        0000000000001000
+LoaderFlags             00000000
+NumberOfRvaAndSizes     00000010
+
+The Data Directory
+Entry 0 0000000000000000 00000000 Export Directory [.edata (or where ever we found it)]
+Entry 1 00000000000281b8 00000050 Import Directory [parts of .idata]
+Entry 2 0000000000029000 000003e8 Resource Directory [.rsrc]
+Entry 3 0000000000024000 00001374 Exception Directory [.pdata]
+Entry 4 0000000000026000 0000a4c0 Security Directory
+Entry 5 000000000002a000 000001f8 Base Relocation Directory [.reloc]
+Entry 6 00000000000212d0 00000038 Debug Directory
+Entry 7 0000000000000000 00000000 Description Directory
+Entry 8 0000000000000000 00000000 Special Directory
+Entry 9 0000000000000000 00000000 Thread Storage Directory [.tls]
+Entry a 0000000000021190 00000140 Load Configuration Directory
+Entry b 0000000000000000 00000000 Bound Import Directory
+Entry c 0000000000020000 00000140 Import Address Table Directory
+Entry d 0000000000000000 00000000 Delay Import Directory
+Entry e 0000000000000000 00000000 CLR Runtime Header
+Entry f 0000000000000000 00000000 Reserved
+
+The Import Tables:
+  lookup 00028248 time 00000000 fwd 00000000 name 000285c6 addr 00020040
+
+    DLL Name: ntoskrnl.exe
+    Hint/Ord  Name
+         252  ExFreePoolWithTag
+         913  IoGetDevicePropertyData
+        2919  ZwClose
+        1546  MmGetSystemRoutineAddress
+        1268  KeInitializeEvent
+        1411  KeSetEvent
+        1460  KeWaitForSingleObject
+        1128  IoWMIRegistrationControl
+        1049  IoSetDeviceInterfacePropertyData
+        1822  PoFxCompleteIdleCondition
+        1823  PoFxCompleteIdleState
+        3001  ZwOpenEvent
+        2931  ZwCreateEvent
+         203  ExAllocatePool2
+        3103  ZwSetEvent
+        1033  IoReportTargetDeviceChange
+         207  ExAllocatePoolWithTag
+        3217  _purecall
+        1272  KeInitializeMutex
+        1376  KeReleaseMutex
+        1248  KeGetCurrentIrql
+        1346  KeQueryTimeIncrement
+        1817  PoFxActivateComponent
+        1825  PoFxIdleComponent
+        1216  KeDelayExecutionThread
+        2135  RtlAppendUnicodeToString
+         119  DbgPrintEx
+        2129  RtlAnsiCharToUnicodeChar
+        2193  RtlCopyUnicodeString
+        2362  RtlInitUnicodeString
+        3147  ZwWaitForSingleObject
+
+  lookup 00028208 time 00000000 fwd 00000000 name 000285f0 addr 00020000
+
+    DLL Name: HAL.dll
+    Hint/Ord  Name
+          85  KeStallExecutionProcessor
+
+  lookup 00028218 time 00000000 fwd 00000000 name 0002868e addr 00020010
+
+    DLL Name: WDFLDR.SYS
+    Hint/Ord  Name
+           6  WdfVersionBind
+           3  WdfLdrQueryInterface
+           8  WdfVersionUnbind
+           9  WdfVersionUnbindClass
+           7  WdfVersionBindClass
+

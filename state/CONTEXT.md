@@ -11,6 +11,7 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
 - IPU7 core support is present.
 - `ov5675` is likely the correct sensor path.
 - The strongest blocker is still MSI-specific `INT3472` / `TPS68470` board data or power sequencing.
+- The Windows `iactrllogic64.sys` control-logic driver clearly contains board-specific `TPS68470` sequencing logic; it is not just an install stub.
 - Local `linux-mainline` source path to reuse:
   - `~/.cache/paru/clone/linux-mainline/src/linux-mainline`
   - current inspected tag: `v6.19`
@@ -48,6 +49,17 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
   - related model: `MSI Summit 13 AI+ Evo A2VMTG`
   - board: `MS-13P5`
   - currently interesting for IIO sensor and LED-control work, not directly webcam-specific
+- Repeatable reverse-engineering helpers are now in-repo:
+  - `scripts/capture-acpi.sh`
+  - `scripts/extract-iactrllogic64.sh`
+  - canonical note: `docs/tps68470-reverse-engineering.md`
+  - generated analysis tree: `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/`
+- Current Windows-driver extraction result:
+  - `iactrllogic64.sys` contains named `SensorInitialize`, `SensorOn`, `SensorOff`, clock, voltage, GPIO, and flash routines for `TPS68470`
+  - recovered `StartClock` register write order: `0x0a`, `0x08`, `0x07`, `0x0b`, `0x0c`, `0x06`, `0x10`, `0x09`, `0x0d`
+  - recovered a common low-level write helper at `0x140010be0` with retry behavior through `0x1400110f4`
+  - recovered `VoltageWF` examples that read/modify/write registers `0x47` and `0x43`
+- Raw `acpidump` capture is still pending because ACPI table reads require root on this machine.
 
 Most important current log lines:
 
@@ -63,6 +75,6 @@ Most important current log lines:
 
 ## Next Actions
 
-1. Correlate MSI `OV5675` graph-setting names such as `BCAB65` and `S5VM17` with ACPI-visible identifiers or module IDs.
-2. Check whether this MSI DMI identity is supported under another variant string or in newer upstream changes beyond local `v6.19`.
-3. Start extracting the concrete `TPS68470` sequencing logic from `iactrllogic64.sys`.
+1. Run `sudo scripts/capture-acpi.sh` and inspect the resulting `reference/acpi/...` dump for camera-relevant ACPI structure.
+2. Map the recovered Windows register indices against `reference/tps68470.pdf` and Linux `int3472` abstractions.
+3. Re-check whether the Linux patch path looks like a missing board-data match or a new MSI-specific `TPS68470` definition.

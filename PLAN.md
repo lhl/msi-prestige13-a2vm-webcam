@@ -26,6 +26,7 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 - [x] Confirm local machine identity, kernel version, PCI binding, and loaded modules.
 - [x] Record the exact local `linux-mainline` source location and current `v6.19` board-data status in `docs/kernel-tree-status.md`.
 - [x] Capture a clean media graph dump once direct device access is available for testing.
+- [x] Add a root-capable ACPI capture script for this exact machine.
 - [ ] Capture ACPI and DMI details relevant to existing `INT3472` board-data matching logic.
 
 ## Workstreams
@@ -54,7 +55,8 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 - [x] Identify the MSI Windows camera-related package(s) for this machine.
 - [x] Inspect driver package contents for `iactrllogic64`, INF files, registry settings, GPIO hints, or regulator programming clues.
 - [x] Vendor the current Windows camera packages into the repo with Git LFS so future analysis does not depend on `/tmp`.
-- [ ] Map any discovered identifiers or sequencing steps back to Linux driver structures.
+- [x] Add a repeatable `iactrllogic64.sys` static-analysis extractor and generated artifacts.
+- [ ] Map recovered register-write sequences and control-flow findings back to Linux `TPS68470` driver structures.
 
 ### 4. Patch path
 
@@ -64,15 +66,16 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 
 ## Near-Term Priority
 
-1. Correlate MSI `OV5675` graph-setting names such as `BCAB65` and `S5VM17` with ACPI-visible identifiers.
-2. Re-check whether this MSI DMI identity is supported under another variant string or newer upstream changes.
-3. Extract concrete `TPS68470` sequencing logic from `iactrllogic64.sys`.
+1. Run `sudo scripts/capture-acpi.sh` and review the resulting `reference/acpi/...` dump for `INT3472`, `OVTI5675`, `CLDB`, `_DSD`, GPIO, and I2C structure.
+2. Map the recovered Windows `TPS68470` register indices against `reference/tps68470.pdf` and Linux `int3472` expectations.
+3. Re-check whether this MSI DMI identity is supportable with a small board-data addition or needs a new MSI-specific `TPS68470` definition.
 
 ## Open Questions
 
 - Is the missing piece just a DMI match entry, or does MSI require custom regulator and GPIO data not present upstream?
 - Does `ov5675` probe far enough to appear in the media graph once PMIC board data exists, or is there a second blocker after power-up?
 - Is there any vendor firmware or Intel middleware dependency beyond standard kernel and firmware files?
+- Does this machine correspond to the Windows driver's `VoltageWF` path, `VoltageUF` path, or a narrower subclass selected via ACPI / board config?
 
 ## Deliverables
 

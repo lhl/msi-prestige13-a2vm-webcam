@@ -1,0 +1,21 @@
+
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/windows-driver-packages/msi-ov5675-70.26100.19939.1/extracted/iactrllogic64.sys:     file format pei-x86-64
+
+Sections:
+Idx Name          Size      VMA               LMA               File off  Algn
+  0 .text         0001ea70  0000000140001000  0000000140001000  00000400  2**4
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .rdata        00002ab8  0000000140020000  0000000140020000  0001f000  2**4
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  2 .data         00000200  0000000140023000  0000000140023000  00021c00  2**4
+                  CONTENTS, ALLOC, LOAD, DATA
+  3 .pdata        00001374  0000000140024000  0000000140024000  00021e00  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  4 PAGE          00001eeb  0000000140026000  0000000140026000  00023200  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  5 INIT          0000069a  0000000140028000  0000000140028000  00025200  2**2
+                  CONTENTS, LOAD, READONLY, CODE
+  6 .rsrc         000003e8  0000000140029000  0000000140029000  00025a00  2**2
+                  CONTENTS, LOAD, READONLY, DATA
+  7 .reloc        000001f8  000000014002a000  000000014002a000  00025e00  2**2
+                  CONTENTS, LOAD, READONLY, DATA

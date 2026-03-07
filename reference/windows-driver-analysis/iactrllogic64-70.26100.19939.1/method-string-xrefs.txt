@@ -1,0 +1,48 @@
+   14000aa64:	48 8d 2d 55 33 01 00 	lea    rbp,[rip+0x13355]        # 0x14001ddc0
+   14000abe9:	4c 8d 3d 20 32 01 00 	lea    r15,[rip+0x13220]        # 0x14001de10
+   14000ae48:	4c 8d 25 a1 2f 01 00 	lea    r12,[rip+0x12fa1]        # 0x14001ddf0
+   14000b8f9:	4c 8d 2d 90 27 01 00 	lea    r13,[rip+0x12790]        # 0x14001e090
+   14000bbed:	4c 8d 25 cc 24 01 00 	lea    r12,[rip+0x124cc]        # 0x14001e0c0
+   14000bd94:	4c 8d 2d 55 23 01 00 	lea    r13,[rip+0x12355]        # 0x14001e0f0
+   14000c0c5:	4c 8d 35 54 20 01 00 	lea    r14,[rip+0x12054]        # 0x14001e120
+   14000c259:	4c 8d 25 d0 1d 01 00 	lea    r12,[rip+0x11dd0]        # 0x14001e030
+   14000c6c4:	48 8d 2d 95 19 01 00 	lea    rbp,[rip+0x11995]        # 0x14001e060
+   140012e04:	4c 8d 3d d5 be 00 00 	lea    r15,[rip+0xbed5]        # 0x14001ece0
+   140013b63:	4c 8d 25 e6 ad 00 00 	lea    r12,[rip+0xade6]        # 0x14001e950
+   140013d0b:	4c 8d 25 ee ad 00 00 	lea    r12,[rip+0xadee]        # 0x14001eb00
+   140013eb3:	4c 8d 25 26 ab 00 00 	lea    r12,[rip+0xab26]        # 0x14001e9e0
+   14001405b:	4c 8d 25 8e ab 00 00 	lea    r12,[rip+0xab8e]        # 0x14001ebf0
+   14001421f:	4c 8d 05 5a a7 00 00 	lea    r8,[rip+0xa75a]        # 0x14001e980
+   1400142c2:	48 8d 3d b7 a6 00 00 	lea    rdi,[rip+0xa6b7]        # 0x14001e980
+   140014307:	48 8d 3d 72 a6 00 00 	lea    rdi,[rip+0xa672]        # 0x14001e980
+   1400143b3:	4c 8d 05 76 a7 00 00 	lea    r8,[rip+0xa776]        # 0x14001eb30
+   140014456:	48 8d 3d d3 a6 00 00 	lea    rdi,[rip+0xa6d3]        # 0x14001eb30
+   14001449b:	48 8d 3d 8e a6 00 00 	lea    rdi,[rip+0xa68e]        # 0x14001eb30
+   14001452b:	4c 8d 25 7e a4 00 00 	lea    r12,[rip+0xa47e]        # 0x14001e9b0
+   1400146d6:	48 8d 35 83 a4 00 00 	lea    rsi,[rip+0xa483]        # 0x14001eb60
+   1400147d9:	48 8d 05 80 a3 00 00 	lea    rax,[rip+0xa380]        # 0x14001eb60
+   140014829:	48 8d 3d 30 a3 00 00 	lea    rdi,[rip+0xa330]        # 0x14001eb60
+   14001486b:	48 8d 3d ee a2 00 00 	lea    rdi,[rip+0xa2ee]        # 0x14001eb60
+   14001490d:	4c 8d 2d ac a2 00 00 	lea    r13,[rip+0xa2ac]        # 0x14001ebc0
+   140014aa6:	4c 8d 25 e3 a0 00 00 	lea    r12,[rip+0xa0e3]        # 0x14001eb90
+   14001dd7c:	74 72                	je     0x14001ddf0
+   14001ddc0:	74 70                	je     0x14001de32
+   14001ddf0:	74 70                	je     0x14001de62
+   14001de10:	74 70                	je     0x14001de82
+   14001e030:	74 70                	je     0x14001e0a2
+   14001e060:	74 70                	je     0x14001e0d2
+   14001e090:	74 70                	je     0x14001e102
+   14001e0c0:	74 70                	je     0x14001e132
+   14001e0f0:	74 70                	je     0x14001e162
+   14001e120:	74 70                	je     0x14001e192
+   14001e950:	74 70                	je     0x14001e9c2
+   14001e980:	74 70                	je     0x14001e9f2
+   14001e9b0:	74 70                	je     0x14001ea22
+   14001e9e0:	74 70                	je     0x14001ea52
+   14001eb00:	74 70                	je     0x14001eb72
+   14001eb30:	74 70                	je     0x14001eba2
+   14001eb60:	74 70                	je     0x14001ebd2
+   14001eb90:	74 70                	je     0x14001ec02
+   14001ebc0:	74 70                	je     0x14001ec32
+   14001ebf0:	74 70                	je     0x14001ec62
+   14001ece0:	74 70                	je     0x14001ed52

@@ -2,6 +2,46 @@
 
 ## 2026-03-08
 
+### Add canonical ACPI plus Windows-control-logic reverse-engineering workflow
+
+- Plan: make the ACPI capture and Windows `iactrllogic64.sys` analysis reproducible in-repo, then write one canonical note that preserves the concrete reverse-engineering results.
+- Commands:
+  - checked current constraints:
+    - `which acpidump`
+    - `sudo -n true`
+    - `ls -l /sys/firmware/acpi/tables`
+    - `acpidump -b`
+  - added scripts:
+    - `scripts/capture-acpi.sh`
+    - `scripts/extract-iactrllogic64.sh`
+  - generated Windows analysis artifacts:
+    - `scripts/extract-iactrllogic64.sh`
+  - reviewed generated outputs:
+    - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/debug-directory.txt`
+    - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/pe-header-and-imports.txt`
+    - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/method-string-addresses.txt`
+    - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/disasm-sensoron.txt`
+    - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/disasm-sensoroff.txt`
+    - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/disasm-clock-start.txt`
+    - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/disasm-clock-confighclkab.txt`
+    - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/disasm-voltage-wf-setvactl.txt`
+    - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/disasm-voltage-wf-setvsioctl-gpio.txt`
+    - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/disasm-register-write-wrapper.txt`
+    - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/disasm-transport-helper.txt`
+- Result:
+  - added a root-capable ACPI capture helper that stores reproducible evidence under `reference/acpi/`
+  - confirmed raw ACPI table capture is still blocked from the current unprivileged session because `/sys/firmware/acpi/tables/*` is root-readable only
+  - generated a stable in-repo analysis tree for `iactrllogic64.sys`
+  - confirmed the Windows driver contains named `TPS68470` sensor, clock, voltage, GPIO, and flash routines plus `CommonFunc::Cmd_SensorPowerOn` / `Cmd_SensorPowerOff`
+  - confirmed the binary build provenance:
+    - PDB path `W:\repo\w\camerasw\Source\Camera\Platform\LNL\x64\Release\iactrllogic64.pdb`
+    - PDB GUID `804BA0D7-738B-4CC9-8027-7AF3103C24B5`
+  - recovered a concrete `Tps68470Clock::StartClock` write sequence using registers `0x0a`, `0x08`, `0x07`, `0x0b`, `0x0c`, `0x06`, `0x10`, `0x09`, and `0x0d`
+  - recovered a `ConfigHCLKAB` helper that reads and masks register `0x0d` before writing it back
+  - recovered a common register-write helper at `0x140010be0` that retries through `0x1400110f4`
+  - recovered `VoltageWF` examples that read/modify/write at least registers `0x47` and `0x43`
+- Decision: keep; this is now the canonical reverse-engineering base for the next ACPI capture and Linux patch-design pass.
+
 ### Commit first baseline snapshot and reprobe run set
 
 - Plan: record the first real `runs/` output from the safe harness so the baseline failure state and exact reprobe behavior are preserved in git.

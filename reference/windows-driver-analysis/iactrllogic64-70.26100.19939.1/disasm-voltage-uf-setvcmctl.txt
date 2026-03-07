@@ -1,0 +1,83 @@
+
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/windows-driver-packages/msi-ov5675-70.26100.19939.1/extracted/iactrllogic64.sys:     file format pei-x86-64
+
+
+Disassembly of section .text:
+
+0000000140013e90 <.text+0x12e90>:
+   140013e90:	89 73 18             	mov    DWORD PTR [rbx+0x18],esi
+   140013e93:	49 89 7b 20          	mov    QWORD PTR [r11+0x20],rdi
+   140013e97:	41 54                	push   r12
+   140013e99:	41 56                	push   r14
+   140013e9b:	41 57                	push   r15
+   140013e9d:	48 83 ec 60          	sub    rsp,0x60
+   140013ea1:	48 8b 05 68 f2 00 00 	mov    rax,QWORD PTR [rip+0xf268]        # 0x140023110
+   140013ea8:	48 33 c4             	xor    rax,rsp
+   140013eab:	48 89 44 24 50       	mov    QWORD PTR [rsp+0x50],rax
+   140013eb0:	48 8b f2             	mov    rsi,rdx
+   140013eb3:	4c 8d 25 26 ab 00 00 	lea    r12,[rip+0xab26]        # 0x14001e9e0
+   140013eba:	48 8b f9             	mov    rdi,rcx
+   140013ebd:	45 33 f6             	xor    r14d,r14d
+   140013ec0:	49 8b d4             	mov    rdx,r12
+   140013ec3:	4d 89 73 d0          	mov    QWORD PTR [r11-0x30],r14
+   140013ec7:	49 8d 4b d0          	lea    rcx,[r11-0x30]
+   140013ecb:	41 8a d8             	mov    bl,r8b
+   140013ece:	e8 2d d1 fe ff       	call   0x140001000
+   140013ed3:	41 8d 56 27          	lea    edx,[r14+0x27]
+   140013ed7:	44 89 74 24 40       	mov    DWORD PTR [rsp+0x40],r14d
+   140013edc:	45 8d 4e 01          	lea    r9d,[r14+0x1]
+   140013ee0:	48 8b ce             	mov    rcx,rsi
+   140013ee3:	4c 8d 44 24 40       	lea    r8,[rsp+0x40]
+   140013ee8:	e8 bf cb ff ff       	call   0x140010aac
+   140013eed:	4c 8d 3d 34 f1 00 00 	lea    r15,[rip+0xf134]        # 0x140023028
+   140013ef4:	85 c0                	test   eax,eax
+   140013ef6:	79 4a                	jns    0x140013f42
+   140013ef8:	48 8b 0d 29 f1 00 00 	mov    rcx,QWORD PTR [rip+0xf129]        # 0x140023028
+   140013eff:	49 3b cf             	cmp    rcx,r15
+   140013f02:	74 3e                	je     0x140013f42
+   140013f04:	8b 49 2c             	mov    ecx,DWORD PTR [rcx+0x2c]
+   140013f07:	f6 c1 01             	test   cl,0x1
+   140013f0a:	74 36                	je     0x140013f42
+   140013f0c:	0f ae e8             	lfence
+   140013f0f:	48 8b 0d 12 f1 00 00 	mov    rcx,QWORD PTR [rip+0xf112]        # 0x140023028
+   140013f16:	41 8d 56 14          	lea    edx,[r14+0x14]
+   140013f1a:	89 44 24 30          	mov    DWORD PTR [rsp+0x30],eax
+   140013f1e:	4c 8d 0d cb 92 00 00 	lea    r9,[rip+0x92cb]        # 0x14001d1f0
+   140013f25:	c7 44 24 28 27 00 00 	mov    DWORD PTR [rsp+0x28],0x27
+   140013f2c:	00 
+   140013f2d:	4c 8d 05 1c cd 00 00 	lea    r8,[rip+0xcd1c]        # 0x140020c50
+   140013f34:	4c 89 64 24 20       	mov    QWORD PTR [rsp+0x20],r12
+   140013f39:	48 8b 49 18          	mov    rcx,QWORD PTR [rcx+0x18]
+   140013f3d:	e8 4a ef fe ff       	call   0x140002e8c
+   140013f42:	84 db                	test   bl,bl
+   140013f44:	74 0f                	je     0x140013f55
+   140013f46:	66 44 39 77 0e       	cmp    WORD PTR [rdi+0xe],r14w
+   140013f4b:	74 08                	je     0x140013f55
+   140013f4d:	8a 44 24 40          	mov    al,BYTE PTR [rsp+0x40]
+   140013f51:	0c 08                	or     al,0x8
+   140013f53:	eb 06                	jmp    0x140013f5b
+   140013f55:	8a 44 24 40          	mov    al,BYTE PTR [rsp+0x40]
+   140013f59:	24 f7                	and    al,0xf7
+   140013f5b:	ba 27 00 00 00       	mov    edx,0x27
+   140013f60:	44 0f b6 c0          	movzx  r8d,al
+   140013f64:	48 8b ce             	mov    rcx,rsi
+   140013f67:	44 8d 4a da          	lea    r9d,[rdx-0x26]
+   140013f6b:	e8 70 cc ff ff       	call   0x140010be0
+   140013f70:	8b d8                	mov    ebx,eax
+   140013f72:	85 c0                	test   eax,eax
+   140013f74:	79 4b                	jns    0x140013fc1
+   140013f76:	48 8b 0d ab f0 00 00 	mov    rcx,QWORD PTR [rip+0xf0ab]        # 0x140023028
+   140013f7d:	49 3b cf             	cmp    rcx,r15
+   140013f80:	74 77                	je     0x140013ff9
+   140013f82:	8b 49 2c             	mov    ecx,DWORD PTR [rcx+0x2c]
+   140013f85:	f6 c1 01             	test   cl,0x1
+   140013f88:	74 37                	je     0x140013fc1
+   140013f8a:	0f ae e8             	lfence
+   140013f8d:	48 8b 0d 94 f0 00 00 	mov    rcx,QWORD PTR [rip+0xf094]        # 0x140023028
+   140013f94:	4c 8d 0d 55 92 00 00 	lea    r9,[rip+0x9255]        # 0x14001d1f0
+   140013f9b:	89 44 24 30          	mov    DWORD PTR [rsp+0x30],eax
+   140013f9f:	4c 8d 05 aa cc 00 00 	lea    r8,[rip+0xccaa]        # 0x140020c50
+   140013fa6:	ba 15 00 00 00       	mov    edx,0x15
+   140013fab:	c7                   	.byte 0xc7
+   140013fac:	44 24 28             	rex.R and al,0x28
+   140013faf:	27                   	(bad)
