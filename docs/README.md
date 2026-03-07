@@ -10,6 +10,7 @@ Current focus:
 ## Core Docs
 
 - `docs/webcam-status.md` — current Linux webcam support assessment for this laptop
+- `docs/kernel-tree-status.md` — exact local `linux-mainline` source path and current `v6.19` INT3472/TPS68470 finding
 
 ## Repo-Level Control Docs
 

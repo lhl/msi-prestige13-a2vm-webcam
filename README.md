@@ -20,6 +20,7 @@ Machine under test:
 - [`PLAN.md`](./PLAN.md) — active investigation plan and task queue
 - [`WORKLOG.md`](./WORKLOG.md) — reverse-chronological record of work performed
 - [`docs/README.md`](./docs/README.md) — documentation index
+- [`docs/kernel-tree-status.md`](./docs/kernel-tree-status.md) — local `linux-mainline` source location and current board-data finding
 - [`reference/README.md`](./reference/README.md) — captured upstream references
 
 ## Repo Layout
@@ -59,5 +60,6 @@ msi-prestige13-a2vm-webcam/
 ## Related Docs
 
 - [`docs/webcam-status.md`](./docs/webcam-status.md) — current Linux support assessment for this laptop
+- [`docs/kernel-tree-status.md`](./docs/kernel-tree-status.md) — exact local kernel-source path and 6.19 board-data status
 - [`reference/intel-ipu7-drivers-issue-17.md`](./reference/intel-ipu7-drivers-issue-17.md) — Intel upstream issue note
 - [`reference/jeremy-grosser-prestige13-notes.md`](./reference/jeremy-grosser-prestige13-notes.md) — MSI-specific Debian/gist note

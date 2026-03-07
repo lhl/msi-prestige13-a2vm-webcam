@@ -24,6 +24,7 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 - [x] Capture the Jeremy Grosser MSI gist and later comments.
 - [x] Record a current local support assessment in `docs/webcam-status.md`.
 - [x] Confirm local machine identity, kernel version, PCI binding, and loaded modules.
+- [x] Record the exact local `linux-mainline` source location and current `v6.19` board-data status in `docs/kernel-tree-status.md`.
 - [ ] Capture a clean media graph dump once direct device access is available for testing.
 - [ ] Capture ACPI and DMI details relevant to existing `INT3472` board-data matching logic.
 
@@ -31,7 +32,7 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 
 ### 1. Upstream gap analysis
 
-- [ ] Inspect current upstream `drivers/platform/x86/intel/int3472/tps68470_board_data.c`.
+- [x] Inspect current local `v6.19` `drivers/platform/x86/intel/int3472/tps68470_board_data.c`.
 - [ ] Check whether this MSI DMI identity is already supported under another variant string.
 - [ ] Search recent kernel and mailing-list activity for Lunar Lake `ov5675`, `INT3472`, or `TPS68470` additions.
 - [ ] Determine whether the blocker is only missing board-data matching or also missing regulator/GPIO sequencing details.

@@ -2,6 +2,22 @@
 
 ## 2026-03-07
 
+### Document local `linux-mainline` source location and board-data status
+
+- Plan: record the exact local kernel-source path and the concrete `v6.19` finding so it is easy to reopen the same files later.
+- Commands:
+  - `git -C ~/.cache/paru/clone/linux-mainline/src/linux-mainline rev-parse --short HEAD`
+  - `git -C ~/.cache/paru/clone/linux-mainline/src/linux-mainline describe --tags --always`
+  - `nl -ba ~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472/tps68470_board_data.c | sed -n '240,336p'`
+  - `nl -ba ~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472/tps68470.c | sed -n '176,184p'`
+  - `nl -ba ~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/i2c/ov5675.c | sed -n '1355,1379p'`
+- Result:
+  - documented the reusable local source location as `~/.cache/paru/clone/linux-mainline/src/linux-mainline`
+  - confirmed that local source is `v6.19` at `05f7e89ab973`
+  - confirmed `tps68470_board_data.c` only contains Surface Go variants and Dell Latitude 7212, with no MSI `MS-13Q3` / `Prestige 13 AI+ Evo A2VMG`
+  - confirmed the `ov5675` ACPI match for `OVTI5675` exists in the same tree
+- Decision: keep; this closes the first local-kernel-tree inspection step and gives us a stable place to resume from later.
+
 ### Add shared `CLAUDE.md` symlink
 
 - Plan: add a repo-local `CLAUDE.md` symlink pointing to `AGENTS.md` so Codex and Claude Code read the same instructions.
