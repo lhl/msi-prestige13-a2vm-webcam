@@ -1,0 +1,55 @@
+=== OV5675 sensor check via TPS68470 manual power-up ===
+Date: 20260308T020606
+Repo root: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam
+Run dir: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-08/20260308T020606-manual-i2c-sensor-check-first-manual-check
+Mode: execute
+Bus: 1  PMIC addr: 0x4d  Device: i2c-INT3472:06
+Sensor address candidates: 0x36 0x10
+
+Planned sequence:
+  1. Verify PMIC REVID
+  2. Capture pre-write PMIC state
+  3. Program VIO/VSIO/VA/VD values explicitly
+  4. Program the full 19.2 MHz TPS68470 clock path
+  5. Put GPIO1/GPIO2 in CMOS-output mode and hold them low
+  6. Enable VSIO/VA/VD
+  7. Drive GPIO1/GPIO2 high and try direct OV5675 chip-ID reads
+  8. Capture post-write PMIC state
+  9. Reset the PMIC on exit
+
+TPS68470 REVID: 0x21
+
+Pre-write PMIC snapshot saved to /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-08/20260308T020606-manual-i2c-sensor-check-first-manual-check/pre-pmic-regs.txt
+
+--- Step 1: Program voltage registers ---
+  reg 0x3f <- 0x34  (VIOVAL 1.8V)
+  reg 0x40 <- 0x34  (VSIOVAL 1.8V)
+  reg 0x41 <- 0x6d  (VAVAL 2.8V for avdd)
+  reg 0x42 <- 0x0c  (VDVAL 1.2V for dvdd)
+
+--- Step 2: Program full 19.2 MHz clock path ---
+  reg 0x0a <- 0xaa  (XTALDIV)
+  reg 0x08 <- 0x02  (BUCKDIV)
+  reg 0x07 <- 0x03  (BOOSTDIV)
+  reg 0x0b <- 0x20  (PLLDIV)
+  reg 0x0c <- 0x01  (POSTDIV)
+  reg 0x06 <- 0x01  (POSTDIV2)
+  reg 0x10 <- 0x05  (CLKCFG2 2mA drive)
+  reg 0x09 <- 0x03  (PLLSWR default)
+  reg 0x0d <- 0xd0  (PLLCTL base: xtal source + ext caps)
+  reg 0x0f <- 0x0a  (enable HCLK_A/HCLK_B PLL outputs)
+  reg 0x0d <- 0xd1  (PLLCTL enable bit set)
+  waiting 5ms for PLL prepare
+
+--- Step 3: Put GPIO1/GPIO2 under PMIC output control and hold low ---
+  reg 0x16: 0x01 -> 0x02  (GPCTL1A mode -> CMOS output)
+  reg 0x18: 0x01 -> 0x02  (GPCTL2A mode -> CMOS output)
+  reg 0x27: 0x00 -> 0x00  (GPDO clear GPIO1/GPIO2)
+
+--- Step 4: Enable VSIO / VA / VD ---
+  reg 0x43: 0x00 -> 0x03  (S_I2C_CTL enable VSIO and sensor-I2C path)
+Error: Read failed
+
+--- Cleanup: resetting TPS68470 ---
+Post-reset REVID: ERROR
+Reset snapshot written to /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-08/20260308T020606-manual-i2c-sensor-check-first-manual-check/post-reset-regs.txt

@@ -91,6 +91,11 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
 - Windows-to-Linux register mapping is now partially confirmed:
   - Windows `StartClock` uses the same TPS68470 clock register family that Linux `clk-tps68470.c` programs
   - recovered voltage and IO helpers touch `VACTL` `0x47`, `S_I2C_CTL` `0x43`, and GPIO control registers `0x16` / `0x18`
+- First executed manual userland PMIC poke result:
+  - `runs/2026-03-08/20260308T020606-manual-i2c-sensor-check-first-manual-check/`
+  - the bus stayed healthy through clock setup and GPIO mode changes
+  - the first PMIC transaction after `S_I2C_CTL=0x03` triggered `i2c_designware.1: controller timed out`
+  - this means the initial manual sequence was non-diagnostic for sensor liveness; the next manual script revision now makes `S_I2C_CTL` the last PMIC write before direct chip-ID reads
 - Linux-side implication:
   - `ov5675` expects `avdd`, `dovdd`, `dvdd`, `reset`, and 19.2 MHz `xvclk`
   - the likely blocker is missing MSI-specific `tps68470_board_data` for `i2c-INT3472:06` and `OVTI5675:00`, not just a missing DMI match

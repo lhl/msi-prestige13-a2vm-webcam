@@ -186,6 +186,17 @@ capture_regs() {
   done
 }
 
+try_capture_regs() {
+  local outfile=$1
+
+  if capture_regs "${outfile}" 2>/dev/null; then
+    echo "Snapshot saved to ${outfile}"
+  else
+    echo "Snapshot skipped: PMIC no longer responded cleanly"
+    rm -f "${outfile}"
+  fi
+}
+
 cleanup() {
   if [[ ${EXECUTE} -ne 1 ]]; then
     return 0
@@ -193,17 +204,19 @@ cleanup() {
 
   echo
   echo "--- Cleanup: resetting TPS68470 ---"
-  i2cset -y "${BUS}" "${ADDR}" 0x50 0xff 2>/dev/null || true
+  if ! i2cset -y "${BUS}" "${ADDR}" 0x50 0xff 2>/dev/null; then
+    echo "PMIC reset write failed; likely bus still wedged after passthrough enable"
+    return 0
+  fi
   sleep 0.1
-  {
-    echo "# TPS68470 post-reset snapshot"
-    echo "date=$(date +%Y%m%dT%H%M%S)"
-    for reg in 0x0d 0x16 0x18 0x3f 0x40 0x41 0x42 0x43 0x47 0x48 0xff; do
-      printf "%s=%s\n" "${reg}" "$(i2cget -y "${BUS}" "${ADDR}" "${reg}" 2>/dev/null || echo ERROR)"
-    done
-  } > "${run_dir}/post-reset-regs.txt"
-  echo "Post-reset REVID: $(i2cget -y "${BUS}" "${ADDR}" 0xff 2>/dev/null || echo ERROR)"
-  echo "Reset snapshot written to ${run_dir}/post-reset-regs.txt"
+  if revid=$(i2cget -y "${BUS}" "${ADDR}" 0xff 2>/dev/null); then
+    printf "# TPS68470 post-reset snapshot\ndate=%s\n0xff=%s\n" \
+      "$(date +%Y%m%dT%H%M%S)" "${revid}" > "${run_dir}/post-reset-regs.txt"
+    echo "Post-reset REVID: ${revid}"
+    echo "Reset snapshot written to ${run_dir}/post-reset-regs.txt"
+  else
+    echo "Post-reset REVID read failed; bus did not recover during cleanup window"
+  fi
 }
 trap cleanup EXIT
 
@@ -213,10 +226,11 @@ echo "  2. Capture pre-write PMIC state"
 echo "  3. Program VIO/VSIO/VA/VD values explicitly"
 echo "  4. Program the full 19.2 MHz TPS68470 clock path"
 echo "  5. Put GPIO1/GPIO2 in CMOS-output mode and hold them low"
-echo "  6. Enable VSIO/VA/VD"
-echo "  7. Drive GPIO1/GPIO2 high and try direct OV5675 chip-ID reads"
-echo "  8. Capture post-write PMIC state"
-echo "  9. Reset the PMIC on exit"
+echo "  6. Enable VA/VD while PMIC access still works"
+echo "  7. Drive GPIO1/GPIO2 high"
+echo "  8. Enable VSIO / passthrough last and immediately try OV5675 chip-ID reads"
+echo "  9. Best-effort capture of post-write PMIC state"
+echo "  10. Reset the PMIC on exit"
 echo
 
 if [[ ${EXECUTE} -ne 1 ]]; then
@@ -271,8 +285,7 @@ write_rmw_mask 0x18 0x03 "${GPIO_OUT_CMOS}" "(GPCTL2A mode -> CMOS output)"
 write_rmw_mask 0x27 "${GPIO_LINES_MASK}" 0x00 "(GPDO clear GPIO1/GPIO2)"
 echo
 
-echo "--- Step 4: Enable VSIO / VA / VD ---"
-write_rmw_mask 0x43 0x00 0x03 "(S_I2C_CTL enable VSIO and sensor-I2C path)"
+echo "--- Step 4: Enable VA / VD while PMIC access still works ---"
 write_rmw_mask 0x47 0x00 0x01 "(VACTL enable)"
 write_rmw_mask 0x48 0x00 0x01 "(VDCTL enable bit)"
 echo "  waiting 3ms for rails to settle"
@@ -285,7 +298,13 @@ echo "  waiting 5ms after control-line release"
 sleep 0.005
 echo
 
-echo "--- Step 6: Try direct OV5675 chip-ID reads ---"
+echo "--- Step 6: Enable VSIO / passthrough last ---"
+write_rmw_mask 0x43 0x00 0x03 "(S_I2C_CTL enable VSIO and sensor-I2C path)"
+echo "  waiting 1ms before direct sensor reads"
+sleep 0.001
+echo
+
+echo "--- Step 7: Try direct OV5675 chip-ID reads ---"
 chip_id_match=0
 for sensor_addr in "${SENSOR_ADDRS[@]}"; do
   echo "  trying ${sensor_addr} register 0x300a"
@@ -303,8 +322,8 @@ for sensor_addr in "${SENSOR_ADDRS[@]}"; do
 done
 echo
 
-capture_regs "${run_dir}/post-pmic-regs.txt"
-echo "Post-write PMIC snapshot saved to ${run_dir}/post-pmic-regs.txt"
+echo "--- Step 8: Best-effort post-write PMIC snapshot ---"
+try_capture_regs "${run_dir}/post-pmic-regs.txt"
 echo
 
 if [[ ${chip_id_match} -eq 1 ]]; then

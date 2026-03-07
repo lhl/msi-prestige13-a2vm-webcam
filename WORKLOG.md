@@ -2,6 +2,37 @@
 
 ## 2026-03-08
 
+### Record first executed manual TPS68470 sensor-check run and tighten the sequence
+
+- Plan: review the first live userland PMIC-poke run, preserve the resulting evidence, and adjust the script so the next run tests the sensor immediately after passthrough enable instead of failing on a follow-up PMIC read.
+- Commands:
+  - reviewed:
+    - `runs/2026-03-08/20260308T020606-manual-i2c-sensor-check-first-manual-check/script.log`
+    - `runs/2026-03-08/20260308T020606-manual-i2c-sensor-check-first-manual-check/pre-pmic-regs.txt`
+    - `runs/2026-03-08/20260308T020606-manual-i2c-sensor-check-first-manual-check/post-reset-regs.txt`
+    - `journalctl -k --since '2026-03-08 02:05:30' --until '2026-03-08 02:07:30'`
+    - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/power-sequencing-notes.md`
+  - `apply_patch` updating:
+    - `scripts/i2c-sensor-check.sh`
+    - `WORKLOG.md`
+- Result:
+  - the first executed manual run reached the PMIC cleanly and confirmed the corrected baseline state:
+    - `REVID=0x21`
+    - `VIOVAL=0x34`
+    - `VSIOVAL=0x34`
+    - `VACTL=0x00`
+    - `VDCTL=0x04`
+  - the run stayed healthy through:
+    - voltage programming
+    - full 19.2 MHz clock programming
+    - GPIO1/GPIO2 mode changes
+  - the first operation after setting `S_I2C_CTL` to `0x03` failed, and the kernel logged repeated `i2c_designware.1: controller timed out`
+  - that means the current script ordering was non-diagnostic:
+    - it proved the bus break happened at or immediately after passthrough enable
+    - it did **not** prove the sensor failed to answer chip-ID reads
+  - the script now makes `S_I2C_CTL` the final PMIC write before direct sensor reads and makes post-passthrough PMIC snapshots / cleanup best-effort instead of fatal
+- Decision: keep the first executed run as evidence; use the reordered script for the next manual check if we want one more high-risk sanity test.
+
 ### Harden manual TPS68470 sensor-check experiment script
 
 - Plan: keep the manual PMIC poke path available as an explicit experiment, but make it less misleading by matching the kernel clock path more closely, removing non-diagnostic `i2cdetect` scans, and defaulting to dry-run.
