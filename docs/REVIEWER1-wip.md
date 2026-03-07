@@ -8,7 +8,7 @@ This is impressively thorough and well-organized research. The project has gone 
 
 ## What's Been Established (Strong Evidence)
 
-- The blocker is definitively **missing MSI board-data** in `tps68470_board_data.c` — not a missing sensor driver, not missing IPU7 support, not missing firmware
+- The strongest current blocker is **missing MSI board-data** in `tps68470_board_data.c` — but board-data alone may not be sufficient if MSI requires GPIO behavior beyond what `ov5675.c` currently consumes (see `docs/tps68470-reverse-engineering.md` for the two-branch outcome)
 - The exact ACPI path is known: `OVTI5675:00` at `\_SB_.LNK0`, PMIC at `INT3472:06` at `\_SB_.CLP0`
 - This is a `CLP` (PMIC companion) path, not a `DSC` (discrete) path
 - The Windows driver is doing real register-level PMIC control, not delegating to firmware
@@ -45,102 +45,96 @@ Rather than fully completing the VoltageWF extraction before testing, consider:
 
 ### 3. The VoltageWF vs VoltageUF distinction
 
-The Windows driver has both `Tps68470VoltageWF` and `Tps68470VoltageUF` classes. "WF" and "UF" likely stand for "world-facing" (rear) and "user-facing" (front) cameras. Since the Prestige 13 probably only has a front-facing webcam, **VoltageUF may actually be the relevant path**, not VoltageWF. Worth checking which class the active sensor initialization path uses. The ACPI `C0TP` variable or the Windows INF `SensorPosition` setting might clarify this.
+The Windows driver has both `Tps68470VoltageWF` and `Tps68470VoltageUF` classes. "WF" and "UF" likely stand for "world-facing" and "user-facing". The concrete recovered call chain (`power-sequencing-notes.md`) is built around `Tps68470VoltageWF::PowerOn/Off`, `IoActive/Idle`, and `IoActive_GPIO` — so the working hypothesis should stay on the WF path. The PowerOn cross-references do point to UF-named helper addresses, which is worth noting but not enough to flip the analysis direction based on naming alone.
 
 ### 4. One potential complication to watch for
 
 The `CDEP` routing to `CLP0` instead of `DSC0` means this is on the "PMIC companion" path. The existing upstream board-data entries (Surface Go, Dell 7212) all use the same `CLP`-style TPS68470 path, so the Linux `int3472-tps68470` driver should handle it. But double-check that the `tps68470.c` probe doesn't have any additional Lunar Lake or IPU7-era requirements that weren't present for the Kaby Lake era Surface Go. The Torvalds HEAD diff against v6.19 only touched `discrete.c` and `tps68470.c` — worth checking what exactly changed in `tps68470.c`.
 
-### 5. Gap: exact DMI strings needed for the patch
+### 5. ~~Gap: exact DMI strings~~ (resolved)
 
-The `dmi.txt` in the ACPI capture has the info, but the exact `DMI_SYS_VENDOR` string has not been recorded in a ready-to-patch form. For the kernel patch, the exact string from `/sys/class/dmi/id/sys_vendor` is needed — it's likely `Micro-Star International Co., Ltd.` but worth confirming it matches exactly.
+The exact vendor string is already recorded in `docs/kernel-tree-status.md`. The v1 patch uses `DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "Micro-Star International Co., Ltd.")`.
 
-### 6. Minor: ACPI DSL files not committed
+### 6. ~~ACPI DSL files not committed~~ (resolved)
 
-The git status shows a pile of untracked DSL files under `reference/acpi/.../dsl/` and `reference/acpi/.../tables/`. These are the disassembled ACPI tables that are crucial to the analysis. If the other agent hasn't committed them yet, they should be — they're the primary evidence for the camera topology analysis.
+These were committed in `cf08cf9` as noted in `docs/tps68470-reverse-engineering.md`.
 
 ## Live I2C Register Dump (2026-03-08)
 
-We ran a read-only register dump of the TPS68470 on I2C bus 1 during the review session. The script is at `scripts/i2c-dump.sh` (run as root). Full results follow.
+We ran a read-only register dump of the TPS68470 on I2C bus 1 during the review session. The script is at `scripts/i2c-dump.sh` (run as root).
 
 ### Bus scan
 
-`i2cdetect -y 1` shows **only one device responding on bus 1: address 0x4D.** Nothing at 0x4C or elsewhere. The controller warned `Can't use SMBus Quick Write command, will skip some addresses` — some address ranges were not probed.
+`i2cdetect -y 1` shows **only one device responding on bus 1: address 0x4D.** Nothing at 0x4C or elsewhere.
 
-### REVID discrepancy (needs investigation)
+### CORRECTION: first dump used wrong register map
 
-**REVID at 0x4D reads 0x00**, but the kernel boot log reports `TPS68470 REVID: 0x21` for `i2c-INT3472:06`.
+The first version of `scripts/i2c-dump.sh` was built on an incorrect register map (addresses pulled from memory rather than the kernel header). It read REVID from 0x00 instead of 0xFF, voltage VAL/CTL registers from the 0x20-0x2D range instead of 0x3C-0x48, and mislabeled the GPIO registers.
 
-Possible explanations (not confirmed):
-- The kernel's regmap layer may use a different I2C transfer type than `i2cget`'s default SMBus byte read
-- The `int3472-tps68470` driver probe failure (no board data) may leave the device in an unexpected state
-- Register 0x00 may behave differently depending on the SMBus protocol used
+The script has been rewritten to use the correct addresses from `include/linux/mfd/tps68470.h`. **The first dump's voltage and identity analysis was wrong and should be disregarded.** The GPIO control register reads (0x14-0x1B) and the clock register reads (0x06-0x10) happened to be at the correct addresses but were mislabeled.
 
-**Action for colleague:** Check `journalctl -k -b | grep -i REVID` to confirm the 0x21 reading is from this boot. Also consider whether the kernel's regmap I2C reads differ from raw `i2cget -y 1 0x4d 0x00` — if the driver uses `regmap_read` with a different byte width, that could explain the discrepancy.
+**A new dump with the corrected script is needed** to get valid voltage register and REVID readings.
 
-Despite the REVID mystery, the non-zero register values form a consistent pattern that looks like real TPS68470 defaults, not noise. Analysis below proceeds on that assumption.
+### What the first (wrong-map) dump DID establish
 
-### Register dump results
+Despite the register map error, a few things are still valid:
 
-All CTL (control/enable) registers have bit 0 = 0, meaning **every regulator is disabled**. This is consistent with the driver failing before enabling power.
+1. **The device at 0x4D is alive and responding** on I2C bus 1
+2. **Clock registers** (0x06-0x10) were read at correct addresses: PLLCTL (0x0d) = 0x80, all others 0x00
+3. **S_I2C_CTL** (0x43) = 0x00 and **VACTL** (0x47) = 0x00 — these were at correct addresses, both disabled
+4. **GPIO control registers** (0x14-0x1B) were at correct addresses (but mislabeled):
+   - GPCTL0A (0x14) = 0x01, GPCTL0B (0x15) = 0x08
+   - GPCTL1A (0x16) = 0x01, GPCTL1B (0x17) = 0x08
+   - GPCTL2A (0x18) = 0x01, GPCTL2B (0x19) = 0x08
+   - GPCTL3A (0x1a) = 0x01, GPCTL3B (0x1b) = 0x08
 
-**Pre-programmed voltage values (VAL registers):**
+### REVID mystery resolved
 
-| Rail | Register | Value | Interpretation |
-|------|----------|-------|----------------|
-| VCORE | 0x20 | 0x01 | ~0.9V (near minimum) |
-| VANA | 0x22 | 0x00 | not programmed — needs AVDD ~2.8V for OV5675 |
-| VCM | 0x24 | 0x00 | not programmed (no VCM on this sensor) |
-| VIO | 0x26 | 0x69 | **~1.8V — matches OV5675 DOVDD** |
-| VSIO | 0x28 | 0x00 | not programmed |
-| VAUX1 | 0x2a | 0x0a | **~1.2V — matches OV5675 DVDD** |
-| VAUX2 | 0x2c | 0x00 | not programmed |
+The kernel driver reads REVID at **register 0xFF** (not 0x00). It also performs a software reset (`TPS68470_REG_RESET` at 0x50) before reading REVID. Our first dump read register 0x00 (which is not REVID) and got 0x00, which is just some unrelated register. There is no actual discrepancy — we simply never read the real REVID register.
 
-VIO and VAUX1 appear to have been initialized by BIOS/firmware with values that match the OV5675 datasheet-typical power rails. VANA (AVDD = 2.8V) still needs to be programmed by the driver.
+## Review of v1 Patch Candidate (commit 0452fe2)
 
-**GPIO state:**
+Reviewed `reference/patches/ms13q3-int3472-tps68470-v1.patch`, `docs/linux-board-data-candidate.md`, and `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/power-sequencing-notes.md`.
 
-| Register | Value | Meaning |
-|----------|-------|---------|
-| GPDI (0x14) | 0x01 | GPIO0 input reads HIGH |
-| GPDO (0x15) | 0x08 | GPIO3 output driven HIGH |
-| GPCTL0A (0x16) | 0x01 | GPIO pair 0 config A |
-| GPCTL0B (0x17) | 0x08 | GPIO pair 0 config B |
-| GPCTL1A (0x18) | 0x01 | GPIO pair 1 config A |
-| GPCTL1B (0x19) | 0x08 | GPIO pair 1 config B |
-| GPCTL2A (0x1a) | 0x01 | GPIO pair 2 config A |
-| GPCTL2B (0x1b) | 0x08 | GPIO pair 2 config B |
+### What's good
 
-All three GPIO pair control registers have the same 0x01/0x08 pattern. `GPDO` = 0x08 means **GPIO3 is being actively driven high** — this could be the sensor reset or powerdown line held in inactive state. Cross-reference with the Windows `IoActive_GPIO` disassembly (which touches GPCTL registers 0x16 and 0x18) to confirm which GPIO is used for sensor reset.
+1. **Patch structure is correct.** It follows the exact same pattern as Surface Go and Dell 7212 — regulator consumer supplies, init data, GPIO lookup table, board-data struct, and DMI match table entry.
+2. **`dev_name` is correct.** `"i2c-INT3472:06"` matches the live sysfs device.
+3. **Consumer device names are correct.** `"i2c-OVTI5675:00"` matches the live ACPI device.
+4. **Regulator-to-supply mapping is reasonable.** ANA→avdd, CORE→dvdd, VSIO→dovdd follows the same pattern as Surface Go's OmniVision sensor.
+5. **Voltage values are standard OV5675.** 2.8V/1.2V/1.8V match the datasheet.
+6. **VIO always-on at 1.8V** matches the Surface Go pattern for the sensor-I2C daisy chain.
+7. **DMI match uses three fields** (board vendor, product name, board name) for good specificity.
+8. **GPIO pin numbers (1 and 2) are correctly derived** from the Windows `IoActive_GPIO` disassembly touching registers 0x16 (GPCTL1A) and 0x18 (GPCTL2A). The kernel's `TPS68470_GPIO_CTL_REG_A(x) = 0x14 + x*2` formula confirms 0x16→GPIO1 and 0x18→GPIO2.
+9. **The patch validates** with `git apply --check` against v6.19.
 
-**Other non-zero registers:**
-- PLLCTL (0x0d) = 0x80 — PLL control, bit 7 set (likely bypass/disable)
-- VSIOCTL_H (0x31) = 0x38 — high byte of VSIO control
-- ILEDCTL (0x40) = 0x34 — LED control default
+### Concerns and risks
 
-### What this means for the board-data patch
+1. **GPIO1/GPIO2 role assignment is still a guess.** The patch maps GPIO1→reset, GPIO2→powerdown. The Windows driver touches both GPCTL1A and GPCTL2A, but the disassembly doesn't clearly show which is reset vs powerdown. If the first test fails, **swapping these is the first thing to try.**
 
-The register dump is **encouraging for the minimal-patch approach:**
+2. **`ov5675.c` only consumes `reset`, not `powerdown`.** The `powerdown` GPIO lookup is harmless (it won't be requested) but also won't be used. If the sensor needs powerdown asserted/deasserted during bring-up, this is a potential gap. The agent identified this risk clearly.
 
-1. **Two of three OV5675 voltage rails appear pre-programmed by firmware.** VIO (~1.8V) maps to DOVDD, VAUX1 (~1.2V) maps to DVDD. Only VANA (AVDD ~2.8V) needs explicit programming.
-2. **All regulators are disabled** — the Linux driver just needs to enable the right ones. No risk of conflicting with already-active rails.
-3. **GPIO3 is driven high at reset** — most likely the sensor reset or powerdown line. The board-data GPIO lookup should reference this pin. Compare with Surface Go which uses GPIO9 for reset and GPIO7 for powerdown.
+3. **PowerOn cross-references point to UF-named helper addresses.** The power-sequencing notes show that `Tps68470VoltageWF::PowerOn` dispatches to helpers whose addresses cross-reference to `Tps68470VoltageUF::SetVACtl`, etc. This is worth noting if deeper register-level debugging is needed, but the working analysis is correctly built around the WF call chain and should not be shifted based on naming alone.
 
-### Remaining uncertainties for colleague
+4. **Minor doc error in power-sequencing-notes.md:** States `VDCTL 0x48, S_I2C_CTL 0x43, and VCMCTL 0x44` — the 0x48 for VDCTL is correct per the kernel header, but the earlier reverse-engineering doc (`tps68470-reverse-engineering.md`) lists `VDCTL 0x46` which is actually VAUX2CTL. This inconsistency should be cleaned up. (Doesn't affect the patch — the Linux framework uses named constants, not raw addresses.)
 
-These are the open questions we could not resolve from the review session:
+### Verdict
 
-1. **REVID 0x00 vs 0x21** — is this an I2C protocol difference, a post-probe state issue, or something else? Does the kernel regmap use a different read method? This doesn't block the board-data work but should be understood.
-2. **Exact rail-to-consumer mapping** — VIO and VAUX1 have plausible defaults, but which TPS68470 rail the Linux board-data should wire to each OV5675 supply name (`avdd`/`dovdd`/`dvdd`) should be confirmed against the Windows VoltageWF/UF extraction. A reasonable first guess:
-   - `TPS68470_ANA` → `avdd` (2.8V, needs programming)
-   - `TPS68470_VIO` or `TPS68470_VSIO` → `dovdd` (1.8V, VIO already at 0x69)
-   - `TPS68470_VAUX1` or `TPS68470_CORE` → `dvdd` (1.2V, VAUX1 already at 0x0a)
-3. **Which GPIO pin is reset** — GPIO3 (driven high in GPDO) is the strongest candidate but this should be confirmed from the Windows driver's `IoActive_GPIO` register writes or ACPI `_DSD` data.
-4. **VoltageWF vs VoltageUF** — which Windows voltage class applies to this front-facing camera? This determines which disasm artifacts contain the actual sequencing for this sensor.
-5. **Exact DMI vendor string** — still needs `cat /sys/class/dmi/id/sys_vendor` for the patch.
+**The patch is a sound first test candidate.** The structure is correct, the evidence trail is well-documented, and the main risks are clearly identified. The most likely failure mode is GPIO role assignment (reset vs powerdown swap), not a fundamental mapping error.
+
+**Recommended test sequence remains:**
+
+1. Apply patch to a kernel tree and build
+2. Boot patched kernel
+3. Run `scripts/webcam-run.sh snapshot` and `reprobe-modules`
+4. Check whether `No board-data found for this model` is gone
+5. Check whether `ov5675` appears in the media graph
+6. If it fails, first try swapping GPIO1↔GPIO2 roles
+
+**Before testing, also run the corrected `scripts/i2c-dump.sh`** to get valid voltage register readings from 0x3C-0x48 and the real REVID from 0xFF. This will confirm whether firmware has pre-programmed any voltage values and give a clean baseline.
 
 ## Summary
 
-The research is on the right track. The main observation is that the **actual data needed for a first testable patch is quite small** — voltage values for 3 rails, one GPIO pin number, and DMI strings. The extensive Windows driver RE is excellent insurance if the obvious values don't work, but the priority should be getting a board-data entry drafted and tested via the reprobe harness sooner rather than completing every VoltageWF method first. A wrong-but-close first attempt that gets `ov5675` to appear in the media graph (even if it doesn't stream) would be a huge signal.
+The research is on the right track. The v1 patch candidate is structurally sound and ready for a first live test. The main observation from this review is that the **actual data needed is small** — voltage values for 3 rails, GPIO pin numbers, and DMI strings — and the patch correctly captures all of these based on the available evidence.
 
-The live register dump reinforces this: firmware has already partially set up the PMIC with sensible defaults for OV5675-compatible voltages. The Linux board-data patch likely just needs to enable those rails and wire the GPIO correctly.
+The live I2C dump script had a register map error that invalidated the voltage and REVID analysis. The script is now fixed. A re-run is needed before the first patched test to establish a valid register baseline.

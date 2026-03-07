@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Read-only dump of TPS68470 registers on i2c-1 for the MSI Prestige 13 A2VMG.
 # Must be run as root. All operations are i2cget (read-only).
+#
+# Register map from include/linux/mfd/tps68470.h in the kernel tree.
 set -euo pipefail
 
 BUS=1
@@ -29,11 +31,11 @@ i2cdetect -y "$BUS"
 echo ""
 
 # Try both possible TPS68470 addresses (0x4C with A0=0, 0x4D with A0=1)
+# REVID is at register 0xFF per tps68470.h
 ADDR=""
 for candidate in 0x4c 0x4d; do
-  val=$(i2cget -y "$BUS" "$candidate" 0x00 2>&1) && {
-    echo "Found responding device at $candidate, REVID=$val"
-    # TPS68470 REVID should be 0x21
+  val=$(i2cget -y "$BUS" "$candidate" 0xff 2>&1) && {
+    echo "Found responding device at $candidate, REVID(0xff)=$val"
     if [[ "$val" == "0x21" ]]; then
       ADDR=$candidate
       echo "  -> matches TPS68470 REVID 0x21"
@@ -54,98 +56,70 @@ fi
 echo "Using addr=$ADDR"
 echo ""
 
-# Read REVID
+# Helper
+read_reg() {
+  local reg=$1 name=$2
+  val=$(i2cget -y $BUS $ADDR "$reg" 2>&1) || val="ERROR"
+  printf "%-16s(%s) = %s\n" "$name" "$reg" "$val"
+}
+
+# Identity
 echo "--- Identity ---"
-REVID=$(i2cget -y $BUS $ADDR 0x00 2>&1) || { echo "FAIL: cannot read REVID at $ADDR on bus $BUS"; exit 1; }
-echo "REVID           (0x00) = $REVID"
+read_reg 0xff REVID
+read_reg 0x50 RESET
 
 echo ""
 echo "--- Clock registers ---"
-for reg in 0x06 0x07 0x08 0x09 0x0a 0x0b 0x0c 0x0d 0x0f 0x10; do
-  val=$(i2cget -y $BUS $ADDR $reg 2>&1) || val="ERROR"
-  case $reg in
-    0x06) name="POSTDIV2" ;;
-    0x07) name="BOOSTDIV" ;;
-    0x08) name="BUCKDIV"  ;;
-    0x09) name="PLLSWR"   ;;
-    0x0a) name="XTALDIV"  ;;
-    0x0b) name="PLLDIV"   ;;
-    0x0c) name="POSTDIV"  ;;
-    0x0d) name="PLLCTL"   ;;
-    0x0f) name="PLLCTL2"  ;;
-    0x10) name="CLKCFG2"  ;;
-    *)    name="unknown"   ;;
-  esac
-  printf "%-16s(%s) = %s\n" "$name" "$reg" "$val"
-done
+read_reg 0x06 POSTDIV2
+read_reg 0x07 BOOSTDIV
+read_reg 0x08 BUCKDIV
+read_reg 0x09 PLLSWR
+read_reg 0x0a XTALDIV
+read_reg 0x0b PLLDIV
+read_reg 0x0c POSTDIV
+read_reg 0x0d PLLCTL
+read_reg 0x0e PLLCTL2
+read_reg 0x0f CLKCFG1
+read_reg 0x10 CLKCFG2
+
+echo ""
+echo "--- GPIO control registers (7 regular GPIOs: 0-6) ---"
+read_reg 0x14 GPCTL0A
+read_reg 0x15 GPCTL0B
+read_reg 0x16 GPCTL1A
+read_reg 0x17 GPCTL1B
+read_reg 0x18 GPCTL2A
+read_reg 0x19 GPCTL2B
+read_reg 0x1a GPCTL3A
+read_reg 0x1b GPCTL3B
+read_reg 0x1c GPCTL4A
+read_reg 0x1d GPCTL4B
+read_reg 0x1e GPCTL5A
+read_reg 0x1f GPCTL5B
+read_reg 0x20 GPCTL6A
+read_reg 0x21 GPCTL6B
+read_reg 0x22 SGPO
+read_reg 0x26 GPDI
+read_reg 0x27 GPDO
+
+echo ""
+echo "--- Regulator value registers ---"
+read_reg 0x3c VCMVAL
+read_reg 0x3d VAUX1VAL
+read_reg 0x3e VAUX2VAL
+read_reg 0x3f VIOVAL
+read_reg 0x40 VSIOVAL
+read_reg 0x41 VAVAL
+read_reg 0x42 VDVAL
 
 echo ""
 echo "--- Regulator control registers ---"
-for reg in 0x20 0x21 0x22 0x23 0x24 0x25 0x26 0x27 0x28 0x29 0x2a 0x2b 0x2c 0x2d 0x2e 0x2f 0x30 0x31 0x32 0x33 0x34 0x43 0x46 0x47; do
-  val=$(i2cget -y $BUS $ADDR $reg 2>&1) || val="ERROR"
-  case $reg in
-    0x20) name="VCOREVAL"  ;;
-    0x21) name="VCORECTL"  ;;
-    0x22) name="VANAVAL"   ;;
-    0x23) name="VANACTL"   ;;
-    0x24) name="VCMVAL"    ;;
-    0x25) name="VCMCTL"    ;;
-    0x26) name="VIOVAL"    ;;
-    0x27) name="VIOCTL"    ;;
-    0x28) name="VSIOVAL"   ;;
-    0x29) name="VSIOCTL"   ;;
-    0x2a) name="VAUX1VAL"  ;;
-    0x2b) name="VAUX1CTL"  ;;
-    0x2c) name="VAUX2VAL"  ;;
-    0x2d) name="VAUX2CTL"  ;;
-    0x2e) name="VIOVAL_H"  ;;
-    0x2f) name="VIOCTL_H"  ;;
-    0x30) name="VSIOVAL_H" ;;
-    0x31) name="VSIOCTL_H" ;;
-    0x32) name="VAUX1VAL_H";;
-    0x33) name="VAUX1CTL_H";;
-    0x34) name="VAUX2VAL_H";;
-    0x43) name="S_I2C_CTL" ;;
-    0x46) name="VDCTL"     ;;
-    0x47) name="VACTL"     ;;
-    *)    name="reg"       ;;
-  esac
-  printf "%-16s(%s) = %s\n" "$name" "$reg" "$val"
-done
-
-echo ""
-echo "--- GPIO registers ---"
-for reg in 0x14 0x15 0x16 0x17 0x18 0x19 0x1a 0x1b; do
-  val=$(i2cget -y $BUS $ADDR $reg 2>&1) || val="ERROR"
-  case $reg in
-    0x14) name="GPDI"    ;;
-    0x15) name="GPDO"    ;;
-    0x16) name="GPCTL0A" ;;
-    0x17) name="GPCTL0B" ;;
-    0x18) name="GPCTL1A" ;;
-    0x19) name="GPCTL1B" ;;
-    0x1a) name="GPCTL2A" ;;
-    0x1b) name="GPCTL2B" ;;
-    *)    name="reg"     ;;
-  esac
-  printf "%-16s(%s) = %s\n" "$name" "$reg" "$val"
-done
-
-echo ""
-echo "--- Misc / status ---"
-for reg in 0x01 0x40 0x41 0x42 0x44 0x45; do
-  val=$(i2cget -y $BUS $ADDR $reg 2>&1) || val="ERROR"
-  case $reg in
-    0x01) name="STBYCTL1"  ;;
-    0x40) name="ILEDCTL"   ;;
-    0x41) name="FLED_IOUT" ;;
-    0x42) name="TLED_IOUT" ;;
-    0x44) name="WLED_IOUT" ;;
-    0x45) name="WLED_FREQ" ;;
-    *)    name="reg"       ;;
-  esac
-  printf "%-16s(%s) = %s\n" "$name" "$reg" "$val"
-done
+read_reg 0x43 S_I2C_CTL
+read_reg 0x44 VCMCTL
+read_reg 0x45 VAUX1CTL
+read_reg 0x46 VAUX2CTL
+read_reg 0x47 VACTL
+read_reg 0x48 VDCTL
 
 echo ""
 echo "=== Done ==="
