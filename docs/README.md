@@ -1,0 +1,33 @@
+# Docs Index
+
+Current focus:
+
+- Restart capsule: `../state/CONTEXT.md`
+- Active plan: `../PLAN.md`
+- Active work log: `../WORKLOG.md`
+- Current technical status: `docs/webcam-status.md`
+
+## Core Docs
+
+- `docs/webcam-status.md` — current Linux webcam support assessment for this laptop
+
+## Repo-Level Control Docs
+
+- `../state/CONTEXT.md` — one-screen restart capsule with current objective and next actions
+- `../PLAN.md` — active investigation plan and task queue
+- `../WORKLOG.md` — reverse-chronological record of work performed
+- `../AGENTS.md` — repo workflow guide
+- `../README.md` — repo entrypoint and layout
+
+## References
+
+- `../reference/README.md` — index of captured upstream sources
+
+## Expected Growth
+
+As the investigation expands, add new synthesized notes here rather than burying them in ad-hoc root files. Likely future docs:
+
+- patch design notes
+- kernel-version comparison notes
+- Windows package reverse-engineering notes
+- media-graph and validation logs
