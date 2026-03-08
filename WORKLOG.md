@@ -2,6 +2,65 @@
 
 ## 2026-03-09
 
+### Record the negative first polarity clean boot and prepare the other-line follow-up
+
+- Plan: review the first polarity clean-boot result, record whether it moved
+  the failure, and if it did not, pivot the patch stack to the other smallest
+  physical-line polarity variant while keeping the kernel-tree workflow
+  repeatable.
+- Commands:
+  - reviewed the clean-boot result:
+    - `sed -n '1,220p' runs/2026-03-09/20260309T030403-snapshot-powerdown-active-high-v1/focused-summary.txt`
+    - `journalctl -b -k --no-pager | rg 'ov5675|OVTI5675|INT3472|i2c_designware|ETIMEDOUT|Failed to enable|failed to disable|regulator'`
+  - `apply_patch` adding and updating:
+    - `reference/patches/ms13q3-int3472-gpio1-powerdown-active-high-v1.patch`
+    - `docs/int3472-gpio1-powerdown-active-high-followup.md`
+    - `docs/int3472-gpio-polarity-followup.md`
+    - `scripts/patch-kernel.sh`
+    - `docs/patch-kernel-workflow.md`
+    - `docs/module-iteration.md`
+    - `docs/README.md`
+    - `README.md`
+    - `docs/webcam-status.md`
+    - `docs/wf-vs-uf-gpio-analysis.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+  - validated the new candidate:
+    - `bash -n scripts/patch-kernel.sh`
+    - `scripts/patch-kernel.sh --profile candidate --status`
+    - temporary-tree validation:
+      - `git clone --shared --quiet ~/.cache/paru/clone/linux-mainline/src/linux-mainline ...`
+      - `git -C <tmp-tree> apply reference/patches/ms13q3-int3472-tps68470-v1.patch`
+      - `git -C <tmp-tree> apply --check reference/patches/ms13q3-int3472-gpio1-powerdown-active-high-v1.patch`
+- Result:
+  - the first one-line polarity clean boot was a real negative result:
+    - `OVTI5675:00` is still found
+    - chip-ID read attempts `1/5` through `5/5` still fail with `-110`
+    - `ov5675` remains unbound
+    - there are still no `/dev/v4l-subdev*` nodes
+  - that run also showed an early `-EPROBE_DEFER` path:
+    - `cannot find GPIO chip tps68470-gpio, deferring`
+    - `failed to get reset-gpios: -517`
+    - but probe retried and still reached the same clean-boot identify timeout
+  - the next smallest physical-line experiment is now:
+    - `GPIO1` => `powerdown`, `GPIO_ACTIVE_HIGH`
+    - `GPIO2` => `reset`, `GPIO_ACTIVE_LOW`
+  - this should be read as "other PMIC line active-high", not as strong proof
+    that Linux now knows the true semantic roles
+  - the first status pass exposed a real workflow bug:
+    - `patch-kernel.sh` normalized the old `gpio-swap` follow-up
+    - but returned early and failed to normalize the newer superseded
+      `powerdown-active-high` patch
+  - that bug is now fixed:
+    - `scripts/patch-kernel.sh --profile candidate --status` reports the new
+      `ms13q3-gpio1-powerdown-active-high` follow-up as `applicable` on the
+      current dirty kernel tree
+- Decision:
+  - treat the first `GPIO2`-active-high polarity run as negative
+  - use the `GPIO1`-active-high physical-line variant as the next module-only
+    clean-boot test
+
 ### Prepare the next `INT3472` polarity follow-up after the negative `gpio-swap-v1` run
 
 - Plan: turn the next meaningful board-data experiment into a repeatable repo

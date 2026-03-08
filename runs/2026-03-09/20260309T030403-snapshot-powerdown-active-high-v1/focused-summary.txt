@@ -1,0 +1,23 @@
+Source: scripts/01-clean-boot-check.sh
+Purpose: capture the clean-boot checkpoint for the webcam bring-up path
+
+High-value boot log lines:
+Mar 09 03:03:17 p13 kernel: intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00
+Mar 09 03:03:17 p13 kernel: intel-ipu7 0000:00:05.0: Connected 1 cameras
+Mar 09 03:03:17 p13 kernel: int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21
+Mar 09 03:03:20 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -110
+Mar 09 03:03:21 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -110
+Mar 09 03:03:22 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -110
+Mar 09 03:03:23 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -110
+Mar 09 03:03:24 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -110
+Mar 09 03:03:24 p13 kernel: ov5675 i2c-OVTI5675:00: failed to find sensor: -110
+Mar 09 03:03:31 p13 kernel: ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110
+
+INT3472 driver state:
+/sys/bus/i2c/drivers/int3472-tps68470
+
+OV5675 driver state:
+ov5675-unbound
+
+v4l-subdev nodes:
+(none)

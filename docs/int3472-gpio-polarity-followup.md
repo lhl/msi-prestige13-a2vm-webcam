@@ -131,3 +131,33 @@ scripts/01-clean-boot-check.sh \
   --label powerdown-active-high-v1 \
   --note "fresh boot after INT3472 powerdown active-high follow-up"
 ```
+
+## Actual Clean-Boot Result
+
+Run:
+
+- `runs/2026-03-09/20260309T030403-snapshot-powerdown-active-high-v1/focused-summary.txt`
+
+Observed result:
+
+- `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+- `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+- `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+- `ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -110`
+- `... 5/5 failed: -110`
+- `ov5675 i2c-OVTI5675:00: failed to find sensor: -110`
+- `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
+
+Additional boot-log detail:
+
+- `ov5675 i2c-OVTI5675:00: cannot find GPIO chip tps68470-gpio, deferring`
+- `ov5675 i2c-OVTI5675:00: failed to get reset-gpios: -517`
+
+That early `-EPROBE_DEFER` path is not the final blocker here; probe retries
+and still reaches the same clean-boot chip-ID timeout.
+
+Result:
+
+- this first polarity variant is a negative result
+- the remaining next smallest physical-line experiment is to move the
+  active-high `powerdown`-style behavior onto `GPIO1` instead of `GPIO2`

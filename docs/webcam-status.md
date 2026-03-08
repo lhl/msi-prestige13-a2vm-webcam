@@ -91,6 +91,22 @@ Additional live evidence on the patched kernel:
   - with the current `ov5675` power sequence, a pure label swap on two
     `GPIO_ACTIVE_LOW` lines is close to a physical no-op, because both control
     lines are driven together
+- on the next clean boot with the first polarity follow-up
+  (`GPIO2` `powerdown` => `GPIO_ACTIVE_HIGH`):
+  - `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+  - `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+  - `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: failed to find sensor: -110`
+  - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
+- that first polarity run also showed an early `-EPROBE_DEFER` path:
+  - `cannot find GPIO chip tps68470-gpio, deferring`
+  - `failed to get reset-gpios: -517`
+  - but probe retried and still ended at the same clean-boot identify timeout
 - the old clean-boot `Failed to enable dvdd: -ETIMEDOUT` line is gone
 - the media graph still has no sensor entity
 - there are still no `/dev/v4l-subdev*` nodes
@@ -123,6 +139,11 @@ Those lines and checks are the current high-value signal. They mean:
    - with the current `ov5675.c` power-on logic, both control lines are
      toggled in lockstep
    - that makes a label-only swap low-signal unless polarity also changes
+9. The first one-line polarity follow-up was also a negative result:
+   - moving the active-high `powerdown` behavior onto `GPIO2` did not move the
+     clean-boot `-110` timeout
+   - the next smallest physical-line test is now the same active-high behavior
+     on `GPIO1`
 
 ## Assessment
 
@@ -149,8 +170,11 @@ board-data matching.
   - the current `ov5675` power sequence drives both control lines together, so
     swapping names without changing polarity does not materially alter the
     pin-level sequence
+- The first one-line polarity follow-up was also negative:
+  - moving the active-high waveform onto `GPIO2` did not change the clean-boot
+    identify failure
 - The leading remaining local possibilities are now:
-  - remaining `GPIO1` / `GPIO2` polarity detail
+  - remaining physical-line polarity detail on the other PMIC GPIO
   - remaining `GPIO1` / `GPIO2` electrical behavior beyond the current
     label-only approximation
   - remaining board-data regulator / consumer / sequencing detail
@@ -216,6 +240,9 @@ that:
 - the next clean boot with the `INT3472` role-swap follow-up was a negative
   result and effectively showed that the next useful board-data space is
   polarity, not more label-only swaps
+- the next clean boot with the first `GPIO2`-active-high polarity follow-up was
+  also negative and leaves the other physical-line polarity variant as the next
+  smallest board-data test
 - the sensor still does not appear as a media subdevice
 - the camera still does not work in userspace
 
@@ -233,9 +260,9 @@ that:
   - board-data regulator consumer mapping
   - remaining PMIC or sensor wake-up sequencing detail
 - Current concrete next candidate:
-  - `reference/patches/ms13q3-int3472-powerdown-active-high-v1.patch`
-  - keep `GPIO1` as `reset`, `GPIO_ACTIVE_LOW`
-  - change `GPIO2` `powerdown` to `GPIO_ACTIVE_HIGH`
+  - `reference/patches/ms13q3-int3472-gpio1-powerdown-active-high-v1.patch`
+  - move the active-high `powerdown`-style behavior onto `GPIO1`
+  - keep `GPIO2` as the active-low companion line
 - Re-test with:
   - `journalctl -k -b | rg 'tps68470|ipu7|ov5675'`
   - `media-ctl -p -d /dev/media0`

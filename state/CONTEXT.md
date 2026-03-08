@@ -72,6 +72,15 @@ with strong evidence.
   - `... 5/5 failed: -110`
   - `ov5675 i2c-OVTI5675:00: failed to find sensor: -110`
   - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
+- Clean boot with the first polarity follow-up
+  (`GPIO2` `powerdown` => `GPIO_ACTIVE_HIGH`):
+  - `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+  - `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+  - `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -110`
+  - `... 5/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: failed to find sensor: -110`
+  - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
 - Conclusion:
   - the clean-boot identify-debug run replaced the old ambiguous `-5` result
     with the real remaining sensor-side error
@@ -80,8 +89,9 @@ with strong evidence.
   - the clean-boot `gpio-swap-v1` run was negative and also clarified that
     pure label swaps are low-signal with the current `ov5675` power sequence,
     because both control lines are driven in lockstep
-  - the next likely patch space is now `GPIO1` / `GPIO2` polarity or
-    remaining PMIC wake-up sequencing, not mere identify retries
+  - the first one-line polarity follow-up on `GPIO2` was also negative
+  - the next likely patch space is now the other physical-line polarity
+    variant or remaining PMIC wake-up sequencing, not mere identify retries
   - the newer Windows-helper analysis does show a separate `UF` path that
     touches what Linux would call `gpio.4`, but current ACPI evidence still
     keeps this laptop aligned with the `WF` / `LNK0` path
@@ -101,14 +111,14 @@ with strong evidence.
 5. Keep clean-boot checkpoints as the primary truth source. Reload-only checks
    are still secondary once the boot-time path has already failed.
 6. Immediate next module-only test:
-   - apply `reference/patches/ms13q3-int3472-powerdown-active-high-v1.patch`
+   - apply `reference/patches/ms13q3-int3472-gpio1-powerdown-active-high-v1.patch`
    - keep the same two PMIC lines
-   - keep `GPIO1` as `reset`, `GPIO_ACTIVE_LOW`
-   - change `GPIO2` `powerdown` to `GPIO_ACTIVE_HIGH`
+   - move the active-high `powerdown`-style behavior onto `GPIO1`
+   - keep `GPIO2` as the active-low companion line
    - rebuild only `drivers/platform/x86/intel/int3472`
    - replace `intel_skl_int3472_tps68470.ko.zst`
    - reboot
-   - run `scripts/01-clean-boot-check.sh --label powerdown-active-high-v1`
+   - run `scripts/01-clean-boot-check.sh --label gpio1-powerdown-active-high-v1`
 
 ## Key Paths
 
@@ -128,5 +138,6 @@ with strong evidence.
 - `WF` vs `UF` Windows helper analysis:
   - `docs/wf-vs-uf-gpio-analysis.md`
 - Next board-data follow-up:
+  - `docs/int3472-gpio1-powerdown-active-high-followup.md`
   - `docs/int3472-gpio-polarity-followup.md`
   - `docs/int3472-gpio-swap-followup.md`

@@ -1,0 +1,4 @@
+CMD: git_safe status --short
+?? runs/2026-03-09/20260309T030403-snapshot-powerdown-active-high-v1/
+
+EXIT_STATUS: 0

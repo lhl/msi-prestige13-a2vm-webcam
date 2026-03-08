@@ -15,7 +15,7 @@ ordered stack:
 - MSI `INT3472` / `TPS68470` board-data
 - `ipu-bridge` `OVTI5675` support
 - `ov5675` serial power-on order
-- current follow-up candidate: MSI `INT3472` `powerdown` polarity follow-up
+- current follow-up candidate: MSI `INT3472` `GPIO1` active-high follow-up
 
 Applying those by hand every time is error-prone, especially because some of
 them are already present in a dirty kernel tree while others may still be
@@ -35,7 +35,7 @@ Applies only the patches that have already produced clean-boot progress:
 
 Applies the `tested` stack plus the current unvalidated follow-up:
 
-- `ms13q3-int3472-powerdown-active-high-v1.patch`
+- `ms13q3-int3472-gpio1-powerdown-active-high-v1.patch`
 
 Use this when you want the repo’s current best branch, not just the last fully
 validated stack.
@@ -62,8 +62,10 @@ stack is present.
 The script also knows how to normalize one older superseded follow-up:
 
 - if the local kernel tree still has `ms13q3-int3472-gpio-swap-v1.patch`
-  applied, `candidate` mode reverses that first and then applies the new
-  polarity candidate
+  applied, `candidate` mode reverses that first
+- if the local kernel tree still has
+  `ms13q3-int3472-powerdown-active-high-v1.patch` applied, `candidate` mode
+  also reverses that before applying the new follow-up
 
 ## Usage
 
@@ -106,5 +108,5 @@ For this repo today:
 
 - `tested` is the last stack that clearly moved the clean-boot failure forward
   to sensor identification
-- `candidate` is `tested` plus the current `INT3472` `powerdown` polarity
+- `candidate` is `tested` plus the current `INT3472` `GPIO1` active-high
   follow-up

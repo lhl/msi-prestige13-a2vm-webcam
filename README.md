@@ -26,7 +26,8 @@ Machine under test:
 - [`docs/reprobe-harness.md`](./docs/reprobe-harness.md) — safe snapshot/reprobe harness and run capture workflow
 - [`docs/tps68470-reverse-engineering.md`](./docs/tps68470-reverse-engineering.md) — canonical ACPI plus Windows-control-logic reverse-engineering note
 - [`docs/linux-board-data-candidate.md`](./docs/linux-board-data-candidate.md) — current Linux patch candidate and first live-test criteria
-- [`docs/int3472-gpio-polarity-followup.md`](./docs/int3472-gpio-polarity-followup.md) — next `INT3472` board-data polarity test on the existing `GPIO1` / `GPIO2` pair
+- [`docs/int3472-gpio1-powerdown-active-high-followup.md`](./docs/int3472-gpio1-powerdown-active-high-followup.md) — next `INT3472` physical-line polarity test after the first negative polarity result
+- [`docs/int3472-gpio-polarity-followup.md`](./docs/int3472-gpio-polarity-followup.md) — earlier negative first `INT3472` polarity test on the existing `GPIO1` / `GPIO2` pair
 - [`docs/int3472-gpio-swap-followup.md`](./docs/int3472-gpio-swap-followup.md) — earlier negative `INT3472` board-data role-swap test on the existing `GPIO1` / `GPIO2` pair
 - [`docs/module-iteration.md`](./docs/module-iteration.md) — faster module-only rebuild/install workflow for camera-path kernel changes
 - [`docs/ov5675-diagnostic-patch.md`](./docs/ov5675-diagnostic-patch.md) — first `ov5675` diagnostic patch and exact module-only test flow
@@ -122,7 +123,8 @@ msi-prestige13-a2vm-webcam/
 - [`docs/reprobe-harness.md`](./docs/reprobe-harness.md) — safe module reprobe/capture workflow for repeatable experiments
 - [`docs/tps68470-reverse-engineering.md`](./docs/tps68470-reverse-engineering.md) — canonical reverse-engineering note for ACPI plus Windows `iactrllogic64.sys`
 - [`docs/linux-board-data-candidate.md`](./docs/linux-board-data-candidate.md) — current MSI `tps68470_board_data` hypothesis and first patched-test plan
-- [`docs/int3472-gpio-polarity-followup.md`](./docs/int3472-gpio-polarity-followup.md) — next `INT3472` board-data polarity test on the existing `GPIO1` / `GPIO2` pair
+- [`docs/int3472-gpio1-powerdown-active-high-followup.md`](./docs/int3472-gpio1-powerdown-active-high-followup.md) — next `INT3472` physical-line polarity test after the first negative polarity result
+- [`docs/int3472-gpio-polarity-followup.md`](./docs/int3472-gpio-polarity-followup.md) — earlier negative first `INT3472` polarity test on the existing `GPIO1` / `GPIO2` pair
 - [`docs/int3472-gpio-swap-followup.md`](./docs/int3472-gpio-swap-followup.md) — earlier negative `INT3472` board-data role-swap test on the existing `GPIO1` / `GPIO2` pair
 - [`docs/module-iteration.md`](./docs/module-iteration.md) — module-only rebuild/install workflow for camera-path iteration
 - [`docs/ov5675-diagnostic-patch.md`](./docs/ov5675-diagnostic-patch.md) — first `ov5675` diagnostic patch and exact module-only test flow
@@ -146,7 +148,8 @@ msi-prestige13-a2vm-webcam/
 - [`reference/tps68470.pdf`](./reference/tps68470.pdf) — local TPS68470 datasheet copy
 - [`reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/README.md`](./reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/README.md) — repeatable static-analysis artifacts for the MSI Windows control-logic driver
 - [`reference/patches/ms13q3-int3472-tps68470-v1.patch`](./reference/patches/ms13q3-int3472-tps68470-v1.patch) — current first-pass Linux board-data patch candidate
-- [`reference/patches/ms13q3-int3472-powerdown-active-high-v1.patch`](./reference/patches/ms13q3-int3472-powerdown-active-high-v1.patch) — current board-data polarity follow-up that flips the `powerdown` line to `GPIO_ACTIVE_HIGH`
+- [`reference/patches/ms13q3-int3472-gpio1-powerdown-active-high-v1.patch`](./reference/patches/ms13q3-int3472-gpio1-powerdown-active-high-v1.patch) — current board-data physical-line polarity follow-up that moves the active-high `powerdown` behavior onto `GPIO1`
+- [`reference/patches/ms13q3-int3472-powerdown-active-high-v1.patch`](./reference/patches/ms13q3-int3472-powerdown-active-high-v1.patch) — earlier negative first board-data polarity follow-up that flipped `GPIO2` `powerdown` to `GPIO_ACTIVE_HIGH`
 - [`reference/patches/ms13q3-int3472-gpio-swap-v1.patch`](./reference/patches/ms13q3-int3472-gpio-swap-v1.patch) — earlier negative board-data follow-up that swapped `GPIO1` / `GPIO2` roles for `OVTI5675`
 - [`reference/windows-driver-packages/README.md`](./reference/windows-driver-packages/README.md) — vendored Windows package archive and extracted-tree index
 - [`runs/README.md`](./runs/README.md) — run archive layout for timestamped probe batches

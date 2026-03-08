@@ -14,7 +14,8 @@ Current focus:
 - `docs/reprobe-harness.md` — safe snapshot/reprobe script and run-capture workflow
 - `docs/tps68470-reverse-engineering.md` — canonical note for ACPI capture plus Windows `iactrllogic64.sys` analysis
 - `docs/linux-board-data-candidate.md` — current MSI `tps68470_board_data` hypothesis and first patched-test plan
-- `docs/int3472-gpio-polarity-followup.md` — current `INT3472` polarity follow-up for the existing `GPIO1` / `GPIO2` pair
+- `docs/int3472-gpio1-powerdown-active-high-followup.md` — current `INT3472` physical-line polarity follow-up after the first negative polarity result
+- `docs/int3472-gpio-polarity-followup.md` — earlier negative first `INT3472` polarity follow-up
 - `docs/int3472-gpio-swap-followup.md` — earlier negative `INT3472` board-data role-swap test on the existing `GPIO1` / `GPIO2` pair
 - `docs/module-iteration.md` — faster module-only rebuild/install workflow for camera-path changes
 - `docs/ov5675-diagnostic-patch.md` — first `ov5675` probe-logging patch and exact module-only test steps

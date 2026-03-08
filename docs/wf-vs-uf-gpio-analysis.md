@@ -170,3 +170,6 @@ Then prefer the next smallest Linux experiments in this order:
 
 - board-data polarity experiments
 - remaining `WF`-side sequencing or delay detail
+
+After the first one-line polarity follow-up on `GPIO2`, the smallest remaining
+board-data experiment is now the same active-high behavior on `GPIO1`.

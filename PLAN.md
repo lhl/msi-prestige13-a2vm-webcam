@@ -135,14 +135,14 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
     caused by `GPIO1` / `GPIO2` polarity, or a still-missing PMIC
     wake-up step
 - Immediate next candidate:
-  - `reference/patches/ms13q3-int3472-powerdown-active-high-v1.patch`
+  - `reference/patches/ms13q3-int3472-gpio1-powerdown-active-high-v1.patch`
   - keep the existing `WF` / `LNK0` board-data structure
-  - keep `GPIO1` => `reset`, `GPIO_ACTIVE_LOW`
-  - change `GPIO2` => `powerdown`, `GPIO_ACTIVE_HIGH`
+  - move the active-high `powerdown`-style behavior onto `GPIO1`
+  - keep `GPIO2` as the active-low companion line
   - keep the experiment module-local with a rebuild of
     `intel_skl_int3472_tps68470.ko`
   - validate on a clean boot with
-    `scripts/01-clean-boot-check.sh --label powerdown-active-high-v1`
+    `scripts/01-clean-boot-check.sh --label gpio1-powerdown-active-high-v1`
 - Is there any vendor firmware or Intel middleware dependency beyond standard kernel and firmware files?
 - Does this machine correspond to the Windows driver's `VoltageWF` path, `VoltageUF` path, or a narrower subclass selected via ACPI / board config?
 

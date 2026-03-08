@@ -147,8 +147,10 @@ See also:
 
 - `docs/patch-kernel-workflow.md` for the idempotent patch-stack applicator and
   `tested` vs `candidate` profiles
-- `docs/int3472-gpio-polarity-followup.md` for the current module-only
-  `INT3472` polarity experiment
+- `docs/int3472-gpio1-powerdown-active-high-followup.md` for the current
+  module-only `INT3472` physical-line polarity experiment
+- `docs/int3472-gpio-polarity-followup.md` for the earlier negative first
+  polarity variant
 - `docs/int3472-gpio-swap-followup.md` for the earlier negative role-swap test
 - `docs/ov5675-diagnostic-patch.md` for the first concrete `ov5675` probe-log
   patch and an exact test sequence
