@@ -2,6 +2,79 @@
 
 ## 2026-03-09
 
+### Analyze the Windows `WF` vs `UF` helper split before changing Linux GPIO wiring
+
+- Plan: inspect the newer clean-boot `-110` identify-timeout baseline against
+  the Windows helper-family split, then document whether the next Linux follow
+  up should still stay on the current `GPIO1` / `GPIO2` model or whether the
+  evidence now justifies a different PMIC GPIO path.
+- Commands:
+  - reviewed the current repo state and entrypoint docs:
+    - `git status -sb`
+    - `sed -n '1,240p' state/CONTEXT.md`
+    - `sed -n '1,220p' PLAN.md`
+    - `sed -n '1,220p' WORKLOG.md`
+    - `sed -n '1,260p' docs/webcam-status.md`
+    - `sed -n '1,220p' README.md`
+    - `sed -n '1,220p' docs/README.md`
+  - reviewed the current Windows sequencing note:
+    - `sed -n '1,240p' reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/power-sequencing-notes.md`
+  - reviewed the current Linux MSI board-data and TPS68470 GPIO numbering:
+    - `sed -n '330,430p' ~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472/tps68470_board_data.c`
+    - `sed -n '1,220p' ~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/gpio/gpio-tps68470.c`
+  - extracted the relevant Windows helper and ACPI references:
+    - `sed -n '1,220p' reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/disasm-sensor-g2ti-poweron.txt`
+    - `sed -n '1,220p' reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/disasm-sensor-g2ti-poweroff.txt`
+    - `sed -n '1,220p' reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/disasm-voltage-wf-ioactive-gpio.txt`
+    - `sed -n '1,220p' reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/disasm-voltage-uf-setvactl.txt`
+    - `sed -n '1,220p' reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/method-string-addresses.txt`
+    - `sed -n '1,220p' reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/method-string-xrefs.txt`
+    - `sed -n '40,90p' reference/acpi/20260308T004459-unknown-host/dsl/ssdt1.dsl`
+    - `sed -n '1500,1565p' reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl`
+    - `rg -n 'WFCS|UFCS|LNK0|LNK1|C0TP|MiCaTabl|OVTI5675|INT3472:06' reference/acpi/20260308T004459-unknown-host/dsl/ssdt1.dsl reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl`
+  - `apply_patch` adding and updating:
+    - `docs/wf-vs-uf-gpio-analysis.md`
+    - `docs/README.md`
+    - `README.md`
+    - `docs/webcam-status.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+- Result:
+  - the Windows package really does contain two `TPS68470` helper families:
+    - `WF`
+    - `UF`
+  - `CrdG2TiSensor::SensorPowerOn` branches into either
+    `Tps68470VoltageWF::PowerOn` or `Tps68470VoltageUF::PowerOn`, so the MSI
+    package is not describing only one board wiring
+  - the `WF` helper path still provides the strongest direct match to the
+    current Linux MSI hypothesis:
+    - `IoActive_GPIO` programs registers `0x16` and `0x18`
+    - those are Linux `GPCTL1A` and `GPCTL2A`
+    - that keeps `GPIO1` / `GPIO2` as the best-supported camera-control pair
+  - the `UF` helper path adds a real caution:
+    - `Tps68470VoltageUF::SetVACtl` reads and writes `GPDO` register `0x27`
+    - it toggles bit `0x10`
+    - in Linux numbering that would be regular `gpio.4`
+  - but the local ACPI evidence still favors `WF`, not `UF`:
+    - `WFCS = "\\_SB.PC00.LNK0"`
+    - `UFCS = "\\_SB.PC00.LNK1"`
+    - this laptop's active sensor path is already known to be `LNK0`
+    - `MiCaTabl` still routes the active PMIC companion through `CLP0` for the
+      `LNK0` path when `C0TP > 1`
+  - therefore the cleanest next Linux experiments remain:
+    - `GPIO1` / `GPIO2` role swap
+    - `GPIO1` / `GPIO2` polarity variants
+    - remaining `WF`-side sequencing detail
+  - the analysis does not justify a first next step that blindly pivots Linux
+    board data to `gpio.4`
+- Decision:
+  - keep the clean-boot `-110` identify timeout as the current primary
+    baseline
+  - keep `WF` / `LNK0` as the primary model for this laptop
+  - use `GPIO1` / `GPIO2` semantics and polarity as the next rational Linux
+    test space before revisiting the `UF` / `gpio.4` branch
+
 ### Record the clean-boot identify-debug result from `journalctl -b -k`
 
 - Plan: confirm whether the first-load identify-debug boot finally reaches the

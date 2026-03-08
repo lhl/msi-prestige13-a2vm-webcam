@@ -117,15 +117,20 @@ board-data matching.
   - `INT3472:06` binds cleanly
   - real regulators are found
   - `ov5675_power_on()` now succeeds far enough to reach chip-ID read
-  - the current clean-boot failure is `failed to find sensor: -5`
 - The first `powerdown` follow-up did not change the clean-boot failure:
   - `ov5675` is still unbound
   - there are still no `/dev/v4l-subdev*`
 - The clean-boot identify-debug run replaced the old collapsed `-5` ambiguity:
   - the sensor now fails with repeated chip-ID read timeouts `-110`
 - The leading remaining local possibilities are now:
-  - remaining GPIO semantics around the second MSI control line
+  - remaining `GPIO1` / `GPIO2` semantics around the second MSI control line
+  - remaining `GPIO1` / `GPIO2` polarity detail
   - remaining board-data regulator / consumer / sequencing detail
+  - remaining `WF`-side PMIC wake-up sequencing detail
+- The Windows package does contain a separate `UF` helper family that touches a
+  different PMIC GPIO line, but current ACPI evidence still keeps this laptop
+  aligned with the `WF` / `LNK0` path, so a blind `gpio.4` pivot is not the
+  best next step.
 
 In practical terms, support looks like this:
 
@@ -177,7 +182,6 @@ that:
 - `ipu-bridge` now recognizes `OVTI5675:00` and reports one connected camera
 - the serial power-on follow-up removed the clean-boot `dvdd` timeout
 - the first `powerdown` follow-up did not change that outcome
-- on the last clean boot, `ov5675` still fails at sensor identification with `-5`
 - the first reload-only identify-debug run failed earlier at `reset-gpios: -110`
 - the next clean boot with identify-debug parameters showed the real remaining
   failure: repeated chip-ID read timeouts `-110`
@@ -187,8 +191,11 @@ that:
 ## Best next steps
 
 - Treat the first `powerdown` follow-up as a negative result.
+- Use `docs/wf-vs-uf-gpio-analysis.md` to keep the next board-data experiments
+  grounded in the current Windows and ACPI evidence.
 - Test the next smallest module-only follow-up in one of these directions:
-  - remaining GPIO semantics or polarity around the second control line
+  - remaining `GPIO1` / `GPIO2` semantics or polarity around the second control
+    line
   - board-data regulator consumer mapping
   - remaining PMIC or sensor wake-up sequencing detail
 - Re-test with:

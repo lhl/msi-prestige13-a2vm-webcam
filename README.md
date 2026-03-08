@@ -7,8 +7,8 @@ Research and bring-up notes for getting the built-in webcam working on Linux on 
 - Current verdict: the webcam is still not working end to end.
 - Latest technical assessment: `docs/webcam-status.md`
 - Current leading blocker: on a clean combined-patch boot, `ov5675` now gets
-  past the earlier `dvdd` timeout and fails later at sensor identification
-  with `failed to find sensor: -5`
+  past the earlier `dvdd` timeout and reaches sensor identification, but every
+  clean-boot chip-ID read still times out with `-110`
 
 Machine under test:
 
@@ -32,6 +32,7 @@ Machine under test:
 - [`docs/ov5675-power-on-order.md`](./docs/ov5675-power-on-order.md) — next `ov5675` power-on sequencing hypothesis after the clean-boot `dvdd` timeout
 - [`docs/ov5675-powerdown-followup.md`](./docs/ov5675-powerdown-followup.md) — next `ov5675` GPIO follow-up after the clean-boot serial-power result
 - [`docs/ov5675-identify-debug-followup.md`](./docs/ov5675-identify-debug-followup.md) — next `ov5675` debug/retry branch after the negative `powerdown-v1` result
+- [`docs/wf-vs-uf-gpio-analysis.md`](./docs/wf-vs-uf-gpio-analysis.md) — why the local evidence still favors the `WF` / `LNK0` GPIO model over a premature `gpio.4` pivot
 - [`docs/patch-kernel-workflow.md`](./docs/patch-kernel-workflow.md) — idempotent patch-stack workflow for the local `linux-mainline` tree
 - [`docs/test-routines.md`](./docs/test-routines.md) — numbered test wrappers for clean-boot and reload checkpoints
 - [`reference/README.md`](./reference/README.md) — captured upstream references
@@ -106,11 +107,11 @@ msi-prestige13-a2vm-webcam/
    idempotent.
 2. Treat the first `powerdown-v1` clean boot as a negative result:
    `failed to find sensor: -5` did not change.
-3. Use the new `ov5675` identify-debug patch branch to recover the real I2C
-   error and test delay/retry hypotheses without another source edit.
-4. Use module-only iteration and clean-boot checkpoints to decide whether the
-   next real fix is GPIO semantics, extra timing, or another board-data
-   follow-up.
+3. Use the `ov5675` identify-debug branch as the clean-boot baseline:
+   chip-ID reads now fail with `-110`, not the old collapsed `-5`.
+4. Use the `WF` vs `UF` analysis to keep the next Linux experiments focused on
+   `GPIO1` / `GPIO2` semantics and polarity before jumping to a different PMIC
+   GPIO design.
 
 ## Related Docs
 
@@ -125,6 +126,7 @@ msi-prestige13-a2vm-webcam/
 - [`docs/ov5675-power-on-order.md`](./docs/ov5675-power-on-order.md) — next `ov5675` power-on sequencing hypothesis after the clean-boot `dvdd` timeout
 - [`docs/ov5675-powerdown-followup.md`](./docs/ov5675-powerdown-followup.md) — next `ov5675` GPIO follow-up after the clean-boot serial-power result
 - [`docs/ov5675-identify-debug-followup.md`](./docs/ov5675-identify-debug-followup.md) — next `ov5675` debug/retry branch after the negative `powerdown-v1` result
+- [`docs/wf-vs-uf-gpio-analysis.md`](./docs/wf-vs-uf-gpio-analysis.md) — Windows helper-family analysis for `WF` / `UF` and PMIC GPIO implications
 - [`docs/patch-kernel-workflow.md`](./docs/patch-kernel-workflow.md) — idempotent patch-stack workflow for the local `linux-mainline` tree
 - [`docs/test-routines.md`](./docs/test-routines.md) — numbered test wrappers for clean-boot and reload checkpoints
 - [`reference/greymouser-summit-13-ai-evo-a2vm.md`](./reference/greymouser-summit-13-ai-evo-a2vm.md) — related MSI Summit 13 AI+ Evo A2VMTG Linux support repo note

@@ -34,6 +34,8 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
     - `chip id read attempt 5/5 failed: -110`
     - `failed to find sensor: -110`
   - there are still no `/dev/v4l-subdev*` nodes
+  - the current Windows-vs-ACPI analysis still favors the `WF` / `LNK0` path
+    over a premature `UF` / `gpio.4` pivot
 
 ## Evidence Baseline
 
@@ -97,7 +99,8 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 2. Use the clean-boot identify-debug result as the new baseline:
    - repeated chip-ID read timeouts `-110`
 3. Use that result to determine whether the next real fix is:
-   - remaining GPIO semantic swap
+   - `GPIO1` / `GPIO2` role swap
+   - `GPIO1` / `GPIO2` polarity follow-up
    - board-data regulator consumer follow-up
    - remaining PMIC or sensor wake-up sequencing detail
 4. Keep full kernel rebuilds as a fallback only when a change stops being
@@ -116,11 +119,17 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
   - `ov5675_identify_module()` is reached
   - repeated chip-ID reads time out with `-110`
 - The next open question is whether Linux now needs:
-  - different GPIO semantics or polarity
+  - different `GPIO1` / `GPIO2` semantics or polarity
   - another board-data consumer or sequencing adjustment
+- The latest Windows-helper analysis adds one important guardrail:
+  - the package has both `WF` and `UF` helper families
+  - `UF` touches what Linux would call `gpio.4`
+  - but this laptop's active ACPI path is still `WFCS -> LNK0`, so `gpio.4`
+    should not be the first follow-up without stronger local evidence
 - Current diagnostic gap:
   - we now know the identify stage times out; the next gap is whether that is
-    caused by GPIO semantics, polarity, or a still-missing PMIC wake-up step
+    caused by `GPIO1` / `GPIO2` semantics, polarity, or a still-missing PMIC
+    wake-up step
 - Is there any vendor firmware or Intel middleware dependency beyond standard kernel and firmware files?
 - Does this machine correspond to the Windows driver's `VoltageWF` path, `VoltageUF` path, or a narrower subclass selected via ACPI / board config?
 
