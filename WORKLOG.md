@@ -2,6 +2,62 @@
 
 ## 2026-03-09
 
+### Fix stale candidate docs and clean-boot journal anchoring
+
+- Plan: verify the reviewer-reported consistency drift, then align the stale
+  status/follow-up docs with the current `ov5675` sequencing branch and remove
+  the clean-boot snapshot harness blind spot where one journal artifact only
+  started at wrapper launch time.
+- Commands:
+  - reviewed the affected files:
+    - `sed -n '1,220p' state/CONTEXT.md`
+    - `sed -n '1,220p' PLAN.md`
+    - `sed -n '1,220p' WORKLOG.md`
+    - `sed -n '1,360p' docs/webcam-status.md`
+    - `sed -n '1,220p' docs/int3472-gpio1-powerdown-active-high-followup.md`
+    - `sed -n '1,320p' scripts/webcam-run.sh`
+    - `sed -n '1,220p' docs/reprobe-harness.md`
+  - `apply_patch` updating:
+    - `README.md`
+    - `docs/webcam-status.md`
+    - `docs/int3472-gpio1-powerdown-active-high-followup.md`
+    - `scripts/webcam-run.sh`
+    - `docs/reprobe-harness.md`
+    - `WORKLOG.md`
+  - validated the changes:
+    - `bash -n scripts/webcam-run.sh`
+    - `rg -n 'Current concrete next candidate|journal-since-run-start|journal-since-capture-anchor|current-boot-start|Historical Test Flow|Patch Under Test' docs/webcam-status.md docs/int3472-gpio1-powerdown-active-high-followup.md scripts/webcam-run.sh docs/reprobe-harness.md`
+    - `scripts/webcam-run.sh snapshot --label anchor-smoke --note 'smoke test capture anchor change' --runs-root /tmp/webcam-run-smoke`
+    - `sed -n '1,40p' /tmp/webcam-run-smoke/2026-03-09/20260309T041529-snapshot-anchor-smoke/pre/metadata.env`
+    - `sed -n '1,20p' /tmp/webcam-run-smoke/2026-03-09/20260309T041529-snapshot-anchor-smoke/summary.env`
+- Result:
+  - `docs/webcam-status.md` now points the live next candidate at
+    `ov5675-gpio-release-sequencing-debug-v1.patch` instead of the superseded
+    `GPIO1` polarity patch
+  - `docs/int3472-gpio1-powerdown-active-high-followup.md` now reads as a
+    historical negative-result note and redirects readers to the live
+    sequencing runbook instead of presenting itself as the current candidate
+  - the same follow-up doc now labels the old `INT3472` rebuild path as
+    historical, so it no longer conflicts with the current module-only
+    `ov5675` candidate composition
+  - `scripts/webcam-run.sh` now records boot-start metadata and uses a
+    capture-anchor model:
+    - `snapshot` runs anchor journal capture at current boot start
+    - `reprobe-modules` runs still anchor at action start
+  - the misleading `journal-since-run-start.txt` artifact is replaced with
+    `journal-since-capture-anchor.txt`, and the harness doc now explains the
+    new semantics
+  - a real snapshot smoke test under `/tmp/webcam-run-smoke` succeeded and
+    confirmed the new metadata fields:
+    - `boot_start_*`
+    - `journal_capture_anchor_*`
+    - `journal_capture_anchor_kind=current-boot-start` for `snapshot`
+- Decision:
+  - treat the reviewer-reported drift as fixed in-tree
+  - keep using clean-boot snapshots as the primary truth source, now with the
+    capture-anchor artifact aligned to the actual boot-time evidence we care
+    about
+
 ### Record the negative second polarity clean boot and pivot to `ov5675` GPIO sequencing
 
 - Plan: review the clean-boot result of the other physical-line polarity

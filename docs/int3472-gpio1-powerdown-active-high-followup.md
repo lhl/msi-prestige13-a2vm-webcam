@@ -3,9 +3,10 @@
 Updated: 2026-03-09
 
 This note captures the second one-line physical-line polarity experiment after
-the negative `powerdown-active-high-v1` clean-boot result.
+the negative `powerdown-active-high-v1` clean-boot result. It is now a
+historical negative-result note, not the repo's active next-candidate runbook.
 
-## Why This Is Next
+## Why This Was Next
 
 The first polarity follow-up tested the current tested-stack line assignment:
 
@@ -19,10 +20,11 @@ That clean-boot run was negative:
 - `ov5675` remained unbound
 
 Because the current `ov5675` power sequence still drives both logical control
-descriptors in lockstep, the most meaningful next one-step change is to move
-the active-high `powerdown`-style behavior onto the other physical PMIC line.
+descriptors in lockstep, the most meaningful one-step follow-up at that point
+was to move the active-high `powerdown`-style behavior onto the other physical
+PMIC line.
 
-## Current Best Candidate
+## Patch Under Test
 
 Patch file:
 
@@ -34,6 +36,13 @@ Patch shape:
 - `GPIO2` => `reset`, `GPIO_ACTIVE_LOW`
 
 Electrically, this is the "other PMIC line active-high" variant.
+
+Current repo status:
+
+- this branch is now closed as a negative result
+- the active next candidate is
+  `reference/patches/ov5675-gpio-release-sequencing-debug-v1.patch`
+- use `docs/ov5675-gpio-release-sequencing-followup.md` for the live runbook
 
 ## Why This Variant Is Still Reasonable
 
@@ -49,7 +58,7 @@ That means this patch should be read primarily as a physical-line test, not as
 strong evidence that Linux has definitely identified which line is `reset` vs
 `powerdown`.
 
-## Validation Result
+## Validation Result Before The Run
 
 The candidate is ready for module-only testing:
 
@@ -61,13 +70,13 @@ The candidate is ready for module-only testing:
   - `ov5675-serial-power-on` => `applied`
   - `ms13q3-gpio1-powerdown-active-high` => `applicable`
 
-That status check also confirms the updated patch-stack workflow can normalize
-both older superseded local states:
+That status check also confirmed the updated patch-stack workflow could
+normalize both older superseded local states:
 
 - `ms13q3-int3472-gpio-swap-v1.patch`
 - `ms13q3-int3472-powerdown-active-high-v1.patch`
 
-## Expected Signal
+## Expected Signal At The Time
 
 Minimum useful success:
 
@@ -90,16 +99,24 @@ If this variant is also negative, the next branch should likely be:
 - a real `ov5675` GPIO sequencing experiment
 - or a deeper `WF`-side PMIC wake-up / sequencing follow-up
 
+That is exactly what happened: this variant was also negative, so the repo
+candidate moved to the `ov5675` sequencing branch.
+
 ## Patch-Stack Note
 
-The current `candidate` profile in `scripts/patch-kernel.sh` now treats this as
-the next follow-up and is expected to normalize two older superseded
-experiments if they are still present in the local kernel tree:
+This patch is no longer the `candidate` profile target. It is now one of the
+older superseded experiments that `scripts/patch-kernel.sh` may normalize out
+of a dirty local kernel tree before applying the current `ov5675` sequencing
+follow-up:
 
 - `ms13q3-int3472-gpio-swap-v1.patch`
 - `ms13q3-int3472-powerdown-active-high-v1.patch`
 
-## Module-Only Test Flow
+## Historical Test Flow
+
+This is the module-only path that was used for this branch before the negative
+clean-boot result. Do not use this as the current candidate runbook; use
+`docs/ov5675-gpio-release-sequencing-followup.md` instead.
 
 User-run commands:
 
@@ -122,7 +139,7 @@ sudo depmod -a "$(uname -r)"
 reboot
 ```
 
-After reboot:
+After reboot, the branch was captured with:
 
 ```bash
 cd /home/lhl/github/lhl/msi-prestige13-a2vm-webcam

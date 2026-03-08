@@ -279,9 +279,10 @@ that:
   - board-data regulator consumer mapping
   - remaining PMIC or sensor wake-up sequencing detail
 - Current concrete next candidate:
-  - `reference/patches/ms13q3-int3472-gpio1-powerdown-active-high-v1.patch`
-  - move the active-high `powerdown`-style behavior onto `GPIO1`
-  - keep `GPIO2` as the active-low companion line
+  - `reference/patches/ov5675-gpio-release-sequencing-debug-v1.patch`
+  - keep the current `WF` / `LNK0` board-data structure
+  - rebuild only `drivers/media/i2c/ov5675.ko`
+  - test staged `powerdown` / `reset` release order via module parameters
 - Re-test with:
   - `journalctl -k -b | rg 'tps68470|ipu7|ov5675'`
   - `media-ctl -p -d /dev/media0`

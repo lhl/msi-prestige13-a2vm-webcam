@@ -14,6 +14,17 @@ RUN_START_LOCAL=$(date +"%Y-%m-%dT%H:%M:%S%z")
 RUN_START_UTC=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 RUN_DATE=$(date +"%Y-%m-%d")
 RUN_STAMP=$(date +"%Y%m%dT%H%M%S")
+BOOT_START_EPOCH=$(awk '/^btime / { print $2; exit }' /proc/stat 2>/dev/null)
+BOOT_START_LOCAL=""
+BOOT_START_UTC=""
+JOURNAL_CAPTURE_ANCHOR_LOCAL=""
+JOURNAL_CAPTURE_ANCHOR_UTC=""
+JOURNAL_CAPTURE_ANCHOR_KIND=""
+
+if [[ -n "${BOOT_START_EPOCH}" ]]; then
+  BOOT_START_LOCAL=$(date -d "@${BOOT_START_EPOCH}" +"%Y-%m-%dT%H:%M:%S%z")
+  BOOT_START_UTC=$(date -u -d "@${BOOT_START_EPOCH}" +"%Y-%m-%dT%H:%M:%SZ")
+fi
 
 ACTION_LOG=""
 RUN_DIR=""
@@ -168,6 +179,11 @@ collect_metadata() {
   {
     printf 'run_start_local=%s\n' "${RUN_START_LOCAL}"
     printf 'run_start_utc=%s\n' "${RUN_START_UTC}"
+    printf 'boot_start_local=%s\n' "${BOOT_START_LOCAL}"
+    printf 'boot_start_utc=%s\n' "${BOOT_START_UTC}"
+    printf 'journal_capture_anchor_local=%s\n' "${JOURNAL_CAPTURE_ANCHOR_LOCAL}"
+    printf 'journal_capture_anchor_utc=%s\n' "${JOURNAL_CAPTURE_ANCHOR_UTC}"
+    printf 'journal_capture_anchor_kind=%s\n' "${JOURNAL_CAPTURE_ANCHOR_KIND}"
     printf 'action=%s\n' "${ACTION}"
     printf 'label=%s\n' "${LABEL}"
     printf 'note=%s\n' "${NOTE}"
@@ -227,8 +243,8 @@ capture_stage() {
 
   capture_shell "${stage_dir}/journal-relevant.txt" \
     "journalctl -k -b --no-pager | grep -En 'tps68470|INT3472|OVTI5675|ov5675|intel-ipu7|board-data|subdev|ipu7' || true"
-  capture_shell "${stage_dir}/journal-since-run-start.txt" \
-    "journalctl -k --since '${RUN_START_UTC}' --no-pager | grep -En 'tps68470|INT3472|OVTI5675|ov5675|intel-ipu7|board-data|subdev|ipu7' || true"
+  capture_shell "${stage_dir}/journal-since-capture-anchor.txt" \
+    "journalctl -k --since '${JOURNAL_CAPTURE_ANCHOR_UTC}' --no-pager | grep -En 'tps68470|INT3472|OVTI5675|ov5675|intel-ipu7|board-data|subdev|ipu7' || true"
 
   capture_shell "${sysfs_dir}/acpi-int3472.txt" \
     "ls -l /sys/bus/acpi/devices/INT3472:06 2>/dev/null || true; find /sys/bus/acpi/devices/INT3472:06 -maxdepth 2 2>/dev/null | sort || true"
@@ -351,6 +367,21 @@ main() {
   have_cmd journalctl || die "journalctl not found"
   have_cmd modprobe || die "modprobe not found"
 
+  if [[ -z "${BOOT_START_UTC}" ]]; then
+    BOOT_START_LOCAL="${RUN_START_LOCAL}"
+    BOOT_START_UTC="${RUN_START_UTC}"
+  fi
+
+  if [[ "${ACTION}" == "snapshot" ]]; then
+    JOURNAL_CAPTURE_ANCHOR_LOCAL="${BOOT_START_LOCAL}"
+    JOURNAL_CAPTURE_ANCHOR_UTC="${BOOT_START_UTC}"
+    JOURNAL_CAPTURE_ANCHOR_KIND="current-boot-start"
+  else
+    JOURNAL_CAPTURE_ANCHOR_LOCAL="${RUN_START_LOCAL}"
+    JOURNAL_CAPTURE_ANCHOR_UTC="${RUN_START_UTC}"
+    JOURNAL_CAPTURE_ANCHOR_KIND="run-start"
+  fi
+
   local safe_label=""
   if [[ -n "${LABEL}" ]]; then
     safe_label=$(sanitize_label "${LABEL}")
@@ -387,6 +418,9 @@ main() {
     printf 'status=%s\n' "${RUN_STATUS}"
     printf 'failure_reason=%s\n' "${RUN_FAILURE_REASON}"
     printf 'run_start_utc=%s\n' "${RUN_START_UTC}"
+    printf 'boot_start_utc=%s\n' "${BOOT_START_UTC}"
+    printf 'journal_capture_anchor_utc=%s\n' "${JOURNAL_CAPTURE_ANCHOR_UTC}"
+    printf 'journal_capture_anchor_kind=%s\n' "${JOURNAL_CAPTURE_ANCHOR_KIND}"
     printf 'run_end_utc=%s\n' "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
     printf 'action=%s\n' "${ACTION}"
     printf 'label=%s\n' "${LABEL}"

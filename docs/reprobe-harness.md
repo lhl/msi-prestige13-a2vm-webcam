@@ -98,7 +98,9 @@ Each capture currently includes:
 - `media-ctl -p -d /dev/media0`
 - `v4l2-ctl --all` for every current `/dev/video*`
 - filtered kernel log for webcam/IPU/INT3472 lines
-- filtered kernel log delta since the run start
+- filtered kernel log since the capture anchor:
+  - `snapshot` runs use current boot start
+  - `reprobe-modules` runs use action start
 - relevant ACPI/I2C/sysfs snapshots for `INT3472:06`, `OVTI5675:00`, bus `i2c-1`, and the `int3472-tps68470` / `ov5675` drivers
 
 ## Analysis workflow
