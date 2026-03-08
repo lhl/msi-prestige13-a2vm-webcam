@@ -64,6 +64,17 @@ Additional live evidence on the patched kernel:
   - `ov5675 i2c-OVTI5675:00: setup of GPIO reset failed: -110`
   - `ov5675 i2c-OVTI5675:00: failed to get reset-gpios: -110`
   - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
+- on the next clean boot with identify-debug parameters active on first load:
+  - `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+  - `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+  - `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: failed to find sensor: -110`
+  - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
 - the old clean-boot `Failed to enable dvdd: -ETIMEDOUT` line is gone
 - the media graph still has no sensor entity
 - there are still no `/dev/v4l-subdev*` nodes
@@ -85,6 +96,11 @@ Those lines and checks are the current high-value signal. They mean:
    - but reload after a failed boot-time probe still dies earlier at
      `reset-gpios: -110`
    - the next trustworthy debug capture must happen on first load at clean boot
+7. The clean-boot identify-debug run provided the real remaining error:
+   - `ov5675_identify_module()` is reached
+   - every chip-ID read attempt times out with `-110`
+   - the remaining blocker is now a true transport / wake-up / sequencing
+     failure at sensor identification time
 
 ## Assessment
 
@@ -105,9 +121,10 @@ board-data matching.
 - The first `powerdown` follow-up did not change the clean-boot failure:
   - `ov5675` is still unbound
   - there are still no `/dev/v4l-subdev*`
+- The clean-boot identify-debug run replaced the old collapsed `-5` ambiguity:
+  - the sensor now fails with repeated chip-ID read timeouts `-110`
 - The leading remaining local possibilities are now:
   - remaining GPIO semantics around the second MSI control line
-  - extra post-power-on timing before chip-ID read
   - remaining board-data regulator / consumer / sequencing detail
 
 In practical terms, support looks like this:
@@ -162,6 +179,8 @@ that:
 - the first `powerdown` follow-up did not change that outcome
 - on the last clean boot, `ov5675` still fails at sensor identification with `-5`
 - the first reload-only identify-debug run failed earlier at `reset-gpios: -110`
+- the next clean boot with identify-debug parameters showed the real remaining
+  failure: repeated chip-ID read timeouts `-110`
 - the sensor still does not appear as a media subdevice
 - the camera still does not work in userspace
 
@@ -169,9 +188,9 @@ that:
 
 - Treat the first `powerdown` follow-up as a negative result.
 - Test the next smallest module-only follow-up in one of these directions:
-  - apply the identify-debug module parameters on first load at clean boot
   - remaining GPIO semantics or polarity around the second control line
   - board-data regulator consumer mapping
+  - remaining PMIC or sensor wake-up sequencing detail
 - Re-test with:
   - `journalctl -k -b | rg 'tps68470|ipu7|ov5675'`
   - `media-ctl -p -d /dev/media0`

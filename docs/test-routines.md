@@ -23,6 +23,10 @@ What it captures:
   - `TPS68470 REVID`
   - `Found supported sensor`
   - `Connected 1 cameras`
+  - `applying extra post-power-on delay`
+  - `chip id read attempt`
+  - `chip id attempt`
+  - `sensor identified on attempt`
   - `Failed to enable`
   - `failed to power on`
   - `failed to find sensor`
@@ -37,6 +41,10 @@ Example:
 ```bash
 scripts/01-clean-boot-check.sh
 ```
+
+For clean-boot identify-debug tests, `01-clean-boot-check.sh` is the primary
+checkpoint because it captures the first-load `ov5675` boot log instead of a
+later reload-only path.
 
 ## `scripts/02-ov5675-reload-check.sh`
 

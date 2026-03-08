@@ -36,42 +36,52 @@ with strong evidence.
   - `ipu-bridge` now finds `OVTI5675:00` and reports one connected camera
   - the old clean-boot `Failed to enable dvdd: -ETIMEDOUT` line is gone
 - Current clean-boot blocker:
-  - `ov5675 i2c-OVTI5675:00: failed to find sensor: -5`
-  - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -5`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: failed to find sensor: -110`
+  - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
   - `ov5675` remains unbound
   - there are still no `/dev/v4l-subdev*` nodes
 
 ## Latest Debug Result
 
-- Installed the identify-debug `ov5675` module build and ran:
-  - `runs/2026-03-09/20260309T004918-snapshot-identify-debug-v1/`
-- High-value lines since reload:
-  - `ov5675 i2c-OVTI5675:00: setup of GPIO reset failed: -110`
-  - `ov5675 i2c-OVTI5675:00: failed to get reset-gpios: -110`
+- Clean boot with identify-debug module parameters active on first load:
+  - `identify_retry_count=5`
+  - `identify_retry_delay_us=2000`
+  - `extra_post_power_on_delay_us=0`
+- High-value boot lines:
+  - `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+  - `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+  - `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: failed to find sensor: -110`
   - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
 - Conclusion:
-  - the debug module is installed and the reload wrapper works
-  - but reload-after-failure still dies before chip-ID reads
-  - the next trustworthy debug test must apply the module parameters on first
-    load at clean boot
+  - the clean-boot identify-debug run replaced the old ambiguous `-5` result
+    with the real remaining sensor-side error
+  - `ov5675_identify_module()` is reached, but every chip-ID read times out
+    with `-110`
+  - the next likely patch space is now GPIO semantics, polarity, or remaining
+    PMIC wake-up sequencing, not mere identify retries
 
 ## Next Best Steps
 
 1. Keep using `scripts/patch-kernel.sh` to make the local patch stack
    repeatable.
-2. Apply the identify-debug module parameters on first load at clean boot.
-   - easiest path:
-     - temporary `modprobe.d` override:
-       - `options ov5675 identify_retry_count=5 identify_retry_delay_us=2000 extra_post_power_on_delay_us=0`
-   - then capture with:
-     - `scripts/01-clean-boot-check.sh --label identify-debug-v1-boot`
-3. Use that clean-boot debug result to decide whether the next real fix is:
+2. Use the clean-boot `-110` identify timeout as the new baseline.
+3. Next fix candidates to test:
    - remaining GPIO semantics or polarity
-   - extra post-power-on timing
    - board-data regulator consumer or sequencing detail
-4. Keep clean-boot checkpoints as the primary truth source and treat
-   reload-only debug checks as secondary once the boot-time path has already
-   failed.
+   - deeper PMIC or sensor wake-up sequencing from the Windows path
+4. Keep clean-boot checkpoints as the primary truth source. Reload-only checks
+   are still secondary once the boot-time path has already failed.
 
 ## Key Paths
 

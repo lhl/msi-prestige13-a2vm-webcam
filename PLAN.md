@@ -26,6 +26,13 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
     - `setup of GPIO reset failed: -110`
     - `failed to get reset-gpios: -110`
     - `probe with driver ov5675 failed with error -110`
+  - on the first clean boot with identify-debug parameters active on first load:
+    - `chip id read attempt 1/5 failed: -110`
+    - `chip id read attempt 2/5 failed: -110`
+    - `chip id read attempt 3/5 failed: -110`
+    - `chip id read attempt 4/5 failed: -110`
+    - `chip id read attempt 5/5 failed: -110`
+    - `failed to find sensor: -110`
   - there are still no `/dev/v4l-subdev*` nodes
 
 ## Evidence Baseline
@@ -87,13 +94,12 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 ## Near-Term Priority
 
 1. Treat the first `powerdown-v1` clean-boot test as a negative result.
-2. Re-test the identify-debug `ov5675` branch on first load at clean boot,
-   because the reload-only run did not reach chip-ID logging.
-3. Use that clean-boot identify-debug result to determine whether the next real
-   fix is:
+2. Use the clean-boot identify-debug result as the new baseline:
+   - repeated chip-ID read timeouts `-110`
+3. Use that result to determine whether the next real fix is:
    - remaining GPIO semantic swap
-   - extra post-power-on delay
    - board-data regulator consumer follow-up
+   - remaining PMIC or sensor wake-up sequencing detail
 4. Keep full kernel rebuilds as a fallback only when a change stops being
    module-local.
 
@@ -106,13 +112,15 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 - The serial power-on follow-up was also real: the old `dvdd` timeout is gone.
 - The first `powerdown` follow-up was a negative result.
 - The first identify-debug reload run was also non-diagnostic.
+- The first clean-boot identify-debug run was a real narrowing step:
+  - `ov5675_identify_module()` is reached
+  - repeated chip-ID reads time out with `-110`
 - The next open question is whether Linux now needs:
   - different GPIO semantics or polarity
-  - extra post-power-on timing
   - another board-data consumer or sequencing adjustment
 - Current diagnostic gap:
-  - the new debug branch exists, but the first reload-only test failed before
-    it reached chip-ID logging
+  - we now know the identify stage times out; the next gap is whether that is
+    caused by GPIO semantics, polarity, or a still-missing PMIC wake-up step
 - Is there any vendor firmware or Intel middleware dependency beyond standard kernel and firmware files?
 - Does this machine correspond to the Windows driver's `VoltageWF` path, `VoltageUF` path, or a narrower subclass selected via ACPI / board config?
 

@@ -113,7 +113,7 @@ sudo scripts/03-ov5675-identify-debug-check.sh \
   --extra-delay-us 5000
 ```
 
-## First Result
+## First Reload Result
 
 The first reload-only run after installing the debug build did not reach the
 new identify logging:
@@ -131,28 +131,44 @@ That means the reload-only path is still being contaminated by the earlier
 boot-time failure. We still do not have chip-ID attempt logs from this debug
 branch.
 
-## Revised Next Test
+## First Clean-Boot Result
 
-The next trustworthy use of this debug branch is on first load at clean boot,
-not on an in-session reload after `ov5675` has already failed once.
+The next clean boot with the debug module parameters applied on first load did
+reach the identify path, and it narrowed the remaining failure materially:
 
-Recommended approach:
+- debug parameters confirmed live:
+  - `identify_retry_count=5`
+  - `identify_retry_delay_us=2000`
+  - `extra_post_power_on_delay_us=0`
+- high-value boot log lines:
+  - `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+  - `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+  - `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: failed to find sensor: -110`
+  - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
 
-1. put the debug module parameters into a temporary `modprobe.d` override so
-   they apply when `ov5675` autoloads
-2. reboot
-3. capture a clean-boot checkpoint with `scripts/01-clean-boot-check.sh`
+This is the first trustworthy clean-boot proof that the remaining blocker is a
+real I2C timeout during chip-ID reads, not just a collapsed `-5` summary code.
 
-Suggested temporary `modprobe.d` line:
+## Revised Assessment
 
-```conf
-options ov5675 identify_retry_count=5 identify_retry_delay_us=2000 extra_post_power_on_delay_us=0
-```
+The debug branch did its job. We no longer need it just to recover the real
+error code. The current evidence now says:
 
-If that still fails before identify logging appears, the next strong
-conclusion is that the sensor path is wedging before `ov5675_identify_module()`
-ever runs, which would push the next patch space back toward GPIO semantics or
-board-data sequencing rather than sensor-identify timing.
+- `ov5675_identify_module()` is reached on a clean boot
+- the current board-data + `ipu-bridge` + serial power-on stack still leaves
+  chip-ID reads timing out with `-110`
+- a simple in-driver retry loop is not sufficient by itself
+- a simple extra delay is now less likely to be the main fix, because the clean
+  boot already spanned five timed-out identify attempts
+
+That pushes the next likely fix space back toward GPIO semantics, polarity, or
+remaining PMIC sequencing rather than mere identify timing.
 
 ## Success Criteria
 

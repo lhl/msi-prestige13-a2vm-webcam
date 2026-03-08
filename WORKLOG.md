@@ -2,6 +2,56 @@
 
 ## 2026-03-09
 
+### Record the clean-boot identify-debug result from `journalctl -b -k`
+
+- Plan: confirm whether the first-load identify-debug boot finally reaches the
+  chip-ID path, convert that boot log into the new primary failure baseline,
+  and update the clean-boot wrapper so future boot checkpoints preserve the
+  identify lines directly.
+- Commands:
+  - reviewed the live boot log directly:
+    - `journalctl -b -k --no-pager | rg 'ov5675|OVTI5675|tps68470|INT3472|intel-ipu7|ipu7|chip id|power on|GPIO|gpio|Failed to enable|failed to power on|failed to find sensor|probe with driver ov5675 failed|extra post-power-on delay|sensor identified on attempt'`
+  - confirmed the active debug module parameters:
+    - `cat /sys/module/ov5675/parameters/identify_retry_count`
+    - `cat /sys/module/ov5675/parameters/identify_retry_delay_us`
+    - `cat /sys/module/ov5675/parameters/extra_post_power_on_delay_us`
+  - confirmed driver binding state:
+    - `readlink -e /sys/bus/i2c/devices/i2c-INT3472:06/driver || echo int3472-unbound`
+    - `readlink -e /sys/bus/i2c/devices/i2c-OVTI5675:00/driver || echo ov5675-unbound`
+  - attempted a normal clean-boot checkpoint:
+    - `scripts/01-clean-boot-check.sh --label identify-debug-v1-boot --note "clean boot with ov5675 identify debug params"`
+  - `apply_patch` adding and updating:
+    - `scripts/01-clean-boot-check.sh`
+    - `docs/test-routines.md`
+    - `docs/ov5675-identify-debug-followup.md`
+    - `docs/webcam-status.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+- Result:
+  - the clean-boot identify-debug run is the first trustworthy sensor-side
+    result after the earlier `-5` ambiguity:
+    - `ov5675_identify_module()` is reached
+    - chip-ID attempts 1 through 5 all fail with `-110`
+    - `failed to find sensor` now also reports `-110`
+  - confirmed debug module parameters on the live boot:
+    - `identify_retry_count=5`
+    - `identify_retry_delay_us=2000`
+    - `extra_post_power_on_delay_us=0`
+  - `INT3472:06` remains bound, while `OVTI5675:00` remains unbound
+  - this strongly suggests the remaining blocker is not merely the old
+    collapsed error handling or a missing retry loop; it is a real transport /
+    wake-up / sequencing failure at chip-ID read time
+  - the attempted `01-clean-boot-check.sh` run failed to archive because
+    `runs/2026-03-09/` is currently root-owned from earlier sudo-driven runs
+  - updated `scripts/01-clean-boot-check.sh` so future clean-boot checkpoints
+    include the identify-debug lines directly
+- Decision:
+  - treat repeated clean-boot chip-ID read timeouts `-110` as the new baseline
+  - de-prioritize simple identify-delay tuning as the leading standalone fix
+  - shift the next patch focus back toward GPIO semantics, polarity, or
+    remaining PMIC wake-up sequencing
+
 ### Clarify in AGENTS that `sudo` and `reboot` are user-run steps
 
 - Plan: add an explicit repo-local reminder that privileged commands and
