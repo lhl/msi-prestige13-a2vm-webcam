@@ -130,6 +130,10 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
   - we now know the identify stage times out; the next gap is whether that is
     caused by `GPIO1` / `GPIO2` semantics, polarity, or a still-missing PMIC
     wake-up step
+- Immediate next candidate:
+  - `reference/patches/ms13q3-int3472-gpio-swap-v1.patch`
+  - module-only rebuild of `intel_skl_int3472_tps68470.ko`
+  - clean-boot checkpoint with `scripts/01-clean-boot-check.sh --label gpio-swap-v1`
 - Is there any vendor firmware or Intel middleware dependency beyond standard kernel and firmware files?
 - Does this machine correspond to the Windows driver's `VoltageWF` path, `VoltageUF` path, or a narrower subclass selected via ACPI / board config?
 

@@ -1,0 +1,13 @@
+--- a/drivers/platform/x86/intel/int3472/tps68470_board_data.c
++++ b/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+@@ -357,8 +357,8 @@
+ static struct gpiod_lookup_table msi_ms13q3_ov5675_gpios = {
+ 	.dev_id = "i2c-OVTI5675:00",
+ 	.table = {
+-		GPIO_LOOKUP("tps68470-gpio", 1, "reset", GPIO_ACTIVE_LOW),
+-		GPIO_LOOKUP("tps68470-gpio", 2, "powerdown", GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP("tps68470-gpio", 1, "powerdown", GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP("tps68470-gpio", 2, "reset", GPIO_ACTIVE_LOW),
+ 		{ }
+ 	}
+ };

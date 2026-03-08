@@ -26,6 +26,7 @@ Machine under test:
 - [`docs/reprobe-harness.md`](./docs/reprobe-harness.md) — safe snapshot/reprobe harness and run capture workflow
 - [`docs/tps68470-reverse-engineering.md`](./docs/tps68470-reverse-engineering.md) — canonical ACPI plus Windows-control-logic reverse-engineering note
 - [`docs/linux-board-data-candidate.md`](./docs/linux-board-data-candidate.md) — current Linux patch candidate and first live-test criteria
+- [`docs/int3472-gpio-swap-followup.md`](./docs/int3472-gpio-swap-followup.md) — next `INT3472` board-data role-swap test on the existing `GPIO1` / `GPIO2` pair
 - [`docs/module-iteration.md`](./docs/module-iteration.md) — faster module-only rebuild/install workflow for camera-path kernel changes
 - [`docs/ov5675-diagnostic-patch.md`](./docs/ov5675-diagnostic-patch.md) — first `ov5675` diagnostic patch and exact module-only test flow
 - [`docs/ipu-bridge-ovti5675-candidate.md`](./docs/ipu-bridge-ovti5675-candidate.md) — current `ipu-bridge` follow-up patch candidate after the diagnostic result
@@ -109,9 +110,9 @@ msi-prestige13-a2vm-webcam/
    `failed to find sensor: -5` did not change.
 3. Use the `ov5675` identify-debug branch as the clean-boot baseline:
    chip-ID reads now fail with `-110`, not the old collapsed `-5`.
-4. Use the `WF` vs `UF` analysis to keep the next Linux experiments focused on
-   `GPIO1` / `GPIO2` semantics and polarity before jumping to a different PMIC
-   GPIO design.
+4. Use the `WF` vs `UF` analysis and the new `INT3472` follow-up to test
+   `GPIO1` / `GPIO2` role swap first, then polarity, before jumping to a
+   different PMIC GPIO design.
 
 ## Related Docs
 
@@ -120,6 +121,7 @@ msi-prestige13-a2vm-webcam/
 - [`docs/reprobe-harness.md`](./docs/reprobe-harness.md) — safe module reprobe/capture workflow for repeatable experiments
 - [`docs/tps68470-reverse-engineering.md`](./docs/tps68470-reverse-engineering.md) — canonical reverse-engineering note for ACPI plus Windows `iactrllogic64.sys`
 - [`docs/linux-board-data-candidate.md`](./docs/linux-board-data-candidate.md) — current MSI `tps68470_board_data` hypothesis and first patched-test plan
+- [`docs/int3472-gpio-swap-followup.md`](./docs/int3472-gpio-swap-followup.md) — next `INT3472` board-data role-swap test on the existing `GPIO1` / `GPIO2` pair
 - [`docs/module-iteration.md`](./docs/module-iteration.md) — module-only rebuild/install workflow for camera-path iteration
 - [`docs/ov5675-diagnostic-patch.md`](./docs/ov5675-diagnostic-patch.md) — first `ov5675` diagnostic patch and exact module-only test flow
 - [`docs/ipu-bridge-ovti5675-candidate.md`](./docs/ipu-bridge-ovti5675-candidate.md) — current `ipu-bridge` follow-up patch candidate after the diagnostic result
@@ -142,5 +144,6 @@ msi-prestige13-a2vm-webcam/
 - [`reference/tps68470.pdf`](./reference/tps68470.pdf) — local TPS68470 datasheet copy
 - [`reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/README.md`](./reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/README.md) — repeatable static-analysis artifacts for the MSI Windows control-logic driver
 - [`reference/patches/ms13q3-int3472-tps68470-v1.patch`](./reference/patches/ms13q3-int3472-tps68470-v1.patch) — current first-pass Linux board-data patch candidate
+- [`reference/patches/ms13q3-int3472-gpio-swap-v1.patch`](./reference/patches/ms13q3-int3472-gpio-swap-v1.patch) — next board-data follow-up that swaps `GPIO1` / `GPIO2` roles for `OVTI5675`
 - [`reference/windows-driver-packages/README.md`](./reference/windows-driver-packages/README.md) — vendored Windows package archive and extracted-tree index
 - [`runs/README.md`](./runs/README.md) — run archive layout for timestamped probe batches

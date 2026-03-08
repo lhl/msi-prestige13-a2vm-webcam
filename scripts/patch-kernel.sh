@@ -32,7 +32,7 @@ Profiles:
 
   candidate
       Apply the tested stack plus the current unvalidated follow-up:
-      - ov5675 powerdown GPIO handling
+      - MSI INT3472 GPIO role swap for OVTI5675
 
 Options:
   --kernel-tree DIR
@@ -84,8 +84,8 @@ load_profile() {
       ;;
     candidate)
       append_patch \
-        "ov5675-powerdown-followup" \
-        "reference/patches/ov5675-powerdown-followup-v1.patch" \
+        "ms13q3-gpio-swap" \
+        "reference/patches/ms13q3-int3472-gpio-swap-v1.patch" \
         "candidate"
       ;;
     *)
@@ -123,11 +123,11 @@ patch_state() {
         return 0
       fi
       ;;
-    ov5675-powerdown-followup)
-      if rg -q 'struct gpio_desc \\*powerdown_gpio;' \
-        "${tree}/drivers/media/i2c/ov5675.c" && \
-        rg -q 'failed to get powerdown-gpios' \
-        "${tree}/drivers/media/i2c/ov5675.c"; then
+    ms13q3-gpio-swap)
+      if rg -q 'GPIO_LOOKUP\\("tps68470-gpio", 1, "powerdown", GPIO_ACTIVE_LOW\\)' \
+        "${tree}/drivers/platform/x86/intel/int3472/tps68470_board_data.c" && \
+        rg -q 'GPIO_LOOKUP\\("tps68470-gpio", 2, "reset", GPIO_ACTIVE_LOW\\)' \
+        "${tree}/drivers/platform/x86/intel/int3472/tps68470_board_data.c"; then
         printf 'applied'
         return 0
       fi

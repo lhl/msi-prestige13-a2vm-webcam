@@ -2,6 +2,62 @@
 
 ## 2026-03-09
 
+### Prepare the next module-only `INT3472` GPIO role-swap experiment
+
+- Plan: turn the next most defensible Linux experiment into a repeatable repo
+  artifact: one small board-data patch, one exact module-only rebuild/install
+  flow, and a patch-stack update so `candidate` now matches the real next test.
+- Commands:
+  - reviewed the current patch-stack and module-only workflow:
+    - `git status -sb`
+    - `sed -n '1,220p' scripts/patch-kernel.sh`
+    - `sed -n '1,260p' docs/patch-kernel-workflow.md`
+    - `sed -n '1,220p' docs/module-iteration.md`
+  - reviewed the current MSI board-data and earlier board-data note:
+    - `sed -n '330,390p' ~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472/tps68470_board_data.c`
+    - `sed -n '1,220p' docs/linux-board-data-candidate.md`
+  - `apply_patch` adding and updating:
+    - `reference/patches/ms13q3-int3472-gpio-swap-v1.patch`
+    - `docs/int3472-gpio-swap-followup.md`
+    - `scripts/patch-kernel.sh`
+    - `docs/patch-kernel-workflow.md`
+    - `docs/module-iteration.md`
+    - `docs/README.md`
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+  - validated the new candidate:
+    - `bash -n scripts/patch-kernel.sh`
+    - `git -C ~/.cache/paru/clone/linux-mainline/src/linux-mainline apply --check /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ms13q3-int3472-gpio-swap-v1.patch`
+    - `scripts/patch-kernel.sh --profile candidate --status`
+- Result:
+  - the next smallest Linux follow-up is now captured as
+    `reference/patches/ms13q3-int3472-gpio-swap-v1.patch`
+  - this patch keeps the same MSI `INT3472` board-data entry and the same PMIC
+    lines, but swaps only their semantic roles:
+    - `GPIO1` => `powerdown`
+    - `GPIO2` => `reset`
+  - this follows the current evidence ordering:
+    - `WF` / `LNK0` is still the best-supported path
+    - `GPIO1` / `GPIO2` still look like the right control-line pair
+    - role assignment is still unproven
+  - `scripts/patch-kernel.sh` now treats that role-swap patch as the current
+    `candidate` profile instead of the older negative `powerdown` branch
+  - `docs/int3472-gpio-swap-followup.md` now gives the exact user-run flow:
+    - apply candidate stack
+    - rebuild only `drivers/platform/x86/intel/int3472`
+    - replace only `intel_skl_int3472_tps68470.ko.zst`
+    - reboot
+    - run `scripts/01-clean-boot-check.sh --label gpio-swap-v1`
+  - validation succeeded on the current local kernel tree:
+    - the patch applies cleanly
+    - `scripts/patch-kernel.sh --profile candidate --status` reports the new
+      `ms13q3-gpio-swap` follow-up as `applicable`
+- Decision:
+  - use the role-swap test before polarity or `gpio.4` / `UF` experiments
+  - keep the test module-local and clean-boot based
+
 ### Clarify whether `WF` / `UF` maps to RGB vs IR sensors on this laptop
 
 - Plan: answer whether the captured Windows helper split is actually the normal

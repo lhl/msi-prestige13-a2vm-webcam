@@ -14,6 +14,7 @@ Current focus:
 - `docs/reprobe-harness.md` — safe snapshot/reprobe script and run-capture workflow
 - `docs/tps68470-reverse-engineering.md` — canonical note for ACPI capture plus Windows `iactrllogic64.sys` analysis
 - `docs/linux-board-data-candidate.md` — current MSI `tps68470_board_data` hypothesis and first patched-test plan
+- `docs/int3472-gpio-swap-followup.md` — next `INT3472` board-data role-swap test on the existing `GPIO1` / `GPIO2` pair
 - `docs/module-iteration.md` — faster module-only rebuild/install workflow for camera-path changes
 - `docs/ov5675-diagnostic-patch.md` — first `ov5675` probe-logging patch and exact module-only test steps
 - `docs/ipu-bridge-ovti5675-candidate.md` — current `ipu-bridge` follow-up patch candidate after the `ov5675` diagnostic result

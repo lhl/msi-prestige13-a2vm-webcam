@@ -132,10 +132,12 @@ with module-only rebuilds afterward.
 
 For the next diagnostic step, a full kernel rebuild is unnecessary.
 
-The likely next edit is in `ov5675.c` or `ipu-bridge.c`, so the faster loop is:
+The current likely next edit is in
+`drivers/platform/x86/intel/int3472/tps68470_board_data.c`, so the faster loop
+is:
 
 1. edit the source under `~/.cache/paru/clone/linux-mainline/src/linux-mainline`
-2. rebuild only the touched modules
+2. rebuild only the touched module subtree
 3. install the new `.ko` files into `/usr/lib/modules/$(uname -r)/...`
 4. run `depmod`
 5. reload the relevant modules or reboot if the live state is messy
@@ -145,5 +147,7 @@ See also:
 
 - `docs/patch-kernel-workflow.md` for the idempotent patch-stack applicator and
   `tested` vs `candidate` profiles
+- `docs/int3472-gpio-swap-followup.md` for the current module-only board-data
+  role-swap test
 - `docs/ov5675-diagnostic-patch.md` for the first concrete `ov5675` probe-log
   patch and an exact test sequence
