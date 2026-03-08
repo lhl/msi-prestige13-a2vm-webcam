@@ -2,6 +2,28 @@
 
 ## 2026-03-09
 
+### Clarify in AGENTS that `sudo` and `reboot` are user-run steps
+
+- Plan: add an explicit repo-local reminder that privileged commands and
+  reboots are user-run steps, so future sessions do not blur the boundary when
+  proposing kernel install, module install, or clean-boot tests.
+- Commands:
+  - reviewed the current repo policy:
+    - `AGENTS.md`
+  - `apply_patch` adding and updating:
+    - `AGENTS.md`
+    - `WORKLOG.md`
+- Result:
+  - `AGENTS.md` now explicitly says:
+    - `sudo` steps are user-run unless the user explicitly asks to run them and
+      the environment permits it
+    - `reboot` is user-run
+    - when a next step needs either one, the agent should provide the exact
+      commands and say what those steps are meant to validate
+- Decision:
+  - treat privilege and reboot boundaries as an explicit part of repo workflow,
+    not just an implicit environment constraint.
+
 ### Record the first identify-debug reload result and tighten the next test plan
 
 - Plan: preserve the first run after installing the identify-debug `ov5675`

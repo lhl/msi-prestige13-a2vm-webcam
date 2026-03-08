@@ -39,6 +39,12 @@ Primary artifacts:
 - If a probe could not be run, say so explicitly rather than implying a negative result.
 - Do not invent board-data details, sensor wiring, or vendor behavior without evidence.
 
+## Privilege and reboot boundaries
+
+- Treat `sudo` steps as user-run unless the user explicitly asks to run them and the environment permits it.
+- Treat `reboot` as user-run.
+- When a next step requires `sudo` or `reboot`, give the user the exact commands and say what result those steps are meant to validate.
+
 ## Communication rules
 
 - Every user-facing progress update must say what was actually done and what was actually learned, not just what command or file was touched.
