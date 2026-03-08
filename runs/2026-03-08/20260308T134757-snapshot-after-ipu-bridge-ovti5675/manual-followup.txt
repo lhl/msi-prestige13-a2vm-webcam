@@ -1,0 +1,68 @@
+Source: user terminal transcript pasted on 2026-03-08 after applying the
+`ipu-bridge` `OVTI5675` patch and rebuilding the `ipu-bridge` module only.
+
+Purpose:
+
+- verify whether the `ipu-bridge` follow-up patch removes the earlier
+  `ov5675 ... no firmware graph endpoint found` failure
+- preserve the exact manual evidence because the later snapshot run started
+  after the interesting probe lines had already occurred
+
+Commands and observed results:
+
+1. Check the relevant kernel log after loading the patched `ipu-bridge` path:
+
+   `journalctl -b -k --no-pager | rg 'ov5675|OVTI5675|firmware graph|firmware node|xvclk|reset|regulator|ipu7'`
+
+   High-value new lines:
+
+- `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+- `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+- `ov5675 i2c-OVTI5675:00: supply avdd not found, using dummy regulator`
+- `ov5675 i2c-OVTI5675:00: supply dovdd not found, using dummy regulator`
+- `ov5675 i2c-OVTI5675:00: supply dvdd not found, using dummy regulator`
+- `ov5675 i2c-OVTI5675:00: failed to find sensor: -5`
+- `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -5`
+
+   Interpretation:
+
+- the `ipu-bridge` patch worked:
+  - the old `no firmware graph endpoint found` failure is gone
+  - IPU now recognizes `OVTI5675:00` as a supported sensor and reports one
+    connected camera
+- the failure moved forward again:
+  - `ov5675` now reaches regulator lookup and then chip-detection
+  - the current failure is now missing real regulators, followed by sensor
+    probe failure `-5`
+
+2. Check current binding state:
+
+   `readlink -e /sys/bus/i2c/devices/i2c-OVTI5675:00/driver || echo unbound`
+   `readlink -e /sys/bus/i2c/devices/i2c-INT3472:06/driver || echo int3472-unbound`
+
+   Observed result:
+
+- `unbound`
+- `int3472-unbound`
+
+   Interpretation:
+
+- this run is useful, but not yet a perfectly clean end-to-end regulator test
+- the companion `INT3472` / `TPS68470` device was no longer bound at the time of
+  this check, which can explain why `ov5675` fell back to dummy regulators
+
+3. Current best reading of this run:
+
+- `ipu-bridge` support for `OVTI5675` was a real missing piece
+- the regulator failure is likely real or partially real, but this exact run is
+  confounded by the previously broken `INT3472` state after manual reprobe work
+
+Bottom line:
+
+- the next clean test should be a fresh boot with both patches present:
+  - MSI `INT3472` / `TPS68470` board-data patch
+  - `ipu-bridge` `OVTI5675` patch
+- after that boot, capture whether:
+  - `INT3472:06` binds cleanly
+  - `TPS68470 REVID: 0x21` appears again
+  - the supply warnings remain or disappear

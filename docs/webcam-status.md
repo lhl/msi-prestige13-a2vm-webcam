@@ -13,9 +13,10 @@ Updated: 2026-03-08
 Webcam support is still not working end to end on this laptop.
 
 The good news is that the first MSI-specific `INT3472` / `TPS68470`
-board-data patch and the follow-up `ov5675` diagnostic patch have both moved
-the failure forward. The bad news is that the camera is still blocked at the
-probe / graph stage, now with a more specific bridge-layer failure.
+board-data patch, the follow-up `ov5675` diagnostic patch, and the first
+`ipu-bridge` follow-up patch have all moved the failure forward. The bad news
+is that the camera is still blocked, now at the regulator / sensor-detect
+stage after the graph hookup was fixed.
 
 ## What works
 
@@ -45,8 +46,14 @@ before a usable sensor graph is assembled:
 Additional live evidence on the patched kernel:
 
 - `i2c-OVTI5675:00` exists under `/sys/bus/i2c/devices/`
-- the diagnostic `ov5675` module now logs:
-  - `ov5675 i2c-OVTI5675:00: no firmware graph endpoint found`
+- the `ipu-bridge` follow-up patch now logs:
+  - `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+  - `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+- the `ov5675` failure has moved forward again:
+  - `supply avdd not found, using dummy regulator`
+  - `supply dovdd not found, using dummy regulator`
+  - `supply dvdd not found, using dummy regulator`
+  - `failed to find sensor: -5`
 - the media graph still has no sensor entity
 - there are still no `/dev/v4l-subdev*` nodes
 - a manual bind attempt to `/sys/bus/i2c/drivers/ov5675/bind` returns:
@@ -56,7 +63,8 @@ Those lines and checks are the current high-value signal. They mean:
 
 1. The PMIC is present and reachable.
 2. The MSI board-data patch is active enough to instantiate the sensor client.
-3. The remaining blocker is now the firmware graph endpoint / sensor probe path.
+3. The firmware graph endpoint problem was real and is now fixed by the tested
+   `ipu-bridge` patch.
 4. The IPU still cannot assemble a complete media graph afterward.
 
 ## Assessment
@@ -67,14 +75,17 @@ board-data matching.
 - ACPI exposes `OVTI5675:00`.
 - The `ov5675` kernel module is loaded.
 - The patched kernel now instantiates `i2c-OVTI5675:00`.
-- The remaining failure is now more specifically consistent with missing
-  firmware / graph-endpoint hookup for `ov5675`.
-- The current leading local hypothesis is:
-  - `OVTI5675` is missing from `drivers/media/pci/intel/ipu-bridge.c`
-    `ipu_supported_sensors[]`
-- Second-order possibilities still exist after that:
-  - missing `powerdown` GPIO semantics
-  - remaining regulator or sequencing mismatch after the graph is fixed
+- The graph-endpoint failure was real:
+  - `OVTI5675` needed an `ipu-bridge` supported-sensor entry
+- The remaining failure is now later in probe:
+  - missing real regulators on the sensor device
+  - followed by sensor-detection failure `-5`
+- Important nuance:
+  - the first `ipu-bridge` test happened after an earlier manual reprobe left
+    `INT3472:06` unbound
+  - so the dummy-regulator result is useful, but it is not yet a perfectly
+    clean proof that the board-data regulator path is still wrong on a fresh
+    boot
 
 In practical terms, support looks like this:
 
@@ -84,7 +95,10 @@ In practical terms, support looks like this:
 - MSI board-data match for `INT3472:06`: present in the patched test kernel
 - Sensor instantiation on I2C: present in the patched test kernel
 - Sensor bind / media-subdevice registration: still missing
-- Firmware graph endpoint for `ov5675`: missing in the current tested kernel
+- Firmware graph endpoint for `ov5675`: fixed by the current tested
+  `ipu-bridge` patch
+- Real regulators on `ov5675`: still not confirmed in a clean combined-patch
+  boot
 - Usable webcam in userspace: not there yet
 
 ## Comparison with the upstream references
@@ -115,24 +129,26 @@ references could.
 ## Bottom line
 
 The webcam is closer than it was in late 2024 because the current patched test
-kernel now gets past the original MSI `INT3472` board-data failure and exposes
-the next missing piece. But the laptop is still blocked on the next stage after
+kernel now gets past the original MSI `INT3472` board-data failure and the
+first `ipu-bridge` gap. But the laptop is still blocked on the next stage after
 that:
 
 - `ov5675` still does not bind successfully
-- `ov5675` now explicitly reports `no firmware graph endpoint found`
+- `ipu-bridge` now recognizes `OVTI5675:00` and reports one connected camera
+- `ov5675` now falls through to dummy regulators and then fails sensor detect
 - the sensor still does not appear as a media subdevice
 - the camera still does not work in userspace
 
 ## Best next steps
 
-- Test the `ipu_bridge` follow-up patch candidate in:
-  - `reference/patches/ipu-bridge-ovti5675-v1.patch`
-- Check whether `OVTI5675` support is simply missing from
-  `drivers/media/pci/intel/ipu-bridge.c`.
-- If the graph-endpoint error disappears, only then re-evaluate:
-  - missing `powerdown` GPIO handling in `ov5675`
-  - remaining PMIC GPIO / sequencing mismatch
+- Reboot once into the same combined-patch kernel and capture a clean baseline
+  before any manual reprobe work.
+- Confirm whether `INT3472:06` binds cleanly again and whether:
+  - `TPS68470 REVID: 0x21` reappears
+  - the three `supply ... not found` warnings remain or disappear
+- If the supply warnings remain on a clean boot, re-evaluate:
+  - board-data regulator consumer mapping
+  - `powerdown` / second-GPIO semantics
 - Re-test with:
   - `journalctl -k -b | rg 'tps68470|ipu7|ov5675'`
   - `media-ctl -p -d /dev/media0`

@@ -2,6 +2,50 @@
 
 ## 2026-03-08
 
+### Record the first `ipu-bridge` success and narrow the remaining question to a clean-boot regulator check
+
+- Plan: preserve the first successful `ipu-bridge` `OVTI5675` result, but
+  document carefully that the later regulator failure is not yet a clean
+  verdict because the `INT3472` companion was already in a broken state from
+  earlier manual reprobe work.
+- Commands:
+  - reviewed the user-run bridge-test output:
+    - `journalctl -b -k --no-pager | rg 'ov5675|OVTI5675|firmware graph|firmware node|xvclk|reset|regulator|ipu7'`
+    - `readlink -e /sys/bus/i2c/devices/i2c-OVTI5675:00/driver || echo unbound`
+    - `readlink -e /sys/bus/i2c/devices/i2c-INT3472:06/driver || echo int3472-unbound`
+  - reviewed live and captured state:
+    - `lsmod | rg 'ipu_bridge|ov5675|intel_skl_int3472|tps68470|intel_ipu7'`
+    - `runs/2026-03-08/20260308T134757-snapshot-after-ipu-bridge-ovti5675/`
+    - earlier context line:
+      - `int3472-tps68470 i2c-INT3472:06: INT3472 seems to have no dependents`
+  - `apply_patch` adding and updating:
+    - `runs/2026-03-08/20260308T134757-snapshot-after-ipu-bridge-ovti5675/manual-followup.txt`
+    - `docs/ipu-bridge-ovti5675-candidate.md`
+    - `docs/webcam-status.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `README.md`
+    - `docs/README.md`
+    - `WORKLOG.md`
+- Result:
+  - the `ipu-bridge` follow-up patch clearly worked:
+    - `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+    - `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+    - the old `ov5675 ... no firmware graph endpoint found` line disappeared
+  - the failure moved forward again:
+    - `ov5675` now reaches regulator lookup
+    - then reports `avdd` / `dovdd` / `dvdd` not found and falls back to dummy
+      regulators
+    - then fails sensor detect with `-5`
+  - important nuance:
+    - this happened after an earlier manual reprobe had already produced
+      `INT3472 seems to have no dependents`
+    - by the time of live follow-up, `i2c-INT3472:06` was unbound
+    - so this run proves the bridge fix, but does **not** yet give a clean
+      fresh-boot verdict on the regulator path
+- Decision: the next test should be a fresh boot with both patches already
+  installed, then a clean baseline capture before any manual reprobe.
+
 ### Record the `ov5675` diagnostic result and draft the `ipu-bridge` follow-up
 
 - Plan: preserve the first diagnostic-patch run result, reduce the remaining

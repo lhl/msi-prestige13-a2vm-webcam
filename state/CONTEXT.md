@@ -16,8 +16,12 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
   - the sensor still does not bind
 - The `ov5675` diagnostic patch narrowed the remaining blocker further:
   - `ov5675 i2c-OVTI5675:00: no firmware graph endpoint found`
-- The strongest blocker is now the sensor firmware-graph hookup, not the
-  original DMI match failure.
+- The `ipu-bridge` follow-up patch fixed that graph-hookup failure:
+  - `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+  - `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+- The current open question is now narrower:
+  - on a clean boot, does `ov5675` still fall back to dummy regulators and fail
+    sensor detect?
 - The first `ov5675` diagnostic patch is now ready:
   - `reference/patches/ov5675-probe-diagnostics-v1.patch`
   - it turns the silent early `-ENXIO` exits into explicit kernel log lines
@@ -111,6 +115,22 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
     listed in `ipu_supported_sensors[]`
   - `OVTI5675` is absent from that list
   - local `ov5675.c` expects one link frequency at `450000000`
+- First `ipu-bridge` `OVTI5675` test result:
+  - `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+  - `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+  - `ov5675` then reports missing regulators:
+    - `supply avdd not found, using dummy regulator`
+    - `supply dovdd not found, using dummy regulator`
+    - `supply dvdd not found, using dummy regulator`
+  - then fails sensor detect:
+    - `failed to find sensor: -5`
+    - `probe with driver ov5675 failed with error -5`
+  - important nuance:
+    - the same session had an earlier
+      `int3472-tps68470 i2c-INT3472:06: INT3472 seems to have no dependents`
+    - a later live check showed `i2c-INT3472:06` currently unbound
+    - so the dummy-regulator result is useful but not yet a clean fresh-boot
+      verdict on the board-data regulator path
 - Important trap:
   - `readlink -f /sys/bus/i2c/devices/i2c-OVTI5675:00/driver` is misleading when the
     `driver` symlink does not exist
@@ -150,16 +170,21 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
   - `ov5675` expects `avdd`, `dovdd`, `dvdd`, `reset`, and 19.2 MHz `xvclk`
   - missing MSI-specific `tps68470_board_data` was real, but is no longer the
     leading blocker after `v1`
-  - the next blocker is now more specifically the firmware graph hookup:
-    - `OVTI5675` likely needs an `ipu_bridge` supported-sensor entry
-    - only after that should we revisit `powerdown` or regulator details
+  - the firmware graph hookup gap was also real and is now fixed by the tested
+    `ipu-bridge` patch candidate
+  - the next clean question is now:
+    - do regulators still fail on a fresh boot with both patches present?
+    - only after that should we revisit `powerdown` or remaining regulator
+      details
 - `scripts/capture-acpi.sh` is now fixed to disassemble lowercase `dsdt.dat` / `ssdt*.dat`, keep `.dsl` outputs under `dsl/`, and capture `live-linux-acpi-state.txt` in future runs
 
 Most important current log lines:
 
 - `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
-- `ov5675 i2c-OVTI5675:00: no firmware graph endpoint found`
-- `intel-ipu7 0000:00:05.0: no subdev found in graph`
+- `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+- `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+- `ov5675 i2c-OVTI5675:00: supply avdd not found, using dummy regulator`
+- `ov5675 i2c-OVTI5675:00: failed to find sensor: -5`
 - manual bind follow-up:
   - `tee: /sys/bus/i2c/drivers/ov5675/bind: No such device or address`
 
@@ -171,13 +196,13 @@ Most important current log lines:
 
 ## Next Actions
 
-1. Apply and test `reference/patches/ipu-bridge-ovti5675-v1.patch`.
-2. Rebuild and replace only the affected module:
-   - `ipu-bridge`
-3. Re-test whether:
-   - `ov5675 ... no firmware graph endpoint found` disappears
-   - a sensor subdevice appears in `media-ctl`
-4. Only after that, revisit:
+1. Reboot into the same combined-patch kernel and capture a clean post-boot
+   baseline before any manual reprobe.
+2. Confirm whether `INT3472:06` binds cleanly again and whether:
+   - `TPS68470 REVID: 0x21` appears
+   - `ov5675` still reports dummy regulators
+3. If the dummy-regulator warnings remain on a clean boot, revisit:
+   - board-data regulator consumer mapping
    - missing `powerdown` GPIO handling
-   - wrong GPIO semantics
-   - remaining regulator details
+   - remaining GPIO semantics
+4. Capture each new iteration with `scripts/webcam-run.sh`.

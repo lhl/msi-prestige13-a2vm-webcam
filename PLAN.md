@@ -77,15 +77,17 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 
 ## Near-Term Priority
 
-1. Test the drafted `ipu_bridge` `OVTI5675` support patch with module-only
-   rebuild/install iteration.
-2. Verify whether adding `OVTI5675` to `ipu_supported_sensors[]` removes:
-   - `ov5675 ... no firmware graph endpoint found`
-   - `intel-ipu7 ... no subdev found in graph`
-3. If the graph-endpoint error disappears, determine whether the next patch is:
+1. Reboot into the same combined-patch kernel and capture a clean baseline
+   before any manual reprobe disturbs `INT3472`.
+2. Verify whether the clean boot still shows:
+   - `intel-ipu7 ... Found supported sensor OVTI5675:00`
+   - `Connected 1 cameras`
+   - `supply avdd/dovdd/dvdd not found, using dummy regulator`
+3. If the supply warnings remain on a clean boot, determine whether the next
+   patch is:
+   - board-data regulator consumer follow-up
    - optional `powerdown` support in `ov5675.c`
    - GPIO semantic swap
-   - remaining regulator / sequencing details
 4. Keep full kernel rebuilds as a fallback only when a change stops being
    module-local.
 

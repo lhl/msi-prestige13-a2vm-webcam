@@ -1,0 +1,4 @@
+CMD: git_safe status --short
+?? runs/2026-03-08/20260308T134757-snapshot-after-ipu-bridge-ovti5675/
+
+EXIT_STATUS: 0

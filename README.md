@@ -6,8 +6,9 @@ Research and bring-up notes for getting the built-in webcam working on Linux on 
 
 - Current verdict: the webcam is still not working end to end.
 - Latest technical assessment: `docs/webcam-status.md`
-- Current leading blocker: `ov5675` still does not bind after the first MSI
-  `INT3472` / `TPS68470` board-data patch
+- Current leading blocker: after the `ipu-bridge` fix, `ov5675` now reaches the
+  regulator / sensor-detect stage, but we still need a clean fresh-boot check
+  to confirm the remaining regulator-path failure
 
 Machine under test:
 
@@ -76,12 +77,12 @@ msi-prestige13-a2vm-webcam/
 
 ## Current Focus
 
-1. Capture the exact `ov5675` probe / bind failure after the first MSI
-   `INT3472` board-data patch.
-2. Correlate that failure against ACPI, Windows sequencing, and Linux
-   firmware-node / graph expectations.
-3. Use module-only iteration to minimize rebuild time for the next camera-path
-   patches.
+1. Reboot and capture a clean combined-patch baseline without disturbing the
+   `INT3472` state first.
+2. Determine whether the remaining `ov5675` supply warnings persist on that
+   clean boot.
+3. Keep using module-only iteration to minimize rebuild time for the next
+   camera-path patches.
 
 ## Related Docs
 

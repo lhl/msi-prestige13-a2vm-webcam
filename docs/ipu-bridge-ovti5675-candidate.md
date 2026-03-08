@@ -78,10 +78,42 @@ failure mode again:
 If the graph endpoint error disappears but probe still fails later, that is
 still a successful narrowing step.
 
+## Actual Result From The First `ipu-bridge` Test
+
+The first `ipu-bridge` module-only test did change the failure mode exactly as
+expected:
+
+- `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+- `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+- the old `ov5675 ... no firmware graph endpoint found` line disappeared
+
+But the sensor still failed later:
+
+- `ov5675 i2c-OVTI5675:00: supply avdd not found, using dummy regulator`
+- `ov5675 i2c-OVTI5675:00: supply dovdd not found, using dummy regulator`
+- `ov5675 i2c-OVTI5675:00: supply dvdd not found, using dummy regulator`
+- `ov5675 i2c-OVTI5675:00: failed to find sensor: -5`
+
+Important nuance:
+
+- this same session also had an earlier:
+  - `int3472-tps68470 i2c-INT3472:06: INT3472 seems to have no dependents`
+- and a later live check showed:
+  - `i2c-INT3472:06` currently unbound
+
+So this first `ipu-bridge` test proved the bridge patch is real, but it did not
+yet give a clean verdict on the regulator path. The missing-regulator result is
+currently confounded by the broken `INT3472` state from the earlier manual
+reprobe work.
+
 ## Suggested Test Flow
 
 Use the same module-only method as the previous `ov5675` patch, but for
-`ipu-bridge`:
+`ipu-bridge`.
+
+For the next validation, prefer a fresh boot with both patches already
+installed, then capture the combined result before any manual reprobe disturbs
+the `INT3472` state.
 
 1. apply `reference/patches/ipu-bridge-ovti5675-v1.patch`
 2. run:
@@ -101,7 +133,13 @@ Use the same module-only method as the previous `ov5675` patch, but for
 The `ov5675` diagnostic patch did its job.
 
 The leading hypothesis is no longer "sensor power sequencing is still wrong."
-It is now:
+The confirmed result is:
 
-- `OVTI5675` needs an `ipu-bridge` supported-sensor entry so Linux creates the
-  firmware graph endpoint that `ov5675` expects.
+- `OVTI5675` did need an `ipu-bridge` supported-sensor entry so Linux could
+  create the firmware graph endpoint that `ov5675` expects
+
+The next unresolved question is narrower:
+
+- on a clean boot with both patches present, do the `ov5675` supply warnings
+  still remain, or were they only exposed because `INT3472:06` had become
+  unbound earlier in the session?
