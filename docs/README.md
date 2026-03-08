@@ -14,6 +14,7 @@ Current focus:
 - `docs/reprobe-harness.md` — safe snapshot/reprobe script and run-capture workflow
 - `docs/tps68470-reverse-engineering.md` — canonical note for ACPI capture plus Windows `iactrllogic64.sys` analysis
 - `docs/linux-board-data-candidate.md` — current MSI `tps68470_board_data` hypothesis and first patched-test plan
+- `docs/module-iteration.md` — faster module-only rebuild/install workflow for camera-path changes
 
 ## Repo-Level Control Docs
 

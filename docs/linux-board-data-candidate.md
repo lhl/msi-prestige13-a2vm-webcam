@@ -21,8 +21,43 @@ Patch candidate:
 
 Validation result:
 
-- `git apply --check` succeeds against the local `v6.19` tree at
-  `~/.cache/paru/clone/linux-mainline/src/linux-mainline`
+- `git apply --check` succeeded against the earlier local `v6.19` tree
+- the same patch also applied cleanly to the current cached `v7.0-rc2`
+  `tps68470_board_data.c` source
+- a patched `linux-mainline` build was then booted successfully as
+  `7.0.0-rc2-1-mainline-dirty`
+
+## V1 Live-Test Result
+
+The first patched boot produced the exact first-stage success we wanted:
+
+- `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+- the old `No board-data found for this model` line disappeared
+- `i2c-OVTI5675:00` now exists on the live I2C bus
+
+But the camera is still not usable:
+
+- `intel-ipu7 0000:00:05.0: no subdev found in graph` still appears
+- the media graph still contains only the IPU-side entities
+- there are still no `/dev/v4l-subdev*` nodes
+- the sensor client still does not bind successfully to `ov5675`
+
+Manual follow-up after the patched boot is recorded in:
+
+- `runs/2026-03-08/20260308T124909-snapshot-after-v1-board-data-boot/manual-followup.txt`
+
+That follow-up showed:
+
+- reloading `ov5675` does not fix the issue
+- a manual sysfs bind attempt returns `No such device or address`
+- there is still no useful `ov5675` probe error line in the kernel log
+
+So `v1` was not a full fix, but it did move the failure forward in a useful
+way:
+
+- before `v1`: no MSI board data, no sensor client
+- after `v1`: PMIC path comes up, `OVTI5675:00` is instantiated, sensor probe
+  still fails later
 
 ## Why This Shape
 
@@ -31,7 +66,7 @@ Machine-specific facts:
 - active sensor: `OVTI5675:00`
 - active PMIC companion: `INT3472:06`
 - live Linux device name: `i2c-INT3472:06`
-- current failure: `No board-data found for this model`
+- original pre-`v1` failure: `No board-data found for this model`
 
 Linux-side facts:
 
@@ -68,12 +103,13 @@ matching:
 - the Windows path clearly touches both PMIC GPIO1 and GPIO2
 
 So the first patch may still leave one MSI-specific control line unused on
-Linux. If `v1` removes `No board-data found` but the sensor still does not
-probe, the most likely next checks are:
+Linux. After the actual `v1` test, the most likely next checks are:
 
 1. swap the GPIO1 / GPIO2 semantic mapping
 2. add optional `powerdown` handling to `ov5675.c`
-3. confirm whether the second PMIC GPIO is sensor `powerdown` or a different
+3. check whether `ov5675` is failing earlier on missing firmware-graph endpoint
+   hookup rather than on power sequencing
+4. confirm whether the second PMIC GPIO is sensor `powerdown` or a different
    board-specific control
 
 ## First Live-Test Goal
@@ -85,6 +121,12 @@ smaller:
 - `ov5675` gets far enough to probe or at least fail differently
 - the media graph gains a sensor subdevice or the kernel logs expose the next
   blocker after board-data
+
+That goal has now been met partially:
+
+- the board-data failure is gone
+- the sensor client is instantiated
+- the remaining blocker is now the sensor probe / bind path
 
 ## Suggested Test Flow
 
@@ -102,4 +144,5 @@ After the first patched test, the branch should become one of:
 
 - board-data-only was sufficient enough to expose the sensor path
 - board-data is correct but `ov5675` needs an MSI-specific GPIO follow-up
+- `ov5675` is failing earlier on missing firmware-node / graph-endpoint hookup
 - the regulator consumer mapping is still wrong and needs another pass

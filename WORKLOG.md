@@ -2,6 +2,67 @@
 
 ## 2026-03-08
 
+### Record `v1` patched-kernel result and document module-only iteration
+
+- Plan: preserve the first successful boot and validation results from the
+  patched `MS-13Q3` board-data kernel, capture the user-run `ov5675` follow-up
+  bind attempt, and document a faster module-only iteration path for the next
+  patches.
+- Commands:
+  - reviewed committed and untracked run evidence:
+    - `runs/2026-03-08/20260308T065505-snapshot-after-v1-board-data-boot/*`
+    - `runs/2026-03-08/20260308T124909-snapshot-after-v1-board-data-boot/*`
+  - reviewed the user-provided terminal transcript for:
+    - `readlink -f /sys/bus/i2c/devices/i2c-OVTI5675:00/driver || echo unbound`
+    - `sudo modprobe -r ov5675`
+    - `sudo modprobe ov5675`
+    - `echo i2c-OVTI5675:00 | sudo tee /sys/bus/i2c/drivers/ov5675/bind`
+    - `journalctl -b -k --no-pager | rg 'ov5675|OVTI5675|tps68470|INT3472|supply|reset|powerdown|clk'`
+    - `media-ctl -p -d /dev/media0`
+    - `v4l2-ctl --list-devices`
+    - `find /dev -maxdepth 1 -name 'v4l-subdev*' | sort`
+  - reviewed kernel build layout for faster iteration:
+    - `drivers/platform/x86/intel/int3472/Makefile`
+    - `drivers/media/i2c/Makefile`
+    - `drivers/media/pci/intel/Makefile`
+    - `.config` entries for:
+      - `CONFIG_INTEL_SKL_INT3472`
+      - `CONFIG_VIDEO_OV5675`
+      - `CONFIG_IPU_BRIDGE`
+      - `CONFIG_GPIO_TPS68470`
+      - `CONFIG_REGULATOR_TPS68470`
+  - `apply_patch` updating:
+    - `WORKLOG.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `README.md`
+    - `docs/README.md`
+    - `docs/webcam-status.md`
+    - `docs/linux-board-data-candidate.md`
+    - `docs/module-iteration.md`
+    - `runs/2026-03-08/20260308T124909-snapshot-after-v1-board-data-boot/manual-followup.txt`
+- Result:
+  - the first patched kernel booted successfully as `7.0.0-rc2-1-mainline-dirty`
+  - the original blocker is gone:
+    - `No board-data found for this model` no longer appears
+  - the patched kernel moved the failure forward usefully:
+    - `i2c-OVTI5675:00` now exists
+    - `intel-ipu7 ... no subdev found in graph` still remains
+    - the graph still has no sensor entity
+    - there are still no `/dev/v4l-subdev*` nodes
+  - the user-run follow-up bind attempt failed with:
+    - `tee: /sys/bus/i2c/drivers/ov5675/bind: No such device or address`
+  - that means the next blocker is now `ov5675` probe / bind, not the original
+    missing `tps68470_board_data` match
+  - documented the practical faster loop for next edits:
+    - `intel_skl_int3472_tps68470`, `ov5675`, `ipu-bridge`, and the relevant
+      TPS68470 helper pieces are all modules in the current test kernel
+    - next iterations can usually use module-only rebuild/install instead of a
+      full `makepkg`
+- Decision: keep the `v1` board-data patch as the correct first-stage fix and
+  switch to module-only iteration for the next diagnostic `ov5675` / `ipu-bridge`
+  work.
+
 ### Preserve the reordered manual sensor-check batch and refresh current `linux-mainline` source status
 
 - Plan: commit the reordered manual sensor-check attempt as evidence, distinguish the dry-run from the real execute run, and re-check the current `linux-mainline` package-cache layout before moving to a patched-kernel test.

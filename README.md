@@ -6,13 +6,14 @@ Research and bring-up notes for getting the built-in webcam working on Linux on 
 
 - Current verdict: the webcam is still not working end to end.
 - Latest technical assessment: `docs/webcam-status.md`
-- Current leading blocker: missing MSI-specific `INT3472` / `TPS68470` board data or equivalent camera power-sequencing knowledge
+- Current leading blocker: `ov5675` still does not bind after the first MSI
+  `INT3472` / `TPS68470` board-data patch
 
 Machine under test:
 
 - Model: `Prestige 13 AI+ Evo A2VMG`
 - Revision: `REV:1.0`
-- Latest recorded kernel: `6.18.9-arch1-2` on 2026-03-07
+- Latest recorded kernel: `7.0.0-rc2-1-mainline-dirty` on 2026-03-08
 
 ## Start Here
 
@@ -24,6 +25,7 @@ Machine under test:
 - [`docs/reprobe-harness.md`](./docs/reprobe-harness.md) — safe snapshot/reprobe harness and run capture workflow
 - [`docs/tps68470-reverse-engineering.md`](./docs/tps68470-reverse-engineering.md) — canonical ACPI plus Windows-control-logic reverse-engineering note
 - [`docs/linux-board-data-candidate.md`](./docs/linux-board-data-candidate.md) — current Linux patch candidate and first live-test criteria
+- [`docs/module-iteration.md`](./docs/module-iteration.md) — faster module-only rebuild/install workflow for camera-path kernel changes
 - [`reference/README.md`](./reference/README.md) — captured upstream references
 
 ## Repo Layout
@@ -44,6 +46,7 @@ msi-prestige13-a2vm-webcam/
 │   └── CONTEXT.md
 ├── docs/
 │   ├── README.md
+│   ├── module-iteration.md
 │   ├── reprobe-harness.md
 │   ├── tps68470-reverse-engineering.md
 │   └── webcam-status.md
@@ -69,9 +72,12 @@ msi-prestige13-a2vm-webcam/
 
 ## Current Focus
 
-1. Confirm the exact upstream gap around `INT3472` / `TPS68470` board data.
-2. Collect MSI-specific evidence from Linux logs, ACPI/device IDs, and Windows camera packages.
-3. Narrow the smallest patch or configuration change needed to make the media graph come up cleanly.
+1. Capture the exact `ov5675` probe / bind failure after the first MSI
+   `INT3472` board-data patch.
+2. Correlate that failure against ACPI, Windows sequencing, and Linux
+   firmware-node / graph expectations.
+3. Use module-only iteration to minimize rebuild time for the next camera-path
+   patches.
 
 ## Related Docs
 
@@ -80,6 +86,7 @@ msi-prestige13-a2vm-webcam/
 - [`docs/reprobe-harness.md`](./docs/reprobe-harness.md) — safe module reprobe/capture workflow for repeatable experiments
 - [`docs/tps68470-reverse-engineering.md`](./docs/tps68470-reverse-engineering.md) — canonical reverse-engineering note for ACPI plus Windows `iactrllogic64.sys`
 - [`docs/linux-board-data-candidate.md`](./docs/linux-board-data-candidate.md) — current MSI `tps68470_board_data` hypothesis and first patched-test plan
+- [`docs/module-iteration.md`](./docs/module-iteration.md) — module-only rebuild/install workflow for camera-path iteration
 - [`reference/greymouser-summit-13-ai-evo-a2vm.md`](./reference/greymouser-summit-13-ai-evo-a2vm.md) — related MSI Summit 13 AI+ Evo A2VMTG Linux support repo note
 - [`reference/intel-ipu7-drivers-issue-17.md`](./reference/intel-ipu7-drivers-issue-17.md) — Intel upstream issue note
 - [`reference/intel-control-logic-microsoft-update-catalog-71.26100.23.20279.md`](./reference/intel-control-logic-microsoft-update-catalog-71.26100.23.20279.md) — exact `ACPI\INT3472` Windows control-logic package entry and CAB URL

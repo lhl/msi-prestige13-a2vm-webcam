@@ -9,8 +9,12 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
 ## Best Current Read
 
 - IPU7 core support is present.
-- `ov5675` is likely the correct sensor path.
-- The strongest blocker is still MSI-specific `INT3472` / `TPS68470` board data or power sequencing.
+- `ov5675` is the correct sensor path.
+- The first patched `MS-13Q3` `tps68470_board_data` test moved the failure forward:
+  - the old board-data error is gone
+  - `i2c-OVTI5675:00` now exists
+  - the sensor still does not bind
+- The strongest blocker is now the `ov5675` probe / bind path, not the original DMI match failure.
 - The Windows `iactrllogic64.sys` control-logic driver clearly contains board-specific `TPS68470` sequencing logic; it is not just an install stub.
 - Local `linux-mainline` source path to reuse:
   - package root: `~/.cache/paru/clone/linux-mainline`
@@ -81,6 +85,20 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
     - Windows clearly uses both PMIC GPIO1 and GPIO2
     - a second Linux patch may still be needed for `powerdown` or swapped GPIO semantics
   - the same patch still applies cleanly to the current cached `v7.0-rc2` `tps68470_board_data.c` content extracted from the bare package cache
+- Patched-kernel `v1` live-test result:
+  - patched kernel booted successfully as `7.0.0-rc2-1-mainline-dirty`
+  - `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+  - `No board-data found for this model` is gone
+  - `intel-ipu7 ... no subdev found in graph` still remains
+  - `i2c-OVTI5675:00` now exists on the live I2C bus
+  - `ov5675` is loaded but the sensor client is still unbound
+  - a manual bind attempt returns `No such device or address`
+  - there are still no `/dev/v4l-subdev*` nodes
+- Important trap:
+  - `readlink -f /sys/bus/i2c/devices/i2c-OVTI5675:00/driver` is misleading when the
+    `driver` symlink does not exist
+  - use `ls -l .../driver` or `readlink -e` when checking whether the sensor is
+    actually bound
 - First real raw ACPI capture now exists in-repo:
   - `reference/acpi/20260308T004459-unknown-host/`
   - `dmi.txt` confirms product `Prestige 13 AI+ Evo A2VMG`, board `MS-13Q3`, BIOS `E13Q3IMS.109`, BIOS date `09/04/2024`
@@ -109,14 +127,20 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
   - it does **not** provide any new evidence about the reordered `VA -> VD -> VSIO` sequence
 - Linux-side implication:
   - `ov5675` expects `avdd`, `dovdd`, `dvdd`, `reset`, and 19.2 MHz `xvclk`
-  - the likely blocker is missing MSI-specific `tps68470_board_data` for `i2c-INT3472:06` and `OVTI5675:00`, not just a missing DMI match
+  - missing MSI-specific `tps68470_board_data` was real, but is no longer the
+    leading blocker after `v1`
+  - the next blocker is now somewhere in the sensor probe / bind path:
+    - missing second GPIO semantics such as `powerdown`
+    - missing firmware / graph-endpoint hookup
+    - or remaining regulator / sequencing mismatch
 - `scripts/capture-acpi.sh` is now fixed to disassemble lowercase `dsdt.dat` / `ssdt*.dat`, keep `.dsl` outputs under `dsl/`, and capture `live-linux-acpi-state.txt` in future runs
 
 Most important current log lines:
 
-- `int3472-tps68470 i2c-INT3472:06: error -ENODEV: No board-data found for this model`
-- `intel-ipu7 0000:00:05.0: no subdev found in graph`
 - `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+- `intel-ipu7 0000:00:05.0: no subdev found in graph`
+- manual bind follow-up:
+  - `tee: /sys/bus/i2c/drivers/ov5675/bind: No such device or address`
 
 ## Open Questions
 
@@ -126,9 +150,14 @@ Most important current log lines:
 
 ## Next Actions
 
-1. Test `reference/patches/ms13q3-int3472-tps68470-v1.patch` against a patched kernel or matching module build.
-2. Compare the first patched run against the committed baseline harness results.
-3. If the board-data error clears but the sensor still fails, decide whether the next patch is:
-   - a GPIO1 / GPIO2 semantic swap, or
-   - optional `powerdown` support in `ov5675.c`
-4. Re-check whether any extra driver behavior beyond board-data is needed for the MSI path.
+1. Add a tiny diagnostic patch to `ov5675.c` so the silent early `-ENXIO` exits
+   become explicit in the kernel log.
+2. Rebuild only the affected modules instead of doing a full kernel rebuild:
+   - `intel_skl_int3472_tps68470`
+   - `ov5675`
+   - `ipu-bridge` if needed
+3. Determine whether the remaining blocker is:
+   - missing `powerdown` GPIO handling
+   - wrong GPIO semantics
+   - missing firmware / graph-endpoint hookup
+4. Capture each new iteration with `scripts/webcam-run.sh`.

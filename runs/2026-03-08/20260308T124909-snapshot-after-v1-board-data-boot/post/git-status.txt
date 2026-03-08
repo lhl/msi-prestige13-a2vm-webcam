@@ -1,0 +1,5 @@
+CMD: git_safe status --short
+?? runs/2026-03-08/20260308T065505-snapshot-after-v1-board-data-boot/
+?? runs/2026-03-08/20260308T124909-snapshot-after-v1-board-data-boot/
+
+EXIT_STATUS: 0

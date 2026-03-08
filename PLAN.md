@@ -1,6 +1,6 @@
 # Webcam Bring-Up Plan
 
-Updated: 2026-03-07
+Updated: 2026-03-08
 
 This is the active plan for getting the MSI Prestige 13 AI+ Evo A2VMG webcam working on Linux and for documenting the investigation cleanly as we go.
 
@@ -11,12 +11,13 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 ## Current Assessment
 
 - IPU7 core support is present enough to enumerate the Lunar Lake IPU and load firmware.
-- The likely sensor path is no longer completely opaque:
-  - ACPI exposes `OVTI5675:00`
-  - the `ov5675` kernel module is loaded
-- The strongest current blocker is still the `INT3472` / `TPS68470` path:
-  - `error -ENODEV: No board-data found for this model`
+- The first patched `tps68470_board_data` test succeeded partially:
+  - the old `No board-data found for this model` failure is gone
+  - `i2c-OVTI5675:00` is now instantiated on the live I2C bus
+- The strongest current blocker has moved forward to the sensor side:
   - `intel-ipu7 ... no subdev found in graph`
+  - `ov5675` still does not bind successfully to `i2c-OVTI5675:00`
+  - there are still no `/dev/v4l-subdev*` nodes
 
 ## Evidence Baseline
 
@@ -29,6 +30,7 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 - [x] Add a root-capable ACPI capture script for this exact machine.
 - [x] Capture ACPI and DMI details relevant to existing `INT3472` board-data matching logic.
 - [x] Identify the active live ACPI camera path and companion `INT3472` device on this machine.
+- [x] Test the first `MS-13Q3` `tps68470_board_data` patch on a booted patched kernel.
 
 ## Workstreams
 
@@ -39,7 +41,11 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 - [x] Snapshot current Torvalds `HEAD` `drivers/platform/x86/intel/int3472/` and compare it against local `v6.19`.
 - [ ] Check whether this MSI DMI identity is already supported under another variant string.
 - [ ] Search recent kernel and mailing-list activity for Lunar Lake `ov5675`, `INT3472`, or `TPS68470` additions.
-- [ ] Determine whether the blocker is only missing board-data matching or also missing regulator/GPIO sequencing details.
+- [x] Determine that the blocker is not only missing board-data matching.
+- [ ] Determine whether the remaining blocker is:
+  - missing `ov5675` GPIO handling
+  - missing firmware / graph-endpoint hookup
+  - remaining regulator or sequencing details
 
 ### 2. Local machine evidence
 
@@ -49,7 +55,11 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
   - `v4l2-ctl --list-devices`
   - targeted `v4l2-ctl --all -d /dev/video*`
 - [x] Save exact boot-log excerpts for failed probe attempts and preserve room for later successful-probe captures.
-- [ ] Record any changes across kernel versions if testing on multiple kernels.
+- [x] Record the change from stock `6.18.9-arch1-2` to patched `7.0.0-rc2-1-mainline-dirty`.
+- [x] Confirm that the patched kernel changes the failure mode:
+  - sensor client instantiated
+  - board-data error removed
+  - sensor still not bound
 
 ### 3. Vendor / Windows clue extraction
 
@@ -67,15 +77,19 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 
 ## Near-Term Priority
 
-1. Test the drafted `MS-13Q3` `tps68470_board_data` patch against a patched kernel or matching module build.
-2. If `No board-data found` disappears but the sensor still fails, determine whether `ov5675` needs an optional `powerdown` GPIO path.
-3. Re-test against the reprobe harness after each concrete patch hypothesis.
-4. Reduce the post-board-data failure, if any, to the next smallest patch.
+1. Add a small diagnostic patch to `ov5675.c` so silent early probe exits become explicit.
+2. Use module-only rebuild/install iteration for `ov5675`, `intel_skl_int3472_tps68470`, and `ipu-bridge` where possible.
+3. Determine whether the next patch is:
+   - optional `powerdown` support in `ov5675.c`
+   - GPIO semantic swap
+   - firmware / graph-endpoint hookup change
+4. Re-test against the reprobe harness after each concrete patch hypothesis.
 
 ## Open Questions
 
-- Is the missing piece just a DMI match entry, or does MSI require custom regulator and GPIO data not present upstream?
-- Does `ov5675` probe far enough to appear in the media graph once PMIC board data exists, or is there a second blocker after power-up?
+- Was the missing piece just a DMI match entry, or does MSI require custom regulator and GPIO data not present upstream?
+- Answer so far: not just a DMI match; board-data was necessary but not sufficient.
+- Does `ov5675` fail because it lacks a second GPIO such as `powerdown`, or because it never receives the expected firmware graph endpoint?
 - Is there any vendor firmware or Intel middleware dependency beyond standard kernel and firmware files?
 - Does this machine correspond to the Windows driver's `VoltageWF` path, `VoltageUF` path, or a narrower subclass selected via ACPI / board config?
 

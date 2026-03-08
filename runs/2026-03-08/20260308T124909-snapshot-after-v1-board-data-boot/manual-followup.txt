@@ -1,0 +1,76 @@
+Source: user terminal transcript pasted on 2026-03-08 after run 20260308T124909-snapshot-after-v1-board-data-boot
+
+Purpose:
+- verify whether the `ov5675` sensor is actually bound after booting the patched
+  `7.0.0-rc2-1-mainline-dirty` kernel
+- attempt a manual unbind/rebind cycle and capture the result outside the normal
+  snapshot harness
+
+Commands and observed results:
+
+1. Check the sensor driver's sysfs path:
+
+   `readlink -f /sys/bus/i2c/devices/i2c-OVTI5675:00/driver || echo unbound`
+
+   Observed output:
+
+   `/sys/devices/pci0000:00/0000:00:15.1/i2c_designware.1/i2c-1/i2c-OVTI5675:00/driver`
+
+   Note:
+
+- this was later recognized as misleading because `readlink -f` canonicalizes the
+  path even if the `driver` symlink does not exist
+- a later direct `ls -l` check showed the `driver` symlink is absent, so the
+  device is still unbound
+
+2. Reload the sensor module:
+
+   `sudo modprobe -r ov5675`
+   `sudo modprobe ov5675`
+
+   Observed result:
+
+- both commands completed without printing an `ov5675`-specific error
+
+3. Try an explicit manual bind:
+
+   `echo i2c-OVTI5675:00 | sudo tee /sys/bus/i2c/drivers/ov5675/bind`
+
+   Observed output:
+
+   `i2c-OVTI5675:00`
+   `tee: /sys/bus/i2c/drivers/ov5675/bind: No such device or address`
+
+   Interpretation:
+
+- the sensor client exists, but the driver's probe path still fails when asked
+  to bind to it
+
+4. Check the relevant kernel log slice:
+
+   `journalctl -b -k --no-pager | rg 'ov5675|OVTI5675|tps68470|INT3472|supply|reset|powerdown|clk'`
+
+   High-value lines:
+
+- `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+- no `No board-data found for this model` line
+- no useful `ov5675` probe error line
+
+5. Re-check the media graph and device nodes:
+
+   `media-ctl -p -d /dev/media0`
+   `v4l2-ctl --list-devices`
+   `find /dev -maxdepth 1 -name 'v4l-subdev*' | sort`
+
+   Observed result:
+
+- the graph still contains only the IPU-side capture entities
+- there is still no sensor entity in the media topology
+- there are still no `/dev/v4l-subdev*` nodes
+
+Bottom line:
+
+- `v1` fixed the `INT3472` board-data failure and got the sensor instantiated as
+  `i2c-OVTI5675:00`
+- the next blocker is now `ov5675` probe / bind, not the original missing
+  `tps68470_board_data` match
