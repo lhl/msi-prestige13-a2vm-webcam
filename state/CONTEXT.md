@@ -45,6 +45,7 @@ with strong evidence.
   - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
   - `ov5675` remains unbound
   - there are still no `/dev/v4l-subdev*` nodes
+  - the `gpio-swap-v1` clean-boot run did not change that pattern
 
 ## Latest Debug Result
 
@@ -63,13 +64,24 @@ with strong evidence.
   - `ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -110`
   - `ov5675 i2c-OVTI5675:00: failed to find sensor: -110`
   - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
+- Clean boot with the `INT3472` `GPIO1` / `GPIO2` role-swap follow-up:
+  - `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+  - `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+  - `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -110`
+  - `... 5/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: failed to find sensor: -110`
+  - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
 - Conclusion:
   - the clean-boot identify-debug run replaced the old ambiguous `-5` result
     with the real remaining sensor-side error
   - `ov5675_identify_module()` is reached, but every chip-ID read times out
     with `-110`
-  - the next likely patch space is now `GPIO1` / `GPIO2` semantics, polarity,
-    or remaining PMIC wake-up sequencing, not mere identify retries
+  - the clean-boot `gpio-swap-v1` run was negative and also clarified that
+    pure label swaps are low-signal with the current `ov5675` power sequence,
+    because both control lines are driven in lockstep
+  - the next likely patch space is now `GPIO1` / `GPIO2` polarity or
+    remaining PMIC wake-up sequencing, not mere identify retries
   - the newer Windows-helper analysis does show a separate `UF` path that
     touches what Linux would call `gpio.4`, but current ACPI evidence still
     keeps this laptop aligned with the `WF` / `LNK0` path
@@ -80,7 +92,6 @@ with strong evidence.
    repeatable.
 2. Use the clean-boot `-110` identify timeout as the new baseline.
 3. Next fix candidates to test:
-   - `GPIO1` / `GPIO2` role swap
    - `GPIO1` / `GPIO2` polarity variants
    - board-data regulator consumer or sequencing detail
    - deeper `WF`-side PMIC or sensor wake-up sequencing from the Windows path
@@ -90,11 +101,12 @@ with strong evidence.
 5. Keep clean-boot checkpoints as the primary truth source. Reload-only checks
    are still secondary once the boot-time path has already failed.
 6. Immediate next module-only test:
-   - apply `reference/patches/ms13q3-int3472-gpio-swap-v1.patch`
+   - keep the same two PMIC lines
+   - change polarity, not just labels
    - rebuild only `drivers/platform/x86/intel/int3472`
    - replace `intel_skl_int3472_tps68470.ko.zst`
    - reboot
-   - run `scripts/01-clean-boot-check.sh --label gpio-swap-v1`
+   - run `scripts/01-clean-boot-check.sh` with a new polarity label
 
 ## Key Paths
 

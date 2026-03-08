@@ -75,6 +75,22 @@ Additional live evidence on the patched kernel:
   - `ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -110`
   - `ov5675 i2c-OVTI5675:00: failed to find sensor: -110`
   - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
+- on the next clean boot with the `INT3472` `GPIO1` / `GPIO2` role-swap patch:
+  - `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+  - `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+  - `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: failed to find sensor: -110`
+  - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
+- the clean-boot `gpio-swap-v1` run also makes one important interpretation
+  point clearer:
+  - with the current `ov5675` power sequence, a pure label swap on two
+    `GPIO_ACTIVE_LOW` lines is close to a physical no-op, because both control
+    lines are driven together
 - the old clean-boot `Failed to enable dvdd: -ETIMEDOUT` line is gone
 - the media graph still has no sensor entity
 - there are still no `/dev/v4l-subdev*` nodes
@@ -101,6 +117,12 @@ Those lines and checks are the current high-value signal. They mean:
    - every chip-ID read attempt times out with `-110`
    - the remaining blocker is now a true transport / wake-up / sequencing
      failure at sensor identification time
+8. The clean-boot `gpio-swap-v1` run was a negative result and also explained
+   one limitation of the previous hypothesis:
+   - the role-swap patch did not move the `-110` timeout
+   - with the current `ov5675.c` power-on logic, both control lines are
+     toggled in lockstep
+   - that makes a label-only swap low-signal unless polarity also changes
 
 ## Assessment
 
@@ -122,9 +144,15 @@ board-data matching.
   - there are still no `/dev/v4l-subdev*`
 - The clean-boot identify-debug run replaced the old collapsed `-5` ambiguity:
   - the sensor now fails with repeated chip-ID read timeouts `-110`
+- The clean-boot `gpio-swap-v1` result was negative and low-signal:
+  - the timeout pattern was unchanged
+  - the current `ov5675` power sequence drives both control lines together, so
+    swapping names without changing polarity does not materially alter the
+    pin-level sequence
 - The leading remaining local possibilities are now:
-  - remaining `GPIO1` / `GPIO2` semantics around the second MSI control line
   - remaining `GPIO1` / `GPIO2` polarity detail
+  - remaining `GPIO1` / `GPIO2` electrical behavior beyond the current
+    label-only approximation
   - remaining board-data regulator / consumer / sequencing detail
   - remaining `WF`-side PMIC wake-up sequencing detail
 - The Windows package does contain a separate `UF` helper family that touches a
@@ -185,6 +213,9 @@ that:
 - the first reload-only identify-debug run failed earlier at `reset-gpios: -110`
 - the next clean boot with identify-debug parameters showed the real remaining
   failure: repeated chip-ID read timeouts `-110`
+- the next clean boot with the `INT3472` role-swap follow-up was a negative
+  result and effectively showed that the next useful board-data space is
+  polarity, not more label-only swaps
 - the sensor still does not appear as a media subdevice
 - the camera still does not work in userspace
 
@@ -193,9 +224,12 @@ that:
 - Treat the first `powerdown` follow-up as a negative result.
 - Use `docs/wf-vs-uf-gpio-analysis.md` to keep the next board-data experiments
   grounded in the current Windows and ACPI evidence.
+- Treat the `gpio-swap-v1` clean-boot result as:
+  - a real negative result
+  - and evidence that polarity changes are now more meaningful than more
+    label-only swaps
 - Test the next smallest module-only follow-up in one of these directions:
-  - remaining `GPIO1` / `GPIO2` semantics or polarity around the second control
-    line
+  - `GPIO1` / `GPIO2` polarity variants
   - board-data regulator consumer mapping
   - remaining PMIC or sensor wake-up sequencing detail
 - Re-test with:

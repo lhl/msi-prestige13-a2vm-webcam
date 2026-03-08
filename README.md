@@ -110,9 +110,9 @@ msi-prestige13-a2vm-webcam/
    `failed to find sensor: -5` did not change.
 3. Use the `ov5675` identify-debug branch as the clean-boot baseline:
    chip-ID reads now fail with `-110`, not the old collapsed `-5`.
-4. Use the `WF` vs `UF` analysis and the new `INT3472` follow-up to test
-   `GPIO1` / `GPIO2` role swap first, then polarity, before jumping to a
-   different PMIC GPIO design.
+4. Use the `WF` vs `UF` analysis and the current clean-boot results to keep the
+   next `INT3472` follow-up focused on `GPIO1` / `GPIO2` polarity rather than a
+   premature jump to a different PMIC GPIO design.
 
 ## Related Docs
 

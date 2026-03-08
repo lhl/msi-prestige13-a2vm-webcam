@@ -118,3 +118,47 @@ Use the clean-boot checkpoint as the primary truth source.
 If the clean-boot result still shows repeated chip-ID read timeouts `-110`,
 then this role-swap experiment is a negative result and the next minimal follow
 up should be polarity experiments on the same `GPIO1` / `GPIO2` pair.
+
+## Actual Clean-Boot Result
+
+Run:
+
+- `runs/2026-03-09/20260309T023655-snapshot-gpio-swap-v1/focused-summary.txt`
+
+Observed result:
+
+- `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+- `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+- `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+- `ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -110`
+- `... 5/5 failed: -110`
+- `ov5675 i2c-OVTI5675:00: failed to find sensor: -110`
+- `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
+
+This is a negative clean-boot result:
+
+- `ov5675` remains unbound
+- there are still no `/dev/v4l-subdev*` nodes
+- the failure did not move past the identify timeout
+
+## What This Actually Tells Us
+
+The role-swap test was worth running, but the result is lower-signal than it
+first looks.
+
+In the current local `ov5675` power sequence, Linux drives both `reset_gpio`
+and `powerdown_gpio` in lockstep:
+
+- both are set to logical `1` before rail enable
+- both are set to logical `0` after the stabilization delay
+- both return to logical `1` on power-off
+
+That means a pure `reset` / `powerdown` label swap does not materially change
+the physical waveform unless polarity also changes.
+
+So the clean interpretation is:
+
+- the role-swap experiment is negative
+- but it is also close to an electrical no-op with current `ov5675.c`
+- the next meaningful board-data experiments should be polarity variants on the
+  same two PMIC lines, not more label-only swaps

@@ -2,6 +2,54 @@
 
 ## 2026-03-09
 
+### Record the negative clean-boot `gpio-swap-v1` result
+
+- Plan: review the first clean-boot run after the `INT3472` `GPIO1` / `GPIO2`
+  role-swap patch, write down the actual result, and update the investigation
+  direction if the run turns out to be low-signal.
+- Commands:
+  - reviewed the new clean-boot run:
+    - `sed -n '1,220p' runs/2026-03-09/20260309T023655-snapshot-gpio-swap-v1/focused-summary.txt`
+    - `journalctl -b -k --no-pager | rg 'ov5675|OVTI5675|INT3472|i2c_designware|ETIMEDOUT|Failed to enable|failed to disable|regulator'`
+  - re-checked the current `ov5675` power sequence and the existing Windows
+    helper note:
+    - `sed -n '1085,1165p' ~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/i2c/ov5675.c`
+    - `sed -n '1,240p' docs/wf-vs-uf-gpio-analysis.md`
+    - `sed -n '1,220p' docs/int3472-gpio-swap-followup.md`
+  - `apply_patch` updating:
+    - `docs/int3472-gpio-swap-followup.md`
+    - `docs/webcam-status.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `README.md`
+    - `WORKLOG.md`
+- Result:
+  - the clean-boot `gpio-swap-v1` run is a real negative result:
+    - `OVTI5675:00` is still found
+    - `INT3472:06` is still bound
+    - chip-ID read attempts `1/5` through `5/5` still fail with `-110`
+    - `ov5675` remains unbound
+    - there are still no `/dev/v4l-subdev*` nodes
+  - the broader boot log also still shows the same follow-on controller and
+    cleanup fallout after the failed identify stage:
+    - repeated `i2c_designware.1: controller timed out`
+    - `VSIO`, `CORE`, and `ANA` disable failures
+    - regulator-core warnings after the bus is already wedged
+  - the most important new interpretation is that the role-swap patch was also
+    low-signal:
+    - current `ov5675_power_on()` drives both control lines together
+    - both lines are set to logical `1` before rail enable
+    - both lines are set to logical `0` after the stabilization delay
+    - both lines return to logical `1` on power-off
+  - so a pure `reset` / `powerdown` label swap with the same active-low flags
+    does not materially change the physical waveform during probe
+- Decision:
+  - stop treating label-only swaps as a strong next-step class
+  - treat `GPIO1` / `GPIO2` polarity changes as the next meaningful
+    board-data-space experiment
+  - keep `WF` / `LNK0` as the primary model until stronger evidence justifies a
+    `UF` / `gpio.4` pivot
+
 ### Prepare the next module-only `INT3472` GPIO role-swap experiment
 
 - Plan: turn the next most defensible Linux experiment into a repeatable repo

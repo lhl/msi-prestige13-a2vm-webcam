@@ -99,11 +99,15 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 2. Use the clean-boot identify-debug result as the new baseline:
    - repeated chip-ID read timeouts `-110`
 3. Use that result to determine whether the next real fix is:
-   - `GPIO1` / `GPIO2` role swap
    - `GPIO1` / `GPIO2` polarity follow-up
    - board-data regulator consumer follow-up
    - remaining PMIC or sensor wake-up sequencing detail
-4. Keep full kernel rebuilds as a fallback only when a change stops being
+4. Treat label-only `GPIO1` / `GPIO2` swaps as low-signal with the current
+   `ov5675` power sequence:
+   - both control lines are driven in lockstep during power-on and power-off
+   - the next meaningful electrical change is polarity, not another pure role
+     swap
+5. Keep full kernel rebuilds as a fallback only when a change stops being
    module-local.
 
 ## Open Questions
@@ -119,7 +123,7 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
   - `ov5675_identify_module()` is reached
   - repeated chip-ID reads time out with `-110`
 - The next open question is whether Linux now needs:
-  - different `GPIO1` / `GPIO2` semantics or polarity
+  - different `GPIO1` / `GPIO2` polarity
   - another board-data consumer or sequencing adjustment
 - The latest Windows-helper analysis adds one important guardrail:
   - the package has both `WF` and `UF` helper families
@@ -128,12 +132,14 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
     should not be the first follow-up without stronger local evidence
 - Current diagnostic gap:
   - we now know the identify stage times out; the next gap is whether that is
-    caused by `GPIO1` / `GPIO2` semantics, polarity, or a still-missing PMIC
+    caused by `GPIO1` / `GPIO2` polarity, or a still-missing PMIC
     wake-up step
 - Immediate next candidate:
-  - `reference/patches/ms13q3-int3472-gpio-swap-v1.patch`
-  - module-only rebuild of `intel_skl_int3472_tps68470.ko`
-  - clean-boot checkpoint with `scripts/01-clean-boot-check.sh --label gpio-swap-v1`
+  - keep the existing `WF` / `LNK0` board-data structure
+  - test a real polarity change on one of the two PMIC lines
+  - keep the experiment module-local with a rebuild of
+    `intel_skl_int3472_tps68470.ko`
+  - validate on a clean boot with `scripts/01-clean-boot-check.sh`
 - Is there any vendor firmware or Intel middleware dependency beyond standard kernel and firmware files?
 - Does this machine correspond to the Windows driver's `VoltageWF` path, `VoltageUF` path, or a narrower subclass selected via ACPI / board config?
 
