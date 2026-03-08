@@ -83,12 +83,14 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 ## Near-Term Priority
 
 1. Treat the first `powerdown-v1` clean-boot test as a negative result.
-2. Determine whether the next module-only patch is:
+2. Test the next module-only `ov5675` debug branch that:
+   - preserves real I2C transfer errors instead of collapsing them to `-EIO`
+   - adds chip-ID retry logging
+   - adds a tunable extra post-power-on delay
+3. Use that result to determine whether the next real fix is:
    - remaining GPIO semantic swap
    - extra post-power-on delay
    - board-data regulator consumer follow-up
-3. Keep using clean-boot checkpoints after each small patch so the log signal
-   stays comparable.
 4. Keep full kernel rebuilds as a fallback only when a change stops being
    module-local.
 
@@ -104,6 +106,9 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
   - different GPIO semantics or polarity
   - extra post-power-on timing
   - another board-data consumer or sequencing adjustment
+- Current diagnostic gap:
+  - Linux still throws away the underlying I2C transport error during chip-ID
+    reads by returning plain `-EIO`
 - Is there any vendor firmware or Intel middleware dependency beyond standard kernel and firmware files?
 - Does this machine correspond to the Windows driver's `VoltageWF` path, `VoltageUF` path, or a narrower subclass selected via ACPI / board config?
 

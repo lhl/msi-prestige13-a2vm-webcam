@@ -59,6 +59,38 @@ Example:
 sudo scripts/02-ov5675-reload-check.sh
 ```
 
+## `scripts/03-ov5675-identify-debug-check.sh`
+
+Use this after installing an `ov5675` build that includes the identify-debug
+patch candidate.
+
+What it does:
+
+- unloads and reloads only `ov5675`
+- passes explicit identify-debug module parameters:
+  - `identify_retry_count`
+  - `identify_retry_delay_us`
+  - `extra_post_power_on_delay_us`
+- captures a standard snapshot run
+- writes a focused summary using identify-specific journal lines since reload
+  start
+
+Additional lines tracked here:
+
+- `applying extra post-power-on delay`
+- `chip id read attempt`
+- `chip id attempt`
+- `sensor identified on attempt`
+
+Example:
+
+```bash
+sudo scripts/03-ov5675-identify-debug-check.sh \
+  --identify-retries 5 \
+  --identify-retry-delay-us 2000 \
+  --extra-delay-us 5000
+```
+
 ## Current interpretation rule
 
 For this project, `01-clean-boot-check.sh` is the primary truth source.

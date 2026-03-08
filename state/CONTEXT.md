@@ -61,14 +61,16 @@ with strong evidence.
 
 1. Keep using `scripts/patch-kernel.sh` to make the local patch stack
    repeatable.
-2. Decide the next smallest module-only follow-up:
-   - remaining GPIO semantics or polarity around the second control line
-   - extra post-power-on delay before chip-ID read
+2. Test the new `ov5675` identify-debug branch:
+   - `reference/patches/ov5675-identify-debug-v1.patch`
+   - `docs/ov5675-identify-debug-followup.md`
+   - `scripts/03-ov5675-identify-debug-check.sh`
+3. Use that result to decide whether the next real fix is:
+   - remaining GPIO semantics or polarity
+   - extra post-power-on timing
    - board-data regulator consumer or sequencing detail
-3. Re-test every small patch with a clean boot:
-   - `scripts/01-clean-boot-check.sh --label ... --note ...`
-4. Keep full kernel rebuilds as a fallback only when a change stops being
-   module-local.
+4. Keep clean-boot checkpoints as the primary truth source and use reload-only
+   debug checks to narrow the next branch faster.
 
 ## Key Paths
 

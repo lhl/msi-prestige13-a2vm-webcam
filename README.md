@@ -31,6 +31,7 @@ Machine under test:
 - [`docs/ipu-bridge-ovti5675-candidate.md`](./docs/ipu-bridge-ovti5675-candidate.md) — current `ipu-bridge` follow-up patch candidate after the diagnostic result
 - [`docs/ov5675-power-on-order.md`](./docs/ov5675-power-on-order.md) — next `ov5675` power-on sequencing hypothesis after the clean-boot `dvdd` timeout
 - [`docs/ov5675-powerdown-followup.md`](./docs/ov5675-powerdown-followup.md) — next `ov5675` GPIO follow-up after the clean-boot serial-power result
+- [`docs/ov5675-identify-debug-followup.md`](./docs/ov5675-identify-debug-followup.md) — next `ov5675` debug/retry branch after the negative `powerdown-v1` result
 - [`docs/patch-kernel-workflow.md`](./docs/patch-kernel-workflow.md) — idempotent patch-stack workflow for the local `linux-mainline` tree
 - [`docs/test-routines.md`](./docs/test-routines.md) — numbered test wrappers for clean-boot and reload checkpoints
 - [`reference/README.md`](./reference/README.md) — captured upstream references
@@ -64,6 +65,7 @@ msi-prestige13-a2vm-webcam/
 │   ├── extract-iactrllogic64.sh
 │   ├── 01-clean-boot-check.sh
 │   ├── 02-ov5675-reload-check.sh
+│   ├── 03-ov5675-identify-debug-check.sh
 │   ├── patch-kernel.sh
 │   └── webcam-run.sh
 ├── runs/
@@ -104,11 +106,11 @@ msi-prestige13-a2vm-webcam/
    idempotent.
 2. Treat the first `powerdown-v1` clean boot as a negative result:
    `failed to find sensor: -5` did not change.
-3. Decide the next module-only follow-up:
-   remaining GPIO semantics, extra post-power-on delay, or board-data
-   regulator-consumer follow-up.
-4. Keep using module-only iteration and clean-boot checkpoints to minimize
-   rebuild time and avoid mixed-session noise.
+3. Use the new `ov5675` identify-debug patch branch to recover the real I2C
+   error and test delay/retry hypotheses without another source edit.
+4. Use module-only iteration and clean-boot checkpoints to decide whether the
+   next real fix is GPIO semantics, extra timing, or another board-data
+   follow-up.
 
 ## Related Docs
 
@@ -122,12 +124,14 @@ msi-prestige13-a2vm-webcam/
 - [`docs/ipu-bridge-ovti5675-candidate.md`](./docs/ipu-bridge-ovti5675-candidate.md) — current `ipu-bridge` follow-up patch candidate after the diagnostic result
 - [`docs/ov5675-power-on-order.md`](./docs/ov5675-power-on-order.md) — next `ov5675` power-on sequencing hypothesis after the clean-boot `dvdd` timeout
 - [`docs/ov5675-powerdown-followup.md`](./docs/ov5675-powerdown-followup.md) — next `ov5675` GPIO follow-up after the clean-boot serial-power result
+- [`docs/ov5675-identify-debug-followup.md`](./docs/ov5675-identify-debug-followup.md) — next `ov5675` debug/retry branch after the negative `powerdown-v1` result
 - [`docs/patch-kernel-workflow.md`](./docs/patch-kernel-workflow.md) — idempotent patch-stack workflow for the local `linux-mainline` tree
 - [`docs/test-routines.md`](./docs/test-routines.md) — numbered test wrappers for clean-boot and reload checkpoints
 - [`reference/greymouser-summit-13-ai-evo-a2vm.md`](./reference/greymouser-summit-13-ai-evo-a2vm.md) — related MSI Summit 13 AI+ Evo A2VMTG Linux support repo note
 - [`reference/intel-ipu7-drivers-issue-17.md`](./reference/intel-ipu7-drivers-issue-17.md) — Intel upstream issue note
 - [`reference/intel-control-logic-microsoft-update-catalog-71.26100.23.20279.md`](./reference/intel-control-logic-microsoft-update-catalog-71.26100.23.20279.md) — exact `ACPI\INT3472` Windows control-logic package entry and CAB URL
 - [`reference/patches/ipu-bridge-ovti5675-v1.patch`](./reference/patches/ipu-bridge-ovti5675-v1.patch) — first `ipu-bridge` follow-up patch candidate for adding `OVTI5675`
+- [`reference/patches/ov5675-identify-debug-v1.patch`](./reference/patches/ov5675-identify-debug-v1.patch) — module-only debug patch for exact chip-ID read errors, retries, and extra delay
 - [`reference/patches/ov5675-probe-diagnostics-v1.patch`](./reference/patches/ov5675-probe-diagnostics-v1.patch) — first `ov5675` probe-logging patch candidate
 - [`reference/jeremy-grosser-prestige13-notes.md`](./reference/jeremy-grosser-prestige13-notes.md) — MSI-specific Debian/gist note
 - [`reference/linux-mainline-v6.19/README.md`](./reference/linux-mainline-v6.19/README.md) — local snapshot of the inspected `v6.19` `int3472` kernel subtree

@@ -2,6 +2,61 @@
 
 ## 2026-03-08
 
+### Record the current Windows-vs-Linux assessment and prepare an identify-debug branch
+
+- Plan: capture the current assessment in a dated worklog entry, then turn the
+  remaining uncertainty into a module-only `ov5675` debug branch that can tell
+  us whether the next problem is timing, GPIO semantics, or a deeper transport
+  failure.
+- Commands:
+  - reviewed the recovered Windows sequencing notes:
+    - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/power-sequencing-notes.md`
+    - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/disasm-sensor-g2ti-poweron.txt`
+    - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/disasm-sensor-g2ti-setgpiooutput.txt`
+  - reviewed the current Linux sensor path:
+    - `~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/i2c/ov5675.c`
+    - `~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472/tps68470_board_data.c`
+  - reviewed the current reload wrapper and doc indexes:
+    - `scripts/02-ov5675-reload-check.sh`
+    - `docs/test-routines.md`
+    - `README.md`
+    - `docs/README.md`
+  - validated the new debug artifacts:
+    - `bash -n scripts/03-ov5675-identify-debug-check.sh`
+    - `git -C ~/.cache/paru/clone/linux-mainline/src/linux-mainline apply --check reference/patches/ov5675-identify-debug-v1.patch`
+  - `apply_patch` adding and updating:
+    - `docs/ov5675-identify-debug-followup.md`
+    - `reference/patches/ov5675-identify-debug-v1.patch`
+    - `scripts/03-ov5675-identify-debug-check.sh`
+    - `docs/test-routines.md`
+    - `README.md`
+    - `docs/README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+- Result:
+  - the current Linux path matches the Windows bring-up only at a high level:
+    - board-data is active
+    - `ipu-bridge` is fixed
+    - rail order now matches the recovered Windows `VA -> VD -> VSIO` shape
+    - two PMIC GPIOs are exposed as `reset` and `powerdown`
+  - but Windows `SensorPowerOn` still includes additional conditional helper
+    calls that Linux has not matched yet
+  - Linux also currently throws away the underlying I2C transport error during
+    chip-ID reads by collapsing failed transfers to plain `-EIO`
+  - the new debug patch candidate addresses that by:
+    - preserving negative I2C error codes
+    - logging per-attempt chip-ID failures
+    - adding tunable identify retries
+    - adding tunable extra post-power-on delay
+  - the new numbered wrapper `scripts/03-ov5675-identify-debug-check.sh` makes
+    that branch easy to test after a module-only rebuild
+  - the patch candidate applies cleanly to the current local `linux-mainline`
+    worktree state, and the new wrapper passes `bash -n`
+- Decision: use the identify-debug branch before guessing another support fix,
+  because the next useful result is a better failure signal, not another blind
+  semantic change.
+
 ### Record the negative `powerdown-v1` clean boot and add Codex resume notes
 
 - Plan: preserve the first clean-boot result after the `powerdown` follow-up,

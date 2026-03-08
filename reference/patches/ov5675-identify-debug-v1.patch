@@ -1,0 +1,142 @@
+--- a/drivers/media/i2c/ov5675.c
++++ b/drivers/media/i2c/ov5675.c
+@@ -99,6 +99,24 @@
+ 	1, /* dovdd */
+ };
+ 
++/*
++ * Diagnostic tuning knobs for the current MSI bring-up path.
++ *
++ * Keep defaults close to stock behavior, but allow module-only iteration on
++ * identify timing and retries without another source edit.
++ */
++static unsigned int ov5675_identify_retry_count = 1;
++module_param_named(identify_retry_count, ov5675_identify_retry_count, uint, 0644);
++MODULE_PARM_DESC(identify_retry_count, "Number of OV5675 chip-ID read attempts");
++
++static unsigned int ov5675_identify_retry_delay_us = 2000;
++module_param_named(identify_retry_delay_us, ov5675_identify_retry_delay_us, uint, 0644);
++MODULE_PARM_DESC(identify_retry_delay_us, "Delay between OV5675 chip-ID read attempts in microseconds");
++
++static unsigned int ov5675_extra_post_power_on_delay_us;
++module_param_named(extra_post_power_on_delay_us, ov5675_extra_post_power_on_delay_us, uint, 0644);
++MODULE_PARM_DESC(extra_post_power_on_delay_us, "Extra delay after ov5675 reset deassert before chip-ID read, in microseconds");
++
+ enum {
+ 	OV5675_LINK_FREQ_900MBPS,
+ };
+@@ -571,8 +589,14 @@
+ 	msgs[1].buf = &data_buf[4 - len];
+ 
+ 	ret = i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
+-	if (ret != ARRAY_SIZE(msgs))
++	if (ret < 0)
++		return ret;
++
++	if (ret != ARRAY_SIZE(msgs)) {
++		dev_warn(ov5675->dev,
++			 "short register read on reg 0x%4.4x: %d\n", reg, ret);
+ 		return -EIO;
++	}
+ 
+ 	*val = get_unaligned_be32(data_buf);
+ 
+@@ -583,14 +607,22 @@
+ {
+ 	struct i2c_client *client = v4l2_get_subdevdata(&ov5675->sd);
+ 	u8 buf[6];
++	int ret;
+ 
+ 	if (len > 4)
+ 		return -EINVAL;
+ 
+ 	put_unaligned_be16(reg, buf);
+ 	put_unaligned_be32(val << 8 * (4 - len), buf + 2);
+-	if (i2c_master_send(client, buf, len + 2) != len + 2)
++	ret = i2c_master_send(client, buf, len + 2);
++	if (ret < 0)
++		return ret;
++
++	if (ret != len + 2) {
++		dev_warn(ov5675->dev,
++			 "short register write on reg 0x%4.4x: %d\n", reg, ret);
+ 		return -EIO;
++	}
+ 
+ 	return 0;
+ }
+@@ -881,25 +913,54 @@
+ static int ov5675_identify_module(struct ov5675 *ov5675)
+ {
+ 	int ret;
+-	u32 val;
++	u32 val = 0;
++	unsigned int attempt, attempts;
+ 
+ 	if (ov5675->identified)
+ 		return 0;
+ 
+-	ret = ov5675_read_reg(ov5675, OV5675_REG_CHIP_ID,
+-			      OV5675_REG_VALUE_24BIT, &val);
+-	if (ret)
+-		return ret;
++	attempts = max(1U, ov5675_identify_retry_count);
++
++	for (attempt = 0; attempt < attempts; attempt++) {
++		ret = ov5675_read_reg(ov5675, OV5675_REG_CHIP_ID,
++				      OV5675_REG_VALUE_24BIT, &val);
++		if (!ret && val == OV5675_CHIP_ID) {
++			if (attempt)
++				dev_info(ov5675->dev,
++					 "sensor identified on attempt %u/%u\n",
++					 attempt + 1, attempts);
++			ov5675->identified = true;
++			return 0;
++		}
++
++		if (ret) {
++			dev_warn(ov5675->dev,
++				 "chip id read attempt %u/%u failed: %d\n",
++				 attempt + 1, attempts, ret);
++		} else {
++			dev_warn(ov5675->dev,
++				 "chip id attempt %u/%u mismatch: expected 0x%x got 0x%x\n",
++				 attempt + 1, attempts, OV5675_CHIP_ID, val);
++			ret = -ENXIO;
++		}
+ 
+-	if (val != OV5675_CHIP_ID) {
+-		dev_err(ov5675->dev, "chip id mismatch: %x!=%x",
+-			OV5675_CHIP_ID, val);
+-		return -ENXIO;
++		if (attempt + 1 < attempts && ov5675_identify_retry_delay_us)
++			usleep_range(ov5675_identify_retry_delay_us,
++				     ov5675_identify_retry_delay_us + 100);
+ 	}
+ 
+-	ov5675->identified = true;
++	return ret;
++}
+ 
+-	return 0;
++static void ov5675_apply_extra_post_power_on_delay(struct ov5675 *ov5675)
++{
++	if (!ov5675_extra_post_power_on_delay_us)
++		return;
++
++	dev_info(ov5675->dev, "applying extra post-power-on delay: %u us\n",
++		 ov5675_extra_post_power_on_delay_us);
++	usleep_range(ov5675_extra_post_power_on_delay_us,
++		     ov5675_extra_post_power_on_delay_us + 100);
+ }
+ 
+ static int ov5675_start_streaming(struct ov5675 *ov5675)
+@@ -1049,6 +1110,8 @@
+ 	 */
+ 	usleep_range(1500, 1600);
+ 
++	ov5675_apply_extra_post_power_on_delay(ov5675);
++
+ 	return 0;
+ }
+ 
