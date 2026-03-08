@@ -115,6 +115,40 @@ The Windows package proves two important things:
 1. there is more than one MSI / Intel `TPS68470` camera wiring pattern in play
 2. our current Linux model is still simplified compared with Windows
 
+It does **not** yet prove that `WF` means the normal RGB webcam and `UF` means
+the IR / Windows Hello sensor.
+
+That distinction is tempting because the captured Windows package includes both:
+
+- `ov5675.inf` for `ACPI\\OVTI5675`
+- `hm1092.inf` for `ACPI\\HIMX1092`
+
+and `hm1092.inf` carries explicit IR-oriented hints such as:
+
+- `IRFlashLedIntensity`
+- `IRSensor = "{CD59E198-F241-4ACD-BB6D-16CB977E5DDC}"`
+
+But the local machine evidence still does not line up with a clean
+`WF`=`RGB`, `UF`=`IR` mapping:
+
+- the only live active sensor path is `OVTI5675:00` at `LNK0`
+- `WFCS` points to `LNK0`
+- `LNK1` exists in firmware but is not currently active
+- the extra inactive sensor links currently visible in sysfs are:
+  - `OVTI13B1:00` at `LNK2`, status `0`
+  - `OVTI01AF:00` at `LNK3`, status `0`
+  - `OVTI01AF:01` at `LNK4`, status `0`
+  - `OVTI01AF:02` at `LNK5`, status `0`
+- there is no live `HIMX1092` / `HM1092` ACPI device currently exposed on this
+  laptop under Linux
+
+So the current best interpretation is:
+
+- `WF` and `UF` are helper or board families in the Windows control driver
+- they may correlate with different camera roles on some platforms
+- but on this laptop we do not yet have evidence that `WF` and `UF` are the
+  RGB-vs-IR split
+
 But for this specific laptop, the current evidence still supports this order of
 operations:
 

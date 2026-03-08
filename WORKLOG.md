@@ -2,6 +2,44 @@
 
 ## 2026-03-09
 
+### Clarify whether `WF` / `UF` maps to RGB vs IR sensors on this laptop
+
+- Plan: answer whether the captured Windows helper split is actually the normal
+  webcam vs Windows Hello IR split, or whether that is still only a plausible
+  but unproven interpretation.
+- Commands:
+  - reviewed local ACPI camera-link and live-state evidence:
+    - `sed -n '1238,1265p' reference/acpi/20260308T004459-unknown-host/dsl/ssdt17.dsl`
+    - `sed -n '1,260p' reference/acpi/20260308T004459-unknown-host/live-linux-acpi-state.txt`
+    - `find /sys/bus/acpi/devices -maxdepth 1 -type l | xargs -r -n1 basename | rg 'OVTI|HM1|INT3472|LNK|IR|OV'`
+    - `for d in /sys/bus/acpi/devices/OVTI13B1:00 /sys/bus/acpi/devices/OVTI01AF:00 /sys/bus/acpi/devices/OVTI01AF:01 /sys/bus/acpi/devices/OVTI01AF:02; do ...; done`
+  - reviewed the two main camera-related Windows package INFs:
+    - `iconv -f utf-16le -t utf-8 reference/windows-driver-packages/msi-ov5675-70.26100.19939.1/extracted/hm1092.inf | sed -n '1,180p'`
+    - `reference/windows-driver-packages/msi-ov5675-70.26100.19939.1/extracted/ov5675.inf`
+  - updated:
+    - `docs/wf-vs-uf-gpio-analysis.md`
+    - `WORKLOG.md`
+- Result:
+  - the MSI Windows package really does include an IR-oriented sensor path:
+    - `hm1092.inf` installs `ACPI\\HIMX1092`
+    - it carries explicit `IRFlashLedIntensity` and `IRSensor` registry hints
+  - that makes a normal-camera plus IR-camera design plausible in the package
+    as a whole
+  - but the local machine evidence still does not justify saying `WF` = RGB and
+    `UF` = IR on this exact laptop:
+    - the only live active sensor path remains `OVTI5675:00` at `LNK0`
+    - `WFCS` still points to `LNK0`
+    - `LNK1` exists in firmware but is not active
+    - other firmware-described sensor links exist but are currently disabled
+    - there is no live `HIMX1092` / `HM1092` ACPI sensor exposed on this Linux
+      install
+  - the best current interpretation is still that `WF` and `UF` are Windows
+    helper or board families, not yet a proven RGB-vs-IR split for this model
+- Decision:
+  - keep treating `WF` / `UF` as control-driver helper families first
+  - do not use an assumed RGB-vs-IR mapping as the basis for the next Linux
+    patch step without stronger local evidence
+
 ### Analyze the Windows `WF` vs `UF` helper split before changing Linux GPIO wiring
 
 - Plan: inspect the newer clean-boot `-110` identify-timeout baseline against
