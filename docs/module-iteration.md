@@ -1,6 +1,6 @@
 # Module Iteration Workflow
 
-Updated: 2026-03-08
+Updated: 2026-03-09
 
 This note captures the faster iteration path for camera-related kernel work on
 this laptop so we do not need a full kernel rebuild for every small change.
@@ -147,7 +147,8 @@ See also:
 
 - `docs/patch-kernel-workflow.md` for the idempotent patch-stack applicator and
   `tested` vs `candidate` profiles
-- `docs/int3472-gpio-swap-followup.md` for the current module-only board-data
-  role-swap test
+- `docs/int3472-gpio-polarity-followup.md` for the current module-only
+  `INT3472` polarity experiment
+- `docs/int3472-gpio-swap-followup.md` for the earlier negative role-swap test
 - `docs/ov5675-diagnostic-patch.md` for the first concrete `ov5675` probe-log
   patch and an exact test sequence

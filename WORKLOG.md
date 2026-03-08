@@ -2,6 +2,62 @@
 
 ## 2026-03-09
 
+### Prepare the next `INT3472` polarity follow-up after the negative `gpio-swap-v1` run
+
+- Plan: turn the next meaningful board-data experiment into a repeatable repo
+  artifact, and update `patch-kernel.sh` so it can move forward from the now
+  superseded `gpio-swap` follow-up without manual cleanup in the local kernel
+  tree.
+- Commands:
+  - reviewed the current tested stack and kernel-side rationale:
+    - `sed -n '1,240p' docs/linux-board-data-candidate.md`
+    - `sed -n '1,240p' docs/ov5675-powerdown-followup.md`
+    - `rg -n 'GPIO1|GPIO2|powerdown|reset' docs reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1 -g '*.md' -g '*.txt'`
+    - `sed -n '1,220p' scripts/patch-kernel.sh`
+    - `sed -n '1,220p' docs/patch-kernel-workflow.md`
+    - `sed -n '1,120p' ~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472/tps68470_board_data.c`
+  - `apply_patch` adding and updating:
+    - `reference/patches/ms13q3-int3472-powerdown-active-high-v1.patch`
+    - `docs/int3472-gpio-polarity-followup.md`
+    - `scripts/patch-kernel.sh`
+    - `docs/patch-kernel-workflow.md`
+    - `docs/module-iteration.md`
+    - `docs/README.md`
+    - `README.md`
+    - `docs/webcam-status.md`
+    - `docs/wf-vs-uf-gpio-analysis.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+  - validated the new candidate:
+    - `bash -n scripts/patch-kernel.sh`
+    - `scripts/patch-kernel.sh --profile candidate --status`
+    - temporary-tree validation:
+      - `git clone --shared --quiet ~/.cache/paru/clone/linux-mainline/src/linux-mainline ...`
+      - `git -C <tmp-tree> apply reference/patches/ms13q3-int3472-tps68470-v1.patch`
+      - `git -C <tmp-tree> apply --check reference/patches/ms13q3-int3472-powerdown-active-high-v1.patch`
+- Result:
+  - the next candidate is now a real polarity experiment:
+    - keep `GPIO1` as `reset`, `GPIO_ACTIVE_LOW`
+    - change `GPIO2` `powerdown` to `GPIO_ACTIVE_HIGH`
+  - this is a more meaningful next step than another label-only swap because
+    the current `ov5675` power sequence drives both control lines in lockstep
+  - `scripts/patch-kernel.sh` now treats
+    `ms13q3-int3472-powerdown-active-high-v1.patch` as the current
+    `candidate` profile
+  - the patch-stack workflow also now normalizes one superseded local state:
+    - if the kernel tree still has `ms13q3-int3472-gpio-swap-v1.patch`
+      applied, `candidate` mode reverses it first
+  - validation succeeded:
+    - the new patch applies cleanly after the tested board-data patch on a
+      temporary clean tree
+    - `scripts/patch-kernel.sh --profile candidate --status` reports the new
+      follow-up as `applicable`
+- Decision:
+  - use this polarity variant as the next module-only clean-boot test
+  - only revisit other GPIO polarity/line combinations if this first variant
+    is negative
+
 ### Record the negative clean-boot `gpio-swap-v1` result
 
 - Plan: review the first clean-boot run after the `INT3472` `GPIO1` / `GPIO2`

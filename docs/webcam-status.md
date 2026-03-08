@@ -232,6 +232,10 @@ that:
   - `GPIO1` / `GPIO2` polarity variants
   - board-data regulator consumer mapping
   - remaining PMIC or sensor wake-up sequencing detail
+- Current concrete next candidate:
+  - `reference/patches/ms13q3-int3472-powerdown-active-high-v1.patch`
+  - keep `GPIO1` as `reset`, `GPIO_ACTIVE_LOW`
+  - change `GPIO2` `powerdown` to `GPIO_ACTIVE_HIGH`
 - Re-test with:
   - `journalctl -k -b | rg 'tps68470|ipu7|ov5675'`
   - `media-ctl -p -d /dev/media0`

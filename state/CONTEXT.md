@@ -101,12 +101,14 @@ with strong evidence.
 5. Keep clean-boot checkpoints as the primary truth source. Reload-only checks
    are still secondary once the boot-time path has already failed.
 6. Immediate next module-only test:
+   - apply `reference/patches/ms13q3-int3472-powerdown-active-high-v1.patch`
    - keep the same two PMIC lines
-   - change polarity, not just labels
+   - keep `GPIO1` as `reset`, `GPIO_ACTIVE_LOW`
+   - change `GPIO2` `powerdown` to `GPIO_ACTIVE_HIGH`
    - rebuild only `drivers/platform/x86/intel/int3472`
    - replace `intel_skl_int3472_tps68470.ko.zst`
    - reboot
-   - run `scripts/01-clean-boot-check.sh` with a new polarity label
+   - run `scripts/01-clean-boot-check.sh --label powerdown-active-high-v1`
 
 ## Key Paths
 
@@ -126,4 +128,5 @@ with strong evidence.
 - `WF` vs `UF` Windows helper analysis:
   - `docs/wf-vs-uf-gpio-analysis.md`
 - Next board-data follow-up:
+  - `docs/int3472-gpio-polarity-followup.md`
   - `docs/int3472-gpio-swap-followup.md`

@@ -153,7 +153,8 @@ But for this specific laptop, the current evidence still supports this order of
 operations:
 
 1. keep `WF` / `LNK0` as the primary model
-2. test `GPIO1` / `GPIO2` role swap
+2. treat the earlier `GPIO1` / `GPIO2` role-swap result as a low-signal
+   negative result
 3. test `GPIO1` / `GPIO2` polarity variants
 4. if those fail, revisit whether this board is actually selecting a narrower
    `UF`-style helper path or needs an extra PMIC GPIO such as Linux `gpio.4`
@@ -167,6 +168,5 @@ Use the clean-boot identify-timeout result as the baseline:
 
 Then prefer the next smallest Linux experiments in this order:
 
-- board-data `reset` / `powerdown` role swap
 - board-data polarity experiments
 - remaining `WF`-side sequencing or delay detail

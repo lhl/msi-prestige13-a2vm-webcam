@@ -32,7 +32,7 @@ Profiles:
 
   candidate
       Apply the tested stack plus the current unvalidated follow-up:
-      - MSI INT3472 GPIO role swap for OVTI5675
+      - MSI INT3472 OVTI5675 powerdown polarity follow-up
 
 Options:
   --kernel-tree DIR
@@ -84,8 +84,8 @@ load_profile() {
       ;;
     candidate)
       append_patch \
-        "ms13q3-gpio-swap" \
-        "reference/patches/ms13q3-int3472-gpio-swap-v1.patch" \
+        "ms13q3-powerdown-active-high" \
+        "reference/patches/ms13q3-int3472-powerdown-active-high-v1.patch" \
         "candidate"
       ;;
     *)
@@ -127,6 +127,15 @@ patch_state() {
       if rg -q 'GPIO_LOOKUP\\("tps68470-gpio", 1, "powerdown", GPIO_ACTIVE_LOW\\)' \
         "${tree}/drivers/platform/x86/intel/int3472/tps68470_board_data.c" && \
         rg -q 'GPIO_LOOKUP\\("tps68470-gpio", 2, "reset", GPIO_ACTIVE_LOW\\)' \
+        "${tree}/drivers/platform/x86/intel/int3472/tps68470_board_data.c"; then
+        printf 'applied'
+        return 0
+      fi
+      ;;
+    ms13q3-powerdown-active-high)
+      if rg -q 'GPIO_LOOKUP\\("tps68470-gpio", 1, "reset", GPIO_ACTIVE_LOW\\)' \
+        "${tree}/drivers/platform/x86/intel/int3472/tps68470_board_data.c" && \
+        rg -q 'GPIO_LOOKUP\\("tps68470-gpio", 2, "powerdown", GPIO_ACTIVE_HIGH\\)' \
         "${tree}/drivers/platform/x86/intel/int3472/tps68470_board_data.c"; then
         printf 'applied'
         return 0
@@ -189,6 +198,30 @@ create_status_tree() {
     git -C "${KERNEL_TREE}" diff --binary HEAD -- > "${diff_file}"
     git -C "${STATUS_TREE}" apply "${diff_file}"
   fi
+
+  normalize_tree_for_profile "${STATUS_TREE}" 1
+}
+
+normalize_tree_for_profile() {
+  local tree="$1"
+  local quiet="${2:-0}"
+  local gpio_swap_patch="${REPO_ROOT}/reference/patches/ms13q3-int3472-gpio-swap-v1.patch"
+  local state=""
+
+  if [[ "${PROFILE}" != "candidate" ]]; then
+    return 0
+  fi
+
+  state=$(patch_state "${tree}" "ms13q3-gpio-swap" "${gpio_swap_patch}")
+  if [[ "${state}" != "applied" ]]; then
+    return 0
+  fi
+
+  if (( ! quiet )); then
+    printf '[normalize] reverse superseded follow-up: ms13q3-gpio-swap\n'
+  fi
+
+  git -C "${tree}" apply --reverse "${gpio_swap_patch}"
 }
 
 apply_patches() {
@@ -197,6 +230,8 @@ apply_patches() {
   applied_count=0
   skipped_count=0
   conflict_count=0
+
+  normalize_tree_for_profile "${KERNEL_TREE}"
 
   for i in "${!PATCH_LABELS[@]}"; do
     state=$(patch_state "${KERNEL_TREE}" "${PATCH_LABELS[$i]}" "${PATCH_FILES[$i]}")
