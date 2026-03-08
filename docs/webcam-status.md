@@ -107,6 +107,20 @@ Additional live evidence on the patched kernel:
   - `cannot find GPIO chip tps68470-gpio, deferring`
   - `failed to get reset-gpios: -517`
   - but probe retried and still ended at the same clean-boot identify timeout
+- on the next clean boot with the other physical-line polarity follow-up
+  (`GPIO1` `powerdown` => `GPIO_ACTIVE_HIGH`):
+  - `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+  - `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+  - `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: failed to find sensor: -110`
+  - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
+- unlike the first polarity run, this second one-line variant did not add the
+  early `-517` GPIO-provider deferral noise
 - the old clean-boot `Failed to enable dvdd: -ETIMEDOUT` line is gone
 - the media graph still has no sensor entity
 - there are still no `/dev/v4l-subdev*` nodes
@@ -142,8 +156,12 @@ Those lines and checks are the current high-value signal. They mean:
 9. The first one-line polarity follow-up was also a negative result:
    - moving the active-high `powerdown` behavior onto `GPIO2` did not move the
      clean-boot `-110` timeout
-   - the next smallest physical-line test is now the same active-high behavior
-     on `GPIO1`
+10. The second one-line polarity follow-up was also a negative result:
+   - moving the active-high `powerdown` behavior onto `GPIO1` also did not
+     move the clean-boot `-110` timeout
+   - with both one-line physical-line variants now negative, the next likely
+     gap is `ov5675` GPIO release sequencing rather than more single-line
+     board-data polarity guesses
 
 ## Assessment
 
@@ -170,13 +188,13 @@ board-data matching.
   - the current `ov5675` power sequence drives both control lines together, so
     swapping names without changing polarity does not materially alter the
     pin-level sequence
-- The first one-line polarity follow-up was also negative:
+- The first and second one-line polarity follow-ups were both negative:
   - moving the active-high waveform onto `GPIO2` did not change the clean-boot
     identify failure
+  - moving the active-high waveform onto `GPIO1` did not change it either
 - The leading remaining local possibilities are now:
-  - remaining physical-line polarity detail on the other PMIC GPIO
   - remaining `GPIO1` / `GPIO2` electrical behavior beyond the current
-    label-only approximation
+    lockstep release model in `ov5675`
   - remaining board-data regulator / consumer / sequencing detail
   - remaining `WF`-side PMIC wake-up sequencing detail
 - The Windows package does contain a separate `UF` helper family that touches a
@@ -240,9 +258,10 @@ that:
 - the next clean boot with the `INT3472` role-swap follow-up was a negative
   result and effectively showed that the next useful board-data space is
   polarity, not more label-only swaps
-- the next clean boot with the first `GPIO2`-active-high polarity follow-up was
-  also negative and leaves the other physical-line polarity variant as the next
-  smallest board-data test
+- the next clean boot with the second `GPIO1`-active-high polarity follow-up
+  was also negative
+- the next best local follow-up is now a module-only `ov5675` GPIO-release
+  sequencing debug patch rather than another one-line board-data polarity guess
 - the sensor still does not appear as a media subdevice
 - the camera still does not work in userspace
 
@@ -256,7 +275,7 @@ that:
   - and evidence that polarity changes are now more meaningful than more
     label-only swaps
 - Test the next smallest module-only follow-up in one of these directions:
-  - `GPIO1` / `GPIO2` polarity variants
+  - `ov5675` staged `reset` / `powerdown` release order and delay
   - board-data regulator consumer mapping
   - remaining PMIC or sensor wake-up sequencing detail
 - Current concrete next candidate:

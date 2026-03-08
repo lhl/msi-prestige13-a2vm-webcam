@@ -2,6 +2,58 @@
 
 ## 2026-03-09
 
+### Record the negative second polarity clean boot and pivot to `ov5675` GPIO sequencing
+
+- Plan: review the clean-boot result of the other physical-line polarity
+  variant, record whether it changed the identify timeout, and if it did not,
+  turn the next branch into a cheaper `ov5675` module-only sequencing debug
+  experiment rather than more one-line board-data churn.
+- Commands:
+  - reviewed the new clean-boot run:
+    - `sed -n '1,220p' runs/2026-03-09/20260309T035410-snapshot-gpio1-powerdown-active-high-v1/focused-summary.txt`
+    - `sed -n '1,260p' reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/disasm-sensor-g2ti-poweron.txt`
+    - `sed -n '1,260p' reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/disasm-sensor-g2ti-setgpiooutput.txt`
+    - `sed -n '1,260p' reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/disasm-voltage-wf-ioactive-gpio.txt`
+    - `sed -n '1038,1125p' ~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/i2c/ov5675.c`
+  - `apply_patch` adding and updating:
+    - `reference/patches/ov5675-gpio-release-sequencing-debug-v1.patch`
+    - `docs/ov5675-gpio-release-sequencing-followup.md`
+    - `scripts/01-clean-boot-check.sh`
+    - `scripts/patch-kernel.sh`
+    - `docs/patch-kernel-workflow.md`
+    - `docs/module-iteration.md`
+    - `docs/README.md`
+    - `README.md`
+    - `docs/webcam-status.md`
+    - `docs/int3472-gpio1-powerdown-active-high-followup.md`
+    - `docs/wf-vs-uf-gpio-analysis.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+- Result:
+  - the clean-boot `gpio1-powerdown-active-high-v1` run is also a real
+    negative result:
+    - `OVTI5675:00` is still found
+    - chip-ID read attempts `1/5` through `5/5` still fail with `-110`
+    - `ov5675` remains unbound
+    - there are still no `/dev/v4l-subdev*` nodes
+  - unlike the first one-line polarity run, this second variant did not add the
+    early `-517` / GPIO-provider deferral noise, so it is the cleaner polarity
+    negative result
+  - with both physical one-line polarity variants now negative, the next
+    likely local gap is no longer which single PMIC line should be active-high
+  - the next better branch is now a module-only `ov5675` sequencing test:
+    - keep the current `WF` / `LNK0` board-data model
+    - keep the current identify-debug branch
+    - add tunable staged GPIO release order and delay in `ov5675`
+  - `scripts/patch-kernel.sh` candidate mode now models that branch and also
+    normalizes all three older superseded `INT3472` follow-up patches from a
+    dirty kernel tree
+- Decision:
+  - stop spending the next cycle on one-line board-data polarity
+  - use staged `ov5675` GPIO release order and delay as the next module-only
+    clean-boot experiment
+
 ### Record the negative first polarity clean boot and prepare the other-line follow-up
 
 - Plan: review the first polarity clean-boot result, record whether it moved

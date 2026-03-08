@@ -132,9 +132,8 @@ with module-only rebuilds afterward.
 
 For the next diagnostic step, a full kernel rebuild is unnecessary.
 
-The current likely next edit is in
-`drivers/platform/x86/intel/int3472/tps68470_board_data.c`, so the faster loop
-is:
+The current likely next edit is in `drivers/media/i2c/ov5675.c`, so the faster
+loop is:
 
 1. edit the source under `~/.cache/paru/clone/linux-mainline/src/linux-mainline`
 2. rebuild only the touched module subtree
@@ -147,8 +146,10 @@ See also:
 
 - `docs/patch-kernel-workflow.md` for the idempotent patch-stack applicator and
   `tested` vs `candidate` profiles
-- `docs/int3472-gpio1-powerdown-active-high-followup.md` for the current
-  module-only `INT3472` physical-line polarity experiment
+- `docs/ov5675-gpio-release-sequencing-followup.md` for the current
+  module-only `ov5675` GPIO-sequencing debug branch
+- `docs/int3472-gpio1-powerdown-active-high-followup.md` for the latest
+  negative `INT3472` physical-line polarity experiment
 - `docs/int3472-gpio-polarity-followup.md` for the earlier negative first
   polarity variant
 - `docs/int3472-gpio-swap-followup.md` for the earlier negative role-swap test

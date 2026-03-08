@@ -99,7 +99,7 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 2. Use the clean-boot identify-debug result as the new baseline:
    - repeated chip-ID read timeouts `-110`
 3. Use that result to determine whether the next real fix is:
-   - `GPIO1` / `GPIO2` polarity follow-up
+   - staged `ov5675` GPIO release sequencing
    - board-data regulator consumer follow-up
    - remaining PMIC or sensor wake-up sequencing detail
 4. Treat label-only `GPIO1` / `GPIO2` swaps as low-signal with the current
@@ -107,7 +107,10 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
    - both control lines are driven in lockstep during power-on and power-off
    - the next meaningful electrical change is polarity, not another pure role
      swap
-5. Keep full kernel rebuilds as a fallback only when a change stops being
+5. Treat both one-line polarity variants as negative:
+   - `GPIO2` active-high: negative
+   - `GPIO1` active-high: negative
+6. Keep full kernel rebuilds as a fallback only when a change stops being
    module-local.
 
 ## Open Questions
@@ -132,17 +135,17 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
     should not be the first follow-up without stronger local evidence
 - Current diagnostic gap:
   - we now know the identify stage times out; the next gap is whether that is
-    caused by `GPIO1` / `GPIO2` polarity, or a still-missing PMIC
+    caused by the current lockstep GPIO release model, or a still-missing PMIC
     wake-up step
 - Immediate next candidate:
-  - `reference/patches/ms13q3-int3472-gpio1-powerdown-active-high-v1.patch`
+  - `reference/patches/ov5675-gpio-release-sequencing-debug-v1.patch`
   - keep the existing `WF` / `LNK0` board-data structure
-  - move the active-high `powerdown`-style behavior onto `GPIO1`
-  - keep `GPIO2` as the active-low companion line
-  - keep the experiment module-local with a rebuild of
-    `intel_skl_int3472_tps68470.ko`
-  - validate on a clean boot with
-    `scripts/01-clean-boot-check.sh --label gpio1-powerdown-active-high-v1`
+  - keep the experiment module-local with a rebuild of `ov5675.ko`
+  - use module parameters to test staged release order and delay:
+    - simultaneous
+    - `powerdown` then `reset`
+    - `reset` then `powerdown`
+  - validate on a clean boot with `scripts/01-clean-boot-check.sh`
 - Is there any vendor firmware or Intel middleware dependency beyond standard kernel and firmware files?
 - Does this machine correspond to the Windows driver's `VoltageWF` path, `VoltageUF` path, or a narrower subclass selected via ACPI / board config?
 

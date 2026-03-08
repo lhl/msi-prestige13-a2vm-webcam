@@ -2,8 +2,8 @@
 
 Updated: 2026-03-09
 
-This note captures the next smallest physical-line polarity experiment after the
-negative `powerdown-active-high-v1` clean-boot result.
+This note captures the second one-line physical-line polarity experiment after
+the negative `powerdown-active-high-v1` clean-boot result.
 
 ## Why This Is Next
 
@@ -87,7 +87,7 @@ Negative result:
 
 If this variant is also negative, the next branch should likely be:
 
-- a dual-line polarity experiment
+- a real `ov5675` GPIO sequencing experiment
 - or a deeper `WF`-side PMIC wake-up / sequencing follow-up
 
 ## Patch-Stack Note
@@ -130,3 +130,32 @@ scripts/01-clean-boot-check.sh \
   --label gpio1-powerdown-active-high-v1 \
   --note "fresh boot after INT3472 GPIO1 powerdown active-high follow-up"
 ```
+
+## Actual Clean-Boot Result
+
+Run:
+
+- `runs/2026-03-09/20260309T035410-snapshot-gpio1-powerdown-active-high-v1/focused-summary.txt`
+
+Observed result:
+
+- `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+- `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+- `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+- `ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -110`
+- `... 5/5 failed: -110`
+- `ov5675 i2c-OVTI5675:00: failed to find sensor: -110`
+- `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
+
+Additional interpretation:
+
+- unlike the first one-line polarity run, this one did not add the early
+  `failed to get reset-gpios: -517` / GPIO-provider deferral noise
+- the final identify-timeout failure is still unchanged
+
+Result:
+
+- this second one-line polarity variant is also a negative result
+- both physical one-line polarity variants are now negative
+- the next best local follow-up is `ov5675` GPIO sequencing, not another
+  single-line polarity change

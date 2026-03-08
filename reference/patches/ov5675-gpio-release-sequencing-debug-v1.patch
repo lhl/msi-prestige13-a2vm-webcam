@@ -1,0 +1,66 @@
+diff --git a/drivers/media/i2c/ov5675.c b/drivers/media/i2c/ov5675.c
+index 2ae762d0efd0..964711e83775 100644
+--- a/drivers/media/i2c/ov5675.c
++++ b/drivers/media/i2c/ov5675.c
+@@ -116,6 +116,14 @@ static unsigned int ov5675_extra_post_power_on_delay_us;
+ module_param_named(extra_post_power_on_delay_us, ov5675_extra_post_power_on_delay_us, uint, 0644);
+ MODULE_PARM_DESC(extra_post_power_on_delay_us, "Extra delay after ov5675 reset deassert before chip-ID read, in microseconds");
+ 
++static unsigned int ov5675_gpio_release_sequence;
++module_param_named(gpio_release_sequence, ov5675_gpio_release_sequence, uint, 0644);
++MODULE_PARM_DESC(gpio_release_sequence, "OV5675 GPIO release sequence: 0=simultaneous, 1=powerdown-then-reset, 2=reset-then-powerdown");
++
++static unsigned int ov5675_gpio_release_delay_us;
++module_param_named(gpio_release_delay_us, ov5675_gpio_release_delay_us, uint, 0644);
++MODULE_PARM_DESC(gpio_release_delay_us, "Delay between staged OV5675 GPIO release steps, in microseconds");
++
+ enum {
+ 	OV5675_LINK_FREQ_900MBPS,
+ };
+@@ -1078,6 +1086,36 @@ static int ov5675_enable_supplies_serial(struct ov5675 *ov5675)
+ 	return 0;
+ }
+ 
++static void ov5675_release_power_gpios(struct ov5675 *ov5675)
++{
++	if (ov5675_gpio_release_sequence || ov5675_gpio_release_delay_us)
++		dev_info(ov5675->dev,
++			 "applying gpio release sequence=%u delay_us=%u\n",
++			 ov5675_gpio_release_sequence,
++			 ov5675_gpio_release_delay_us);
++
++	switch (ov5675_gpio_release_sequence) {
++	case 1:
++		gpiod_set_value_cansleep(ov5675->powerdown_gpio, 0);
++		if (ov5675_gpio_release_delay_us)
++			usleep_range(ov5675_gpio_release_delay_us,
++				     ov5675_gpio_release_delay_us + 100);
++		gpiod_set_value_cansleep(ov5675->reset_gpio, 0);
++		break;
++	case 2:
++		gpiod_set_value_cansleep(ov5675->reset_gpio, 0);
++		if (ov5675_gpio_release_delay_us)
++			usleep_range(ov5675_gpio_release_delay_us,
++				     ov5675_gpio_release_delay_us + 100);
++		gpiod_set_value_cansleep(ov5675->powerdown_gpio, 0);
++		break;
++	default:
++		gpiod_set_value_cansleep(ov5675->powerdown_gpio, 0);
++		gpiod_set_value_cansleep(ov5675->reset_gpio, 0);
++		break;
++	}
++}
++
+ static int ov5675_power_on(struct device *dev)
+ {
+ 	struct v4l2_subdev *sd = dev_get_drvdata(dev);
+@@ -1101,8 +1141,7 @@ static int ov5675_power_on(struct device *dev)
+ 	 */
+ 	usleep_range(2000, 2200);
+ 
+-	gpiod_set_value_cansleep(ov5675->powerdown_gpio, 0);
+-	gpiod_set_value_cansleep(ov5675->reset_gpio, 0);
++	ov5675_release_power_gpios(ov5675);
+ 
+ 	/* Worst case quiesence gap is 1.365 milliseconds @ 6MHz XVCLK
+ 	 * Add an additional threshold grace period to ensure reset

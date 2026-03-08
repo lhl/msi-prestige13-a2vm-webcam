@@ -31,8 +31,10 @@ Profiles:
       - ov5675 serial power-on order
 
   candidate
-      Apply the tested stack plus the current unvalidated follow-up:
-      - MSI INT3472 OVTI5675 GPIO1 powerdown active-high follow-up
+      Apply the tested stack plus the current unvalidated debug branch:
+      - ov5675 powerdown follow-up
+      - ov5675 identify-debug support
+      - ov5675 GPIO release sequencing debug follow-up
 
 Options:
   --kernel-tree DIR
@@ -84,8 +86,16 @@ load_profile() {
       ;;
     candidate)
       append_patch \
-        "ms13q3-gpio1-powerdown-active-high" \
-        "reference/patches/ms13q3-int3472-gpio1-powerdown-active-high-v1.patch" \
+        "ov5675-powerdown-followup" \
+        "reference/patches/ov5675-powerdown-followup-v1.patch" \
+        "candidate"
+      append_patch \
+        "ov5675-identify-debug" \
+        "reference/patches/ov5675-identify-debug-v1.patch" \
+        "candidate"
+      append_patch \
+        "ov5675-gpio-release-sequencing-debug" \
+        "reference/patches/ov5675-gpio-release-sequencing-debug-v1.patch" \
         "candidate"
       ;;
     *)
@@ -146,6 +156,33 @@ patch_state() {
         "${tree}/drivers/platform/x86/intel/int3472/tps68470_board_data.c" && \
         rg -q 'GPIO_LOOKUP\\("tps68470-gpio", 2, "reset", GPIO_ACTIVE_LOW\\)' \
         "${tree}/drivers/platform/x86/intel/int3472/tps68470_board_data.c"; then
+        printf 'applied'
+        return 0
+      fi
+      ;;
+    ov5675-powerdown-followup)
+      if rg -q 'powerdown_gpio' \
+        "${tree}/drivers/media/i2c/ov5675.c" && \
+        rg -F -q 'devm_gpiod_get_optional(dev, "powerdown"' \
+        "${tree}/drivers/media/i2c/ov5675.c"; then
+        printf 'applied'
+        return 0
+      fi
+      ;;
+    ov5675-identify-debug)
+      if rg -q 'identify_retry_count' \
+        "${tree}/drivers/media/i2c/ov5675.c" && \
+        rg -q 'extra_post_power_on_delay_us' \
+        "${tree}/drivers/media/i2c/ov5675.c"; then
+        printf 'applied'
+        return 0
+      fi
+      ;;
+    ov5675-gpio-release-sequencing-debug)
+      if rg -q 'gpio_release_sequence' \
+        "${tree}/drivers/media/i2c/ov5675.c" && \
+        rg -q 'ov5675_release_power_gpios' \
+        "${tree}/drivers/media/i2c/ov5675.c"; then
         printf 'applied'
         return 0
       fi
@@ -216,6 +253,7 @@ normalize_tree_for_profile() {
   local quiet="${2:-0}"
   local gpio_swap_patch="${REPO_ROOT}/reference/patches/ms13q3-int3472-gpio-swap-v1.patch"
   local powerdown_active_high_patch="${REPO_ROOT}/reference/patches/ms13q3-int3472-powerdown-active-high-v1.patch"
+  local gpio1_powerdown_active_high_patch="${REPO_ROOT}/reference/patches/ms13q3-int3472-gpio1-powerdown-active-high-v1.patch"
   local state=""
 
   if [[ "${PROFILE}" != "candidate" ]]; then
@@ -238,6 +276,15 @@ normalize_tree_for_profile() {
     fi
 
     git -C "${tree}" apply --reverse "${powerdown_active_high_patch}"
+  fi
+
+  state=$(patch_state "${tree}" "ms13q3-gpio1-powerdown-active-high" "${gpio1_powerdown_active_high_patch}")
+  if [[ "${state}" == "applied" ]]; then
+    if (( ! quiet )); then
+      printf '[normalize] reverse superseded follow-up: ms13q3-gpio1-powerdown-active-high\n'
+    fi
+
+    git -C "${tree}" apply --reverse "${gpio1_powerdown_active_high_patch}"
   fi
 }
 

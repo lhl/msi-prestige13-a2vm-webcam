@@ -171,5 +171,7 @@ Then prefer the next smallest Linux experiments in this order:
 - board-data polarity experiments
 - remaining `WF`-side sequencing or delay detail
 
-After the first one-line polarity follow-up on `GPIO2`, the smallest remaining
-board-data experiment is now the same active-high behavior on `GPIO1`.
+After both one-line polarity follow-ups on `GPIO2` and `GPIO1`, the smallest
+remaining local experiment is no longer another single-line board-data change.
+The next better branch is staged `ov5675` GPIO release sequencing while still
+keeping the board on the `WF` / `LNK0` path.
