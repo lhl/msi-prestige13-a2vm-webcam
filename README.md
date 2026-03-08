@@ -26,6 +26,7 @@ Machine under test:
 - [`docs/tps68470-reverse-engineering.md`](./docs/tps68470-reverse-engineering.md) — canonical ACPI plus Windows-control-logic reverse-engineering note
 - [`docs/linux-board-data-candidate.md`](./docs/linux-board-data-candidate.md) — current Linux patch candidate and first live-test criteria
 - [`docs/module-iteration.md`](./docs/module-iteration.md) — faster module-only rebuild/install workflow for camera-path kernel changes
+- [`docs/ov5675-diagnostic-patch.md`](./docs/ov5675-diagnostic-patch.md) — first `ov5675` diagnostic patch and exact module-only test flow
 - [`reference/README.md`](./reference/README.md) — captured upstream references
 
 ## Repo Layout
@@ -47,6 +48,7 @@ msi-prestige13-a2vm-webcam/
 ├── docs/
 │   ├── README.md
 │   ├── module-iteration.md
+│   ├── ov5675-diagnostic-patch.md
 │   ├── reprobe-harness.md
 │   ├── tps68470-reverse-engineering.md
 │   └── webcam-status.md
@@ -87,9 +89,11 @@ msi-prestige13-a2vm-webcam/
 - [`docs/tps68470-reverse-engineering.md`](./docs/tps68470-reverse-engineering.md) — canonical reverse-engineering note for ACPI plus Windows `iactrllogic64.sys`
 - [`docs/linux-board-data-candidate.md`](./docs/linux-board-data-candidate.md) — current MSI `tps68470_board_data` hypothesis and first patched-test plan
 - [`docs/module-iteration.md`](./docs/module-iteration.md) — module-only rebuild/install workflow for camera-path iteration
+- [`docs/ov5675-diagnostic-patch.md`](./docs/ov5675-diagnostic-patch.md) — first `ov5675` diagnostic patch and exact module-only test flow
 - [`reference/greymouser-summit-13-ai-evo-a2vm.md`](./reference/greymouser-summit-13-ai-evo-a2vm.md) — related MSI Summit 13 AI+ Evo A2VMTG Linux support repo note
 - [`reference/intel-ipu7-drivers-issue-17.md`](./reference/intel-ipu7-drivers-issue-17.md) — Intel upstream issue note
 - [`reference/intel-control-logic-microsoft-update-catalog-71.26100.23.20279.md`](./reference/intel-control-logic-microsoft-update-catalog-71.26100.23.20279.md) — exact `ACPI\INT3472` Windows control-logic package entry and CAB URL
+- [`reference/patches/ov5675-probe-diagnostics-v1.patch`](./reference/patches/ov5675-probe-diagnostics-v1.patch) — first `ov5675` probe-logging patch candidate
 - [`reference/jeremy-grosser-prestige13-notes.md`](./reference/jeremy-grosser-prestige13-notes.md) — MSI-specific Debian/gist note
 - [`reference/linux-mainline-v6.19/README.md`](./reference/linux-mainline-v6.19/README.md) — local snapshot of the inspected `v6.19` `int3472` kernel subtree
 - [`reference/linux-torvalds-head/README.md`](./reference/linux-torvalds-head/README.md) — current Torvalds `HEAD` snapshot of the `int3472` subtree

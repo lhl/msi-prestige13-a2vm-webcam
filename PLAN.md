@@ -77,13 +77,13 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 
 ## Near-Term Priority
 
-1. Add a small diagnostic patch to `ov5675.c` so silent early probe exits become explicit.
-2. Use module-only rebuild/install iteration for `ov5675`, `intel_skl_int3472_tps68470`, and `ipu-bridge` where possible.
-3. Determine whether the next patch is:
+1. Test the drafted `ov5675` diagnostic patch with module-only rebuild/install iteration.
+2. Use the resulting kernel log to determine whether the next patch is:
    - optional `powerdown` support in `ov5675.c`
    - GPIO semantic swap
    - firmware / graph-endpoint hookup change
-4. Re-test against the reprobe harness after each concrete patch hypothesis.
+3. Re-test against the reprobe harness after each concrete patch hypothesis.
+4. Keep full kernel rebuilds as a fallback only when a change stops being module-local.
 
 ## Open Questions
 

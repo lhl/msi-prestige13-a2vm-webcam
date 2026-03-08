@@ -2,6 +2,44 @@
 
 ## 2026-03-08
 
+### Draft `ov5675` diagnostic patch and tighten the module-only integration workflow
+
+- Plan: turn the silent `ov5675` early-exit theory into a real patch artifact,
+  and document the exact module-only apply/build/install/reload steps against
+  the current `linux-mainline` package layout.
+- Commands:
+  - reviewed the current `ov5675` probe path:
+    - `sed -n '1120,1385p' ~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/i2c/ov5675.c`
+    - `rg -n "return -ENXIO|fwnode_graph_get_next_endpoint|dev_err_probe|chip ID|xvclk|reset" ~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/i2c/ov5675.c`
+  - verified the installed module layout:
+    - `ls /lib/modules/$(uname -r)/kernel/drivers/media/i2c/ov5675.ko.zst`
+    - `modinfo -F filename ov5675`
+  - `apply_patch` adding and updating:
+    - `reference/patches/ov5675-probe-diagnostics-v1.patch`
+    - `docs/ov5675-diagnostic-patch.md`
+    - `docs/module-iteration.md`
+    - `docs/README.md`
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+- Result:
+  - confirmed the current `ov5675` driver has two silent early `-ENXIO` exits
+    in `ov5675_get_hwcfg()`:
+    - no firmware node
+    - no firmware graph endpoint
+  - drafted `reference/patches/ov5675-probe-diagnostics-v1.patch` to expose
+    those failure paths and to log regulator and endpoint-parse errors via
+    `dev_err_probe()`
+  - documented the exact module-only integration loop in
+    `docs/ov5675-diagnostic-patch.md`
+  - corrected the earlier install guidance to match the real Arch module
+    layout:
+    - installed modules are `.ko.zst`
+    - the clean replacement path is to overwrite the packaged `.ko.zst`
+      filename, then run `depmod`
+- Decision: next test should use the new `ov5675` diagnostic patch with a
+  module-only rebuild instead of another full kernel compile.
 ### Record `v1` patched-kernel result and document module-only iteration
 
 - Plan: preserve the first successful boot and validation results from the

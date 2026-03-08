@@ -1,0 +1,39 @@
+--- a/drivers/media/i2c/ov5675.c
++++ b/drivers/media/i2c/ov5675.c
+@@ -1179,8 +1179,10 @@ static int ov5675_get_hwcfg(struct ov5675 *ov5675)
+ 	int ret;
+ 	unsigned int i, j;
+ 
+-	if (!fwnode)
++	if (!fwnode) {
++		dev_err(dev, "no firmware node found for sensor device\n");
+ 		return -ENXIO;
++	}
+ 
+ 	ov5675->xvclk = devm_v4l2_sensor_clk_get(dev, NULL);
+ 	if (IS_ERR(ov5675->xvclk))
+@@ -1208,16 +1210,20 @@ static int ov5675_get_hwcfg(struct ov5675 *ov5675)
+ 
+ 	ret = devm_regulator_bulk_get(dev, OV5675_NUM_SUPPLIES,
+ 				      ov5675->supplies);
+ 	if (ret)
+-		return ret;
++		return dev_err_probe(dev, ret,
++				     "failed to get sensor regulators\n");
+ 
+ 	ep = fwnode_graph_get_next_endpoint(fwnode, NULL);
+-	if (!ep)
++	if (!ep) {
++		dev_err(dev, "no firmware graph endpoint found\n");
+ 		return -ENXIO;
++	}
+ 
+ 	ret = v4l2_fwnode_endpoint_alloc_parse(ep, &bus_cfg);
+ 	fwnode_handle_put(ep);
+ 	if (ret)
+-		return ret;
++		return dev_err_probe(dev, ret,
++				     "failed to parse firmware graph endpoint\n");
+ 
+ 	if (bus_cfg.bus.mipi_csi2.num_data_lanes != OV5675_DATA_LANES) {
+ 		dev_err(dev, "number of CSI2 data lanes %d is not supported",

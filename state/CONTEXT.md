@@ -15,6 +15,9 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
   - `i2c-OVTI5675:00` now exists
   - the sensor still does not bind
 - The strongest blocker is now the `ov5675` probe / bind path, not the original DMI match failure.
+- The first `ov5675` diagnostic patch is now ready:
+  - `reference/patches/ov5675-probe-diagnostics-v1.patch`
+  - it turns the silent early `-ENXIO` exits into explicit kernel log lines
 - The Windows `iactrllogic64.sys` control-logic driver clearly contains board-specific `TPS68470` sequencing logic; it is not just an install stub.
 - Local `linux-mainline` source path to reuse:
   - package root: `~/.cache/paru/clone/linux-mainline`
@@ -99,6 +102,10 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
     `driver` symlink does not exist
   - use `ls -l .../driver` or `readlink -e` when checking whether the sensor is
     actually bound
+- Module-iteration trap:
+  - the installed Arch modules are `.ko.zst`
+  - for clean replacement, install a matching `.ko.zst` over the packaged path
+    instead of leaving a second uncompressed `.ko` beside it
 - First real raw ACPI capture now exists in-repo:
   - `reference/acpi/20260308T004459-unknown-host/`
   - `dmi.txt` confirms product `Prestige 13 AI+ Evo A2VMG`, board `MS-13Q3`, BIOS `E13Q3IMS.109`, BIOS date `09/04/2024`
@@ -150,12 +157,12 @@ Most important current log lines:
 
 ## Next Actions
 
-1. Add a tiny diagnostic patch to `ov5675.c` so the silent early `-ENXIO` exits
-   become explicit in the kernel log.
-2. Rebuild only the affected modules instead of doing a full kernel rebuild:
-   - `intel_skl_int3472_tps68470`
+1. Apply and test `reference/patches/ov5675-probe-diagnostics-v1.patch`.
+2. Rebuild and replace only the affected module instead of doing a full kernel
+   rebuild:
    - `ov5675`
-   - `ipu-bridge` if needed
+   - `ipu-bridge` if the result points to firmware-node / graph hookup
+   - `intel_skl_int3472_tps68470` only if the result points back to regulators
 3. Determine whether the remaining blocker is:
    - missing `powerdown` GPIO handling
    - wrong GPIO semantics

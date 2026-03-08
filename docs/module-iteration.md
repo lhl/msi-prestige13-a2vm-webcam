@@ -67,23 +67,38 @@ full `makepkg`.
 
 ## Install path
 
+On this Arch `linux-mainline` setup, the installed modules under
+`/usr/lib/modules/$(uname -r)/...` are compressed as `.ko.zst`.
+
+For clean replacement, prefer writing a matching `.ko.zst` over the packaged
+module path rather than dropping an extra uncompressed `.ko` alongside it.
+
 Copy only the modules you actually changed into the running kernel's module
 tree, then run `depmod`.
 
 Examples:
 
 ```bash
-sudo install -Dm644 \
+zstd -T0 -f \
   drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.ko \
-  /usr/lib/modules/$(uname -r)/kernel/drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.ko
+  -o /tmp/intel_skl_int3472_tps68470.ko.zst
 
-sudo install -Dm644 \
+zstd -T0 -f \
   drivers/media/i2c/ov5675.ko \
-  /usr/lib/modules/$(uname -r)/kernel/drivers/media/i2c/ov5675.ko
+  -o /tmp/ov5675.ko.zst
 
-sudo install -Dm644 \
+zstd -T0 -f \
   drivers/media/pci/intel/ipu-bridge.ko \
-  /usr/lib/modules/$(uname -r)/kernel/drivers/media/pci/intel/ipu-bridge.ko
+  -o /tmp/ipu-bridge.ko.zst
+
+sudo install -Dm644 /tmp/intel_skl_int3472_tps68470.ko.zst \
+  /usr/lib/modules/$(uname -r)/kernel/drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.ko.zst
+
+sudo install -Dm644 /tmp/ov5675.ko.zst \
+  /usr/lib/modules/$(uname -r)/kernel/drivers/media/i2c/ov5675.ko.zst
+
+sudo install -Dm644 /tmp/ipu-bridge.ko.zst \
+  /usr/lib/modules/$(uname -r)/kernel/drivers/media/pci/intel/ipu-bridge.ko.zst
 
 sudo depmod -a "$(uname -r)"
 ```
@@ -125,3 +140,8 @@ The likely next edit is in `ov5675.c` or `ipu-bridge.c`, so the faster loop is:
 4. run `depmod`
 5. reload the relevant modules or reboot if the live state is messy
 6. capture the result with `scripts/webcam-run.sh`
+
+See also:
+
+- `docs/ov5675-diagnostic-patch.md` for the first concrete `ov5675` probe-log
+  patch and an exact test sequence
