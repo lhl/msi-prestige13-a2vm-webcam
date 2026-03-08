@@ -77,13 +77,17 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 
 ## Near-Term Priority
 
-1. Test the drafted `ov5675` diagnostic patch with module-only rebuild/install iteration.
-2. Use the resulting kernel log to determine whether the next patch is:
+1. Test the drafted `ipu_bridge` `OVTI5675` support patch with module-only
+   rebuild/install iteration.
+2. Verify whether adding `OVTI5675` to `ipu_supported_sensors[]` removes:
+   - `ov5675 ... no firmware graph endpoint found`
+   - `intel-ipu7 ... no subdev found in graph`
+3. If the graph-endpoint error disappears, determine whether the next patch is:
    - optional `powerdown` support in `ov5675.c`
    - GPIO semantic swap
-   - firmware / graph-endpoint hookup change
-3. Re-test against the reprobe harness after each concrete patch hypothesis.
-4. Keep full kernel rebuilds as a fallback only when a change stops being module-local.
+   - remaining regulator / sequencing details
+4. Keep full kernel rebuilds as a fallback only when a change stops being
+   module-local.
 
 ## Open Questions
 

@@ -16,6 +16,7 @@ Current focus:
 - `docs/linux-board-data-candidate.md` — current MSI `tps68470_board_data` hypothesis and first patched-test plan
 - `docs/module-iteration.md` — faster module-only rebuild/install workflow for camera-path changes
 - `docs/ov5675-diagnostic-patch.md` — first `ov5675` probe-logging patch and exact module-only test steps
+- `docs/ipu-bridge-ovti5675-candidate.md` — current `ipu-bridge` follow-up patch candidate after the `ov5675` diagnostic result
 
 ## Repo-Level Control Docs
 

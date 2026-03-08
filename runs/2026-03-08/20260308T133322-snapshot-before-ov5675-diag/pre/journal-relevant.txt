@@ -1,0 +1,28 @@
+CMD: journalctl -k -b --no-pager | grep -En 'tps68470|INT3472|OVTI5675|ov5675|intel-ipu7|board-data|subdev|ipu7' || true
+1024:Mar 08 06:53:25 p13 kernel: intel_ipu7: module is from the staging directory, the quality is unknown, you have been warned.
+1028:Mar 08 06:53:25 p13 kernel: intel-ipu7 0000:00:05.0: enabling device (0000 -> 0002)
+1029:Mar 08 06:53:25 p13 kernel: intel-ipu7 0000:00:05.0: Device 0x645d (rev: 0x4)
+1030:Mar 08 06:53:25 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 PCI BAR0 base 0x0000003014000000 BAR2 base 0x0000003016336000
+1031:Mar 08 06:53:25 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 PCI BAR0 mapped at 00000000dfbb9605
+1033:Mar 08 06:53:25 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 SKU 0 in secure mode mask 0x0
+1040:Mar 08 06:53:25 p13 kernel: intel-ipu7 0000:00:05.0: firmware cpd file: intel/ipu/ipu7_fw.bin
+1042:Mar 08 06:53:25 p13 kernel: intel-ipu7 0000:00:05.0: FW binary0 info:
+1043:Mar 08 06:53:25 p13 kernel: intel-ipu7 0000:00:05.0: Name:  psys
+1044:Mar 08 06:53:25 p13 kernel: intel-ipu7 0000:00:05.0: Version:  1.1.9.240627135220
+1045:Mar 08 06:53:25 p13 kernel: intel-ipu7 0000:00:05.0: Timestamp:  build_id:331942702
+1046:Mar 08 06:53:25 p13 kernel: intel-ipu7 0000:00:05.0: Commit:  commit_id:d84f5c35
+1047:Mar 08 06:53:25 p13 kernel: intel-ipu7 0000:00:05.0: FW binary1 info:
+1048:Mar 08 06:53:25 p13 kernel: intel-ipu7 0000:00:05.0: Name:  isys
+1049:Mar 08 06:53:25 p13 kernel: intel-ipu7 0000:00:05.0: Version:  1.1.9.240627135318
+1050:Mar 08 06:53:25 p13 kernel: intel-ipu7 0000:00:05.0: Timestamp:  build_id:3823931988
+1051:Mar 08 06:53:25 p13 kernel: intel-ipu7 0000:00:05.0: Commit:  commit_id:d84f5c35
+1054:Mar 08 06:53:25 p13 kernel: intel-ipu7 0000:00:05.0: Sending BOOT_LOAD to CSE
+1060:Mar 08 06:53:25 p13 kernel: int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21
+1061:Mar 08 06:53:25 p13 kernel: intel-ipu7 0000:00:05.0: Sending AUTHENTICATE_RUN to CSE
+1068:Mar 08 06:53:25 p13 kernel: intel-ipu7 0000:00:05.0: CSE authenticate_run done
+1116:Mar 08 06:53:25 p13 kernel: intel_ipu7_isys: module is from the staging directory, the quality is unknown, you have been warned.
+1117:Mar 08 06:53:25 p13 kernel: intel-ipu7 0000:00:05.0: no subdev found in graph
+1245:Mar 08 12:43:38 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 in secure mode
+1332:Mar 08 13:09:27 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 in secure mode
+
+EXIT_STATUS: 0

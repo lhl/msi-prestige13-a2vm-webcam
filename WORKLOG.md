@@ -2,6 +2,53 @@
 
 ## 2026-03-08
 
+### Record the `ov5675` diagnostic result and draft the `ipu-bridge` follow-up
+
+- Plan: preserve the first diagnostic-patch run result, reduce the remaining
+  blocker to the next concrete kernel file, and turn that into the next
+  module-only patch candidate.
+- Commands:
+  - reviewed the user-run diagnostic output:
+    - `journalctl -b -k --no-pager | rg 'ov5675|OVTI5675|firmware graph|firmware node|xvclk|reset|regulator|ipu7'`
+    - `ls -l /sys/bus/i2c/devices/i2c-OVTI5675:00/driver || true`
+    - `media-ctl -p -d /dev/media0`
+    - `find /dev -maxdepth 1 -name 'v4l-subdev*' | sort`
+  - reviewed the new captured runs:
+    - `runs/2026-03-08/20260308T133322-snapshot-before-ov5675-diag/`
+    - `runs/2026-03-08/20260308T133515-snapshot-after-ov5675-diag/`
+    - `runs/2026-03-08/20260308T133658-reprobe-modules-after-ov5675-diag/`
+  - reviewed the bridge and sensor code:
+    - `drivers/media/pci/intel/ipu-bridge.c`
+    - `drivers/media/i2c/ov5675.c`
+    - `drivers/platform/x86/intel/int3472/common.c`
+  - `apply_patch` adding and updating:
+    - `runs/2026-03-08/20260308T133515-snapshot-after-ov5675-diag/manual-followup.txt`
+    - `reference/patches/ipu-bridge-ovti5675-v1.patch`
+    - `docs/ipu-bridge-ovti5675-candidate.md`
+    - `docs/webcam-status.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `README.md`
+    - `docs/README.md`
+    - `WORKLOG.md`
+- Result:
+  - the diagnostic patch produced the first explicit `ov5675` probe error:
+    - `ov5675 i2c-OVTI5675:00: no firmware graph endpoint found`
+  - this means the remaining blocker is now more specific than "sensor probe
+    still fails":
+    - the sensor client exists
+    - the `ov5675` driver is probing
+    - the failure happens before chip-ID and streaming logic
+  - `ipu_bridge` is loaded on the same kernel, but local `ipu-bridge.c` only
+    creates software-node graph endpoints for sensors in
+    `ipu_supported_sensors[]`
+  - `OVTI5675` is absent from that table
+  - local `ov5675.c` expects a single link-frequency at `450000000`
+  - drafted the next minimal patch candidate in
+    `reference/patches/ipu-bridge-ovti5675-v1.patch`
+- Decision: shift the next module-only test from `ov5675.c` to `ipu-bridge.c`;
+  the leading hypothesis is now missing `OVTI5675` bridge support, not missing
+  PMIC board data.
 ### Draft `ov5675` diagnostic patch and tighten the module-only integration workflow
 
 - Plan: turn the silent `ov5675` early-exit theory into a real patch artifact,

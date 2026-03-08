@@ -14,10 +14,17 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
   - the old board-data error is gone
   - `i2c-OVTI5675:00` now exists
   - the sensor still does not bind
-- The strongest blocker is now the `ov5675` probe / bind path, not the original DMI match failure.
+- The `ov5675` diagnostic patch narrowed the remaining blocker further:
+  - `ov5675 i2c-OVTI5675:00: no firmware graph endpoint found`
+- The strongest blocker is now the sensor firmware-graph hookup, not the
+  original DMI match failure.
 - The first `ov5675` diagnostic patch is now ready:
   - `reference/patches/ov5675-probe-diagnostics-v1.patch`
   - it turns the silent early `-ENXIO` exits into explicit kernel log lines
+- The next patch candidate is now:
+  - `reference/patches/ipu-bridge-ovti5675-v1.patch`
+  - rationale: `OVTI5675` is absent from `ipu_bridge`'s
+    `ipu_supported_sensors[]`
 - The Windows `iactrllogic64.sys` control-logic driver clearly contains board-specific `TPS68470` sequencing logic; it is not just an install stub.
 - Local `linux-mainline` source path to reuse:
   - package root: `~/.cache/paru/clone/linux-mainline`
@@ -97,6 +104,13 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
   - `ov5675` is loaded but the sensor client is still unbound
   - a manual bind attempt returns `No such device or address`
   - there are still no `/dev/v4l-subdev*` nodes
+- Diagnostic `ov5675` module-only test result:
+  - `ov5675 i2c-OVTI5675:00: no firmware graph endpoint found`
+  - `ipu_bridge` is loaded on the same kernel
+  - local `ipu_bridge.c` only creates software-node graph endpoints for sensors
+    listed in `ipu_supported_sensors[]`
+  - `OVTI5675` is absent from that list
+  - local `ov5675.c` expects one link frequency at `450000000`
 - Important trap:
   - `readlink -f /sys/bus/i2c/devices/i2c-OVTI5675:00/driver` is misleading when the
     `driver` symlink does not exist
@@ -136,15 +150,15 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
   - `ov5675` expects `avdd`, `dovdd`, `dvdd`, `reset`, and 19.2 MHz `xvclk`
   - missing MSI-specific `tps68470_board_data` was real, but is no longer the
     leading blocker after `v1`
-  - the next blocker is now somewhere in the sensor probe / bind path:
-    - missing second GPIO semantics such as `powerdown`
-    - missing firmware / graph-endpoint hookup
-    - or remaining regulator / sequencing mismatch
+  - the next blocker is now more specifically the firmware graph hookup:
+    - `OVTI5675` likely needs an `ipu_bridge` supported-sensor entry
+    - only after that should we revisit `powerdown` or regulator details
 - `scripts/capture-acpi.sh` is now fixed to disassemble lowercase `dsdt.dat` / `ssdt*.dat`, keep `.dsl` outputs under `dsl/`, and capture `live-linux-acpi-state.txt` in future runs
 
 Most important current log lines:
 
 - `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+- `ov5675 i2c-OVTI5675:00: no firmware graph endpoint found`
 - `intel-ipu7 0000:00:05.0: no subdev found in graph`
 - manual bind follow-up:
   - `tee: /sys/bus/i2c/drivers/ov5675/bind: No such device or address`
@@ -157,14 +171,13 @@ Most important current log lines:
 
 ## Next Actions
 
-1. Apply and test `reference/patches/ov5675-probe-diagnostics-v1.patch`.
-2. Rebuild and replace only the affected module instead of doing a full kernel
-   rebuild:
-   - `ov5675`
-   - `ipu-bridge` if the result points to firmware-node / graph hookup
-   - `intel_skl_int3472_tps68470` only if the result points back to regulators
-3. Determine whether the remaining blocker is:
+1. Apply and test `reference/patches/ipu-bridge-ovti5675-v1.patch`.
+2. Rebuild and replace only the affected module:
+   - `ipu-bridge`
+3. Re-test whether:
+   - `ov5675 ... no firmware graph endpoint found` disappears
+   - a sensor subdevice appears in `media-ctl`
+4. Only after that, revisit:
    - missing `powerdown` GPIO handling
    - wrong GPIO semantics
-   - missing firmware / graph-endpoint hookup
-4. Capture each new iteration with `scripts/webcam-run.sh`.
+   - remaining regulator details

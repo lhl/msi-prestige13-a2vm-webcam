@@ -1,0 +1,67 @@
+Source: user terminal transcript pasted on 2026-03-08 after applying the
+`ov5675` diagnostic patch and rebuilding the `ov5675` module only.
+
+Purpose:
+
+- verify whether the patched `ov5675` module exposes the first explicit probe
+  error after the earlier MSI `INT3472` / `TPS68470` board-data fix
+- preserve the exact manual evidence because the regular snapshot taken before
+  the reload did not itself contain the new `ov5675` log line
+
+Commands and observed results:
+
+1. Check the relevant kernel log after reloading the diagnostic module:
+
+   `journalctl -b -k --no-pager | rg 'ov5675|OVTI5675|firmware graph|firmware node|xvclk|reset|regulator|ipu7'`
+
+   High-value new line:
+
+- `ov5675 i2c-OVTI5675:00: no firmware graph endpoint found`
+
+   Interpretation:
+
+- the diagnostic patch worked
+- the sensor client exists and the driver is probing
+- the current failure is now specifically missing firmware-graph hookup, not
+  just a silent probe failure
+
+2. Check whether the sensor is actually bound:
+
+   `ls -l /sys/bus/i2c/devices/i2c-OVTI5675:00/driver || true`
+
+   Observed result:
+
+- `No such file or directory`
+
+   Interpretation:
+
+- the sensor is still unbound after the diagnostic `ov5675` reload
+
+3. Re-check the media graph and device nodes:
+
+   `media-ctl -p -d /dev/media0`
+   `find /dev -maxdepth 1 -name 'v4l-subdev*' | sort`
+
+   Observed result:
+
+- the media graph still contains only IPU-side entities
+- there are still no `/dev/v4l-subdev*` nodes
+
+4. Run the reprobe harness afterward:
+
+   `sudo scripts/webcam-run.sh reprobe-modules --label after-ov5675-diag`
+
+   Observed result from the run log:
+
+- module unload/load sequence completed successfully
+- `journal-since-run-start.txt` contains:
+  - `int3472-tps68470 i2c-INT3472:06: INT3472 seems to have no dependents`
+  - `intel-ipu7 0000:00:05.0: no subdev found in graph`
+- it did not reproduce the `ov5675` diagnostic line inside the harness log
+
+Bottom line:
+
+- the `ov5675` diagnostic patch reduced the current blocker to:
+  - missing firmware graph endpoint for `OVTI5675`
+- the most likely next target is `drivers/media/pci/intel/ipu-bridge.c`, not
+  further guessing in `ov5675` power sequencing

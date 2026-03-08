@@ -1,0 +1,8 @@
+CMD: find /sys/bus/i2c/drivers/int3472-tps68470 -maxdepth 2 2>/dev/null | sort || true
+/sys/bus/i2c/drivers/int3472-tps68470
+/sys/bus/i2c/drivers/int3472-tps68470/bind
+/sys/bus/i2c/drivers/int3472-tps68470/module
+/sys/bus/i2c/drivers/int3472-tps68470/uevent
+/sys/bus/i2c/drivers/int3472-tps68470/unbind
+
+EXIT_STATUS: 0

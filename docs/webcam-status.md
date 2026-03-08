@@ -13,9 +13,9 @@ Updated: 2026-03-08
 Webcam support is still not working end to end on this laptop.
 
 The good news is that the first MSI-specific `INT3472` / `TPS68470`
-board-data patch has now been tested successfully enough to move the failure
-forward. The bad news is that the sensor still does not bind, so the camera is
-still blocked at the probe / graph stage.
+board-data patch and the follow-up `ov5675` diagnostic patch have both moved
+the failure forward. The bad news is that the camera is still blocked at the
+probe / graph stage, now with a more specific bridge-layer failure.
 
 ## What works
 
@@ -45,6 +45,8 @@ before a usable sensor graph is assembled:
 Additional live evidence on the patched kernel:
 
 - `i2c-OVTI5675:00` exists under `/sys/bus/i2c/devices/`
+- the diagnostic `ov5675` module now logs:
+  - `ov5675 i2c-OVTI5675:00: no firmware graph endpoint found`
 - the media graph still has no sensor entity
 - there are still no `/dev/v4l-subdev*` nodes
 - a manual bind attempt to `/sys/bus/i2c/drivers/ov5675/bind` returns:
@@ -54,7 +56,7 @@ Those lines and checks are the current high-value signal. They mean:
 
 1. The PMIC is present and reachable.
 2. The MSI board-data patch is active enough to instantiate the sensor client.
-3. The remaining blocker is now the sensor probe / bind path.
+3. The remaining blocker is now the firmware graph endpoint / sensor probe path.
 4. The IPU still cannot assemble a complete media graph afterward.
 
 ## Assessment
@@ -65,10 +67,14 @@ board-data matching.
 - ACPI exposes `OVTI5675:00`.
 - The `ov5675` kernel module is loaded.
 - The patched kernel now instantiates `i2c-OVTI5675:00`.
-- The remaining failure is more consistent with a later sensor-probe problem:
-  - missing second GPIO semantics such as `powerdown`, or
-  - missing firmware / graph-endpoint hookup for `ov5675`, or
-  - remaining regulator / sequencing mismatch after board-data
+- The remaining failure is now more specifically consistent with missing
+  firmware / graph-endpoint hookup for `ov5675`.
+- The current leading local hypothesis is:
+  - `OVTI5675` is missing from `drivers/media/pci/intel/ipu-bridge.c`
+    `ipu_supported_sensors[]`
+- Second-order possibilities still exist after that:
+  - missing `powerdown` GPIO semantics
+  - remaining regulator or sequencing mismatch after the graph is fixed
 
 In practical terms, support looks like this:
 
@@ -78,6 +84,7 @@ In practical terms, support looks like this:
 - MSI board-data match for `INT3472:06`: present in the patched test kernel
 - Sensor instantiation on I2C: present in the patched test kernel
 - Sensor bind / media-subdevice registration: still missing
+- Firmware graph endpoint for `ov5675`: missing in the current tested kernel
 - Usable webcam in userspace: not there yet
 
 ## Comparison with the upstream references
@@ -108,20 +115,23 @@ references could.
 ## Bottom line
 
 The webcam is closer than it was in late 2024 because the current patched test
-kernel now gets past the original MSI `INT3472` board-data failure. But the
-laptop is still blocked on the next stage after that:
+kernel now gets past the original MSI `INT3472` board-data failure and exposes
+the next missing piece. But the laptop is still blocked on the next stage after
+that:
 
 - `ov5675` still does not bind successfully
+- `ov5675` now explicitly reports `no firmware graph endpoint found`
 - the sensor still does not appear as a media subdevice
 - the camera still does not work in userspace
 
 ## Best next steps
 
-- Add a small diagnostic patch in `ov5675.c` so the silent early probe exits
-  become explicit in the kernel log.
-- Check whether the next blocker is:
+- Test the `ipu_bridge` follow-up patch candidate in:
+  - `reference/patches/ipu-bridge-ovti5675-v1.patch`
+- Check whether `OVTI5675` support is simply missing from
+  `drivers/media/pci/intel/ipu-bridge.c`.
+- If the graph-endpoint error disappears, only then re-evaluate:
   - missing `powerdown` GPIO handling in `ov5675`
-  - missing firmware / graph-endpoint hookup
   - remaining PMIC GPIO / sequencing mismatch
 - Re-test with:
   - `journalctl -k -b | rg 'tps68470|ipu7|ov5675'`
