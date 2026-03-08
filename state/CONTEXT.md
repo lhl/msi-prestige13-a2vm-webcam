@@ -22,8 +22,8 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
 - The clean combined-patch boot answered the next question:
   - real regulators are present
   - `INT3472:06` binds cleanly
-  - the current failure is now `Failed to enable dvdd: -ETIMEDOUT`
-  - `ov5675` fails during `power_on()`, before later sensor-detect logic
+  - the serial power-on follow-up removed the old `dvdd` timeout
+  - the current failure is now `failed to find sensor: -5`
 - The first `ov5675` diagnostic patch is now ready:
   - `reference/patches/ov5675-probe-diagnostics-v1.patch`
   - it turns the silent early `-ENXIO` exits into explicit kernel log lines
@@ -152,6 +152,21 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
     - the earlier dummy-regulator warning was a disturbed-session artifact
     - the next blocker is specifically the `dvdd` enable path inside
       `ov5675_power_on()`
+- Clean boot after the serial power-on follow-up:
+  - run:
+    - `runs/2026-03-08/20260308T151653-snapshot-serial-power-v1/`
+  - key lines:
+    - `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+    - `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+    - `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+    - `ov5675 i2c-OVTI5675:00: failed to find sensor: -5`
+    - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -5`
+  - important contrast with the previous clean boot:
+    - `Failed to enable dvdd: -ETIMEDOUT` does not appear
+  - implication:
+    - the serial power-on follow-up was real
+    - the next blocker is now sensor identification rather than rail enable
+    - the leading next hypothesis is missing `powerdown` GPIO handling
 - Important trap:
   - `readlink -f /sys/bus/i2c/devices/i2c-OVTI5675:00/driver` is misleading when the
     `driver` symlink does not exist
@@ -193,12 +208,12 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
     leading blocker after `v1`
   - the firmware graph hookup gap was also real and is now fixed by the tested
     `ipu-bridge` patch candidate
-  - the clean-boot result now points to a sharper next hypothesis:
-    - Windows uses `VA -> VD -> VSIO`
-    - Linux `ov5675` currently enables `avdd`, `dovdd`, `dvdd` via async
-      `regulator_bulk_enable()`
-    - a serial Linux power-on order of `avdd -> dvdd -> dovdd` is now the
-      most targeted next experiment
+  - the serial power-on follow-up was also a real improvement:
+    - the old clean-boot `dvdd` timeout is gone
+  - the current next hypothesis is:
+    - board data already provides `reset` and `powerdown`
+    - `ov5675` still only consumes `reset`
+    - Windows evidence still points to two PMIC GPIOs for this board
 - `scripts/capture-acpi.sh` is now fixed to disassemble lowercase `dsdt.dat` / `ssdt*.dat`, keep `.dsl` outputs under `dsl/`, and capture `live-linux-acpi-state.txt` in future runs
 
 Most important current log lines:
@@ -206,8 +221,7 @@ Most important current log lines:
 - `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
 - `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
 - `intel-ipu7 0000:00:05.0: Connected 1 cameras`
-- `Failed to enable dvdd: -ETIMEDOUT`
-- `ov5675 i2c-OVTI5675:00: failed to power on: -110`
+- `ov5675 i2c-OVTI5675:00: failed to find sensor: -5`
 - manual bind follow-up:
   - `tee: /sys/bus/i2c/drivers/ov5675/bind: No such device or address`
 
@@ -219,18 +233,14 @@ Most important current log lines:
 
 ## Next Actions
 
-1. Test a module-only `ov5675` patch that replaces async
-   `regulator_bulk_enable()` with explicit serial power-on in the recovered
-   Windows-like order:
-   - `avdd`
-   - `dvdd`
-   - `dovdd`
+1. Test a module-only `ov5675` follow-up that consumes `powerdown` in addition
+   to `reset`.
 2. Re-test whether:
-   - `Failed to enable dvdd: -ETIMEDOUT` disappears
-   - `ov5675` gets past `power_on()`
+   - `failed to find sensor: -5` disappears
+   - `ov5675` binds
    - a sensor subdevice appears
-3. If serial power-on still fails, revisit:
-   - board-data regulator consumer mapping
-   - missing `powerdown` GPIO handling
+3. If sensor identification still fails, revisit:
    - remaining GPIO semantics
+   - extra post-power-on delay
+   - board-data regulator consumer mapping
 4. Capture each new iteration with `scripts/webcam-run.sh`.

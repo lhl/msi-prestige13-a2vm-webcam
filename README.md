@@ -29,6 +29,7 @@ Machine under test:
 - [`docs/ov5675-diagnostic-patch.md`](./docs/ov5675-diagnostic-patch.md) — first `ov5675` diagnostic patch and exact module-only test flow
 - [`docs/ipu-bridge-ovti5675-candidate.md`](./docs/ipu-bridge-ovti5675-candidate.md) — current `ipu-bridge` follow-up patch candidate after the diagnostic result
 - [`docs/ov5675-power-on-order.md`](./docs/ov5675-power-on-order.md) — next `ov5675` power-on sequencing hypothesis after the clean-boot `dvdd` timeout
+- [`docs/ov5675-powerdown-followup.md`](./docs/ov5675-powerdown-followup.md) — next `ov5675` GPIO follow-up after the clean-boot serial-power result
 - [`docs/test-routines.md`](./docs/test-routines.md) — numbered test wrappers for clean-boot and reload checkpoints
 - [`reference/README.md`](./reference/README.md) — captured upstream references
 
@@ -80,9 +81,8 @@ msi-prestige13-a2vm-webcam/
 
 ## Current Focus
 
-1. Test a module-only `ov5675` power-on sequencing patch.
-2. Check whether the clean-boot `Failed to enable dvdd: -ETIMEDOUT` line
-   disappears.
+1. Test a module-only `ov5675` follow-up that adds `powerdown` handling.
+2. Check whether the clean-boot `failed to find sensor: -5` line disappears.
 3. Keep using module-only iteration to minimize rebuild time for the next
    camera-path patches.
 
@@ -97,6 +97,7 @@ msi-prestige13-a2vm-webcam/
 - [`docs/ov5675-diagnostic-patch.md`](./docs/ov5675-diagnostic-patch.md) — first `ov5675` diagnostic patch and exact module-only test flow
 - [`docs/ipu-bridge-ovti5675-candidate.md`](./docs/ipu-bridge-ovti5675-candidate.md) — current `ipu-bridge` follow-up patch candidate after the diagnostic result
 - [`docs/ov5675-power-on-order.md`](./docs/ov5675-power-on-order.md) — next `ov5675` power-on sequencing hypothesis after the clean-boot `dvdd` timeout
+- [`docs/ov5675-powerdown-followup.md`](./docs/ov5675-powerdown-followup.md) — next `ov5675` GPIO follow-up after the clean-boot serial-power result
 - [`docs/test-routines.md`](./docs/test-routines.md) — numbered test wrappers for clean-boot and reload checkpoints
 - [`reference/greymouser-summit-13-ai-evo-a2vm.md`](./reference/greymouser-summit-13-ai-evo-a2vm.md) — related MSI Summit 13 AI+ Evo A2VMTG Linux support repo note
 - [`reference/intel-ipu7-drivers-issue-17.md`](./reference/intel-ipu7-drivers-issue-17.md) — Intel upstream issue note

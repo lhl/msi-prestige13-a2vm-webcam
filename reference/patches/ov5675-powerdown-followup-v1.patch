@@ -1,0 +1,49 @@
+--- a/drivers/media/i2c/ov5675.c
++++ b/drivers/media/i2c/ov5675.c
+@@ -511,6 +511,7 @@
+ 	struct v4l2_ctrl_handler ctrl_handler;
+ 	struct clk *xvclk;
+ 	struct gpio_desc *reset_gpio;
++	struct gpio_desc *powerdown_gpio;
+ 	struct regulator_bulk_data supplies[OV5675_NUM_SUPPLIES];
+ 
+ 	/* V4L2 Controls */
+@@ -985,6 +986,7 @@
+ 
+ 	clk_disable_unprepare(ov5675->xvclk);
+ 	gpiod_set_value_cansleep(ov5675->reset_gpio, 1);
++	gpiod_set_value_cansleep(ov5675->powerdown_gpio, 1);
+ 	for (i = ARRAY_SIZE(ov5675_power_on_order) - 1; i >= 0; i--)
+ 		regulator_disable(ov5675->supplies[ov5675_power_on_order[i]].consumer);
+ 
+@@ -1025,6 +1027,7 @@
+ 	}
+ 
+ 	gpiod_set_value_cansleep(ov5675->reset_gpio, 1);
++	gpiod_set_value_cansleep(ov5675->powerdown_gpio, 1);
+ 
+ 	ret = ov5675_enable_supplies_serial(ov5675);
+ 	if (ret) {
+@@ -1037,6 +1040,7 @@
+ 	 */
+ 	usleep_range(2000, 2200);
+ 
++	gpiod_set_value_cansleep(ov5675->powerdown_gpio, 0);
+ 	gpiod_set_value_cansleep(ov5675->reset_gpio, 0);
+ 
+ 	/* Worst case quiesence gap is 1.365 milliseconds @ 6MHz XVCLK
+@@ -1237,6 +1241,14 @@
+ 		return ret;
+ 	}
+ 
++	ov5675->powerdown_gpio = devm_gpiod_get_optional(dev, "powerdown",
++							 GPIOD_OUT_HIGH);
++	if (IS_ERR(ov5675->powerdown_gpio)) {
++		ret = PTR_ERR(ov5675->powerdown_gpio);
++		dev_err(dev, "failed to get powerdown-gpios: %d\n", ret);
++		return ret;
++	}
++
+ 	for (i = 0; i < OV5675_NUM_SUPPLIES; i++)
+ 		ov5675->supplies[i].supply = ov5675_supply_names[i];
+ 

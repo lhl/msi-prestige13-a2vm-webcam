@@ -1,0 +1,15 @@
+CMD: modinfo ov5675
+filename:       /lib/modules/7.0.0-rc2-1-mainline-dirty/kernel/drivers/media/i2c/ov5675.ko.zst
+license:        GPL v2
+description:    OmniVision OV5675 sensor driver
+author:         Shawn Tu
+srcversion:     52D018F009C8A9F202B5C46
+alias:          acpi*:OVTI5675:*
+alias:          of:N*T*Covti,ov5675C*
+alias:          of:N*T*Covti,ov5675
+depends:        videodev,v4l2-fwnode,mc,v4l2-async
+name:           ov5675
+retpoline:      Y
+vermagic:       7.0.0-rc2-1-mainline-dirty SMP preempt mod_unload 
+
+EXIT_STATUS: 0

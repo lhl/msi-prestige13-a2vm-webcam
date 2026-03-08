@@ -1,0 +1,4 @@
+CMD: git_safe status --short
+?? runs/2026-03-08/20260308T151653-snapshot-serial-power-v1/
+
+EXIT_STATUS: 0

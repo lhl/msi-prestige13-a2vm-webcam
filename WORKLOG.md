@@ -2,6 +2,50 @@
 
 ## 2026-03-08
 
+### Record the clean serial-power result and pivot to `powerdown` GPIO handling
+
+- Plan: preserve the first clean-boot result after the serial power-on patch,
+  confirm whether it really fixed the `dvdd` timeout, and turn the next clean
+  failure into the next small module-only patch candidate.
+- Commands:
+  - reviewed the new clean-boot run:
+    - `runs/2026-03-08/20260308T151653-snapshot-serial-power-v1/`
+    - `runs/2026-03-08/20260308T151653-snapshot-serial-power-v1/focused-summary.txt`
+  - reviewed the relevant boot log and driver state:
+    - `journalctl -b -k --no-pager | rg 'TPS68470 REVID|Found supported sensor|Connected 1 cameras|Failed to enable|failed to power on|failed to find sensor|probe with driver ov5675 failed'`
+    - `readlink -e /sys/bus/i2c/devices/i2c-INT3472:06/driver || echo int3472-unbound`
+    - `readlink -e /sys/bus/i2c/devices/i2c-OVTI5675:00/driver || echo ov5675-unbound`
+  - reviewed the current `ov5675` identify path and board-data wiring:
+    - `drivers/media/i2c/ov5675.c`
+    - `drivers/platform/x86/intel/int3472/tps68470_board_data.c`
+    - `drivers/media/i2c/ov5693.c`
+    - `drivers/media/i2c/ov2740.c`
+  - `apply_patch` adding and updating:
+    - `docs/ov5675-powerdown-followup.md`
+    - `reference/patches/ov5675-powerdown-followup-v1.patch`
+    - `docs/webcam-status.md`
+    - `docs/ov5675-power-on-order.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `README.md`
+    - `docs/README.md`
+    - `WORKLOG.md`
+- Result:
+  - the serial power-on follow-up was a real improvement:
+    - the old clean-boot `Failed to enable dvdd: -ETIMEDOUT` line is gone
+    - `ov5675` now gets past the earlier rail-enable failure
+  - the new clean-boot failure is:
+    - `ov5675 i2c-OVTI5675:00: failed to find sensor: -5`
+  - that means the current blocker is no longer missing graph hookup or rail
+    enable order; it is now sensor identification
+  - the leading next local hypothesis is:
+    - board data already provides both `reset` and `powerdown`
+    - `ov5675` still only consumes `reset`
+    - the next smallest follow-up is to add optional `powerdown` handling
+- Decision: treat the serial power-on patch as a successful narrowing step and
+  shift the next module-only iteration from regulator order to second-GPIO
+  handling.
+
 ### Add numbered checkpoint scripts for clean-boot and ov5675-reload testing
 
 - Plan: make the current iteration loop easier to repeat and easier to compare

@@ -101,3 +101,18 @@ Stronger success:
 - `ov5675` gets far enough to log `failed to find sensor` or to bind
 - `/dev/v4l-subdev*` appears
 - `media-ctl` shows a sensor entity instead of IPU-only nodes
+
+## Actual Result
+
+The clean boot after the serial power-on patch did meet the minimum goal:
+
+- `Failed to enable dvdd: -ETIMEDOUT` disappeared
+- the failure moved forward to:
+  - `ov5675 i2c-OVTI5675:00: failed to find sensor: -5`
+
+That means this patch candidate was useful and should now be treated as a real
+step forward, not just a theory.
+
+The next likely branch is now in:
+
+- `docs/ov5675-powerdown-followup.md`
