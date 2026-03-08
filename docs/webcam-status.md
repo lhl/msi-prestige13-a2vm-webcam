@@ -1,6 +1,6 @@
 # Webcam status
 
-Updated: 2026-03-08
+Updated: 2026-03-09
 
 ## Machine under test
 
@@ -59,6 +59,11 @@ Additional live evidence on the patched kernel:
   - `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
   - `ov5675 i2c-OVTI5675:00: failed to find sensor: -5`
   - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -5`
+- after installing the identify-debug `ov5675` build and doing a reload-only
+  debug run:
+  - `ov5675 i2c-OVTI5675:00: setup of GPIO reset failed: -110`
+  - `ov5675 i2c-OVTI5675:00: failed to get reset-gpios: -110`
+  - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
 - the old clean-boot `Failed to enable dvdd: -ETIMEDOUT` line is gone
 - the media graph still has no sensor entity
 - there are still no `/dev/v4l-subdev*` nodes
@@ -75,6 +80,11 @@ Those lines and checks are the current high-value signal. They mean:
    failure forward again to sensor identification.
 5. The first `powerdown` follow-up was a negative result:
    - consuming `powerdown` alone did not move the failure past `-5`
+6. The first identify-debug reload run was also non-diagnostic:
+   - the debug module is installed
+   - but reload after a failed boot-time probe still dies earlier at
+     `reset-gpios: -110`
+   - the next trustworthy debug capture must happen on first load at clean boot
 
 ## Assessment
 
@@ -150,7 +160,8 @@ that:
 - `ipu-bridge` now recognizes `OVTI5675:00` and reports one connected camera
 - the serial power-on follow-up removed the clean-boot `dvdd` timeout
 - the first `powerdown` follow-up did not change that outcome
-- on the next clean boot, `ov5675` still fails at sensor identification with `-5`
+- on the last clean boot, `ov5675` still fails at sensor identification with `-5`
+- the first reload-only identify-debug run failed earlier at `reset-gpios: -110`
 - the sensor still does not appear as a media subdevice
 - the camera still does not work in userspace
 
@@ -158,8 +169,8 @@ that:
 
 - Treat the first `powerdown` follow-up as a negative result.
 - Test the next smallest module-only follow-up in one of these directions:
+  - apply the identify-debug module parameters on first load at clean boot
   - remaining GPIO semantics or polarity around the second control line
-  - extra post-power-on delay before chip-ID read
   - board-data regulator consumer mapping
 - Re-test with:
   - `journalctl -k -b | rg 'tps68470|ipu7|ov5675'`

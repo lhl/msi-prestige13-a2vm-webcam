@@ -81,6 +81,8 @@ Additional lines tracked here:
 - `chip id read attempt`
 - `chip id attempt`
 - `sensor identified on attempt`
+- `setup of GPIO reset failed`
+- `failed to get reset-gpios`
 
 Example:
 
@@ -90,6 +92,15 @@ sudo scripts/03-ov5675-identify-debug-check.sh \
   --identify-retry-delay-us 2000 \
   --extra-delay-us 5000
 ```
+
+Interpretation note:
+
+- this is still a reload-only narrowing tool
+- if the boot-time `ov5675` probe has already wedged the sensor path, a later
+  reload may fail earlier at `setup of GPIO reset failed: -110` or
+  `failed to get reset-gpios: -110` and never reach chip-ID reads
+- when that happens, the next trustworthy test is a clean boot with the debug
+  module parameters applied on first load
 
 ## Current interpretation rule
 

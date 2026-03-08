@@ -101,7 +101,7 @@ run_dir=$(printf '%s\n' "${snapshot_output}" | sed -n 's/.*run directory: //p' |
 }
 
 focus_journal=$(journalctl -k --since "${run_start_local}" --no-pager | rg \
-  'TPS68470 REVID|Found supported sensor|Connected 1 cameras|applying extra post-power-on delay|chip id read attempt|chip id attempt|sensor identified on attempt|Failed to enable|failed to power on|failed to find sensor|probe with driver ov5675 failed' \
+  'TPS68470 REVID|Found supported sensor|Connected 1 cameras|applying extra post-power-on delay|chip id read attempt|chip id attempt|sensor identified on attempt|setup of GPIO reset failed|failed to get reset-gpios|Failed to enable|failed to power on|failed to find sensor|probe with driver ov5675 failed' \
   || true)
 int3472_driver=$(readlink -e /sys/bus/i2c/devices/i2c-INT3472:06/driver || printf 'int3472-unbound')
 ov5675_driver=$(readlink -e /sys/bus/i2c/devices/i2c-OVTI5675:00/driver || printf 'ov5675-unbound')

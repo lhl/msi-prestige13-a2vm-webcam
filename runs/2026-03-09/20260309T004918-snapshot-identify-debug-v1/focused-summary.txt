@@ -1,0 +1,22 @@
+Source: scripts/03-ov5675-identify-debug-check.sh
+Purpose: capture the focused result of an ov5675 identify-debug reload attempt
+
+Reload start time:
+2026-03-09 00:49:16
+
+Module parameters:
+identify_retry_count=5
+identify_retry_delay_us=2000
+extra_post_power_on_delay_us=0
+
+High-value journal lines since reload:
+Mar 09 00:49:18 p13 kernel: ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110
+
+INT3472 driver state:
+/sys/bus/i2c/drivers/int3472-tps68470
+
+OV5675 driver state:
+ov5675-unbound
+
+v4l-subdev nodes:
+(none)

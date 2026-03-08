@@ -1,6 +1,6 @@
 # `ov5675` Identify Debug Follow-Up
 
-Updated: 2026-03-08
+Updated: 2026-03-09
 
 This note captures the next module-only debug branch after the first clean boot
 with `ov5675-powerdown-followup-v1.patch`.
@@ -112,6 +112,47 @@ sudo scripts/03-ov5675-identify-debug-check.sh \
   --identify-retry-delay-us 2000 \
   --extra-delay-us 5000
 ```
+
+## First Result
+
+The first reload-only run after installing the debug build did not reach the
+new identify logging:
+
+- run directory:
+  - `runs/2026-03-09/20260309T004918-snapshot-identify-debug-v1/`
+- focused summary:
+  - `runs/2026-03-09/20260309T004918-snapshot-identify-debug-v1/focused-summary.txt`
+- high-value kernel lines since reload:
+  - `ov5675 i2c-OVTI5675:00: setup of GPIO reset failed: -110`
+  - `ov5675 i2c-OVTI5675:00: failed to get reset-gpios: -110`
+  - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
+
+That means the reload-only path is still being contaminated by the earlier
+boot-time failure. We still do not have chip-ID attempt logs from this debug
+branch.
+
+## Revised Next Test
+
+The next trustworthy use of this debug branch is on first load at clean boot,
+not on an in-session reload after `ov5675` has already failed once.
+
+Recommended approach:
+
+1. put the debug module parameters into a temporary `modprobe.d` override so
+   they apply when `ov5675` autoloads
+2. reboot
+3. capture a clean-boot checkpoint with `scripts/01-clean-boot-check.sh`
+
+Suggested temporary `modprobe.d` line:
+
+```conf
+options ov5675 identify_retry_count=5 identify_retry_delay_us=2000 extra_post_power_on_delay_us=0
+```
+
+If that still fails before identify logging appears, the next strong
+conclusion is that the sensor path is wedging before `ov5675_identify_module()`
+ever runs, which would push the next patch space back toward GPIO semantics or
+board-data sequencing rather than sensor-identify timing.
 
 ## Success Criteria
 

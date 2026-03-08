@@ -1,0 +1,6 @@
+CMD: journalctl -k --since '2026-03-08T15:49:18Z' --no-pager | grep -En 'tps68470|INT3472|OVTI5675|ov5675|intel-ipu7|board-data|subdev|ipu7' || true
+2:Mar 09 00:49:18 p13 kernel: ov5675 i2c-OVTI5675:00: setup of GPIO reset failed: -110
+3:Mar 09 00:49:18 p13 kernel: ov5675 i2c-OVTI5675:00: failed to get reset-gpios: -110
+4:Mar 09 00:49:18 p13 kernel: ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110
+
+EXIT_STATUS: 0

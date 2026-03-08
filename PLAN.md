@@ -1,6 +1,6 @@
 # Webcam Bring-Up Plan
 
-Updated: 2026-03-08
+Updated: 2026-03-09
 
 This is the active plan for getting the MSI Prestige 13 AI+ Evo A2VMG webcam working on Linux and for documenting the investigation cleanly as we go.
 
@@ -22,6 +22,10 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
     - `ov5675 ... failed to find sensor: -5`
   - on the first clean boot after adding `powerdown` handling:
     - the same `ov5675 ... failed to find sensor: -5` lines remain
+  - on the first identify-debug reload run:
+    - `setup of GPIO reset failed: -110`
+    - `failed to get reset-gpios: -110`
+    - `probe with driver ov5675 failed with error -110`
   - there are still no `/dev/v4l-subdev*` nodes
 
 ## Evidence Baseline
@@ -83,11 +87,10 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 ## Near-Term Priority
 
 1. Treat the first `powerdown-v1` clean-boot test as a negative result.
-2. Test the next module-only `ov5675` debug branch that:
-   - preserves real I2C transfer errors instead of collapsing them to `-EIO`
-   - adds chip-ID retry logging
-   - adds a tunable extra post-power-on delay
-3. Use that result to determine whether the next real fix is:
+2. Re-test the identify-debug `ov5675` branch on first load at clean boot,
+   because the reload-only run did not reach chip-ID logging.
+3. Use that clean-boot identify-debug result to determine whether the next real
+   fix is:
    - remaining GPIO semantic swap
    - extra post-power-on delay
    - board-data regulator consumer follow-up
@@ -102,13 +105,14 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 - Answer so far: the graph-endpoint problem was also real and is now fixed.
 - The serial power-on follow-up was also real: the old `dvdd` timeout is gone.
 - The first `powerdown` follow-up was a negative result.
+- The first identify-debug reload run was also non-diagnostic.
 - The next open question is whether Linux now needs:
   - different GPIO semantics or polarity
   - extra post-power-on timing
   - another board-data consumer or sequencing adjustment
 - Current diagnostic gap:
-  - Linux still throws away the underlying I2C transport error during chip-ID
-    reads by returning plain `-EIO`
+  - the new debug branch exists, but the first reload-only test failed before
+    it reached chip-ID logging
 - Is there any vendor firmware or Intel middleware dependency beyond standard kernel and firmware files?
 - Does this machine correspond to the Windows driver's `VoltageWF` path, `VoltageUF` path, or a narrower subclass selected via ACPI / board config?
 

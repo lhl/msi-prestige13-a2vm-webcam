@@ -1,5 +1,52 @@
 # Worklog
 
+## 2026-03-09
+
+### Record the first identify-debug reload result and tighten the next test plan
+
+- Plan: preserve the first run after installing the identify-debug `ov5675`
+  module build, make sure the worklog captures what it actually did and did not
+  tell us, and update the next-step plan so we stop over-interpreting
+  reload-after-failure runs.
+- Commands:
+  - reviewed the new reload run:
+    - `runs/2026-03-09/20260309T004918-snapshot-identify-debug-v1/`
+    - `runs/2026-03-09/20260309T004918-snapshot-identify-debug-v1/focused-summary.txt`
+    - `runs/2026-03-09/20260309T004918-snapshot-identify-debug-v1/post/journal-since-run-start.txt`
+  - reviewed the identify-debug wrapper to confirm what it currently captures:
+    - `scripts/03-ov5675-identify-debug-check.sh`
+  - `apply_patch` adding and updating:
+    - `scripts/03-ov5675-identify-debug-check.sh`
+    - `docs/test-routines.md`
+    - `docs/ov5675-identify-debug-followup.md`
+    - `docs/webcam-status.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+- Result:
+  - the identify-debug `ov5675` build is installed and the reload wrapper ran
+    successfully enough to archive a normal snapshot under:
+    - `runs/2026-03-09/20260309T004918-snapshot-identify-debug-v1/`
+  - but the first reload-only run still did not reach the new chip-ID logging:
+    - `ov5675 i2c-OVTI5675:00: setup of GPIO reset failed: -110`
+    - `ov5675 i2c-OVTI5675:00: failed to get reset-gpios: -110`
+    - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
+  - there were no identify-attempt logs in that run, so it did not narrow the
+    remaining clean-boot `-5` failure yet
+  - the likely reason is the same one we have seen in earlier reload-only
+    attempts:
+    - once the boot-time probe has already failed, the reload path can die
+      earlier and become non-diagnostic
+  - updated `scripts/03-ov5675-identify-debug-check.sh` so its focused summary
+    now includes the `reset-gpios` failure lines instead of hiding them
+- Decision:
+  - treat the first identify-debug reload as an intermediate checkpoint, not as
+    a new root-cause signal
+  - the next trustworthy use of the debug branch is a clean boot with the
+    identify-debug module parameters applied on first load
+  - until that run exists, the last strong primary result is still the clean
+    boot `ov5675 ... failed to find sensor: -5`
+
 ## 2026-03-08
 
 ### Record the current Windows-vs-Linux assessment and prepare an identify-debug branch
