@@ -7,6 +7,9 @@ This repo now includes a scripted harness for repeatable webcam/IPU probe attemp
 ## Script
 
 - `scripts/webcam-run.sh`
+- numbered wrappers:
+  - `scripts/01-clean-boot-check.sh`
+  - `scripts/02-ov5675-reload-check.sh`
 
 ## Safety boundary
 
@@ -108,3 +111,17 @@ Recommended pattern:
 4. commit meaningful run directories together with any resulting notes or conclusions
 
 If a reprobe fails, the run still preserves the exact point of failure in `action.log` plus the post-failure state capture.
+
+## Focused numbered checkpoints
+
+For the current MSI webcam bring-up loop, the numbered wrappers are useful:
+
+1. `scripts/01-clean-boot-check.sh`
+   - primary truth source after a reboot
+   - adds a focused summary for the current boot
+2. `sudo scripts/02-ov5675-reload-check.sh`
+   - useful after replacing only `ov5675.ko.zst`
+   - adds a focused summary since the reload start time
+
+Those wrappers still create ordinary run directories under `runs/`, so they fit
+the same archival workflow as the base harness.

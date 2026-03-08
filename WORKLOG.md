@@ -2,6 +2,44 @@
 
 ## 2026-03-08
 
+### Add numbered checkpoint scripts for clean-boot and ov5675-reload testing
+
+- Plan: make the current iteration loop easier to repeat and easier to compare
+  by adding small numbered wrappers around the existing harness rather than
+  relying on ad-hoc terminal commands and notes.
+- Commands:
+  - reviewed the existing harness and docs:
+    - `find scripts -maxdepth 2 -type f | sort`
+    - `sed -n '1,260p' scripts/webcam-run.sh`
+    - `sed -n '1,260p' docs/reprobe-harness.md`
+  - reviewed the current failure mode:
+    - `journalctl -b -k --no-pager | rg 'Failed to enable|failed to power on|failed to find sensor|probe with driver ov5675 failed|OVTI5675'`
+    - `journalctl -b -k --no-pager | rg 'setup of GPIO reset failed|failed to get reset-gpios'`
+  - `apply_patch` adding and updating:
+    - `scripts/01-clean-boot-check.sh`
+    - `scripts/02-ov5675-reload-check.sh`
+    - `docs/test-routines.md`
+    - `README.md`
+    - `docs/README.md`
+    - `docs/reprobe-harness.md`
+    - `WORKLOG.md`
+- Result:
+  - added two numbered wrappers on top of `scripts/webcam-run.sh`
+  - `01-clean-boot-check.sh` captures the primary clean-boot checkpoint and
+    writes a focused summary into the run directory
+  - `02-ov5675-reload-check.sh` captures the current reload-only checkpoint and
+    writes a focused summary based on journal lines since reload start
+  - the wrappers keep using normal `runs/...` directories, so they fit the
+    existing archival workflow
+  - the current reload-only result also clarified why the wrappers are useful:
+    - the clean boot showed `Failed to enable dvdd: -ETIMEDOUT`
+    - the later reload-only attempt shifted to
+      `setup of GPIO reset failed: -110`
+    - that is treated as secondary fallout after the earlier bus timeout, not
+      as the primary blocker
+- Decision: use `01-clean-boot-check.sh` as the main truth source when a clean
+  reboot is available; treat reload-only checks as secondary because they can
+  reflect fallout from an earlier wedged PMIC/I2C state.
 ### Record the clean combined-patch boot result and pivot to `ov5675` power-on sequencing
 
 - Plan: preserve the first clean combined-patch boot, resolve the earlier

@@ -29,6 +29,7 @@ Machine under test:
 - [`docs/ov5675-diagnostic-patch.md`](./docs/ov5675-diagnostic-patch.md) — first `ov5675` diagnostic patch and exact module-only test flow
 - [`docs/ipu-bridge-ovti5675-candidate.md`](./docs/ipu-bridge-ovti5675-candidate.md) — current `ipu-bridge` follow-up patch candidate after the diagnostic result
 - [`docs/ov5675-power-on-order.md`](./docs/ov5675-power-on-order.md) — next `ov5675` power-on sequencing hypothesis after the clean-boot `dvdd` timeout
+- [`docs/test-routines.md`](./docs/test-routines.md) — numbered test wrappers for clean-boot and reload checkpoints
 - [`reference/README.md`](./reference/README.md) — captured upstream references
 
 ## Repo Layout
@@ -42,6 +43,8 @@ msi-prestige13-a2vm-webcam/
 ├── scripts/
 │   ├── capture-acpi.sh
 │   ├── extract-iactrllogic64.sh
+│   ├── 01-clean-boot-check.sh
+│   ├── 02-ov5675-reload-check.sh
 │   └── webcam-run.sh
 ├── runs/
 │   └── README.md
@@ -94,6 +97,7 @@ msi-prestige13-a2vm-webcam/
 - [`docs/ov5675-diagnostic-patch.md`](./docs/ov5675-diagnostic-patch.md) — first `ov5675` diagnostic patch and exact module-only test flow
 - [`docs/ipu-bridge-ovti5675-candidate.md`](./docs/ipu-bridge-ovti5675-candidate.md) — current `ipu-bridge` follow-up patch candidate after the diagnostic result
 - [`docs/ov5675-power-on-order.md`](./docs/ov5675-power-on-order.md) — next `ov5675` power-on sequencing hypothesis after the clean-boot `dvdd` timeout
+- [`docs/test-routines.md`](./docs/test-routines.md) — numbered test wrappers for clean-boot and reload checkpoints
 - [`reference/greymouser-summit-13-ai-evo-a2vm.md`](./reference/greymouser-summit-13-ai-evo-a2vm.md) — related MSI Summit 13 AI+ Evo A2VMTG Linux support repo note
 - [`reference/intel-ipu7-drivers-issue-17.md`](./reference/intel-ipu7-drivers-issue-17.md) — Intel upstream issue note
 - [`reference/intel-control-logic-microsoft-update-catalog-71.26100.23.20279.md`](./reference/intel-control-logic-microsoft-update-catalog-71.26100.23.20279.md) — exact `ACPI\INT3472` Windows control-logic package entry and CAB URL

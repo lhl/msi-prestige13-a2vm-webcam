@@ -18,6 +18,7 @@ Current focus:
 - `docs/ov5675-diagnostic-patch.md` — first `ov5675` probe-logging patch and exact module-only test steps
 - `docs/ipu-bridge-ovti5675-candidate.md` — current `ipu-bridge` follow-up patch candidate after the `ov5675` diagnostic result
 - `docs/ov5675-power-on-order.md` — next `ov5675` power-on sequencing hypothesis after the clean-boot `dvdd` timeout
+- `docs/test-routines.md` — numbered test wrappers for clean-boot and reload checkpoints
 
 ## Repo-Level Control Docs
 
