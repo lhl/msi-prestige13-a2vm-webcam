@@ -6,8 +6,9 @@ Research and bring-up notes for getting the built-in webcam working on Linux on 
 
 - Current verdict: the webcam is still not working end to end.
 - Latest technical assessment: `docs/webcam-status.md`
-- Current leading blocker: on a clean combined-patch boot, `ov5675` now fails
-  during `power_on()` with `Failed to enable dvdd: -ETIMEDOUT`
+- Current leading blocker: on a clean combined-patch boot, `ov5675` now gets
+  past the earlier `dvdd` timeout and fails later at sensor identification
+  with `failed to find sensor: -5`
 
 Machine under test:
 
@@ -30,6 +31,7 @@ Machine under test:
 - [`docs/ipu-bridge-ovti5675-candidate.md`](./docs/ipu-bridge-ovti5675-candidate.md) — current `ipu-bridge` follow-up patch candidate after the diagnostic result
 - [`docs/ov5675-power-on-order.md`](./docs/ov5675-power-on-order.md) — next `ov5675` power-on sequencing hypothesis after the clean-boot `dvdd` timeout
 - [`docs/ov5675-powerdown-followup.md`](./docs/ov5675-powerdown-followup.md) — next `ov5675` GPIO follow-up after the clean-boot serial-power result
+- [`docs/patch-kernel-workflow.md`](./docs/patch-kernel-workflow.md) — idempotent patch-stack workflow for the local `linux-mainline` tree
 - [`docs/test-routines.md`](./docs/test-routines.md) — numbered test wrappers for clean-boot and reload checkpoints
 - [`reference/README.md`](./reference/README.md) — captured upstream references
 
@@ -46,6 +48,7 @@ msi-prestige13-a2vm-webcam/
 │   ├── extract-iactrllogic64.sh
 │   ├── 01-clean-boot-check.sh
 │   ├── 02-ov5675-reload-check.sh
+│   ├── patch-kernel.sh
 │   └── webcam-run.sh
 ├── runs/
 │   └── README.md
@@ -81,9 +84,11 @@ msi-prestige13-a2vm-webcam/
 
 ## Current Focus
 
-1. Test a module-only `ov5675` follow-up that adds `powerdown` handling.
-2. Check whether the clean-boot `failed to find sensor: -5` line disappears.
-3. Keep using module-only iteration to minimize rebuild time for the next
+1. Use `scripts/patch-kernel.sh` to keep the local patch stack repeatable and
+   idempotent.
+2. Test a module-only `ov5675` follow-up that adds `powerdown` handling.
+3. Check whether the clean-boot `failed to find sensor: -5` line disappears.
+4. Keep using module-only iteration to minimize rebuild time for the next
    camera-path patches.
 
 ## Related Docs
@@ -98,6 +103,7 @@ msi-prestige13-a2vm-webcam/
 - [`docs/ipu-bridge-ovti5675-candidate.md`](./docs/ipu-bridge-ovti5675-candidate.md) — current `ipu-bridge` follow-up patch candidate after the diagnostic result
 - [`docs/ov5675-power-on-order.md`](./docs/ov5675-power-on-order.md) — next `ov5675` power-on sequencing hypothesis after the clean-boot `dvdd` timeout
 - [`docs/ov5675-powerdown-followup.md`](./docs/ov5675-powerdown-followup.md) — next `ov5675` GPIO follow-up after the clean-boot serial-power result
+- [`docs/patch-kernel-workflow.md`](./docs/patch-kernel-workflow.md) — idempotent patch-stack workflow for the local `linux-mainline` tree
 - [`docs/test-routines.md`](./docs/test-routines.md) — numbered test wrappers for clean-boot and reload checkpoints
 - [`reference/greymouser-summit-13-ai-evo-a2vm.md`](./reference/greymouser-summit-13-ai-evo-a2vm.md) — related MSI Summit 13 AI+ Evo A2VMTG Linux support repo note
 - [`reference/intel-ipu7-drivers-issue-17.md`](./reference/intel-ipu7-drivers-issue-17.md) — Intel upstream issue note

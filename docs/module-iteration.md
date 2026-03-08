@@ -143,5 +143,7 @@ The likely next edit is in `ov5675.c` or `ipu-bridge.c`, so the faster loop is:
 
 See also:
 
+- `docs/patch-kernel-workflow.md` for the idempotent patch-stack applicator and
+  `tested` vs `candidate` profiles
 - `docs/ov5675-diagnostic-patch.md` for the first concrete `ov5675` probe-log
   patch and an exact test sequence

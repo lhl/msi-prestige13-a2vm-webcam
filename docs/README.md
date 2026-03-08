@@ -19,6 +19,7 @@ Current focus:
 - `docs/ipu-bridge-ovti5675-candidate.md` — current `ipu-bridge` follow-up patch candidate after the `ov5675` diagnostic result
 - `docs/ov5675-power-on-order.md` — next `ov5675` power-on sequencing hypothesis after the clean-boot `dvdd` timeout
 - `docs/ov5675-powerdown-followup.md` — next `ov5675` GPIO follow-up after the clean-boot serial-power result
+- `docs/patch-kernel-workflow.md` — idempotent patch-stack workflow for the local `linux-mainline` tree
 - `docs/test-routines.md` — numbered test wrappers for clean-boot and reload checkpoints
 
 ## Repo-Level Control Docs

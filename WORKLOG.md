@@ -2,6 +2,51 @@
 
 ## 2026-03-08
 
+### Add an idempotent `patch-kernel.sh` for the current patch stack
+
+- Plan: stop relying on hand-applied patch sequences in the local
+  `linux-mainline` tree and replace them with a script that can detect
+  already-applied patches, apply only what is missing, and expose the current
+  stack state clearly.
+- Commands:
+  - reviewed the current patch inventory:
+    - `find reference/patches -maxdepth 1 -type f | sort`
+  - reviewed the current local kernel tree state:
+    - `git -C ~/.cache/paru/clone/linux-mainline/src/linux-mainline status --short`
+  - reviewed the current module-iteration doc:
+    - `sed -n '1,220p' docs/module-iteration.md`
+  - mechanically validated the patch order against a clean temp clone of the
+    local kernel tree:
+    - `ms13q3-int3472-tps68470-v1.patch`
+    - `ipu-bridge-ovti5675-v1.patch`
+    - `ov5675-serial-power-on-v1.patch`
+    - `ov5675-powerdown-followup-v1.patch`
+  - `apply_patch` adding and updating:
+    - `scripts/patch-kernel.sh`
+    - `docs/patch-kernel-workflow.md`
+    - `README.md`
+    - `docs/README.md`
+    - `docs/module-iteration.md`
+    - `WORKLOG.md`
+- Result:
+  - added `scripts/patch-kernel.sh`
+  - the script is idempotent per patch:
+    - skips already-applied patches
+    - applies missing patches
+    - stops on conflicts
+  - added two profiles:
+    - `tested`
+    - `candidate`
+  - validated that the current ordered stack applies cleanly to a clean temp
+    clone of the local `linux-mainline` tree
+  - verified two important edge cases before committing:
+    - higher-order follow-up patches can still satisfy earlier patch markers
+    - `--status` now evaluates the selected profile in order on a temporary
+      clone of the current tree state, so dependent follow-up patches do not
+      show false conflicts on a clean base tree
+- Decision: use `scripts/patch-kernel.sh --status` as the first check before
+  rebuilding modules or rebooting into a newly patched tree.
+
 ### Record the clean serial-power result and pivot to `powerdown` GPIO handling
 
 - Plan: preserve the first clean-boot result after the serial power-on patch,
