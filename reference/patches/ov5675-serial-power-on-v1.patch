@@ -1,0 +1,65 @@
+--- a/drivers/media/i2c/ov5675.c
++++ b/drivers/media/i2c/ov5675.c
+@@ -89,6 +89,16 @@
+ 
+ #define OV5675_NUM_SUPPLIES	ARRAY_SIZE(ov5675_supply_names)
+ 
++/*
++ * Recovered Windows sequencing for this MSI/TPS68470 path is VA -> VD -> VSIO.
++ * Map that to Linux ov5675 supply names as avdd -> dvdd -> dovdd.
++ */
++static const unsigned int ov5675_power_on_order[] = {
++	0, /* avdd */
++	2, /* dvdd */
++	1, /* dovdd */
++};
++
+ enum {
+ 	OV5675_LINK_FREQ_900MBPS,
+ };
+@@ -969,12 +979,35 @@
+ {
+ 	struct v4l2_subdev *sd = dev_get_drvdata(dev);
+ 	struct ov5675 *ov5675 = to_ov5675(sd);
++	int i;
+ 
+ 	usleep_range(90, 100);
+ 
+ 	clk_disable_unprepare(ov5675->xvclk);
+ 	gpiod_set_value_cansleep(ov5675->reset_gpio, 1);
+-	regulator_bulk_disable(OV5675_NUM_SUPPLIES, ov5675->supplies);
++	for (i = ARRAY_SIZE(ov5675_power_on_order) - 1; i >= 0; i--)
++		regulator_disable(ov5675->supplies[ov5675_power_on_order[i]].consumer);
++
++	return 0;
++}
++
++static int ov5675_enable_supplies_serial(struct ov5675 *ov5675)
++{
++	int i, ret;
++
++	for (i = 0; i < ARRAY_SIZE(ov5675_power_on_order); i++) {
++		const struct regulator_bulk_data *supply =
++			&ov5675->supplies[ov5675_power_on_order[i]];
++
++		ret = regulator_enable(supply->consumer);
++		if (ret) {
++			dev_err(ov5675->dev, "failed to enable %s serially: %d\n",
++				supply->supply, ret);
++			while (--i >= 0)
++				regulator_disable(ov5675->supplies[ov5675_power_on_order[i]].consumer);
++			return ret;
++		}
++	}
+ 
+ 	return 0;
+ }
+@@ -993,7 +1026,7 @@
+ 
+ 	gpiod_set_value_cansleep(ov5675->reset_gpio, 1);
+ 
+-	ret = regulator_bulk_enable(OV5675_NUM_SUPPLIES, ov5675->supplies);
++	ret = ov5675_enable_supplies_serial(ov5675);
+ 	if (ret) {
+ 		clk_disable_unprepare(ov5675->xvclk);
+ 		return ret;

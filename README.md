@@ -6,9 +6,8 @@ Research and bring-up notes for getting the built-in webcam working on Linux on 
 
 - Current verdict: the webcam is still not working end to end.
 - Latest technical assessment: `docs/webcam-status.md`
-- Current leading blocker: after the `ipu-bridge` fix, `ov5675` now reaches the
-  regulator / sensor-detect stage, but we still need a clean fresh-boot check
-  to confirm the remaining regulator-path failure
+- Current leading blocker: on a clean combined-patch boot, `ov5675` now fails
+  during `power_on()` with `Failed to enable dvdd: -ETIMEDOUT`
 
 Machine under test:
 
@@ -29,6 +28,7 @@ Machine under test:
 - [`docs/module-iteration.md`](./docs/module-iteration.md) — faster module-only rebuild/install workflow for camera-path kernel changes
 - [`docs/ov5675-diagnostic-patch.md`](./docs/ov5675-diagnostic-patch.md) — first `ov5675` diagnostic patch and exact module-only test flow
 - [`docs/ipu-bridge-ovti5675-candidate.md`](./docs/ipu-bridge-ovti5675-candidate.md) — current `ipu-bridge` follow-up patch candidate after the diagnostic result
+- [`docs/ov5675-power-on-order.md`](./docs/ov5675-power-on-order.md) — next `ov5675` power-on sequencing hypothesis after the clean-boot `dvdd` timeout
 - [`reference/README.md`](./reference/README.md) — captured upstream references
 
 ## Repo Layout
@@ -77,10 +77,9 @@ msi-prestige13-a2vm-webcam/
 
 ## Current Focus
 
-1. Reboot and capture a clean combined-patch baseline without disturbing the
-   `INT3472` state first.
-2. Determine whether the remaining `ov5675` supply warnings persist on that
-   clean boot.
+1. Test a module-only `ov5675` power-on sequencing patch.
+2. Check whether the clean-boot `Failed to enable dvdd: -ETIMEDOUT` line
+   disappears.
 3. Keep using module-only iteration to minimize rebuild time for the next
    camera-path patches.
 
@@ -94,6 +93,7 @@ msi-prestige13-a2vm-webcam/
 - [`docs/module-iteration.md`](./docs/module-iteration.md) — module-only rebuild/install workflow for camera-path iteration
 - [`docs/ov5675-diagnostic-patch.md`](./docs/ov5675-diagnostic-patch.md) — first `ov5675` diagnostic patch and exact module-only test flow
 - [`docs/ipu-bridge-ovti5675-candidate.md`](./docs/ipu-bridge-ovti5675-candidate.md) — current `ipu-bridge` follow-up patch candidate after the diagnostic result
+- [`docs/ov5675-power-on-order.md`](./docs/ov5675-power-on-order.md) — next `ov5675` power-on sequencing hypothesis after the clean-boot `dvdd` timeout
 - [`reference/greymouser-summit-13-ai-evo-a2vm.md`](./reference/greymouser-summit-13-ai-evo-a2vm.md) — related MSI Summit 13 AI+ Evo A2VMTG Linux support repo note
 - [`reference/intel-ipu7-drivers-issue-17.md`](./reference/intel-ipu7-drivers-issue-17.md) — Intel upstream issue note
 - [`reference/intel-control-logic-microsoft-update-catalog-71.26100.23.20279.md`](./reference/intel-control-logic-microsoft-update-catalog-71.26100.23.20279.md) — exact `ACPI\INT3472` Windows control-logic package entry and CAB URL

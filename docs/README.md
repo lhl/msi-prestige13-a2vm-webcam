@@ -17,6 +17,7 @@ Current focus:
 - `docs/module-iteration.md` — faster module-only rebuild/install workflow for camera-path changes
 - `docs/ov5675-diagnostic-patch.md` — first `ov5675` probe-logging patch and exact module-only test steps
 - `docs/ipu-bridge-ovti5675-candidate.md` — current `ipu-bridge` follow-up patch candidate after the `ov5675` diagnostic result
+- `docs/ov5675-power-on-order.md` — next `ov5675` power-on sequencing hypothesis after the clean-boot `dvdd` timeout
 
 ## Repo-Level Control Docs
 

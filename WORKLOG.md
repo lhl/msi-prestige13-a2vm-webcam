@@ -2,6 +2,60 @@
 
 ## 2026-03-08
 
+### Record the clean combined-patch boot result and pivot to `ov5675` power-on sequencing
+
+- Plan: preserve the first clean combined-patch boot, resolve the earlier
+  dummy-regulator ambiguity, and turn the new `dvdd` timeout into the next
+  concrete module-only patch target.
+- Commands:
+  - reviewed the new clean-boot run:
+    - `runs/2026-03-08/20260308T143023-snapshot-clean-boot-after-ipu-bridge/`
+  - reviewed the user-run checks:
+    - `journalctl -b -k --no-pager | rg 'TPS68470 REVID|Found supported sensor|Connected 1 cameras|supply avdd|supply dovdd|supply dvdd|failed to find sensor|probe with driver ov5675 failed'`
+    - `readlink -e /sys/bus/i2c/devices/i2c-INT3472:06/driver || echo int3472-unbound`
+    - `readlink -e /sys/bus/i2c/devices/i2c-OVTI5675:00/driver || echo ov5675-unbound`
+    - `find /dev -maxdepth 1 -name 'v4l-subdev*' | sort`
+  - extracted the sharper failure lines from the same boot:
+    - `journalctl -b -k --no-pager | rg 'Failed to enable|failed to power on|ov5675 i2c-OVTI5675:00|tps68470|TPS68470 REVID'`
+  - reviewed the relevant kernel paths:
+    - `drivers/media/i2c/ov5675.c`
+    - `drivers/regulator/core.c`
+    - `drivers/regulator/tps68470-regulator.c`
+  - `apply_patch` adding and updating:
+    - `runs/2026-03-08/20260308T143023-snapshot-clean-boot-after-ipu-bridge/manual-followup.txt`
+    - `docs/ov5675-power-on-order.md`
+    - `reference/patches/ov5675-serial-power-on-v1.patch`
+    - `docs/webcam-status.md`
+    - `docs/ipu-bridge-ovti5675-candidate.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `README.md`
+    - `docs/README.md`
+    - `WORKLOG.md`
+- Result:
+  - the clean combined-patch boot is much better than the earlier disturbed
+    session:
+    - `INT3472:06` binds cleanly
+    - `OVTI5675` is still recognized by `ipu-bridge`
+    - the dummy-regulator warnings do not appear
+  - the remaining failure is now specific:
+    - `Failed to enable dvdd: -ETIMEDOUT`
+    - `ov5675 i2c-OVTI5675:00: failed to power on: -110`
+  - that means the current blocker is no longer:
+    - missing board data
+    - missing graph endpoint hookup
+    - missing regulator lookup
+  - the current blocker is now:
+    - `ov5675_power_on()` failing while enabling `dvdd`
+  - the next targeted local hypothesis is:
+    - Linux should try a serial rail-enable order matching recovered Windows
+      sequencing:
+      - `avdd`
+      - `dvdd`
+      - `dovdd`
+- Decision: stop using `media-ctl` as the main signal for now; until
+  `ov5675_power_on()` succeeds there will still be no sensor subdevice to show.
+
 ### Record the first `ipu-bridge` success and narrow the remaining question to a clean-boot regulator check
 
 - Plan: preserve the first successful `ipu-bridge` `OVTI5675` result, but

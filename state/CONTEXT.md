@@ -19,9 +19,11 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
 - The `ipu-bridge` follow-up patch fixed that graph-hookup failure:
   - `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
   - `intel-ipu7 0000:00:05.0: Connected 1 cameras`
-- The current open question is now narrower:
-  - on a clean boot, does `ov5675` still fall back to dummy regulators and fail
-    sensor detect?
+- The clean combined-patch boot answered the next question:
+  - real regulators are present
+  - `INT3472:06` binds cleanly
+  - the current failure is now `Failed to enable dvdd: -ETIMEDOUT`
+  - `ov5675` fails during `power_on()`, before later sensor-detect logic
 - The first `ov5675` diagnostic patch is now ready:
   - `reference/patches/ov5675-probe-diagnostics-v1.patch`
   - it turns the silent early `-ENXIO` exits into explicit kernel log lines
@@ -131,6 +133,25 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
     - a later live check showed `i2c-INT3472:06` currently unbound
     - so the dummy-regulator result is useful but not yet a clean fresh-boot
       verdict on the board-data regulator path
+- Clean combined-patch boot result:
+  - run:
+    - `runs/2026-03-08/20260308T143023-snapshot-clean-boot-after-ipu-bridge/`
+  - key lines:
+    - `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+    - `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+    - `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+    - `Failed to enable dvdd: -ETIMEDOUT`
+    - `ov5675 i2c-OVTI5675:00: failed to power on: -110`
+    - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
+  - current live binding state after that boot:
+    - `i2c-INT3472:06` bound to `int3472-tps68470`
+    - `i2c-OVTI5675:00` still unbound
+    - no `/dev/v4l-subdev*`
+  - implication:
+    - the bridge fix is real
+    - the earlier dummy-regulator warning was a disturbed-session artifact
+    - the next blocker is specifically the `dvdd` enable path inside
+      `ov5675_power_on()`
 - Important trap:
   - `readlink -f /sys/bus/i2c/devices/i2c-OVTI5675:00/driver` is misleading when the
     `driver` symlink does not exist
@@ -172,10 +193,12 @@ Get the built-in webcam working on Linux on the MSI Prestige 13 AI+ Evo A2VMG, o
     leading blocker after `v1`
   - the firmware graph hookup gap was also real and is now fixed by the tested
     `ipu-bridge` patch candidate
-  - the next clean question is now:
-    - do regulators still fail on a fresh boot with both patches present?
-    - only after that should we revisit `powerdown` or remaining regulator
-      details
+  - the clean-boot result now points to a sharper next hypothesis:
+    - Windows uses `VA -> VD -> VSIO`
+    - Linux `ov5675` currently enables `avdd`, `dovdd`, `dvdd` via async
+      `regulator_bulk_enable()`
+    - a serial Linux power-on order of `avdd -> dvdd -> dovdd` is now the
+      most targeted next experiment
 - `scripts/capture-acpi.sh` is now fixed to disassemble lowercase `dsdt.dat` / `ssdt*.dat`, keep `.dsl` outputs under `dsl/`, and capture `live-linux-acpi-state.txt` in future runs
 
 Most important current log lines:
@@ -183,8 +206,8 @@ Most important current log lines:
 - `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
 - `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
 - `intel-ipu7 0000:00:05.0: Connected 1 cameras`
-- `ov5675 i2c-OVTI5675:00: supply avdd not found, using dummy regulator`
-- `ov5675 i2c-OVTI5675:00: failed to find sensor: -5`
+- `Failed to enable dvdd: -ETIMEDOUT`
+- `ov5675 i2c-OVTI5675:00: failed to power on: -110`
 - manual bind follow-up:
   - `tee: /sys/bus/i2c/drivers/ov5675/bind: No such device or address`
 
@@ -196,12 +219,17 @@ Most important current log lines:
 
 ## Next Actions
 
-1. Reboot into the same combined-patch kernel and capture a clean post-boot
-   baseline before any manual reprobe.
-2. Confirm whether `INT3472:06` binds cleanly again and whether:
-   - `TPS68470 REVID: 0x21` appears
-   - `ov5675` still reports dummy regulators
-3. If the dummy-regulator warnings remain on a clean boot, revisit:
+1. Test a module-only `ov5675` patch that replaces async
+   `regulator_bulk_enable()` with explicit serial power-on in the recovered
+   Windows-like order:
+   - `avdd`
+   - `dvdd`
+   - `dovdd`
+2. Re-test whether:
+   - `Failed to enable dvdd: -ETIMEDOUT` disappears
+   - `ov5675` gets past `power_on()`
+   - a sensor subdevice appears
+3. If serial power-on still fails, revisit:
    - board-data regulator consumer mapping
    - missing `powerdown` GPIO handling
    - remaining GPIO semantics

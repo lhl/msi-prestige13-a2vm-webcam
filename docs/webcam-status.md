@@ -15,8 +15,8 @@ Webcam support is still not working end to end on this laptop.
 The good news is that the first MSI-specific `INT3472` / `TPS68470`
 board-data patch, the follow-up `ov5675` diagnostic patch, and the first
 `ipu-bridge` follow-up patch have all moved the failure forward. The bad news
-is that the camera is still blocked, now at the regulator / sensor-detect
-stage after the graph hookup was fixed.
+is that the camera is still blocked, now at the sensor power-on stage after
+the graph hookup was fixed.
 
 ## What works
 
@@ -49,11 +49,13 @@ Additional live evidence on the patched kernel:
 - the `ipu-bridge` follow-up patch now logs:
   - `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
   - `intel-ipu7 0000:00:05.0: Connected 1 cameras`
-- the `ov5675` failure has moved forward again:
-  - `supply avdd not found, using dummy regulator`
-  - `supply dovdd not found, using dummy regulator`
-  - `supply dvdd not found, using dummy regulator`
-  - `failed to find sensor: -5`
+- on a clean boot with both patches present:
+  - `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+  - `Failed to enable dvdd: -ETIMEDOUT`
+  - `ov5675 i2c-OVTI5675:00: failed to power on: -110`
+  - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
+- the earlier dummy-regulator run is now understood as a disturbed-session
+  artifact, not the clean combined-patch result
 - the media graph still has no sensor entity
 - there are still no `/dev/v4l-subdev*` nodes
 - a manual bind attempt to `/sys/bus/i2c/drivers/ov5675/bind` returns:
@@ -65,7 +67,8 @@ Those lines and checks are the current high-value signal. They mean:
 2. The MSI board-data patch is active enough to instantiate the sensor client.
 3. The firmware graph endpoint problem was real and is now fixed by the tested
    `ipu-bridge` patch.
-4. The IPU still cannot assemble a complete media graph afterward.
+4. On a clean boot, the sensor now fails during `ov5675_power_on()`, and the
+   failing rail-enable path is specifically `dvdd`.
 
 ## Assessment
 
@@ -77,15 +80,16 @@ board-data matching.
 - The patched kernel now instantiates `i2c-OVTI5675:00`.
 - The graph-endpoint failure was real:
   - `OVTI5675` needed an `ipu-bridge` supported-sensor entry
-- The remaining failure is now later in probe:
-  - missing real regulators on the sensor device
-  - followed by sensor-detection failure `-5`
-- Important nuance:
-  - the first `ipu-bridge` test happened after an earlier manual reprobe left
-    `INT3472:06` unbound
-  - so the dummy-regulator result is useful, but it is not yet a perfectly
-    clean proof that the board-data regulator path is still wrong on a fresh
-    boot
+- The clean-boot result removes the earlier dummy-regulator ambiguity:
+  - `INT3472:06` binds cleanly
+  - real regulators are found
+  - `ov5675_power_on()` still fails with `-110`
+  - kernel logging identifies the failing enable as `dvdd`
+- The leading remaining local hypothesis is now:
+  - Linux is not enabling the three sensor rails in the order MSI expects
+  - recovered Windows notes point to `VA -> VD -> VSIO`
+  - local `ov5675` currently requests supplies as `avdd`, `dovdd`, `dvdd`
+    and enables them through async `regulator_bulk_enable()`
 
 In practical terms, support looks like this:
 
@@ -97,8 +101,8 @@ In practical terms, support looks like this:
 - Sensor bind / media-subdevice registration: still missing
 - Firmware graph endpoint for `ov5675`: fixed by the current tested
   `ipu-bridge` patch
-- Real regulators on `ov5675`: still not confirmed in a clean combined-patch
-  boot
+- Real regulators on `ov5675`: confirmed on a clean combined-patch boot
+- Clean sensor power-on: still failing
 - Usable webcam in userspace: not there yet
 
 ## Comparison with the upstream references
@@ -135,18 +139,22 @@ that:
 
 - `ov5675` still does not bind successfully
 - `ipu-bridge` now recognizes `OVTI5675:00` and reports one connected camera
-- `ov5675` now falls through to dummy regulators and then fails sensor detect
+- on a clean boot, `ov5675` now fails earlier in `power_on()`
+- the failing rail-enable path is `dvdd`
 - the sensor still does not appear as a media subdevice
 - the camera still does not work in userspace
 
 ## Best next steps
 
-- Reboot once into the same combined-patch kernel and capture a clean baseline
-  before any manual reprobe work.
-- Confirm whether `INT3472:06` binds cleanly again and whether:
-  - `TPS68470 REVID: 0x21` reappears
-  - the three `supply ... not found` warnings remain or disappear
-- If the supply warnings remain on a clean boot, re-evaluate:
+- Test a module-only `ov5675` experiment that replaces async
+  `regulator_bulk_enable()` with explicit serial rail enable in the recovered
+  Windows order:
+  - `avdd`
+  - `dvdd`
+  - `dovdd`
+- Use the clean-boot `Failed to enable dvdd: -ETIMEDOUT` line as the pass/fail
+  criterion for that test.
+- Only if serial rail enable still fails, re-evaluate:
   - board-data regulator consumer mapping
   - `powerdown` / second-GPIO semantics
 - Re-test with:

@@ -15,8 +15,11 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
   - the old `No board-data found for this model` failure is gone
   - `i2c-OVTI5675:00` is now instantiated on the live I2C bus
 - The strongest current blocker has moved forward to the sensor side:
-  - `intel-ipu7 ... no subdev found in graph`
+  - `ipu-bridge` now finds `OVTI5675:00` and reports one connected camera
   - `ov5675` still does not bind successfully to `i2c-OVTI5675:00`
+  - on a clean combined-patch boot:
+    - `Failed to enable dvdd: -ETIMEDOUT`
+    - `ov5675 ... failed to power on: -110`
   - there are still no `/dev/v4l-subdev*` nodes
 
 ## Evidence Baseline
@@ -77,14 +80,16 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 
 ## Near-Term Priority
 
-1. Reboot into the same combined-patch kernel and capture a clean baseline
-   before any manual reprobe disturbs `INT3472`.
-2. Verify whether the clean boot still shows:
-   - `intel-ipu7 ... Found supported sensor OVTI5675:00`
-   - `Connected 1 cameras`
-   - `supply avdd/dovdd/dvdd not found, using dummy regulator`
-3. If the supply warnings remain on a clean boot, determine whether the next
-   patch is:
+1. Test a module-only `ov5675` power-on patch that replaces async
+   `regulator_bulk_enable()` with explicit serial rail enable in Windows-like
+   order:
+   - `avdd`
+   - `dvdd`
+   - `dovdd`
+2. Verify whether that removes:
+   - `Failed to enable dvdd: -ETIMEDOUT`
+   - `ov5675 ... failed to power on: -110`
+3. If serial rail enable still fails, determine whether the next patch is:
    - board-data regulator consumer follow-up
    - optional `powerdown` support in `ov5675.c`
    - GPIO semantic swap
@@ -96,6 +101,9 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 - Was the missing piece just a DMI match entry, or does MSI require custom regulator and GPIO data not present upstream?
 - Answer so far: not just a DMI match; board-data was necessary but not sufficient.
 - Does `ov5675` fail because it lacks a second GPIO such as `powerdown`, or because it never receives the expected firmware graph endpoint?
+- Answer so far: the graph-endpoint problem was also real and is now fixed.
+- The next open question is whether Linux needs a different sensor rail-enable
+  order for this MSI board.
 - Is there any vendor firmware or Intel middleware dependency beyond standard kernel and firmware files?
 - Does this machine correspond to the Windows driver's `VoltageWF` path, `VoltageUF` path, or a narrower subclass selected via ACPI / board config?
 

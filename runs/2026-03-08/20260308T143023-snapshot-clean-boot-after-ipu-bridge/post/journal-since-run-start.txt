@@ -1,0 +1,3 @@
+CMD: journalctl -k --since '2026-03-08T05:30:23Z' --no-pager | grep -En 'tps68470|INT3472|OVTI5675|ov5675|intel-ipu7|board-data|subdev|ipu7' || true
+
+EXIT_STATUS: 0

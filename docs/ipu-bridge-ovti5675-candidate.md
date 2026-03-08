@@ -106,14 +106,34 @@ yet give a clean verdict on the regulator path. The missing-regulator result is
 currently confounded by the broken `INT3472` state from the earlier manual
 reprobe work.
 
+## Actual Result From The Clean-Boot Re-Test
+
+The clean combined-patch boot answered the main open question from the first
+`ipu-bridge` run:
+
+- `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+- `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+- `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+- `Failed to enable dvdd: -ETIMEDOUT`
+- `ov5675 i2c-OVTI5675:00: failed to power on: -110`
+- `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
+
+This means:
+
+- the `ipu-bridge` patch is definitely correct
+- the board-data / regulator lookup path is also present on a clean boot
+- the earlier dummy-regulator output was not the steady-state combined-patch
+  result
+- the remaining blocker has narrowed again:
+  - the failing power-on path is now specifically `dvdd`
+
 ## Suggested Test Flow
 
 Use the same module-only method as the previous `ov5675` patch, but for
 `ipu-bridge`.
 
-For the next validation, prefer a fresh boot with both patches already
-installed, then capture the combined result before any manual reprobe disturbs
-the `INT3472` state.
+That clean-boot validation is now complete, so the next targeted iteration is
+no longer in `ipu-bridge`. The next patch should be in `ov5675` power-on.
 
 1. apply `reference/patches/ipu-bridge-ovti5675-v1.patch`
 2. run:
@@ -132,14 +152,13 @@ the `INT3472` state.
 
 The `ov5675` diagnostic patch did its job.
 
-The leading hypothesis is no longer "sensor power sequencing is still wrong."
-The confirmed result is:
+The `ipu-bridge` follow-up patch also did its job. The confirmed result is:
 
 - `OVTI5675` did need an `ipu-bridge` supported-sensor entry so Linux could
   create the firmware graph endpoint that `ov5675` expects
 
-The next unresolved question is narrower:
+The next unresolved question is now later and narrower:
 
-- on a clean boot with both patches present, do the `ov5675` supply warnings
-  still remain, or were they only exposed because `INT3472:06` had become
-  unbound earlier in the session?
+- can a serial Linux rail-enable sequence matching the recovered Windows
+  `VA -> VD -> VSIO` order avoid the current `Failed to enable dvdd: -ETIMEDOUT`
+  failure?
