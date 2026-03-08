@@ -20,6 +20,8 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
   - on a clean combined-patch boot:
     - the old `dvdd` timeout is gone
     - `ov5675 ... failed to find sensor: -5`
+  - on the first clean boot after adding `powerdown` handling:
+    - the same `ov5675 ... failed to find sensor: -5` lines remain
   - there are still no `/dev/v4l-subdev*` nodes
 
 ## Evidence Baseline
@@ -80,14 +82,13 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 
 ## Near-Term Priority
 
-1. Test a module-only `ov5675` follow-up that consumes the existing
-   `powerdown` GPIO mapping as well as `reset`.
-2. Verify whether that removes:
-   - `ov5675 ... failed to find sensor: -5`
-3. If sensor identification still fails, determine whether the next patch is:
+1. Treat the first `powerdown-v1` clean-boot test as a negative result.
+2. Determine whether the next module-only patch is:
    - remaining GPIO semantic swap
    - extra post-power-on delay
    - board-data regulator consumer follow-up
+3. Keep using clean-boot checkpoints after each small patch so the log signal
+   stays comparable.
 4. Keep full kernel rebuilds as a fallback only when a change stops being
    module-local.
 
@@ -98,8 +99,11 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 - Does `ov5675` fail because it lacks a second GPIO such as `powerdown`, or because it never receives the expected firmware graph endpoint?
 - Answer so far: the graph-endpoint problem was also real and is now fixed.
 - The serial power-on follow-up was also real: the old `dvdd` timeout is gone.
-- The next open question is whether Linux now needs the second sensor GPIO
-  (`powerdown`) to match the MSI Windows path.
+- The first `powerdown` follow-up was a negative result.
+- The next open question is whether Linux now needs:
+  - different GPIO semantics or polarity
+  - extra post-power-on timing
+  - another board-data consumer or sequencing adjustment
 - Is there any vendor firmware or Intel middleware dependency beyond standard kernel and firmware files?
 - Does this machine correspond to the Windows driver's `VoltageWF` path, `VoltageUF` path, or a narrower subclass selected via ACPI / board config?
 

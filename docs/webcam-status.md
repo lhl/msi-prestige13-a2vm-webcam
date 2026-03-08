@@ -53,6 +53,12 @@ Additional live evidence on the patched kernel:
   - `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
   - `ov5675 i2c-OVTI5675:00: failed to find sensor: -5`
   - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -5`
+- on the next clean boot with the added `powerdown` follow-up present:
+  - `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+  - `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+  - `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+  - `ov5675 i2c-OVTI5675:00: failed to find sensor: -5`
+  - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -5`
 - the old clean-boot `Failed to enable dvdd: -ETIMEDOUT` line is gone
 - the media graph still has no sensor entity
 - there are still no `/dev/v4l-subdev*` nodes
@@ -67,6 +73,8 @@ Those lines and checks are the current high-value signal. They mean:
    `ipu-bridge` patch.
 4. The serial power-on follow-up removed the `dvdd` timeout and moved the
    failure forward again to sensor identification.
+5. The first `powerdown` follow-up was a negative result:
+   - consuming `powerdown` alone did not move the failure past `-5`
 
 ## Assessment
 
@@ -84,11 +92,13 @@ board-data matching.
   - real regulators are found
   - `ov5675_power_on()` now succeeds far enough to reach chip-ID read
   - the current clean-boot failure is `failed to find sensor: -5`
-- The leading remaining local hypothesis is now:
-  - Linux still is not handling the second MSI control GPIO correctly
-  - board data already maps both `reset` and `powerdown`
-  - `ov5675` still only uses `reset`
-  - Windows evidence still points to two PMIC GPIOs on this board
+- The first `powerdown` follow-up did not change the clean-boot failure:
+  - `ov5675` is still unbound
+  - there are still no `/dev/v4l-subdev*`
+- The leading remaining local possibilities are now:
+  - remaining GPIO semantics around the second MSI control line
+  - extra post-power-on timing before chip-ID read
+  - remaining board-data regulator / consumer / sequencing detail
 
 In practical terms, support looks like this:
 
@@ -139,19 +149,17 @@ that:
 - `ov5675` still does not bind successfully
 - `ipu-bridge` now recognizes `OVTI5675:00` and reports one connected camera
 - the serial power-on follow-up removed the clean-boot `dvdd` timeout
-- on the next clean boot, `ov5675` now fails at sensor identification with `-5`
+- the first `powerdown` follow-up did not change that outcome
+- on the next clean boot, `ov5675` still fails at sensor identification with `-5`
 - the sensor still does not appear as a media subdevice
 - the camera still does not work in userspace
 
 ## Best next steps
 
-- Test a module-only `ov5675` follow-up that consumes the existing `powerdown`
-  GPIO mapping in addition to `reset`.
-- Use disappearance of `failed to find sensor: -5` as the first pass/fail
-  criterion for that test.
-- Only if `powerdown` handling still fails, re-evaluate:
-  - remaining GPIO semantics
-  - extra post-power-on delays
+- Treat the first `powerdown` follow-up as a negative result.
+- Test the next smallest module-only follow-up in one of these directions:
+  - remaining GPIO semantics or polarity around the second control line
+  - extra post-power-on delay before chip-ID read
   - board-data regulator consumer mapping
 - Re-test with:
   - `journalctl -k -b | rg 'tps68470|ipu7|ov5675'`

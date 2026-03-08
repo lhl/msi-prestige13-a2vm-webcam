@@ -2,6 +2,44 @@
 
 ## 2026-03-08
 
+### Record the negative `powerdown-v1` clean boot and add Codex resume notes
+
+- Plan: preserve the first clean-boot result after the `powerdown` follow-up,
+  update the repo entrypoints so they reflect that negative result, and add
+  exact local `codex resume` instructions so the next session can be resumed
+  without guesswork.
+- Commands:
+  - reviewed the new clean-boot run:
+    - `runs/2026-03-08/20260308T160828-snapshot-powerdown-v1/`
+    - `runs/2026-03-08/20260308T160828-snapshot-powerdown-v1/focused-summary.txt`
+  - checked local Codex resume syntax:
+    - `codex --help`
+    - `codex resume --help`
+  - identified the current local session id from Codex history:
+    - `019cc8a9-ae0e-7dc0-9b99-c293ea51b666`
+  - `apply_patch` adding and updating:
+    - `README.md`
+    - `docs/webcam-status.md`
+    - `docs/ov5675-powerdown-followup.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+- Result:
+  - the first clean boot after `ov5675-powerdown-followup-v1.patch` did not
+    change the failure mode:
+    - `ov5675 i2c-OVTI5675:00: failed to find sensor: -5`
+    - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -5`
+    - no `/dev/v4l-subdev*`
+  - this means consuming `powerdown` alone is not sufficient on this laptop
+  - the likely next patch space is now:
+    - remaining GPIO semantics or polarity
+    - extra post-power-on delay
+    - board-data regulator-consumer or sequencing follow-up
+  - `README.md` and `state/CONTEXT.md` now include exact local `codex resume`
+    commands so the next session can be recovered quickly
+- Decision: treat `powerdown-v1` as a negative result and stop treating simple
+  `powerdown` consumption as the leading standalone fix.
+
 ### Add an idempotent `patch-kernel.sh` for the current patch stack
 
 - Plan: stop relying on hand-applied patch sequences in the local

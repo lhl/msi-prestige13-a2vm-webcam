@@ -35,6 +35,22 @@ Machine under test:
 - [`docs/test-routines.md`](./docs/test-routines.md) — numbered test wrappers for clean-boot and reload checkpoints
 - [`reference/README.md`](./reference/README.md) — captured upstream references
 
+## Resume Codex
+
+From this repo root, the quickest way back into the latest investigation
+session is:
+
+```bash
+cd /home/lhl/github/lhl/msi-prestige13-a2vm-webcam
+codex resume --last
+```
+
+Useful variants:
+
+- `codex resume` — open the session picker filtered to the current working tree
+- `codex resume --all` — show all recorded sessions, not just this repo/CWD
+- `codex resume <SESSION_ID>` — resume a specific session UUID directly
+
 ## Repo Layout
 
 ```text
@@ -86,10 +102,13 @@ msi-prestige13-a2vm-webcam/
 
 1. Use `scripts/patch-kernel.sh` to keep the local patch stack repeatable and
    idempotent.
-2. Test a module-only `ov5675` follow-up that adds `powerdown` handling.
-3. Check whether the clean-boot `failed to find sensor: -5` line disappears.
-4. Keep using module-only iteration to minimize rebuild time for the next
-   camera-path patches.
+2. Treat the first `powerdown-v1` clean boot as a negative result:
+   `failed to find sensor: -5` did not change.
+3. Decide the next module-only follow-up:
+   remaining GPIO semantics, extra post-power-on delay, or board-data
+   regulator-consumer follow-up.
+4. Keep using module-only iteration and clean-boot checkpoints to minimize
+   rebuild time and avoid mixed-session noise.
 
 ## Related Docs
 

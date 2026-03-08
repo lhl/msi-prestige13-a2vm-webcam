@@ -1,0 +1,32 @@
+CMD: journalctl -k -b --no-pager | grep -En 'tps68470|INT3472|OVTI5675|ov5675|intel-ipu7|board-data|subdev|ipu7' || true
+1028:Mar 08 16:03:23 p13 kernel: intel_ipu7: module is from the staging directory, the quality is unknown, you have been warned.
+1029:Mar 08 16:03:23 p13 kernel: intel-ipu7 0000:00:05.0: enabling device (0000 -> 0002)
+1030:Mar 08 16:03:23 p13 kernel: intel-ipu7 0000:00:05.0: Device 0x645d (rev: 0x4)
+1031:Mar 08 16:03:23 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 PCI BAR0 base 0x0000003014000000 BAR2 base 0x0000003016336000
+1032:Mar 08 16:03:23 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 PCI BAR0 mapped at 000000001abd098c
+1034:Mar 08 16:03:23 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 SKU 0 in secure mode mask 0x0
+1045:Mar 08 16:03:23 p13 kernel: intel-ipu7 0000:00:05.0: firmware cpd file: intel/ipu/ipu7_fw.bin
+1046:Mar 08 16:03:23 p13 kernel: intel-ipu7 0000:00:05.0: FW binary0 info:
+1047:Mar 08 16:03:23 p13 kernel: intel-ipu7 0000:00:05.0: Name:  psys
+1048:Mar 08 16:03:23 p13 kernel: intel-ipu7 0000:00:05.0: Version:  1.1.9.240627135220
+1049:Mar 08 16:03:23 p13 kernel: intel-ipu7 0000:00:05.0: Timestamp:  build_id:331942702
+1050:Mar 08 16:03:23 p13 kernel: intel-ipu7 0000:00:05.0: Commit:  commit_id:d84f5c35
+1051:Mar 08 16:03:23 p13 kernel: intel-ipu7 0000:00:05.0: FW binary1 info:
+1052:Mar 08 16:03:23 p13 kernel: intel-ipu7 0000:00:05.0: Name:  isys
+1053:Mar 08 16:03:23 p13 kernel: intel-ipu7 0000:00:05.0: Version:  1.1.9.240627135318
+1054:Mar 08 16:03:23 p13 kernel: intel-ipu7 0000:00:05.0: Timestamp:  build_id:3823931988
+1055:Mar 08 16:03:23 p13 kernel: intel-ipu7 0000:00:05.0: Commit:  commit_id:d84f5c35
+1057:Mar 08 16:03:23 p13 kernel: intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00
+1058:Mar 08 16:03:23 p13 kernel: intel-ipu7 0000:00:05.0: Connected 1 cameras
+1060:Mar 08 16:03:23 p13 kernel: intel-ipu7 0000:00:05.0: Sending BOOT_LOAD to CSE
+1064:Mar 08 16:03:23 p13 kernel: int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21
+1067:Mar 08 16:03:23 p13 kernel: intel-ipu7 0000:00:05.0: Sending AUTHENTICATE_RUN to CSE
+1078:Mar 08 16:03:23 p13 kernel: intel-ipu7 0000:00:05.0: CSE authenticate_run done
+1140:Mar 08 16:03:26 p13 kernel: ov5675 i2c-OVTI5675:00: failed to find sensor: -5
+1153:Mar 08 16:03:33 p13 kernel: Modules linked in: fat libarc4 kvm videobuf2_memops videobuf2_v4l2 gpio_tps68470 irqbypass snd_soc_core intel_rapl_msr videobuf2_common snd_compress rapl ac97_bus intel_cstate snd_pcm_dmaengine btusb snd_pcm btmtk snd_timer btrtl processor_thermal_device_pci btbcm snd btintel intel_uncore processor_thermal_device wmi_bmof pcspkr spi_intel_pci soundcore processor_thermal_wt_hint bluetooth spi_intel mei_me msi_wmi_platform crc8 msi_wmi platform_temperature_control intel_skl_int3472_tps68470 mei processor_thermal_soc_slider ov5675(OE) platform_profile v4l2_fwnode processor_thermal_rfim tps68470_regulator int3403_thermal v4l2_async clk_tps68470 processor_thermal_rapl intel_rapl_common iwlwifi videodev processor_thermal_wt_req intel_skl_int3472_discrete int3400_thermal mc intel_pmc_core intel_skl_int3472_common acpi_thermal_rel acpi_pad intel_hid processor_thermal_power_floor sparse_keymap acpi_tad cfg80211 intel_ipu7(C) intel_vpu pmt_telemetry processor_thermal_mbox ipu_bridge(OE) pmt_discovery rfkill
+1205:Mar 08 16:03:33 p13 kernel: Modules linked in: fat libarc4 kvm videobuf2_memops videobuf2_v4l2 gpio_tps68470 irqbypass snd_soc_core intel_rapl_msr videobuf2_common snd_compress rapl ac97_bus intel_cstate snd_pcm_dmaengine btusb snd_pcm btmtk snd_timer btrtl processor_thermal_device_pci btbcm snd btintel intel_uncore processor_thermal_device wmi_bmof pcspkr spi_intel_pci soundcore processor_thermal_wt_hint bluetooth spi_intel mei_me msi_wmi_platform crc8 msi_wmi platform_temperature_control intel_skl_int3472_tps68470 mei processor_thermal_soc_slider ov5675(OE) platform_profile v4l2_fwnode processor_thermal_rfim tps68470_regulator int3403_thermal v4l2_async clk_tps68470 processor_thermal_rapl intel_rapl_common iwlwifi videodev processor_thermal_wt_req intel_skl_int3472_discrete int3400_thermal mc intel_pmc_core intel_skl_int3472_common acpi_thermal_rel acpi_pad intel_hid processor_thermal_power_floor sparse_keymap acpi_tad cfg80211 intel_ipu7(C) intel_vpu pmt_telemetry processor_thermal_mbox ipu_bridge(OE) pmt_discovery rfkill
+1257:Mar 08 16:03:33 p13 kernel: Modules linked in: fat libarc4 kvm videobuf2_memops videobuf2_v4l2 gpio_tps68470 irqbypass snd_soc_core intel_rapl_msr videobuf2_common snd_compress rapl ac97_bus intel_cstate snd_pcm_dmaengine btusb snd_pcm btmtk snd_timer btrtl processor_thermal_device_pci btbcm snd btintel intel_uncore processor_thermal_device wmi_bmof pcspkr spi_intel_pci soundcore processor_thermal_wt_hint bluetooth spi_intel mei_me msi_wmi_platform crc8 msi_wmi platform_temperature_control intel_skl_int3472_tps68470 mei processor_thermal_soc_slider ov5675(OE) platform_profile v4l2_fwnode processor_thermal_rfim tps68470_regulator int3403_thermal v4l2_async clk_tps68470 processor_thermal_rapl intel_rapl_common iwlwifi videodev processor_thermal_wt_req intel_skl_int3472_discrete int3400_thermal mc intel_pmc_core intel_skl_int3472_common acpi_thermal_rel acpi_pad intel_hid processor_thermal_power_floor sparse_keymap acpi_tad cfg80211 intel_ipu7(C) intel_vpu pmt_telemetry processor_thermal_mbox ipu_bridge(OE) pmt_discovery rfkill
+1307:Mar 08 16:03:33 p13 kernel: ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -5
+1310:Mar 08 16:03:33 p13 kernel: intel_ipu7_isys: module is from the staging directory, the quality is unknown, you have been warned.
+
+EXIT_STATUS: 0

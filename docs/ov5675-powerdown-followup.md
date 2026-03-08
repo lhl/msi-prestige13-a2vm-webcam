@@ -72,6 +72,25 @@ Patch shape:
 This is intentionally the smallest follow-up after the serial power-order
 change. It does not yet alter delays further.
 
+## Clean-Boot Result After `powerdown-v1`
+
+The first clean boot after adding this follow-up produced:
+
+- `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+- `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+- `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+- `ov5675 i2c-OVTI5675:00: failed to find sensor: -5`
+- `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -5`
+
+Additional state from the same clean-boot checkpoint:
+
+- `i2c-OVTI5675:00` remains unbound
+- there are still no `/dev/v4l-subdev*` nodes
+
+Result:
+
+- this first `powerdown` follow-up did not move the failure forward
+
 ## Success Criteria
 
 Minimum success:
@@ -83,3 +102,7 @@ Stronger success:
 - `ov5675` binds
 - `/dev/v4l-subdev*` appears
 - `media-ctl` gains a sensor entity
+
+Current verdict:
+
+- not met on the first `powerdown-v1` clean boot

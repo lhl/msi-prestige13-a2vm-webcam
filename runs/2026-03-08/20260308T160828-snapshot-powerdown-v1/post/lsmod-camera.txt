@@ -1,0 +1,20 @@
+CMD: bash -lc lsmod\ \|\ grep\ -E\ \'intel_ipu7\|ov5675\|int3472\|tps68470\|ipu_bridge\|videodev\|v4l2\'
+intel_ipu7_isys       131072  0
+videobuf2_dma_sg       24576  1 intel_ipu7_isys
+videobuf2_v4l2         40960  1 intel_ipu7_isys
+gpio_tps68470          12288  0
+videobuf2_common       94208  4 intel_ipu7_isys,videobuf2_v4l2,videobuf2_dma_sg,videobuf2_memops
+intel_skl_int3472_tps68470    24576  0
+ov5675                 24576  0
+v4l2_fwnode            36864  2 ov5675,intel_ipu7_isys
+tps68470_regulator     12288  0
+v4l2_async             36864  3 v4l2_fwnode,ov5675,intel_ipu7_isys
+clk_tps68470           12288  1
+videodev              409600  5 v4l2_async,v4l2_fwnode,ov5675,intel_ipu7_isys,videobuf2_v4l2
+intel_skl_int3472_discrete    28672  0
+mc                     94208  6 v4l2_async,videodev,ov5675,intel_ipu7_isys,videobuf2_v4l2,videobuf2_common
+intel_skl_int3472_common    16384  2 intel_skl_int3472_tps68470,intel_skl_int3472_discrete
+intel_ipu7            135168  1 intel_ipu7_isys
+ipu_bridge             24576  2 intel_ipu7_isys,intel_ipu7
+
+EXIT_STATUS: 0

@@ -1,0 +1,19 @@
+CMD: i2cdetect -l
+i2c-0	unknown   	i915 gmbus dpa                  	N/A
+i2c-1	unknown   	i915 gmbus dpb                  	N/A
+i2c-2	unknown   	i915 gmbus dpc                  	N/A
+i2c-3	unknown   	i915 gmbus dpd                  	N/A
+i2c-4	unknown   	i915 gmbus dpe                  	N/A
+i2c-5	unknown   	i915 gmbus tc1                  	N/A
+i2c-6	unknown   	i915 gmbus tc2                  	N/A
+i2c-7	unknown   	i915 gmbus tc3                  	N/A
+i2c-8	unknown   	i915 gmbus tc4                  	N/A
+i2c-9	unknown   	Synopsys DesignWare I2C adapter 	N/A
+i2c-10	unknown   	Synopsys DesignWare I2C adapter 	N/A
+i2c-11	unknown   	Synopsys DesignWare I2C adapter 	N/A
+i2c-12	unknown   	Synopsys DesignWare I2C adapter 	N/A
+i2c-13	unknown   	AUX A/DDI A/PHY A               	N/A
+i2c-14	unknown   	AUX USBC1/DDI TC1/PHY TC1       	N/A
+i2c-15	unknown   	AUX USBC2/DDI TC2/PHY TC2       	N/A
+
+EXIT_STATUS: 0
