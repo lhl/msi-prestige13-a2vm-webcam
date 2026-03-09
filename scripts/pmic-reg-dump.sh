@@ -24,7 +24,7 @@ read_reg() {
   local reg="$1"
   local label="$2"
   local val
-  if val=$(i2cget -y "$BUS" "$ADDR" "$reg" 2>/dev/null); then
+  if val=$(i2cget -f -y "$BUS" "$ADDR" "$reg" 2>/dev/null); then
     printf "%-6s = %-6s  # %s\n" "$reg" "$val" "$label"
   else
     printf "%-6s = %-6s  # %s\n" "$reg" "ERROR" "$label"
