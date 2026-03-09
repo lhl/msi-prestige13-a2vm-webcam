@@ -24,6 +24,10 @@ high-safety pattern:
 - The update wrappers are meant to be run from this repo checkout.
 - They default to the current local `linux-mainline` tree:
   - `~/.cache/paru/clone/linux-mainline/src/linux-mainline`
+- They default their temporary build/status files to a repo-local temp
+  directory:
+  - `.tmp/`
+  - override by exporting `TMPDIR` before running a wrapper if needed
 - They default to the repo's current best baseline profile:
   - `candidate`
 - They require the experiment patch file to exist.
@@ -61,8 +65,8 @@ All six `*-update.sh` wrappers do this:
 - log the intended kernel tree, baseline profile, patch path, build dirs, and
   module install targets
 - attempt `scripts/patch-kernel.sh --status` for visibility
-  - if status cannot be captured (for example `/tmp` space/quota pressure while
-    creating the temporary status tree), the wrapper logs a warning and
+  - if status cannot be captured (for example temp-directory space/quota
+    pressure while creating the temporary status tree), the wrapper logs a warning and
     continues with baseline apply
 - apply the selected baseline profile
 - apply the experiment patch if it is not already present

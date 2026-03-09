@@ -7,6 +7,7 @@ DEFAULT_KERNEL_TREE="${HOME}/.cache/paru/clone/linux-mainline/src/linux-mainline
 DEFAULT_BASELINE_PROFILE="candidate"
 DEFAULT_PMIC_BUS="13"
 DEFAULT_PMIC_ADDR="0x48"
+DEFAULT_TEMP_ROOT="${REPO_ROOT}/.tmp"
 KNOWN_EXPERIMENT_PATCHES=(
   "reference/patches/pmic-path-instrumentation-v1-pre-regmap-include.patch"
   "reference/patches/pmic-path-instrumentation-v1.patch"
@@ -41,6 +42,7 @@ SKIP_PMIC_DUMP=0
 RESET_EXPERIMENT_PATCHES=1
 PMIC_BUS="${DEFAULT_PMIC_BUS}"
 PMIC_ADDR="${DEFAULT_PMIC_ADDR}"
+TEMP_ROOT="${TMPDIR:-${DEFAULT_TEMP_ROOT}}"
 VERIFY_LABEL=""
 VERIFY_NOTE=""
 BUILD_JOBS=""
@@ -65,6 +67,11 @@ log() {
 
 require_file() {
   [[ -f "$1" ]] || die "missing file: $1"
+}
+
+prepare_temp_root() {
+  mkdir -p "${TEMP_ROOT}"
+  export TMPDIR="${TEMP_ROOT}"
 }
 
 as_root() {
@@ -345,9 +352,9 @@ install_module_map() {
       fi
     fi
     if (( DRY_RUN )); then
-      tmp_file="/tmp/$(basename -- "${src_rel%.ko}").dry-run.ko.zst"
+      tmp_file="${TMPDIR}/$(basename -- "${src_rel%.ko}").dry-run.ko.zst"
     else
-      tmp_file=$(mktemp "/tmp/$(basename -- "${src_rel%.ko}").XXXXXX.ko.zst")
+      tmp_file=$(mktemp "${TMPDIR}/$(basename -- "${src_rel%.ko}").XXXXXX.ko.zst")
     fi
     run_logged zstd -T0 -f "${src_abs}" -o "${tmp_file}"
     run_logged as_root install -Dm644 "${tmp_file}" "${dst_abs}"
@@ -652,6 +659,7 @@ experiment_update_main() {
   parse_update_args "$@"
   resolve_build_jobs
   resolve_patch_path
+  prepare_temp_root
   prepare_action_dir
   module_release=$(compute_module_release)
   write_update_metadata "${module_release}"
@@ -676,6 +684,7 @@ experiment_verify_main() {
   ACTION_KIND="verify"
   ensure_wrapper_vars
   parse_verify_args "$@"
+  prepare_temp_root
 
   if [[ -z "${VERIFY_LABEL}" ]]; then
     VERIFY_LABEL="${EXPERIMENT_ID}-clean-boot"

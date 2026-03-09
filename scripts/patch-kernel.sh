@@ -3,6 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 REPO_ROOT=$(cd -- "${SCRIPT_DIR}/.." && pwd)
+TMP_ROOT="${TMPDIR:-${REPO_ROOT}/.tmp}"
 
 KERNEL_TREE="${HOME}/.cache/paru/clone/linux-mainline/src/linux-mainline"
 PROFILE="tested"
@@ -233,19 +234,20 @@ cleanup_status_tree() {
 create_status_tree() {
   local tmpdir diff_file
 
-  tmpdir=$(mktemp -d /tmp/patch-kernel-status.XXXXXX)
+  mkdir -p "${TMP_ROOT}"
+  tmpdir=$(mktemp -d "${TMP_ROOT}/patch-kernel-status.XXXXXX")
   STATUS_TREE="${tmpdir}/tree"
   trap cleanup_status_tree EXIT
 
   if ! git clone --shared --quiet "${KERNEL_TREE}" "${STATUS_TREE}" >/dev/null 2>&1; then
-    die "failed to create temporary status tree at ${STATUS_TREE}; check /tmp free space or user quota"
+    die "failed to create temporary status tree at ${STATUS_TREE}; check ${TMP_ROOT} free space or user quota"
   fi
 
   if ! git -C "${KERNEL_TREE}" diff --quiet HEAD --; then
     diff_file="${tmpdir}/tree-state.patch"
     git -C "${KERNEL_TREE}" diff --binary HEAD -- > "${diff_file}"
     if ! git -C "${STATUS_TREE}" apply "${diff_file}" >/dev/null 2>&1; then
-      die "failed to apply working-tree diff to temporary status tree; check /tmp free space or user quota"
+      die "failed to apply working-tree diff to temporary status tree; check ${TMP_ROOT} free space or user quota"
     fi
   fi
 

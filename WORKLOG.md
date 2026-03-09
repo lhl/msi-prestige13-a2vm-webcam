@@ -2,6 +2,32 @@
 
 ## 2026-03-09
 
+### Move experiment temp files off /tmp and into a repo-local temp root
+
+- Plan: stop PMIC experiment runs from failing on `/tmp` quota by defaulting
+  wrapper temp files and `patch-kernel.sh` status snapshots to a repo-local
+  temp directory instead.
+- Trigger:
+  - repeated `exp2` attempts progressed past status snapshot, then failed in
+    compiler temp-file creation with:
+    - `fatal error: error writing to /tmp/...: Disk quota exceeded`
+- Commands:
+  - reviewed temp-file call sites in:
+    - `scripts/lib-experiment-workflow.sh`
+    - `scripts/patch-kernel.sh`
+  - `apply_patch` updating:
+    - `scripts/lib-experiment-workflow.sh`
+    - `scripts/patch-kernel.sh`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+- Result:
+  - experiment wrappers now default `TMPDIR` to `REPO_ROOT/.tmp`
+  - `.ko.zst` staging files now use that temp root instead of `/tmp`
+  - `patch-kernel.sh --status` now creates its temporary status tree under the
+    same temp root unless `TMPDIR` is explicitly overridden
+  - this should remove the observed `/tmp`-quota blocker from both the status
+    snapshot path and compiler temp-file allocation during module builds
+
 ### Make update wrappers resilient when patch-kernel status snapshot fails
 
 - Plan: fix the `exp*-update.sh` path that appeared to stall at
