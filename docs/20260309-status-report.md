@@ -153,6 +153,19 @@ This is important when judging progress relative to other efforts. Those
 patches are not hypothetical anymore. They already moved the failure forward
 substantially.
 
+Experiment provenance note:
+
+- the March 9 `exp1` through `exp6` PMIC runs were executed on the repo's
+  `candidate` baseline profile, not the pure `tested` profile
+- `candidate` means:
+  - the `tested` baseline stack above
+  - plus the current extra `ov5675` debug patches:
+    - `ov5675-powerdown-followup-v1.patch`
+    - `ov5675-identify-debug-v1.patch`
+    - `ov5675-gpio-release-sequencing-debug-v1.patch`
+- that matches the recorded experiment metadata:
+  - `baseline_profile=candidate`
+
 ## Reverse-Engineering Timeline So Far
 
 ### 1. Initial broad hypothesis
@@ -405,6 +418,8 @@ and remember the gist." It is now reproducible.
 | `exp4` | mimic `WF::Initialize` value programming | negative for function, positive for signal | value-register programming alone is insufficient |
 | `exp5` | revisit PMIC GPIO mode semantics | clean negative | more blind GPIO mode changes are low value |
 | `exp6` | test `UF` / `gpio.4` last resort | clean negative | current local evidence still does not justify pivoting to `UF` |
+
+All six PMIC experiments above ran on `candidate`, not on bare `tested`.
 
 ### `exp1` PMIC instrumentation
 

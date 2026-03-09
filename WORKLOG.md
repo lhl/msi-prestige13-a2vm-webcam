@@ -2,6 +2,24 @@
 
 ## 2026-03-09
 
+### Clarify that the March 9 PMIC batch ran on the `candidate` baseline
+
+- Plan: fix a provenance ambiguity in the new March 9 report so it does not
+  read like `exp1` through `exp6` ran on the pure `tested` stack.
+- Commands:
+  - reviewed the relevant report section and experiment metadata:
+    - `sed -n '120,190p' docs/20260309-status-report.md`
+    - `sed -n '1,40p' runs/2026-03-09/20260309T142113-pmic-instrumentation-update/metadata.env`
+    - `sed -n '1,40p' runs/2026-03-09/20260309T150040-uf-gpio4-last-resort-update/metadata.env`
+  - `apply_patch` updating:
+    - `docs/20260309-status-report.md`
+    - `WORKLOG.md`
+- Result:
+  - the report now explicitly says the March 9 PMIC batch ran on the
+    `candidate` baseline profile
+  - it also spells out that `candidate` means `tested` plus the extra
+    `ov5675` debug patches, which matches the recorded update metadata
+
 ### Publish the March 9 status report and refresh stale top-level docs
 
 - Plan: turn the completed PMIC experiment batch and Windows extraction state
