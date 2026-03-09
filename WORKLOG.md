@@ -2,6 +2,35 @@
 
 ## 2026-03-09
 
+### Fix the exp1 instrumentation patch compile failure and preserve rerun recovery
+
+- Plan: repair the real `exp1` PMIC instrumentation patch after the first live
+  build exposed a missing `regmap` prototype, and preserve a clean rerun path
+  for the already-dirty kernel tree by keeping the broken patch as a legacy
+  reverse target.
+- Commands:
+  - reviewed the failed build log from the live `exp1` update run
+  - reviewed the affected patch/source context:
+    - `sed -n '1,220p' reference/patches/pmic-path-instrumentation-v1.patch`
+    - `sed -n '1,220p' ~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/regulator/tps68470-regulator.c`
+    - `sed -n '600,690p' scripts/lib-experiment-workflow.sh`
+  - copied the broken patch aside as a compatibility reset target:
+    - `cp reference/patches/pmic-path-instrumentation-v1.patch reference/patches/pmic-path-instrumentation-v1-pre-regmap-include.patch`
+  - `apply_patch` updating:
+    - `reference/patches/pmic-path-instrumentation-v1.patch`
+    - `scripts/lib-experiment-workflow.sh`
+    - `WORKLOG.md`
+- Result:
+  - the real `exp1` patch now also adds `#include <linux/regmap.h>` before the
+    new `regmap_read()` instrumentation, which fixes the observed compiler
+    error
+  - the old broken `exp1` patch is now retained as
+    `reference/patches/pmic-path-instrumentation-v1-pre-regmap-include.patch`
+  - the shared experiment reset list now includes that legacy patch, so a
+    rerun of `scripts/exp1-pmic-instrumentation-update.sh` can reverse the
+    already-applied broken patch from the kernel tree and then apply the fixed
+    one without manual cleanup
+
 ### Correct the experiment 5 / experiment 6 wrapper note
 
 - Plan: fix the PMIC workflow doc so its rebuild/install scope matches the

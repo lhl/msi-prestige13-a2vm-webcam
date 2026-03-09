@@ -8,6 +8,7 @@ DEFAULT_BASELINE_PROFILE="candidate"
 DEFAULT_PMIC_BUS="13"
 DEFAULT_PMIC_ADDR="0x48"
 KNOWN_EXPERIMENT_PATCHES=(
+  "reference/patches/pmic-path-instrumentation-v1-pre-regmap-include.patch"
   "reference/patches/pmic-path-instrumentation-v1.patch"
   "reference/patches/ms13q3-wf-s-i2c-ctl-staging-v1.patch"
   "reference/patches/ms13q3-vd-1050mv-v1.patch"
