@@ -208,8 +208,15 @@ reverse_patch_if_applied() {
 patch_touched_files() {
   local patch="$1"
 
-  sed -n -e 's#^--- a/##p' -e 's#^+++ b/##p' "${patch}" | \
-    rg -v '^/dev/null$' || true
+  awk '
+    /^(--- a\/|\+\+\+ b\/)/ {
+      path = $0
+      sub(/^(--- a\/|\+\+\+ b\/)/, "", path)
+      sub(/[[:space:]].*$/, "", path)
+      if (path != "/dev/null")
+        print path
+    }
+  ' "${patch}" || true
 }
 
 collect_reset_paths() {

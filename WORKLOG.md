@@ -2,6 +2,27 @@
 
 ## 2026-03-09
 
+### Fix `exp9` reset-path parsing after the first real wrapper run
+
+- Plan: repair the experiment reset helper so patch headers with timestamps do
+  not turn into invalid `git checkout --` pathspecs during wrapper startup.
+- Trigger:
+  - the first real `exp9` update run failed before baseline apply with:
+    - `pathspec 'drivers/regulator/tps68470-regulator.c 2026-03-09 ...' did not match any file(s) known to git`
+- Commands:
+  - reviewed:
+    - `scripts/lib-experiment-workflow.sh`
+    - `reference/patches/pmic-si2c-ctl-split-step-trace-v1.patch`
+  - `apply_patch` updating:
+    - `scripts/lib-experiment-workflow.sh`
+    - `WORKLOG.md`
+  - normalized the `exp9` patch header to drop timestamp suffixes
+- Result:
+  - experiment reset-path extraction now strips everything after the actual
+    file path on `--- a/...` and `+++ b/...` lines
+  - `exp9` no longer depends on timestamped patch headers being parsed
+    accidentally
+
 ### Commit `exp8`, record its narrower confirmation result, and add `exp9`
 
 - Plan: check in the new `exp8` run artifacts, record the narrower `0x43`

@@ -1,5 +1,5 @@
---- a/drivers/regulator/tps68470-regulator.c	2026-03-09 16:52:58.335578551 +0900
-+++ b/drivers/regulator/tps68470-regulator.c	2026-03-09 16:53:18.416405692 +0900
+--- a/drivers/regulator/tps68470-regulator.c
++++ b/drivers/regulator/tps68470-regulator.c
 @@ -20,6 +20,7 @@
  #include <linux/kernel.h>
  #include <linux/mfd/tps68470.h>
