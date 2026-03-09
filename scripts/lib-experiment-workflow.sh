@@ -16,6 +16,7 @@ KNOWN_EXPERIMENT_PATCHES=(
   "reference/patches/ms13q3-wf-init-value-programming-v1.patch"
   "reference/patches/ms13q3-wf-gpio-mode-followup-v1.patch"
   "reference/patches/ms13q3-uf-gpio4-last-resort-v1.patch"
+  "reference/patches/pmic-raw-regmap-trace-v1.patch"
 )
 BASE_BUILD_DIRS=(
   "drivers/platform/x86/intel/int3472"

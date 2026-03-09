@@ -106,6 +106,10 @@ with strong evidence.
    - `scripts/exp*-*-verify.sh`
    - `scripts/01-clean-boot-check.sh`
    to keep evidence reproducible
+5. The immediate next run should be:
+   - `scripts/exp7-pmic-raw-regmap-trace-update.sh`
+   - reboot
+   - `scripts/exp7-pmic-raw-regmap-trace-verify.sh`
 
 ## Open Questions
 

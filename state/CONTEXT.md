@@ -80,6 +80,10 @@ with strong evidence.
    - `0x40`-`0x42`
    - `0x47`
    - `0x48`
+   - immediate next wrapper:
+     - `scripts/exp7-pmic-raw-regmap-trace-update.sh`
+     - reboot
+     - `scripts/exp7-pmic-raw-regmap-trace-verify.sh`
 2. Fix or replace the post-boot PMIC dump path so we can observe real register
    state after a failed clean boot.
 3. Extract more of the higher-level Windows config path above `WF::SetConf`.

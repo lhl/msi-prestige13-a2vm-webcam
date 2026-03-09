@@ -2,6 +2,55 @@
 
 ## 2026-03-09
 
+### Add the next PMIC kernel-instrumentation experiment for raw regmap trace
+
+- Plan: add a new PMIC experiment focused on raw register truth inside the
+  Linux clock and regulator drivers, because the current userspace PMIC dump
+  path is not yielding useful data.
+- Commands:
+  - reviewed the current PMIC experiment patches, wrappers, and kernel sources:
+    - `sed -n '1,260p' reference/patches/pmic-path-instrumentation-v1.patch`
+    - `sed -n '1,260p' reference/patches/ms13q3-wf-s-i2c-ctl-staging-v1.patch`
+    - `sed -n '1,260p' scripts/lib-experiment-workflow.sh`
+    - `sed -n '1,260p' scripts/exp1-pmic-instrumentation-update.sh`
+    - `sed -n '1,260p' scripts/exp1-pmic-instrumentation-verify.sh`
+    - `sed -n '1,260p' ~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/clk/clk-tps68470.c`
+    - `sed -n '1,260p' ~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/regulator/tps68470-regulator.c`
+  - reviewed the generic regulator helpers to preserve behavior while adding
+    tracing:
+    - `sed -n '1,140p' ~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/regulator/helpers.c`
+    - `sed -n '260,330p' ~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/regulator/helpers.c`
+  - generated a new patch from temporary source copies under:
+    - `.tmp/exp7-gen/`
+  - validated the result:
+    - `git -C ~/.cache/paru/clone/linux-mainline/src/linux-mainline apply --check reference/patches/pmic-raw-regmap-trace-v1.patch`
+    - repo-local shared-clone build check for:
+      - `drivers/clk`
+      - `drivers/regulator`
+  - `apply_patch` updating:
+    - `reference/patches/pmic-raw-regmap-trace-v1.patch`
+    - `scripts/lib-experiment-workflow.sh`
+    - `scripts/exp7-pmic-raw-regmap-trace-update.sh`
+    - `scripts/exp7-pmic-raw-regmap-trace-verify.sh`
+    - `docs/pmic-followup-experiments.md`
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/webcam-status.md`
+    - `WORKLOG.md`
+- Result:
+  - the repo now has a concrete `exp7` PMIC trace experiment aimed at raw
+    register truth during the failing clean-boot probe window
+  - the new patch instruments:
+    - `clk-tps68470`
+    - `tps68470-regulator`
+  - it logs:
+    - register
+    - mask / value
+    - regmap return code
+    - immediate readback
+  - `exp7` is now the highest-priority next kernel-side experiment
+
 ### Clarify that the March 9 PMIC batch ran on the `candidate` baseline
 
 - Plan: fix a provenance ambiguity in the new March 9 report so it does not

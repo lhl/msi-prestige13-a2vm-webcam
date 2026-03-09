@@ -5,10 +5,16 @@ Updated: 2026-03-09
 This note turns the current ordered PMIC follow-up list into repeatable
 update-and-verify workflows.
 
+As of the completed `2026-03-09` PMIC batch:
+
+- `exp1` through `exp6` are completed historical experiments
+- the highest-value next kernel-side follow-up is `exp7`
+- `exp7` is a raw PMIC regmap trace aimed at actual register truth during the
+  failing clean-boot probe window
+
 ## Goal
 
-Make each of the six remaining source-guided experiments runnable with the same
-high-safety pattern:
+Make each PMIC experiment runnable with the same high-safety pattern:
 
 1. apply the current baseline patch stack with `scripts/patch-kernel.sh`
 2. apply one experiment patch
@@ -60,7 +66,7 @@ high-safety pattern:
 
 ## Shared behavior
 
-All six `*-update.sh` wrappers do this:
+All experiment `*-update.sh` wrappers do this:
 
 - log the intended kernel tree, baseline profile, patch path, build dirs, and
   module install targets
@@ -78,7 +84,7 @@ All six `*-update.sh` wrappers do this:
 - run `sudo depmod -a <release>`
 - prompt for reboot
 
-All six `*-verify.sh` wrappers do this after reboot:
+All experiment `*-verify.sh` wrappers do this after reboot:
 
 - run `scripts/01-clean-boot-check.sh`
 - append an experiment-specific journal extract to the run directory
@@ -188,6 +194,28 @@ Scripts:
 - `scripts/exp6-uf-gpio4-last-resort-update.sh`
 - `scripts/exp6-uf-gpio4-last-resort-verify.sh`
 
+### 7. Raw PMIC regmap trace
+
+Purpose:
+- capture raw PMIC register operations inside the Linux clock and regulator
+  paths during the failing clean boot
+- record:
+  - register
+  - mask / value
+  - regmap return code
+  - immediate readback
+
+Default patch:
+- `reference/patches/pmic-raw-regmap-trace-v1.patch`
+
+Extra module rebuild/install:
+- `clk-tps68470.ko`
+- `tps68470-regulator.ko`
+
+Scripts:
+- `scripts/exp7-pmic-raw-regmap-trace-update.sh`
+- `scripts/exp7-pmic-raw-regmap-trace-verify.sh`
+
 ## Typical usage
 
 Update, install modules, and reboot for experiment 2:
@@ -229,6 +257,18 @@ Preview the clean-boot verification steps without running them:
 
 ```bash
 scripts/exp2-wf-s-i2c-ctl-verify.sh --dry-run
+```
+
+Current highest-priority run:
+
+```bash
+scripts/exp7-pmic-raw-regmap-trace-update.sh
+```
+
+After reboot:
+
+```bash
+scripts/exp7-pmic-raw-regmap-trace-verify.sh
 ```
 
 ## Why the verify wrappers always do a PMIC dump

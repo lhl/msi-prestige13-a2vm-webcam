@@ -1,0 +1,524 @@
+--- a/drivers/clk/clk-tps68470.c
++++ b/drivers/clk/clk-tps68470.c
+@@ -69,9 +69,133 @@
+ struct tps68470_clkdata {
+ 	struct clk_hw clkout_hw;
+ 	struct regmap *regmap;
++	struct device *dev;
+ 	unsigned long rate;
+ };
+ 
++static const char *tps68470_clk_reg_name(unsigned int reg)
++{
++	switch (reg) {
++	case TPS68470_REG_POSTDIV2:
++		return "POSTDIV2";
++	case TPS68470_REG_BOOSTDIV:
++		return "BOOSTDIV";
++	case TPS68470_REG_BUCKDIV:
++		return "BUCKDIV";
++	case TPS68470_REG_PLLSWR:
++		return "PLLSWR";
++	case TPS68470_REG_XTALDIV:
++		return "XTALDIV";
++	case TPS68470_REG_PLLDIV:
++		return "PLLDIV";
++	case TPS68470_REG_POSTDIV:
++		return "POSTDIV";
++	case TPS68470_REG_PLLCTL:
++		return "PLLCTL";
++	case TPS68470_REG_CLKCFG1:
++		return "CLKCFG1";
++	case TPS68470_REG_CLKCFG2:
++		return "CLKCFG2";
++	case TPS68470_REG_VSIOVAL:
++		return "VSIOVAL";
++	case TPS68470_REG_VAVAL:
++		return "VAVAL";
++	case TPS68470_REG_VDVAL:
++		return "VDVAL";
++	case TPS68470_REG_S_I2C_CTL:
++		return "S_I2C_CTL";
++	case TPS68470_REG_VACTL:
++		return "VACTL";
++	case TPS68470_REG_VDCTL:
++		return "VDCTL";
++	default:
++		return "UNKNOWN";
++	}
++}
++
++static void tps68470_clk_log_read(struct tps68470_clkdata *clkdata,
++				  const char *tag, unsigned int reg)
++{
++	unsigned int val = 0;
++	int ret;
++
++	ret = regmap_read(clkdata->regmap, reg, &val);
++	dev_info(clkdata->dev,
++		 "pmic_raw: %s read reg=%s(0x%02x) ret=%d val=0x%02x\n",
++		 tag, tps68470_clk_reg_name(reg), reg, ret, val);
++}
++
++static void tps68470_clk_log_snapshot(struct tps68470_clkdata *clkdata,
++				      const char *tag)
++{
++	static const unsigned int regs[] = {
++		TPS68470_REG_POSTDIV2,
++		TPS68470_REG_BOOSTDIV,
++		TPS68470_REG_BUCKDIV,
++		TPS68470_REG_PLLSWR,
++		TPS68470_REG_XTALDIV,
++		TPS68470_REG_PLLDIV,
++		TPS68470_REG_POSTDIV,
++		TPS68470_REG_PLLCTL,
++		TPS68470_REG_CLKCFG1,
++		TPS68470_REG_CLKCFG2,
++		TPS68470_REG_VSIOVAL,
++		TPS68470_REG_VAVAL,
++		TPS68470_REG_VDVAL,
++		TPS68470_REG_S_I2C_CTL,
++		TPS68470_REG_VACTL,
++		TPS68470_REG_VDCTL,
++	};
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(regs); i++)
++		tps68470_clk_log_read(clkdata, tag, regs[i]);
++}
++
++static int tps68470_clk_write_trace(struct tps68470_clkdata *clkdata,
++				    unsigned int reg, unsigned int value,
++				    const char *tag)
++{
++	unsigned int before = 0;
++	unsigned int after = 0;
++	int before_ret;
++	int ret;
++	int after_ret;
++
++	before_ret = regmap_read(clkdata->regmap, reg, &before);
++	ret = regmap_write(clkdata->regmap, reg, value);
++	after_ret = regmap_read(clkdata->regmap, reg, &after);
++
++	dev_info(clkdata->dev,
++		 "pmic_raw: %s write reg=%s(0x%02x) value=0x%02x before_ret=%d before=0x%02x write_ret=%d after_ret=%d after=0x%02x\n",
++		 tag, tps68470_clk_reg_name(reg), reg, value,
++		 before_ret, before, ret, after_ret, after);
++
++	return ret;
++}
++
++static int tps68470_clk_update_bits_trace(struct tps68470_clkdata *clkdata,
++					  unsigned int reg, unsigned int mask,
++					  unsigned int value, const char *tag)
++{
++	unsigned int before = 0;
++	unsigned int after = 0;
++	int before_ret;
++	int ret;
++	int after_ret;
++
++	before_ret = regmap_read(clkdata->regmap, reg, &before);
++	ret = regmap_update_bits(clkdata->regmap, reg, mask, value);
++	after_ret = regmap_read(clkdata->regmap, reg, &after);
++
++	dev_info(clkdata->dev,
++		 "pmic_raw: %s update reg=%s(0x%02x) mask=0x%02x value=0x%02x before_ret=%d before=0x%02x update_ret=%d after_ret=%d after=0x%02x\n",
++		 tag, tps68470_clk_reg_name(reg), reg, mask, value,
++		 before_ret, before, ret, after_ret, after);
++
++	return ret;
++}
++
+ static int tps68470_clk_is_prepared(struct clk_hw *hw)
+ {
+ 	struct tps68470_clkdata *clkdata = to_tps68470_clkdata(hw);
+@@ -86,13 +210,23 @@
+ static int tps68470_clk_prepare(struct clk_hw *hw)
+ {
+ 	struct tps68470_clkdata *clkdata = to_tps68470_clkdata(hw);
++	int ret;
++
++	tps68470_clk_log_snapshot(clkdata, "clk_prepare(pre)");
+ 
+-	regmap_write(clkdata->regmap, TPS68470_REG_CLKCFG1,
+-			   (TPS68470_PLL_OUTPUT_ENABLE << TPS68470_OUTPUT_A_SHIFT) |
+-			   (TPS68470_PLL_OUTPUT_ENABLE << TPS68470_OUTPUT_B_SHIFT));
++	ret = tps68470_clk_write_trace(clkdata, TPS68470_REG_CLKCFG1,
++				       (TPS68470_PLL_OUTPUT_ENABLE << TPS68470_OUTPUT_A_SHIFT) |
++				       (TPS68470_PLL_OUTPUT_ENABLE << TPS68470_OUTPUT_B_SHIFT),
++				       "clk_prepare(clock_outputs)");
++	if (ret)
++		return ret;
+ 
+-	regmap_update_bits(clkdata->regmap, TPS68470_REG_PLLCTL,
+-			   TPS68470_PLL_EN_MASK, TPS68470_PLL_EN_MASK);
++	ret = tps68470_clk_update_bits_trace(clkdata, TPS68470_REG_PLLCTL,
++					     TPS68470_PLL_EN_MASK,
++					     TPS68470_PLL_EN_MASK,
++					     "clk_prepare(pll_enable)");
++	if (ret)
++		return ret;
+ 
+ 	/*
+ 	 * The PLLCTL reg lock bit is set by the PMIC after approx. 4ms and
+@@ -100,6 +234,8 @@
+ 	 */
+ 	usleep_range(4000, 5000);
+ 
++	tps68470_clk_log_snapshot(clkdata, "clk_prepare(post)");
++
+ 	return 0;
+ }
+ 
+@@ -107,11 +243,17 @@
+ {
+ 	struct tps68470_clkdata *clkdata = to_tps68470_clkdata(hw);
+ 
++	tps68470_clk_log_snapshot(clkdata, "clk_unprepare(pre)");
++
+ 	/* Disable clock first ... */
+-	regmap_update_bits(clkdata->regmap, TPS68470_REG_PLLCTL, TPS68470_PLL_EN_MASK, 0);
++	tps68470_clk_update_bits_trace(clkdata, TPS68470_REG_PLLCTL,
++				       TPS68470_PLL_EN_MASK, 0,
++				       "clk_unprepare(pll_disable)");
+ 
+ 	/* ... and then tri-state the clock outputs. */
+-	regmap_write(clkdata->regmap, TPS68470_REG_CLKCFG1, 0);
++	tps68470_clk_write_trace(clkdata, TPS68470_REG_CLKCFG1, 0,
++				 "clk_unprepare(clock_outputs)");
++	tps68470_clk_log_snapshot(clkdata, "clk_unprepare(post)");
+ }
+ 
+ static unsigned long tps68470_clk_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+@@ -161,24 +303,63 @@
+ {
+ 	struct tps68470_clkdata *clkdata = to_tps68470_clkdata(hw);
+ 	unsigned int idx = tps68470_clk_cfg_lookup(rate);
++	int ret;
+ 
+ 	if (rate != clk_freqs[idx].freq)
+ 		return -EINVAL;
+ 
+-	regmap_write(clkdata->regmap, TPS68470_REG_BOOSTDIV, clk_freqs[idx].boostdiv);
+-	regmap_write(clkdata->regmap, TPS68470_REG_BUCKDIV, clk_freqs[idx].buckdiv);
+-	regmap_write(clkdata->regmap, TPS68470_REG_PLLSWR, TPS68470_PLLSWR_DEFAULT);
+-	regmap_write(clkdata->regmap, TPS68470_REG_XTALDIV, clk_freqs[idx].xtaldiv);
+-	regmap_write(clkdata->regmap, TPS68470_REG_PLLDIV, clk_freqs[idx].plldiv);
+-	regmap_write(clkdata->regmap, TPS68470_REG_POSTDIV, clk_freqs[idx].postdiv);
+-	regmap_write(clkdata->regmap, TPS68470_REG_POSTDIV2, clk_freqs[idx].postdiv);
+-	regmap_write(clkdata->regmap, TPS68470_REG_CLKCFG2, TPS68470_CLKCFG2_DRV_STR_2MA);
+-
+-	regmap_write(clkdata->regmap, TPS68470_REG_PLLCTL,
+-		     TPS68470_OSC_EXT_CAP_DEFAULT << TPS68470_OSC_EXT_CAP_SHIFT |
+-		     TPS68470_CLK_SRC_XTAL << TPS68470_CLK_SRC_SHIFT);
++	tps68470_clk_log_snapshot(clkdata, "clk_set_rate(pre)");
++
++	ret = tps68470_clk_write_trace(clkdata, TPS68470_REG_BOOSTDIV,
++				       clk_freqs[idx].boostdiv,
++				       "clk_set_rate(BOOSTDIV)");
++	if (ret)
++		return ret;
++	ret = tps68470_clk_write_trace(clkdata, TPS68470_REG_BUCKDIV,
++				       clk_freqs[idx].buckdiv,
++				       "clk_set_rate(BUCKDIV)");
++	if (ret)
++		return ret;
++	ret = tps68470_clk_write_trace(clkdata, TPS68470_REG_PLLSWR,
++				       TPS68470_PLLSWR_DEFAULT,
++				       "clk_set_rate(PLLSWR)");
++	if (ret)
++		return ret;
++	ret = tps68470_clk_write_trace(clkdata, TPS68470_REG_XTALDIV,
++				       clk_freqs[idx].xtaldiv,
++				       "clk_set_rate(XTALDIV)");
++	if (ret)
++		return ret;
++	ret = tps68470_clk_write_trace(clkdata, TPS68470_REG_PLLDIV,
++				       clk_freqs[idx].plldiv,
++				       "clk_set_rate(PLLDIV)");
++	if (ret)
++		return ret;
++	ret = tps68470_clk_write_trace(clkdata, TPS68470_REG_POSTDIV,
++				       clk_freqs[idx].postdiv,
++				       "clk_set_rate(POSTDIV)");
++	if (ret)
++		return ret;
++	ret = tps68470_clk_write_trace(clkdata, TPS68470_REG_POSTDIV2,
++				       clk_freqs[idx].postdiv,
++				       "clk_set_rate(POSTDIV2)");
++	if (ret)
++		return ret;
++	ret = tps68470_clk_write_trace(clkdata, TPS68470_REG_CLKCFG2,
++				       TPS68470_CLKCFG2_DRV_STR_2MA,
++				       "clk_set_rate(CLKCFG2)");
++	if (ret)
++		return ret;
++
++	ret = tps68470_clk_write_trace(clkdata, TPS68470_REG_PLLCTL,
++				       TPS68470_OSC_EXT_CAP_DEFAULT << TPS68470_OSC_EXT_CAP_SHIFT |
++				       TPS68470_CLK_SRC_XTAL << TPS68470_CLK_SRC_SHIFT,
++				       "clk_set_rate(PLLCTL)");
++	if (ret)
++		return ret;
+ 
+ 	clkdata->rate = rate;
++	tps68470_clk_log_snapshot(clkdata, "clk_set_rate(post)");
+ 
+ 	return 0;
+ }
+@@ -212,10 +393,16 @@
+ 		return -ENOMEM;
+ 
+ 	tps68470_clkdata->regmap = dev_get_drvdata(pdev->dev.parent);
++	tps68470_clkdata->dev = &pdev->dev;
+ 	tps68470_clkdata->clkout_hw.init = &tps68470_clk_initdata;
+ 
++	tps68470_clk_log_snapshot(tps68470_clkdata, "clk_probe(initial)");
++
+ 	/* Set initial rate */
+-	tps68470_clk_set_rate(&tps68470_clkdata->clkout_hw, clk_freqs[0].freq, 0);
++	ret = tps68470_clk_set_rate(&tps68470_clkdata->clkout_hw,
++				    clk_freqs[0].freq, 0);
++	if (ret)
++		return ret;
+ 
+ 	ret = devm_clk_hw_register(&pdev->dev, &tps68470_clkdata->clkout_hw);
+ 	if (ret)
+--- a/drivers/regulator/tps68470-regulator.c
++++ b/drivers/regulator/tps68470-regulator.c
+@@ -14,12 +14,14 @@
+ //	Rajmohan Mani <rajmohan.mani@intel.com>
+ 
+ #include <linux/clk.h>
++#include <linux/bitops.h>
+ #include <linux/device.h>
+ #include <linux/err.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/mfd/tps68470.h>
+ #include <linux/module.h>
++#include <linux/regmap.h>
+ #include <linux/platform_data/tps68470.h>
+ #include <linux/platform_device.h>
+ #include <linux/regulator/driver.h>
+@@ -54,11 +56,145 @@
+ 	REGULATOR_LINEAR_RANGE(900000, 0, 42, 25000),
+ };
+ 
++static const char *tps68470_regulator_reg_name(unsigned int reg)
++{
++	switch (reg) {
++	case TPS68470_REG_VCMVAL:
++		return "VCMVAL";
++	case TPS68470_REG_VIOVAL:
++		return "VIOVAL";
++	case TPS68470_REG_VSIOVAL:
++		return "VSIOVAL";
++	case TPS68470_REG_VAVAL:
++		return "VAVAL";
++	case TPS68470_REG_VDVAL:
++		return "VDVAL";
++	case TPS68470_REG_S_I2C_CTL:
++		return "S_I2C_CTL";
++	case TPS68470_REG_VCMCTL:
++		return "VCMCTL";
++	case TPS68470_REG_VACTL:
++		return "VACTL";
++	case TPS68470_REG_VDCTL:
++		return "VDCTL";
++	default:
++		return "UNKNOWN";
++	}
++}
++
++static bool tps68470_regulator_trace_snapshot_needed(struct regulator_dev *rdev)
++{
++	switch (rdev->desc->id) {
++	case TPS68470_CORE:
++	case TPS68470_ANA:
++	case TPS68470_VCM:
++	case TPS68470_VIO:
++	case TPS68470_VSIO:
++		return true;
++	default:
++		return false;
++	}
++}
++
++static void tps68470_regulator_log_read(struct regulator_dev *rdev,
++					const char *tag, unsigned int reg)
++{
++	unsigned int val = 0;
++	int ret;
++
++	ret = regmap_read(rdev->regmap, reg, &val);
++	dev_info(&rdev->dev,
++		 "pmic_raw: %s %s read reg=%s(0x%02x) ret=%d val=0x%02x\n",
++		 tag, rdev->desc->name,
++		 tps68470_regulator_reg_name(reg), reg, ret, val);
++}
++
++static void tps68470_regulator_log_snapshot(struct regulator_dev *rdev,
++					    const char *tag)
++{
++	static const unsigned int regs[] = {
++		TPS68470_REG_VCMVAL,
++		TPS68470_REG_VIOVAL,
++		TPS68470_REG_VSIOVAL,
++		TPS68470_REG_VAVAL,
++		TPS68470_REG_VDVAL,
++		TPS68470_REG_S_I2C_CTL,
++		TPS68470_REG_VCMCTL,
++		TPS68470_REG_VACTL,
++		TPS68470_REG_VDCTL,
++	};
++	int i;
++
++	if (!tps68470_regulator_trace_snapshot_needed(rdev))
++		return;
++
++	for (i = 0; i < ARRAY_SIZE(regs); i++)
++		tps68470_regulator_log_read(rdev, tag, regs[i]);
++}
++
++static int tps68470_regulator_update_bits_trace(struct regulator_dev *rdev,
++						unsigned int reg,
++						unsigned int mask,
++						unsigned int value,
++						const char *tag)
++{
++	unsigned int before = 0;
++	unsigned int after = 0;
++	int before_ret;
++	int ret;
++	int after_ret;
++
++	before_ret = regmap_read(rdev->regmap, reg, &before);
++	ret = regmap_update_bits(rdev->regmap, reg, mask, value);
++	after_ret = regmap_read(rdev->regmap, reg, &after);
++
++	dev_info(&rdev->dev,
++		 "pmic_raw: %s %s update reg=%s(0x%02x) mask=0x%02x value=0x%02x before_ret=%d before=0x%02x update_ret=%d after_ret=%d after=0x%02x\n",
++		 tag, rdev->desc->name,
++		 tps68470_regulator_reg_name(reg), reg, mask, value,
++		 before_ret, before, ret, after_ret, after);
++
++	return ret;
++}
++
++static int tps68470_regulator_set_voltage_sel(struct regulator_dev *rdev,
++					      unsigned int sel)
++{
++	unsigned int value;
++	int ret;
++
++	tps68470_regulator_log_snapshot(rdev, "set_voltage_sel(pre)");
++
++	value = sel << (ffs(rdev->desc->vsel_mask) - 1);
++	ret = tps68470_regulator_update_bits_trace(rdev, rdev->desc->vsel_reg,
++						   rdev->desc->vsel_mask,
++						   value, "set_voltage_sel");
++	if (ret)
++		return ret;
++
++	if (rdev->desc->apply_bit) {
++		ret = tps68470_regulator_update_bits_trace(rdev,
++							   rdev->desc->apply_reg,
++							   rdev->desc->apply_bit,
++							   rdev->desc->apply_bit,
++							   "apply_voltage_sel");
++		if (ret)
++			return ret;
++	}
++
++	tps68470_regulator_log_snapshot(rdev, "set_voltage_sel(post)");
++
++	return 0;
++}
++
+ static int tps68470_regulator_enable(struct regulator_dev *rdev)
+ {
+ 	struct tps68470_regulator_data *data = rdev->reg_data;
++	unsigned int value;
+ 	int ret;
+ 
++	tps68470_regulator_log_snapshot(rdev, "enable(pre)");
++
+ 	/* The Core buck regulator needs the PMIC's PLL to be enabled */
+ 	if (rdev->desc->id == TPS68470_CORE) {
+ 		ret = clk_prepare_enable(data->clk);
+@@ -68,17 +204,53 @@
+ 		}
+ 	}
+ 
+-	return regulator_enable_regmap(rdev);
++	if (rdev->desc->enable_is_inverted) {
++		value = rdev->desc->disable_val;
++	} else {
++		value = rdev->desc->enable_val;
++		if (!value)
++			value = rdev->desc->enable_mask;
++	}
++
++	ret = tps68470_regulator_update_bits_trace(rdev, rdev->desc->enable_reg,
++						   rdev->desc->enable_mask,
++						   value, "enable");
++	if (ret)
++		return ret;
++
++	tps68470_regulator_log_snapshot(rdev, "enable(post)");
++
++	return 0;
+ }
+ 
+ static int tps68470_regulator_disable(struct regulator_dev *rdev)
+ {
+ 	struct tps68470_regulator_data *data = rdev->reg_data;
++	unsigned int value;
++	int ret;
++
++	tps68470_regulator_log_snapshot(rdev, "disable(pre)");
+ 
+ 	if (rdev->desc->id == TPS68470_CORE)
+ 		clk_disable_unprepare(data->clk);
+ 
+-	return regulator_disable_regmap(rdev);
++	if (rdev->desc->enable_is_inverted) {
++		value = rdev->desc->enable_val;
++		if (!value)
++			value = rdev->desc->enable_mask;
++	} else {
++		value = rdev->desc->disable_val;
++	}
++
++	ret = tps68470_regulator_update_bits_trace(rdev, rdev->desc->enable_reg,
++						   rdev->desc->enable_mask,
++						   value, "disable");
++	if (ret)
++		return ret;
++
++	tps68470_regulator_log_snapshot(rdev, "disable(post)");
++
++	return 0;
+ }
+ 
+ /* Operations permitted on DCDCx, LDO2, LDO3 and LDO4 */
+@@ -87,14 +259,14 @@
+ 	.enable			= tps68470_regulator_enable,
+ 	.disable		= tps68470_regulator_disable,
+ 	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
+-	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
++	.set_voltage_sel	= tps68470_regulator_set_voltage_sel,
+ 	.list_voltage		= regulator_list_voltage_linear_range,
+ 	.map_voltage		= regulator_map_voltage_linear_range,
+ };
+ 
+ static const struct regulator_ops tps68470_always_on_reg_ops = {
+ 	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
+-	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
++	.set_voltage_sel	= tps68470_regulator_set_voltage_sel,
+ 	.list_voltage		= regulator_list_voltage_linear_range,
+ 	.map_voltage		= regulator_map_voltage_linear_range,
+ };

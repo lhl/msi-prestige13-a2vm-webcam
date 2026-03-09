@@ -180,6 +180,10 @@ What now looks most likely:
 
 1. Tighten in-kernel PMIC instrumentation around raw regmap write/read return
    codes for `0x43`, `0x40`-`0x42`, `0x47`, and `0x48`.
+   - immediate next wrapper:
+     - `scripts/exp7-pmic-raw-regmap-trace-update.sh`
+     - reboot
+     - `scripts/exp7-pmic-raw-regmap-trace-verify.sh`
 2. Fix or replace the post-boot PMIC dump path so we can see real register
    state after a failed clean boot.
 3. Extract the higher-level Windows config path that feeds `WF::SetConf` and

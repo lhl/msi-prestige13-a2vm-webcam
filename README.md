@@ -148,8 +148,11 @@ msi-prestige13-a2vm-webcam/
 4. Put the next effort into the PMIC behavior Linux still does not explain:
    - raw regmap write/read results around `S_I2C_CTL` `0x43`
    - why post-boot PMIC register dumps still fail completely
-   - the higher-level Windows config that feeds `WF::SetConf` and selects
-     `WF` versus `UF`
+   - the higher-level Windows config that feeds `WF::SetConf`
+5. The next concrete kernel-side run is:
+   - `scripts/exp7-pmic-raw-regmap-trace-update.sh`
+   - reboot
+   - `scripts/exp7-pmic-raw-regmap-trace-verify.sh`
 
 ## Related Docs
 
