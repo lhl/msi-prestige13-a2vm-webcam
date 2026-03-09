@@ -62,6 +62,13 @@ with strong evidence.
     already `-110`
   - after that point, `i2c_designware.1` starts timing out and later PMIC
     accesses collapse to `-110`
+- `exp8` focused `S_I2C_CTL` trace confirmed the same failure point with a
+  narrower patch:
+  - `ANA` and `CORE` still read back cleanly
+  - the combined `VSIO` write to `0x43` still returns success but immediate
+    readback fails with `-110`
+  - the timeout storm still persists, though without the `exp7` emergency-mode
+    outcome
 - the post-boot PMIC dump path is still not usable:
   - `scripts/pmic-reg-dump.sh` returned `ERROR` for all registers in
     representative PMIC experiment runs
@@ -81,12 +88,12 @@ with strong evidence.
 
 ## Next Best Steps
 
-1. Run the narrower PMIC follow-up that keeps the `0x43` signal but avoids the
-   broad timeout amplification seen in `exp7`:
+1. Run the split-step PMIC follow-up that keeps the `0x43` signal but separates
+   the Windows-like IO-side and GPIO-side updates:
    - immediate next wrapper:
-     - `scripts/exp8-s-i2c-ctl-focused-trace-update.sh`
+     - `scripts/exp9-s-i2c-ctl-split-step-trace-update.sh`
      - reboot
-     - `scripts/exp8-s-i2c-ctl-focused-trace-verify.sh`
+     - `scripts/exp9-s-i2c-ctl-split-step-trace-verify.sh`
 2. Fix or replace the post-boot PMIC dump path so we can observe real register
    state after a failed clean boot.
 3. Extract more of the higher-level Windows config path above `WF::SetConf`.

@@ -2,6 +2,42 @@
 
 ## 2026-03-09
 
+### Commit `exp8`, record its narrower confirmation result, and add `exp9`
+
+- Plan: check in the new `exp8` run artifacts, record the narrower `0x43`
+  confirmation result in the status docs, and add a split-step `exp9`
+  experiment that distinguishes the IO-side `BIT(1)` update from the later
+  GPIO-side `BIT(0)` update.
+- Commands:
+  - reviewed the new `exp8` update and verify artifacts:
+    - `sed -n '1,220p' runs/2026-03-09/20260309T164119-s-i2c-ctl-focused-trace-update/metadata.env`
+    - `sed -n '1,220p' runs/2026-03-09/20260309T164422-snapshot-exp8-clean-boot/focused-summary.txt`
+    - `sed -n '1,260p' runs/2026-03-09/20260309T164422-snapshot-exp8-clean-boot/experiment-journal.txt`
+    - `sed -n '1,120p' runs/2026-03-09/20260309T164422-snapshot-exp8-clean-boot/pmic-reg-dump.txt`
+  - reviewed the Windows `S_I2C_CTL` notes and disassembly around:
+    - `Tps68470VoltageWF::SetVSIOCtl_IO`
+    - `Tps68470VoltageWF::SetVSIOCtl_GPIO`
+  - created and wired the next experiment:
+    - `reference/patches/pmic-si2c-ctl-split-step-trace-v1.patch`
+    - `scripts/exp9-s-i2c-ctl-split-step-trace-update.sh`
+    - `scripts/exp9-s-i2c-ctl-split-step-trace-verify.sh`
+    - `scripts/lib-experiment-workflow.sh`
+  - refreshed status/control docs:
+    - `README.md`
+    - `docs/pmic-followup-experiments.md`
+    - `docs/webcam-status.md`
+    - `docs/20260309-status-report.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+- Result:
+  - `exp8` is now recorded as a narrower confirmation of the `exp7` finding,
+    not a new branch
+  - the project's next narrow question is now explicit:
+    - does `0x43` wedge the PMIC on the IO-side `BIT(1)` step
+    - or on the later GPIO-side `BIT(0)` step
+  - the repo now has a runnable `exp9` wrapper pair to answer that
+
 ### Analyze `exp7`, commit its run artifacts, and prepare a narrower `exp8`
 
 - Plan: record the new `exp7` run evidence and update the project assessment,

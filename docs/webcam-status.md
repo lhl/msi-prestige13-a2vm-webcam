@@ -168,6 +168,30 @@ Operational note:
 - that looks like collateral from the PMIC/I2C timeout storm, not evidence
   that `/boot` itself is the webcam blocker
 
+### `exp8` focused `S_I2C_CTL` trace
+
+What it proved:
+
+- the narrower trace does not change the underlying failure
+- `ANA` still enables cleanly on `VACTL`
+- `CORE` still enables cleanly on `VDCTL`
+- the first bad PMIC transition is still `VSIO` enable on `S_I2C_CTL` `0x43`
+
+Key lines:
+
+- `pmic_focus: enable ANA ... before=0x00 ... after=0x01`
+- `pmic_focus: enable CORE ... before=0x04 ... after=0x05`
+- `pmic_focus: enable VSIO reg=S_I2C_CTL(0x43) ... update_ret=0 after_ret=-110`
+
+Interpretation:
+
+- `exp7` was not a false positive caused by broad tracing
+- the bus wedge is tied to the `0x43` transition itself, not just to the
+  extra regmap snapshotting
+- the next meaningful question is narrower still:
+  - does the wedge happen on the IO-side `BIT(1)` transition
+  - or on the later GPIO-side `BIT(0)` transition
+
 ## Current Assessment
 
 The honest assessment is:
@@ -207,12 +231,12 @@ What now looks most likely:
 
 ## Next Steps
 
-1. Run the narrower `S_I2C_CTL`-focused PMIC follow-up that keeps the key
-   `0x43` signal but avoids the broad timeout amplification seen in `exp7`.
+1. Run the split-step `S_I2C_CTL` PMIC follow-up that separates the Windows-like
+   IO-side `BIT(1)` step from the later GPIO-side `BIT(0)` step.
    - immediate next wrapper:
-     - `scripts/exp8-s-i2c-ctl-focused-trace-update.sh`
+     - `scripts/exp9-s-i2c-ctl-split-step-trace-update.sh`
      - reboot
-     - `scripts/exp8-s-i2c-ctl-focused-trace-verify.sh`
+     - `scripts/exp9-s-i2c-ctl-split-step-trace-verify.sh`
 2. Fix or replace the post-boot PMIC dump path so we can see real register
    state after a failed clean boot.
 3. Extract the higher-level Windows config path that feeds `WF::SetConf` and

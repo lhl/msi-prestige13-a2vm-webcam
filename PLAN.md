@@ -50,6 +50,10 @@ with strong evidence.
     immediate readback already failed with `-110`
   - after that point, `i2c_designware.1` entered a timeout storm and later
     PMIC accesses also failed with `-110`
+  - `exp8` confirmed the same failure point with a narrower trace:
+    - `ANA` and `CORE` still enable cleanly
+    - the first bad transition is still the `VSIO` write to `0x43`
+    - the boot delay persists even without the broader `exp7` snapshots
 - current leading interpretation:
   - the remaining gap is PMIC-side behavior, not basic platform support
   - we are missing either exact PMIC control behavior, exact runtime
@@ -59,16 +63,13 @@ with strong evidence.
 
 ### 1. PMIC state truth
 
-- [ ] Narrow the next PMIC trace to the smallest set of operations needed to
-  confirm the `S_I2C_CTL` `0x43` failure without dragging the bus through
-  dozens of additional timeout reads.
-- [ ] Confirm in a lighter-weight run that:
-  - `ANA` enable still succeeds
-  - `CORE` enable still succeeds
-  - `VSIO` `S_I2C_CTL` `0x43` remains the first transition after which PMIC
-    readback fails
-- [ ] Avoid broad unwind and full-register snapshot tracing once the first
-  `-110` appears.
+- [ ] Run the split-step follow-up that logs `0x43` after:
+  - the IO-side `BIT(1)` update
+  - the later GPIO-side `BIT(0)` update
+- [ ] Determine which of those two substeps is the first one to wedge PMIC
+  access and trigger the later timeout storm.
+- [ ] Keep the scope narrow enough that the experiment stays bootable without
+  emergency-mode fallout.
 
 ### 2. Post-boot PMIC visibility
 
@@ -102,7 +103,7 @@ with strong evidence.
    work.
 2. Do not spend more time on pure GPIO permutations for now.
 3. Put the next experiment budget into:
-   - focused `S_I2C_CTL` follow-up instrumentation
+   - split-step `S_I2C_CTL` follow-up instrumentation
    - repairing PMIC readback visibility
    - deeper Windows config-path extraction
 4. Keep using:
@@ -112,14 +113,16 @@ with strong evidence.
    - `scripts/01-clean-boot-check.sh`
    to keep evidence reproducible
 5. The immediate next run should be:
-   - `scripts/exp8-s-i2c-ctl-focused-trace-update.sh`
+   - `scripts/exp9-s-i2c-ctl-split-step-trace-update.sh`
    - reboot
-   - `scripts/exp8-s-i2c-ctl-focused-trace-verify.sh`
+   - `scripts/exp9-s-i2c-ctl-split-step-trace-verify.sh`
 
 ## Open Questions
 
 - Why does the `S_I2C_CTL` `0x43` update path report success while immediate
   PMIC readback collapses to `-110`?
+- If `0x43` is the culprit, does the wedge happen on the IO-side `BIT(1)`
+  stage, the GPIO-side `BIT(0)` stage, or only after both are set?
 - Why does userspace PMIC register dumping fail completely after boot when the
   kernel can still log `TPS68470 REVID: 0x21`?
 - What exact higher-level Windows configuration feeds `WF::SetConf` on this

@@ -1,0 +1,5 @@
+CMD: git_safe status --short
+?? runs/2026-03-09/20260309T164119-s-i2c-ctl-focused-trace-update/
+?? runs/2026-03-09/20260309T164422-snapshot-exp8-clean-boot/
+
+EXIT_STATUS: 0

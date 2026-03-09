@@ -1,0 +1,17 @@
+filename:       /lib/modules/7.0.0-rc2-1-mainline-dirty/kernel/drivers/media/i2c/ov5675.ko.zst
+license:        GPL v2
+description:    OmniVision OV5675 sensor driver
+author:         Shawn Tu
+srcversion:     31150C43E501BFEDE30A613
+alias:          acpi*:OVTI5675:*
+alias:          of:N*T*Covti,ov5675C*
+alias:          of:N*T*Covti,ov5675
+depends:        videodev,v4l2-fwnode,mc,v4l2-async
+name:           ov5675
+retpoline:      Y
+vermagic:       7.0.0-rc2-1-mainline-dirty SMP preempt mod_unload 
+parm:           identify_retry_count:Number of OV5675 chip-ID read attempts (uint)
+parm:           identify_retry_delay_us:Delay between OV5675 chip-ID read attempts in microseconds (uint)
+parm:           extra_post_power_on_delay_us:Extra delay after ov5675 reset deassert before chip-ID read, in microseconds (uint)
+parm:           gpio_release_sequence:OV5675 GPIO release sequence: 0=simultaneous, 1=powerdown-then-reset, 2=reset-then-powerdown (uint)
+parm:           gpio_release_delay_us:Delay between staged OV5675 GPIO release steps, in microseconds (uint)

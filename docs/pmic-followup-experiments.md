@@ -7,12 +7,17 @@ update-and-verify workflows.
 
 As of the completed `2026-03-09` PMIC batch:
 
-- `exp1` through `exp7` are completed historical experiments
-- the highest-value next kernel-side follow-up is `exp8`
+- `exp1` through `exp8` are completed historical experiments
+- the highest-value next kernel-side follow-up is `exp9`
 - `exp7` established that `VSIO` enable on `S_I2C_CTL` `0x43` is the first
   PMIC transaction after which readback collapses to `-110`
-- `exp8` keeps that signal but avoids the broad post-failure snapshotting that
-  amplified boot delays in `exp7`
+- `exp8` confirmed the same failure point with a narrower trace:
+  - `ANA` enable still succeeds
+  - `CORE` enable still succeeds
+  - the combined `VSIO` enable on `0x43` still returns success but immediate
+    readback fails with `-110`
+- `exp9` now splits the `0x43` path into an explicit `BIT(1)` substep and
+  `BIT(0)` substep so we can see which transition wedges PMIC access
 
 ## Goal
 
@@ -251,6 +256,34 @@ Scripts:
 - `scripts/exp8-s-i2c-ctl-focused-trace-update.sh`
 - `scripts/exp8-s-i2c-ctl-focused-trace-verify.sh`
 
+Observed outcome:
+- confirmed `exp7` with a narrower trace
+- `ANA` and `CORE` enable still read back cleanly
+- `VSIO` enable on `0x43` still reports:
+  - `update_ret=0`
+  - immediate `after_ret=-110`
+- the timeout storm was smaller than `exp7`, but still large enough to add
+  about a minute of boot delay on the observed run
+
+### 9. Split-step `S_I2C_CTL` trace
+
+Purpose:
+- keep the narrower `exp8` scope
+- split the `VSIO` enable path into:
+  - IO-side `BIT(1)` update with immediate readback
+  - GPIO-side `BIT(0)` update with immediate readback
+- determine which substep actually wedges PMIC access
+
+Default patch:
+- `reference/patches/pmic-si2c-ctl-split-step-trace-v1.patch`
+
+Extra module rebuild/install:
+- `tps68470-regulator.ko`
+
+Scripts:
+- `scripts/exp9-s-i2c-ctl-split-step-trace-update.sh`
+- `scripts/exp9-s-i2c-ctl-split-step-trace-verify.sh`
+
 ## Typical usage
 
 Update, install modules, and reboot for experiment 2:
@@ -297,19 +330,19 @@ scripts/exp2-wf-s-i2c-ctl-verify.sh --dry-run
 Current highest-priority run:
 
 ```bash
-scripts/exp8-s-i2c-ctl-focused-trace-update.sh
+scripts/exp9-s-i2c-ctl-split-step-trace-update.sh
 ```
 
 After reboot:
 
 ```bash
-scripts/exp8-s-i2c-ctl-focused-trace-verify.sh
+scripts/exp9-s-i2c-ctl-split-step-trace-verify.sh
 ```
 
 ## Why the verify wrappers always do a PMIC dump
 
 The clean-boot journal remains the primary truth source, but the PMIC dump is a
-useful secondary check for all six PMIC-side follow-ups because it captures:
+useful secondary check for all PMIC-side follow-ups because it captures:
 
 - value-register state
 - `S_I2C_CTL`

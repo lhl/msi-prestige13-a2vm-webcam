@@ -1,0 +1,9 @@
+filename:       /lib/modules/7.0.0-rc2-1-mainline-dirty/kernel/drivers/regulator/tps68470-regulator.ko.zst
+license:        GPL v2
+description:    TPS68470 voltage regulator driver
+alias:          platform:tps68470-regulator
+srcversion:     5343AFE726B1A79AED8E086
+depends:        
+name:           tps68470_regulator
+retpoline:      Y
+vermagic:       7.0.0-rc2-1-mainline-dirty SMP preempt mod_unload 

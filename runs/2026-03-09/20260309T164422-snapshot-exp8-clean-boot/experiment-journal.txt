@@ -1,0 +1,66 @@
+Mar 09 16:43:09 p13 kernel: regulator regulator.2: pmic_focus: enable ANA reg=VACTL(0x47) mask=0x01 value=0x01 before_ret=0 before=0x00 update_ret=0 after_ret=0 after=0x01
+Mar 09 16:43:09 p13 kernel: regulator regulator.1: pmic_focus: enable CORE reg=VDCTL(0x48) mask=0x01 value=0x01 before_ret=0 before=0x04 update_ret=0 after_ret=0 after=0x05
+Mar 09 16:43:10 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:10 p13 kernel: regulator regulator.5: pmic_focus: enable VSIO reg=S_I2C_CTL(0x43) mask=0x03 value=0x03 before_ret=0 before=0x00 update_ret=0 after_ret=-110 after=0x00
+Mar 09 16:43:11 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:12 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:13 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:13 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -110
+Mar 09 16:43:14 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:14 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -110
+Mar 09 16:43:15 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:15 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -110
+Mar 09 16:43:16 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:16 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -110
+Mar 09 16:43:17 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:17 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -110
+Mar 09 16:43:17 p13 kernel: ov5675 i2c-OVTI5675:00: failed to find sensor: -110
+Mar 09 16:43:18 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:19 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:20 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:21 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:22 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:22 p13 kernel: regulator regulator.5: pmic_focus: disable VSIO reg=S_I2C_CTL(0x43) mask=0x03 value=0x00 before_ret=-110 before=0x00 update_ret=-110 after_ret=-110 after=0x00
+Mar 09 16:43:23 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:24 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:25 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:26 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:27 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:28 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:29 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:30 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:31 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:33 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:34 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:35 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:36 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:37 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:38 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:39 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:40 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:41 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:42 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:43 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:44 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:45 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:46 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:47 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:48 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:49 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:50 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:51 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:52 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:53 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:54 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:55 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:56 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:57 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:58 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:43:59 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:44:00 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:44:01 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:44:02 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:44:03 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:44:04 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:44:05 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 16:44:06 p13 kernel: i2c_designware i2c_designware.1: controller timed out

@@ -1,0 +1,8 @@
+CMD: find /sys/bus/i2c/drivers/ov5675 -maxdepth 2 2>/dev/null | sort || true
+/sys/bus/i2c/drivers/ov5675
+/sys/bus/i2c/drivers/ov5675/bind
+/sys/bus/i2c/drivers/ov5675/module
+/sys/bus/i2c/drivers/ov5675/uevent
+/sys/bus/i2c/drivers/ov5675/unbind
+
+EXIT_STATUS: 0

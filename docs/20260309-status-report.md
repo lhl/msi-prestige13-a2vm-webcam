@@ -298,6 +298,40 @@ Outcome:
 - but several experiments added high-value signal
 - the remaining uncertainty is now smaller and more concrete
 
+### 10. `exp8` confirmed the same `0x43` failure point with a narrower trace
+
+`exp8` kept only the minimum PMIC context around:
+
+- `ANA` enable on `VACTL`
+- `CORE` enable on `VDCTL`
+- `VSIO` enable / disable on `S_I2C_CTL` `0x43`
+
+It confirmed:
+
+- `ANA` still enables cleanly
+- `CORE` still enables cleanly
+- the first bad PMIC transition is still `VSIO` enable on `0x43`
+- the `0x43` update still returns success while immediate readback fails
+  with `-110`
+
+This matters because it rules out a simpler explanation that `exp7` only
+looked bad because the raw-regmap patch was too noisy.
+
+`exp8` also showed:
+
+- the narrower trace reduced the blast radius compared with `exp7`
+- but the system still spent about a minute logging `i2c_designware.1:
+  controller timed out`
+
+Interpretation:
+
+- the bus wedge is tied to the `0x43` transition itself, not just to broad
+  post-failure PMIC snapshotting
+- the next narrow question is whether the failure happens on:
+  - the Windows-like IO-side `BIT(1)` step
+  - the later GPIO-side `BIT(0)` step
+  - or only after both are set
+
 ## Windows Driver Extraction State
 
 ### What we have
@@ -720,14 +754,12 @@ Those branches have enough clean negatives now.
 
 Ordered by likely value:
 
-1. Run the narrower `S_I2C_CTL`-focused follow-up.
-   - keep the high-value `exp7` signal around `0x43`
-   - confirm in a lighter-weight run that:
-     - `ANA` enable still succeeds
-     - `CORE` enable still succeeds
-     - `VSIO` `S_I2C_CTL` `0x43` remains the first transition after which
-       PMIC readback fails
-   - avoid broad post-failure snapshots once the first `-110` appears
+1. Run the split-step `S_I2C_CTL` follow-up.
+   - keep the high-value `exp8` signal around `0x43`
+   - split the enable path so it logs:
+     - the IO-side `BIT(1)` write and readback
+     - the later GPIO-side `BIT(0)` write and readback
+   - determine which transition actually wedges PMIC access
 
 2. Fix or replace the PMIC dump path.
    - figure out why post-boot userspace reads all fail
