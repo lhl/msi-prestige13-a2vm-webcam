@@ -16,7 +16,9 @@ The good news is that the first MSI-specific `INT3472` / `TPS68470`
 board-data patch, the follow-up `ov5675` diagnostic patch, the `ipu-bridge`
 follow-up patch, and the serial power-on follow-up have all moved the failure
 forward. The bad news is that the camera is still blocked, now at sensor
-identification after power-on succeeds.
+identification after power-on succeeds. The latest three staged `ov5675`
+GPIO-release clean boots were also negative, and the latest Windows-source
+pull shows that Linux still does not model some `WF`-side PMIC behavior.
 
 ## What works
 
@@ -121,6 +123,12 @@ Additional live evidence on the patched kernel:
   - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
 - unlike the first polarity run, this second one-line variant did not add the
   early `-517` GPIO-provider deferral noise
+- on the three newer clean boots for staged `ov5675` GPIO release:
+  - `sequence=1`, `delay_us=2000` still ends at repeated chip-ID timeouts
+    `-110`
+  - `sequence=2`, `delay_us=2000` still ends at repeated chip-ID timeouts
+    `-110`
+  - control `sequence=0` also still ends at repeated chip-ID timeouts `-110`
 - the old clean-boot `Failed to enable dvdd: -ETIMEDOUT` line is gone
 - the media graph still has no sensor entity
 - there are still no `/dev/v4l-subdev*` nodes
@@ -159,9 +167,19 @@ Those lines and checks are the current high-value signal. They mean:
 10. The second one-line polarity follow-up was also a negative result:
    - moving the active-high `powerdown` behavior onto `GPIO1` also did not
      move the clean-boot `-110` timeout
-   - with both one-line physical-line variants now negative, the next likely
-     gap is `ov5675` GPIO release sequencing rather than more single-line
-     board-data polarity guesses
+11. The three staged `ov5675` GPIO-release clean boots were also negative:
+   - `sequence=1`, `delay_us=2000` did not move the timeout
+   - `sequence=2`, `delay_us=2000` did not move it either
+   - control `sequence=0` behaved the same
+12. The newer Windows-source pull now narrows the likely missing Linux behavior:
+   - the `WF` path carries a five-voltage tuple:
+     `1050 / 2800 / 1800 / 2800 / 1800`
+   - the `WF` initialize path writes PMIC value registers
+     `0x41`, `0x40`, `0x42`, `0x3c`, and `0x3f`
+   - the `WF` `S_I2C_CTL` path around register `0x43` is staged rather than a
+     single generic enable write
+   - the remaining gap is now more likely PMIC-side initialization or control
+     behavior than another `ov5675`-only GPIO release tweak
 
 ## Assessment
 
@@ -192,11 +210,19 @@ board-data matching.
   - moving the active-high waveform onto `GPIO2` did not change the clean-boot
     identify failure
   - moving the active-high waveform onto `GPIO1` did not change it either
+- The three staged `ov5675` GPIO-release runs were also negative:
+  - `sequence=1`, `delay_us=2000` did not change the `-110` timeout
+  - `sequence=2`, `delay_us=2000` did not change it either
+  - control `sequence=0` behaved the same
+- The latest Windows-source pull adds stronger PMIC-side evidence:
+  - the `WF` helper carries a concrete voltage tuple
+  - the `WF` initialize path writes PMIC value registers before power-on
+  - the `WF` `S_I2C_CTL` handling is staged and conditional
 - The leading remaining local possibilities are now:
-  - remaining `GPIO1` / `GPIO2` electrical behavior beyond the current
-    lockstep release model in `ov5675`
-  - remaining board-data regulator / consumer / sequencing detail
-  - remaining `WF`-side PMIC wake-up sequencing detail
+  - missing `WF`-side PMIC value-register programming
+  - missing staged `S_I2C_CTL` behavior
+  - possible `VD` / `CORE` voltage mismatch between Linux and Windows
+  - exact `GPIO1` / `GPIO2` semantic mapping beyond the current Linux model
 - The Windows package does contain a separate `UF` helper family that touches a
   different PMIC GPIO line, but current ACPI evidence still keeps this laptop
   aligned with the `WF` / `LNK0` path, so a blind `gpio.4` pivot is not the
@@ -260,8 +286,9 @@ that:
   polarity, not more label-only swaps
 - the next clean boot with the second `GPIO1`-active-high polarity follow-up
   was also negative
-- the next best local follow-up is now a module-only `ov5675` GPIO-release
-  sequencing debug patch rather than another one-line board-data polarity guess
+- the next three staged `ov5675` GPIO-release clean boots were also negative
+- the newest Windows-source pull now shows a concrete `WF` PMIC init gap:
+  value-register programming plus staged `S_I2C_CTL`
 - the sensor still does not appear as a media subdevice
 - the camera still does not work in userspace
 
@@ -274,15 +301,19 @@ that:
   - a real negative result
   - and evidence that polarity changes are now more meaningful than more
     label-only swaps
-- Test the next smallest module-only follow-up in one of these directions:
-  - `ov5675` staged `reset` / `powerdown` release order and delay
-  - board-data regulator consumer mapping
-  - remaining PMIC or sensor wake-up sequencing detail
-- Current concrete next candidate:
-  - `reference/patches/ov5675-gpio-release-sequencing-debug-v1.patch`
-  - keep the current `WF` / `LNK0` board-data structure
-  - rebuild only `drivers/media/i2c/ov5675.ko`
-  - test staged `powerdown` / `reset` release order via module parameters
+- Treat all three staged `ov5675` GPIO-release runs from `2026-03-09` as
+  negative.
+- Use the recovered Windows `WF` path to drive the next comparison in these
+  directions:
+  - PMIC value-register programming
+  - `S_I2C_CTL` sequencing
+  - current Linux `CORE` / `VD` voltage assumptions
+- Current concrete next comparison:
+  - current Linux MSI `WF` assumptions versus the recovered Windows `WF` tuple
+    and initialization path
+  - likely first patch space:
+    - `INT3472` / `TPS68470` board-data or regulator behavior
+    - not another `ov5675`-only GPIO-release tweak
 - Re-test with:
   - `journalctl -k -b | rg 'tps68470|ipu7|ov5675'`
   - `media-ctl -p -d /dev/media0`

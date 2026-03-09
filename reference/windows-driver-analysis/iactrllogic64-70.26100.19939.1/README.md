@@ -2,7 +2,7 @@
 
 - Package: `msi-ov5675-70.26100.19939.1`
 - Source binary: `/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/windows-driver-packages/msi-ov5675-70.26100.19939.1/extracted/iactrllogic64.sys`
-- Generated UTC: 2026-03-07T16:13:51Z
+- Generated UTC: 2026-03-09T03:36:59Z
 
 ## Files
 
@@ -13,7 +13,7 @@
 - `pe-header-and-imports.txt` — PE metadata and imports
 - `debug-directory.txt` — PDB path and CodeView GUID
 - `load-config.txt` — GuardCF table and related load-config metadata
-- `disasm-*.txt` — targeted disassembly windows for the current investigation, including VoltageWF power/IO paths and CrdG2TiSensor helpers
+- `disasm-*.txt` — targeted disassembly windows for the current investigation, including VoltageWF constructor/init/setconf, WF/UF power paths, and CrdG2TiSensor helpers
 
 ## Regeneration
 

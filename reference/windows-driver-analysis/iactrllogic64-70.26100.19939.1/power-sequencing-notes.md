@@ -6,160 +6,229 @@ This note captures the concrete `TPS68470` power-path behavior recovered from
 
 ## Main Result
 
-- The Windows driver contains real `TPS68470` sequencing logic for this board.
-- `Tps68470VoltageWF::PowerOn` and `PowerOff` are orchestration functions, not
-  simple one-register toggles.
-- `Tps68470VoltageWF::IoActive` and `IoIdle` manage the `S_I2C_CTL` path with a
-  refcount and separate IO-vs-GPIO helper branches.
-- `CrdG2TiSensor::SensorPowerOn` and `SensorPowerOff` wrap those voltage and IO
-  helpers, which means the Linux gap is likely in PMIC board data and GPIO
-  policy rather than in the sensor driver itself.
+- The Windows driver contains more than simple PMIC rail enables for this board.
+- The `WF` path carries a concrete five-voltage configuration tuple:
+  - `VD` = `1050 mV`
+  - `VA` = `2800 mV`
+  - `VIO` = `1800 mV`
+  - `VCM` = `2800 mV`
+  - `VSIO` = `1800 mV`
+- The `WF` initialize path programs PMIC value registers before the later
+  enable/control helpers run.
+- The `WF` `S_I2C_CTL` path is staged rather than a single generic enable write.
+- `CrdG2TiSensor::SensorPowerOn` still layers `IoActive_IO`, a `WF`/`UF`
+  power-on branch, and later `IoActive_GPIO`.
+- The remaining Linux gap is therefore narrower and more concrete than before:
+  value-register programming, `S_I2C_CTL` behavior, and exact GPIO semantics.
+
+## Corrections
+
+- The earlier extracted `poweron` / `poweroff` files were partly mislabeled.
+- Regeneration on `2026-03-09` corrected the captured function windows to match
+  method-string cross-references:
+  - `disasm-voltage-uf-poweroff.txt` => `0x140013214`
+  - `disasm-voltage-wf-poweroff.txt` => `0x1400133e8`
+  - `disasm-voltage-uf-poweron.txt` => `0x14001357c`
+  - `disasm-voltage-wf-poweron.txt` => `0x140013868`
 
 ## Files
 
+- `disasm-voltage-wf-constructor.txt`
+- `disasm-voltage-wf-initialize.txt`
+- `disasm-voltage-wf-setconf.txt`
 - `disasm-voltage-wf-poweron.txt`
 - `disasm-voltage-wf-poweroff.txt`
 - `disasm-voltage-wf-ioactive.txt`
 - `disasm-voltage-wf-ioactive-io.txt`
 - `disasm-voltage-wf-ioactive-gpio.txt`
-- `disasm-voltage-wf-ioidle.txt`
+- `disasm-voltage-wf-setvsioctl-gpio.txt`
+- `disasm-voltage-wf-setvsioctl-io.txt`
 - `disasm-sensor-g2ti-poweron.txt`
 - `disasm-sensor-g2ti-poweroff.txt`
 - `disasm-sensor-g2ti-setgpiooutput.txt`
 
 ## Concrete Behavior
 
+### Function Mapping
+
+Method-string cross-references now line up like this:
+
+- `0x140013214` logs `Tps68470VoltageUF::PowerOff`
+- `0x1400133e8` logs `Tps68470VoltageWF::PowerOff`
+- `0x14001357c` logs `Tps68470VoltageUF::PowerOn`
+- `0x140013868` logs `Tps68470VoltageWF::PowerOn`
+- `0x140012de0` logs `Tps68470VoltageWF::IoActive_GPIO`
+- `0x1400148e4` logs `Tps68470VoltageWF::SetVSIOCtl_GPIO`
+- `0x140014a7c` logs `Tps68470VoltageWF::SetVSIOCtl_IO`
+
+That matters because the `WF` path, not just the generic sensor wrapper, now has
+source-backed board configuration details.
+
+### `Tps68470VoltageWF` Constructor
+
+Recovered from `disasm-voltage-wf-constructor.txt`:
+
+- entry point: `0x140012764`
+- zeroes the refcount/state field at `[this + 0x14]`
+- seeds these 16-bit fields:
+  - `[this + 0x08] = 0x041a` => `1050 mV`
+  - `[this + 0x0a] = 0x0af0` => `2800 mV`
+  - `[this + 0x0c] = 0x0708` => `1800 mV`
+  - `[this + 0x0e] = 0x0af0` => `2800 mV`
+  - `[this + 0x10] = 0x0708` => `1800 mV`
+
+Interpretation:
+
+- the `WF` helper object itself carries a default board voltage tuple
+- Windows is not relying only on later boolean rail enables
+
+### `Tps68470VoltageWF::SetConf`
+
+Recovered from `disasm-voltage-wf-setconf.txt`:
+
+- entry point: `0x140013ab8`
+- copies five 16-bit values from the input config blob into the same object
+  fields used by the constructor
+- copy order:
+  - input `+0x02` => object `+0x0a`
+  - input `+0x06` => object `+0x0e`
+  - input `+0x04` => object `+0x0c`
+  - input `+0x08` => object `+0x10`
+  - input `+0x00` => object `+0x08`
+
+Implication:
+
+- those object fields are live configuration values, not dead defaults or flags
+- the same five-voltage tuple can be board-specific data supplied from a higher
+  config layer
+
+### `Tps68470VoltageWF::Initialize`
+
+Recovered from `disasm-voltage-wf-initialize.txt`:
+
+- entry point: `0x1400129d8`
+- converts the stored millivolt fields into PMIC register values and writes them
+  before later power-on helpers run
+- register writes observed in order:
+  - object `+0x0a` => register `0x41`
+  - object `+0x10` => register `0x40`
+  - object `+0x08` => register `0x42`
+  - object `+0x0e` => register `0x3c`
+  - object `+0x0c` => register `0x3f`
+
+Linux correlation:
+
+- `0x41` => `VAVAL`
+- `0x40` => `VSIOVAL`
+- `0x42` => `VDVAL`
+- `0x3f` => `VIOVAL`
+- `0x3c` is the value register used by the Windows `VCM` path
+
+Implication:
+
+- Windows programs at least `VA`, `VSIO`, `VD`, `VCM`, and `VIO` value registers
+  explicitly on this path
+- Linux currently models the MSI board mainly as regulator consumers and GPIOs;
+  this initialization step is not represented as a board-specific source artifact
+
 ### `Tps68470VoltageWF::PowerOn`
 
 Recovered from `disasm-voltage-wf-poweron.txt`:
 
-- entry point: `0x140013214`
-- logs step ids `0x20`, `0x21`, `0x22`, `0x23`, and final status `0x24`
-- calls these helper functions in order:
-  - `0x140013b38`
-  - `0x1400141d8`
-  - `0x140014500`
-  - `0x140013e88`
-
-Cross-references tie those helper regions to the named methods:
-
-- `0x140013b38` => `Tps68470VoltageUF::SetVACtl`
-- `0x1400141d8` => `Tps68470VoltageUF::SetVDCtl`
-- `0x140014500` => `Tps68470VoltageUF::SetVSIOCtl`
-- `0x140013e88` => `Tps68470VoltageUF::SetVCMCtl`
-
-Implication:
-
-- the power-up path enables at least VA, VD, VSIO, and VCM through explicit
-  staged helper calls
-- the helper names and recovered register accesses line up with Linux register
-  definitions for `VACTL` `0x47`, `VDCTL` `0x48`, `S_I2C_CTL` `0x43`, and
-  `VCMCTL` `0x44`
-
-### `Tps68470VoltageWF::PowerOff`
-
-Recovered from `disasm-voltage-wf-poweroff.txt`:
-
-- entry point: `0x1400133e8`
-- logs step ids `0x3d`, `0x3e`, `0x3f`, and final status `0x40`
-- calls these helper functions in order:
+- entry point: `0x140013868`
+- first calls `0x1400129d8` (`WF` initialize)
+- then calls:
   - `0x140013ce0`
   - `0x14001436c`
   - `0x140014030`
-
-Cross-references tie those helper regions to the named methods:
-
-- `0x140013ce0` => `Tps68470VoltageWF::SetVACtl`
-- `0x14001436c` => `Tps68470VoltageWF::SetVDCtl`
-- `0x140014030` => `Tps68470VoltageWF::SetVCMCtl`
+- logs steps `0x39`, `0x3a`, `0x3b`, and final status `0x3c`
 
 Implication:
 
-- the teardown path explicitly handles VA, VD, and VCM
-- `VSIO` is not toggled in this function directly; it is managed through the
-  separate `IoActive` / `IoIdle` path
-
-### `Tps68470VoltageWF::IoActive` and `IoIdle`
-
-Recovered from `disasm-voltage-wf-ioactive.txt`,
-`disasm-voltage-wf-ioactive-io.txt`, and `disasm-voltage-wf-ioidle.txt`:
-
-- `IoActive` entry point: `0x140012c90`
-- `IoActive_IO` entry point: `0x140013014`
-- `IoIdle` entry point: `0x140013158`
-- both `IoActive` and `IoActive_IO` increment a refcount at `[this + 0x14]`
-- `IoIdle` decrements the same refcount and only disables the path when the
-  count drops to zero
-- these methods read register `0x43` and use helper calls rooted around
-  `0x1400146a8` and `0x140014a7c`
-
-Linux correlation:
-
-- register `0x43` is `TPS68470_REG_S_I2C_CTL`
-- Linux models that register as the `VSIO` regulator enable path with a
-  two-bit mask `TPS68470_S_I2C_CTL_EN_MASK`
-
-Implication:
-
-- the Windows driver is treating `VSIO` and the sensor-I2C daisy-chain path as
-  coordinated state, not as an independent single-bit rail toggle
+- the `WF` power-up path begins with the value-register programming step above
+- this is stronger evidence than the earlier "some helper toggles exist" read
 
 ### `Tps68470VoltageWF::IoActive_GPIO`
 
 Recovered from `disasm-voltage-wf-ioactive-gpio.txt`:
 
-- entry point: `0x140012dd4`
-- reads, masks, and writes registers `0x16` and `0x18`
-- those are Linux `TPS68470_REG_GPCTL1A` and `TPS68470_REG_GPCTL2A`
-- both writes clear the low mode bits with `and ... , 0xfc`, which matches
-  Linux `TPS68470_GPIO_MODE_MASK`
-- the same function also reads register `0x43` and may branch into the
-  `S_I2C_CTL` helper path
+- entry point: `0x140012de0`
+- reads and rewrites registers `0x16` and `0x18`
+- both writes clear the low mode bits with `and ... , 0xfc`
+- then reads register `0x43`
+- if the expected bit is not already set, it calls `0x1400148e4`
+  (`SetVSIOCtl_GPIO`)
+
+Linux correlation:
+
+- `0x16` / `0x18` are `GPCTL1A` / `GPCTL2A`
+- this still supports the current view that the `WF` board path uses PMIC GPIOs
+  `1` and `2` as camera-control outputs
+
+### `Tps68470VoltageWF::SetVSIOCtl_GPIO`
+
+Recovered from `disasm-voltage-wf-setvsioctl-gpio.txt`:
+
+- entry point: `0x1400148e4`
+- reads register `0x43`
+- when enabled and when `[this + 0x10]` is nonzero, it writes back `0x43` with
+  bit `0` set
+
+Conservative takeaway:
+
+- the GPIO helper does not treat `S_I2C_CTL` as a fire-and-forget static rail
+- it makes the write conditional on both current register state and helper config
+
+### `Tps68470VoltageWF::SetVSIOCtl_IO`
+
+Recovered from `disasm-voltage-wf-setvsioctl-io.txt`:
+
+- entry point: `0x140014a7c`
+- reads register `0x43`
+- computes two candidate values:
+  - `old | 0x02`
+  - `old & 0xfc`
+- chooses between them based on the enable request and whether `[this + 0x10]`
+  is nonzero
+- writes the chosen value back to `0x43`
 
 Implication:
 
-- this board likely uses PMIC regular GPIO 1 and GPIO 2 as camera-control
-  outputs
-- that is different from the Surface Go pattern, which uses the PMIC logical
-  outputs `s_enable` and `s_resetn`
+- the IO-side `S_I2C_CTL` path is staged and mode-aware
+- Linux's current generic `VSIO` enable handling may be too coarse for this board
 
-### `CrdG2TiSensor::SensorPowerOn` and `SensorPowerOff`
+### `CrdG2TiSensor::SensorPowerOn`
 
-Recovered from `disasm-sensor-g2ti-poweron.txt` and
-`disasm-sensor-g2ti-poweroff.txt`:
+Recovered from `disasm-sensor-g2ti-poweron.txt`:
 
-- `SensorPowerOn` entry point: `0x140011df0`
-- `SensorPowerOff` entry point: `0x140011ae0`
-- `SensorPowerOn` first calls `0x140013014` (`IoActive_IO`) on one internal
-  subobject, then later calls `0x140012dd4` (`IoActive_GPIO`) on another
-  subobject
-- `SensorPowerOff` has one branch that calls `0x1400133e8`
-  (`VoltageWF::PowerOff`) and then calls `0x140013158` (`IoIdle`)
+- `SensorPowerOn` first calls `IoActive_IO` at `0x140013014`
+- it then branches into either:
+  - `0x140013868` => `Tps68470VoltageWF::PowerOn`
+  - `0x14001357c` => `Tps68470VoltageUF::PowerOn`
+- it later calls `IoActive_GPIO` at `0x140012de0`
 
 Implication:
 
-- the sensor wrapper class explicitly layers IO-path activation, GPIO
-  activation, and regulator sequencing
-- Linux likely needs both correct regulator consumers and correct GPIO lookup
-  wiring for this board
+- the Windows wrapper still layers IO-path activation around the regulator and
+  GPIO work
+- Linux has enough evidence now to say the remaining gap is PMIC-side behavior,
+  not just sensor-driver ignorance of the hardware
 
 ## Linux-Oriented Takeaway
 
-The strongest board-specific clues now are:
+The strongest source-backed deltas between current Linux behavior and the
+recovered Windows `WF` path are now:
 
-- `i2c-INT3472:06` is the active Windows-style PMIC companion
-- `OVTI5675:00` is the active sensor
-- `VACTL`, `VDCTL`, and `S_I2C_CTL` are definitely in use on this path
-- `GPCTL1A` and `GPCTL2A` are definitely in use on this path
+- Windows has a five-value board voltage tuple; Linux currently exposes only the
+  simpler consumer/lookup model
+- Windows writes PMIC value registers before `WF::PowerOn`; Linux does not have
+  a board-specific equivalent in the current MSI path
+- Windows uses conditional, staged `S_I2C_CTL` writes; Linux currently treats
+  `VSIO` more like a generic regulator enable
+- Windows definitely touches PMIC GPIO control registers `GPCTL1A` and `GPCTL2A`,
+  but exact `GPIO1` / `GPIO2` semantic mapping is still not proven from these
+  windows alone
 
-That makes the smallest plausible Linux support shape:
-
-- `TPS68470_ANA` => `avdd` for `i2c-OVTI5675:00`
-- `TPS68470_CORE` => `dvdd` for `i2c-OVTI5675:00`
-- `TPS68470_VSIO` with `TPS68470_VIO` pinned to the same voltage
-- two GPIO lookups on PMIC regular GPIOs `1` and `2`
-
-The remaining uncertainty is semantic, not structural:
-
-- which of GPIO1 or GPIO2 is `reset` vs `powerdown`
-- whether `VCM`, `AUX1`, or `AUX2` need real consumers on this MSI board
+The remaining uncertainty is no longer whether the Windows driver programs the
+PMIC. It does. The uncertainty is which subset of that behavior Linux must copy
+for this exact board to wake `OVTI5675:00` far enough to answer chip-ID reads.

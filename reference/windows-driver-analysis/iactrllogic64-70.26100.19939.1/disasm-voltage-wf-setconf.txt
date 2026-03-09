@@ -1,0 +1,39 @@
+
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/windows-driver-packages/msi-ov5675-70.26100.19939.1/extracted/iactrllogic64.sys:     file format pei-x86-64
+
+
+Disassembly of section .text:
+
+0000000140013ab8 <.text+0x12ab8>:
+   140013ab8:	48 89 5c 24 10       	mov    QWORD PTR [rsp+0x10],rbx
+   140013abd:	57                   	push   rdi
+   140013abe:	48 83 ec 30          	sub    rsp,0x30
+   140013ac2:	48 8b 05 47 f6 00 00 	mov    rax,QWORD PTR [rip+0xf647]        # 0x140023110
+   140013ac9:	48 33 c4             	xor    rax,rsp
+   140013acc:	48 89 44 24 28       	mov    QWORD PTR [rsp+0x28],rax
+   140013ad1:	48 83 64 24 20 00    	and    QWORD PTR [rsp+0x20],0x0
+   140013ad7:	48 8b da             	mov    rbx,rdx
+   140013ada:	48 8b f9             	mov    rdi,rcx
+   140013add:	48 8d 15 bc af 00 00 	lea    rdx,[rip+0xafbc]        # 0x14001eaa0
+   140013ae4:	48 8d 4c 24 20       	lea    rcx,[rsp+0x20]
+   140013ae9:	e8 12 d5 fe ff       	call   0x140001000
+   140013aee:	0f b7 43 02          	movzx  eax,WORD PTR [rbx+0x2]
+   140013af2:	48 8d 4c 24 20       	lea    rcx,[rsp+0x20]
+   140013af7:	66 89 47 0a          	mov    WORD PTR [rdi+0xa],ax
+   140013afb:	0f b7 43 06          	movzx  eax,WORD PTR [rbx+0x6]
+   140013aff:	66 89 47 0e          	mov    WORD PTR [rdi+0xe],ax
+   140013b03:	0f b7 43 04          	movzx  eax,WORD PTR [rbx+0x4]
+   140013b07:	66 89 47 0c          	mov    WORD PTR [rdi+0xc],ax
+   140013b0b:	0f b7 43 08          	movzx  eax,WORD PTR [rbx+0x8]
+   140013b0f:	66 89 47 10          	mov    WORD PTR [rdi+0x10],ax
+   140013b13:	0f b7 03             	movzx  eax,WORD PTR [rbx]
+   140013b16:	66 89 47 08          	mov    WORD PTR [rdi+0x8],ax
+   140013b1a:	e8 29 d5 fe ff       	call   0x140001048
+   140013b1f:	48 8b 4c 24 28       	mov    rcx,QWORD PTR [rsp+0x28]
+   140013b24:	48 33 cc             	xor    rcx,rsp
+   140013b27:	e8 f4 90 00 00       	call   0x14001cc20
+   140013b2c:	48 8b 5c 24 48       	mov    rbx,QWORD PTR [rsp+0x48]
+   140013b31:	48 83 c4 30          	add    rsp,0x30
+   140013b35:	5f                   	pop    rdi
+   140013b36:	c3                   	ret
+   140013b37:	cc                   	int3

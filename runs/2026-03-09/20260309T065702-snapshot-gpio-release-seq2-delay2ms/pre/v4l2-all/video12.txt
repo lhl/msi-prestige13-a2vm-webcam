@@ -1,0 +1,49 @@
+CMD: v4l2-ctl --all -d /dev/video12
+Driver Info:
+	Driver name      : isys
+	Card type        : ipu7
+	Bus info         : PCI:0000:00:05.0
+	Driver version   : 7.0.0
+	Capabilities     : 0xa4200001
+		Video Capture
+		I/O MC
+		Streaming
+		Extended Pix Format
+		Device Capabilities
+	Device Caps      : 0x24200001
+		Video Capture
+		I/O MC
+		Streaming
+		Extended Pix Format
+Media Driver Info:
+	Driver name      : intel-ipu7
+	Model            : ipu7
+	Serial           : 
+	Bus info         : PCI:0000:00:05.0
+	Media version    : 7.0.0
+	Hardware revision: 0x1462145f (341972063)
+	Driver version   : 7.0.0
+Interface Info:
+	ID               : 0x03000033
+	Type             : V4L Video
+Entity Info:
+	ID               : 0x00000031 (49)
+	Name             : Intel IPU7 ISYS Capture 12
+	Function         : V4L2 I/O
+	Pad 0x01000032   : 0: Sink, Must Connect
+	  Link 0x020000c1: from remote pad 0x1000091 of entity 'Intel IPU7 CSI2 1' (Video Interface Bridge): Data
+Priority: 2
+Video input : 0 (Intel IPU7 ISYS Capture 12: ok)
+Format Video Capture:
+	Width/Height      : 1920/1080
+	Pixel Format      : 'BG12' (12-bit Bayer BGBG/GRGR)
+	Field             : None
+	Bytes per Line    : 3840
+	Size Image        : 4151040
+	Colorspace        : Raw
+	Transfer Function : Default (maps to None)
+	YCbCr/HSV Encoding: Default (maps to ITU-R 601)
+	Quantization      : Default (maps to Full Range)
+	Flags             : 
+
+EXIT_STATUS: 0

@@ -141,15 +141,20 @@ dump_disasm 0x140014200 0x140014360 "${OUT_DIR}/disasm-voltage-uf-setvdctl.txt"
 dump_disasm 0x140014390 0x1400144f0 "${OUT_DIR}/disasm-voltage-wf-setvdctl.txt"
 dump_disasm 0x140014500 0x1400145a0 "${OUT_DIR}/disasm-voltage-uf-setvsioctl.txt"
 dump_disasm 0x1400146a8 0x1400148c0 "${OUT_DIR}/disasm-voltage-wf-setvsioctl.txt"
-dump_disasm 0x140014a7c 0x140014b60 "${OUT_DIR}/disasm-voltage-wf-setvsioctl-io.txt"
-dump_disasm 0x1400148e4 0x140014a40 "${OUT_DIR}/disasm-voltage-wf-setvsioctl-gpio.txt"
+dump_disasm 0x140014a7c 0x140014c20 "${OUT_DIR}/disasm-voltage-wf-setvsioctl-io.txt"
+dump_disasm 0x1400148e4 0x140014a7c "${OUT_DIR}/disasm-voltage-wf-setvsioctl-gpio.txt"
 dump_disasm 0x140013e90 0x140013fb0 "${OUT_DIR}/disasm-voltage-uf-setvcmctl.txt"
 dump_disasm 0x140014030 0x140014150 "${OUT_DIR}/disasm-voltage-wf-setvcmctl.txt"
-dump_disasm 0x140013214 0x1400133e8 "${OUT_DIR}/disasm-voltage-wf-poweron.txt"
+dump_disasm 0x140013214 0x1400133e8 "${OUT_DIR}/disasm-voltage-uf-poweroff.txt"
 dump_disasm 0x1400133e8 0x14001357c "${OUT_DIR}/disasm-voltage-wf-poweroff.txt"
+dump_disasm 0x14001357c 0x140013868 "${OUT_DIR}/disasm-voltage-uf-poweron.txt"
+dump_disasm 0x140013868 0x1400139f0 "${OUT_DIR}/disasm-voltage-wf-poweron.txt"
+dump_disasm 0x140012764 0x1400127d8 "${OUT_DIR}/disasm-voltage-wf-constructor.txt"
+dump_disasm 0x1400129d8 0x140012c80 "${OUT_DIR}/disasm-voltage-wf-initialize.txt"
+dump_disasm 0x140013ab8 0x140013b38 "${OUT_DIR}/disasm-voltage-wf-setconf.txt"
 dump_disasm 0x140012c90 0x140012dd4 "${OUT_DIR}/disasm-voltage-wf-ioactive.txt"
 dump_disasm 0x140013014 0x140013158 "${OUT_DIR}/disasm-voltage-wf-ioactive-io.txt"
-dump_disasm 0x140012de0 0x140012f10 "${OUT_DIR}/disasm-voltage-wf-ioactive-gpio.txt"
+dump_disasm 0x140012de0 0x140013014 "${OUT_DIR}/disasm-voltage-wf-ioactive-gpio.txt"
 dump_disasm 0x140013158 0x140013212 "${OUT_DIR}/disasm-voltage-wf-ioidle.txt"
 dump_disasm 0x140011ae0 0x140011de6 "${OUT_DIR}/disasm-sensor-g2ti-poweroff.txt"
 dump_disasm 0x140011df0 0x140011ff4 "${OUT_DIR}/disasm-sensor-g2ti-poweron.txt"
@@ -173,7 +178,7 @@ cat > "${OUT_DIR}/README.md" <<EOF
 - \`pe-header-and-imports.txt\` — PE metadata and imports
 - \`debug-directory.txt\` — PDB path and CodeView GUID
 - \`load-config.txt\` — GuardCF table and related load-config metadata
-- \`disasm-*.txt\` — targeted disassembly windows for the current investigation, including VoltageWF power/IO paths and CrdG2TiSensor helpers
+- \`disasm-*.txt\` — targeted disassembly windows for the current investigation, including VoltageWF constructor/init/setconf, WF/UF power paths, and CrdG2TiSensor helpers
 
 ## Regeneration
 

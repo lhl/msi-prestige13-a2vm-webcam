@@ -94,4 +94,22 @@ Disassembly of section .text:
    140014a2f:	ba 35 00 00 00       	mov    edx,0x35
    140014a34:	89 5c 24 28          	mov    DWORD PTR [rsp+0x28],ebx
    140014a38:	4c 8d 05 11 c2 00 00 	lea    r8,[rip+0xc211]        # 0x140020c50
-   140014a3f:	4c                   	rex.WR
+   140014a3f:	4c 89 6c 24 20       	mov    QWORD PTR [rsp+0x20],r13
+   140014a44:	e8 87 2f ff ff       	call   0x1400079d0
+   140014a49:	48 8d 4c 24 48       	lea    rcx,[rsp+0x48]
+   140014a4e:	e8 f5 c5 fe ff       	call   0x140001048
+   140014a53:	8b c3                	mov    eax,ebx
+   140014a55:	48 8b 4c 24 50       	mov    rcx,QWORD PTR [rsp+0x50]
+   140014a5a:	48 33 cc             	xor    rcx,rsp
+   140014a5d:	e8 be 81 00 00       	call   0x14001cc20
+   140014a62:	4c 8d 5c 24 60       	lea    r11,[rsp+0x60]
+   140014a67:	49 8b 5b 30          	mov    rbx,QWORD PTR [r11+0x30]
+   140014a6b:	49 8b 6b 40          	mov    rbp,QWORD PTR [r11+0x40]
+   140014a6f:	49 8b e3             	mov    rsp,r11
+   140014a72:	41 5f                	pop    r15
+   140014a74:	41 5d                	pop    r13
+   140014a76:	41 5c                	pop    r12
+   140014a78:	5f                   	pop    rdi
+   140014a79:	5e                   	pop    rsi
+   140014a7a:	c3                   	ret
+   140014a7b:	cc                   	int3

@@ -65,6 +65,52 @@ Disassembly of section .text:
    140014b54:	0f b6 d0             	movzx  edx,al
    140014b57:	85 c9                	test   ecx,ecx
    140014b59:	41 0f b6 c0          	movzx  eax,r8b
-   140014b5d:	44                   	rex.R
-   140014b5e:	8d                   	.byte 0x8d
-   140014b5f:	4f                   	rex.WRXB
+   140014b5d:	44 8d 4f be          	lea    r9d,[rdi-0x42]
+   140014b61:	48 8b ce             	mov    rcx,rsi
+   140014b64:	0f 44 d0             	cmove  edx,eax
+   140014b67:	44 0f b6 c2          	movzx  r8d,dl
+   140014b6b:	8b d7                	mov    edx,edi
+   140014b6d:	e8 6e c0 ff ff       	call   0x140010be0
+   140014b72:	8b d8                	mov    ebx,eax
+   140014b74:	85 c0                	test   eax,eax
+   140014b76:	79 45                	jns    0x140014bbd
+   140014b78:	48 8b 0d a9 e4 00 00 	mov    rcx,QWORD PTR [rip+0xe4a9]        # 0x140023028
+   140014b7f:	49 3b cf             	cmp    rcx,r15
+   140014b82:	74 71                	je     0x140014bf5
+   140014b84:	8b 49 2c             	mov    ecx,DWORD PTR [rcx+0x2c]
+   140014b87:	f6 c1 01             	test   cl,0x1
+   140014b8a:	74 31                	je     0x140014bbd
+   140014b8c:	0f ae e8             	lfence
+   140014b8f:	48 8b 0d 92 e4 00 00 	mov    rcx,QWORD PTR [rip+0xe492]        # 0x140023028
+   140014b96:	8d 57 ee             	lea    edx,[rdi-0x12]
+   140014b99:	89 44 24 30          	mov    DWORD PTR [rsp+0x30],eax
+   140014b9d:	4c 8d 0d 4c 86 00 00 	lea    r9,[rip+0x864c]        # 0x14001d1f0
+   140014ba4:	89 7c 24 28          	mov    DWORD PTR [rsp+0x28],edi
+   140014ba8:	4c 8d 05 a1 c0 00 00 	lea    r8,[rip+0xc0a1]        # 0x140020c50
+   140014baf:	4c 89 64 24 20       	mov    QWORD PTR [rsp+0x20],r12
+   140014bb4:	48 8b 49 18          	mov    rcx,QWORD PTR [rcx+0x18]
+   140014bb8:	e8 cf e2 fe ff       	call   0x140002e8c
+   140014bbd:	48 8b 0d 64 e4 00 00 	mov    rcx,QWORD PTR [rip+0xe464]        # 0x140023028
+   140014bc4:	49 3b cf             	cmp    rcx,r15
+   140014bc7:	74 2c                	je     0x140014bf5
+   140014bc9:	8b 41 2c             	mov    eax,DWORD PTR [rcx+0x2c]
+   140014bcc:	a8 01                	test   al,0x1
+   140014bce:	74 25                	je     0x140014bf5
+   140014bd0:	48 8b 49 18          	mov    rcx,QWORD PTR [rcx+0x18]
+   140014bd4:	4c 8d 0d 15 86 00 00 	lea    r9,[rip+0x8615]        # 0x14001d1f0
+   140014bdb:	ba 32 00 00 00       	mov    edx,0x32
+   140014be0:	89 5c 24 28          	mov    DWORD PTR [rsp+0x28],ebx
+   140014be4:	4c 8d 05 65 c0 00 00 	lea    r8,[rip+0xc065]        # 0x140020c50
+   140014beb:	4c 89 64 24 20       	mov    QWORD PTR [rsp+0x20],r12
+   140014bf0:	e8 db 2d ff ff       	call   0x1400079d0
+   140014bf5:	48 8d 4c 24 48       	lea    rcx,[rsp+0x48]
+   140014bfa:	e8 49 c4 fe ff       	call   0x140001048
+   140014bff:	8b c3                	mov    eax,ebx
+   140014c01:	48 8b 4c 24 50       	mov    rcx,QWORD PTR [rsp+0x50]
+   140014c06:	48 33 cc             	xor    rcx,rsp
+   140014c09:	e8 12 80 00 00       	call   0x14001cc20
+   140014c0e:	4c 8d 5c 24 60       	lea    r11,[rsp+0x60]
+   140014c13:	49 8b 5b 20          	mov    rbx,QWORD PTR [r11+0x20]
+   140014c17:	49 8b 6b 30          	mov    rbp,QWORD PTR [r11+0x30]
+   140014c1b:	49 8b 73 38          	mov    rsi,QWORD PTR [r11+0x38]
+   140014c1f:	49                   	rex.WB

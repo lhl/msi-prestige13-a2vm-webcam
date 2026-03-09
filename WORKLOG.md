@@ -2,6 +2,67 @@
 
 ## 2026-03-09
 
+### Pull more `WF` PMIC behavior into source artifacts and reassess the blocker
+
+- Plan: widen the Windows disassembly capture so the missing `WF`
+  constructor/init/config windows and the truncated `S_I2C_CTL` / GPIO helpers
+  are preserved in-tree, then update the status docs to reflect what Linux still
+  does not model after the latest negative staged-release runs.
+- Commands:
+  - reviewed the current extractor and notes:
+    - `sed -n '1,260p' scripts/extract-iactrllogic64.sh`
+    - `sed -n '1,260p' reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/power-sequencing-notes.md`
+  - verified the relevant `iactrllogic64.sys` windows directly:
+    - `objdump -d -M intel --start-address=0x140012740 --stop-address=0x140012c80 ...`
+    - `objdump -d -M intel --start-address=0x14001357c --stop-address=0x1400139f0 ...`
+    - `objdump -d -M intel --start-address=0x1400148e4 --stop-address=0x140014c20 ...`
+    - `objdump -d -M intel --start-address=0x140013ab0 --stop-address=0x140013b40 ...`
+  - checked the local ACPI tuple hints:
+    - `sed -n '250,420p' reference/acpi/20260308T004459-unknown-host/dsl/ssdt10.dsl`
+  - `apply_patch` updating:
+    - `scripts/extract-iactrllogic64.sh`
+    - `docs/wf-vs-uf-gpio-analysis.md`
+    - `docs/webcam-status.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+  - regenerated the Windows analysis artifacts:
+    - `scripts/extract-iactrllogic64.sh`
+  - rewrote the Windows sequencing note:
+    - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/power-sequencing-notes.md`
+- Result:
+  - the extractor now preserves the missing `WF` source windows:
+    - `disasm-voltage-wf-constructor.txt`
+    - `disasm-voltage-wf-initialize.txt`
+    - `disasm-voltage-wf-setconf.txt`
+    - widened `disasm-voltage-wf-ioactive-gpio.txt`
+    - widened `disasm-voltage-wf-setvsioctl-gpio.txt`
+    - widened `disasm-voltage-wf-setvsioctl-io.txt`
+  - the regenerated artifacts also correct the earlier power-path filename drift:
+    - `disasm-voltage-uf-poweroff.txt` now captures `0x140013214`
+    - `disasm-voltage-uf-poweron.txt` now captures `0x14001357c`
+    - `disasm-voltage-wf-poweron.txt` now captures `0x140013868`
+  - the strongest new source-backed `WF` findings are:
+    - Windows carries a five-voltage tuple:
+      `VD=1050`, `VA=2800`, `VIO=1800`, `VCM=2800`, `VSIO=1800`
+    - `WF::Initialize` writes PMIC value registers
+      `0x41`, `0x40`, `0x42`, `0x3c`, and `0x3f`
+    - `WF::SetVSIOCtl_IO` stages register `0x43` rather than treating it as a
+      single generic enable
+  - the three newer staged `ov5675` GPIO-release clean boots are now recorded as
+    part of the live assessment:
+    - `sequence=1`, `delay_us=2000`: negative
+    - `sequence=2`, `delay_us=2000`: negative
+    - control `sequence=0`: negative
+  - the blocker is now documented more precisely:
+    - the GPIO-only branch is largely exhausted
+    - the next likely Linux gap is `WF` PMIC behavior, not another pure sensor
+      GPIO release tweak
+- Decision:
+  - stop describing staged `ov5675` GPIO release as the leading next branch
+  - use the recovered Windows `WF` PMIC path as the next comparison baseline
+    for any Linux patch attempt
+
 ### Fix stale candidate docs and clean-boot journal anchoring
 
 - Plan: verify the reviewer-reported consistency drift, then align the stale

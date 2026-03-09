@@ -33,9 +33,18 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
     - `chip id read attempt 4/5 failed: -110`
     - `chip id read attempt 5/5 failed: -110`
     - `failed to find sensor: -110`
+  - on the three staged `ov5675` GPIO-release clean boots from `2026-03-09`:
+    - `sequence=1`, `delay_us=2000`: still `-110`
+    - `sequence=2`, `delay_us=2000`: still `-110`
+    - control `sequence=0`: still `-110`
   - there are still no `/dev/v4l-subdev*` nodes
   - the current Windows-vs-ACPI analysis still favors the `WF` / `LNK0` path
     over a premature `UF` / `gpio.4` pivot
+  - the latest Windows-source pull now shows concrete `WF` PMIC behavior that
+    Linux does not yet model:
+    - default/configured voltage tuple `1050 / 2800 / 1800 / 2800 / 1800`
+    - PMIC value-register writes `0x41`, `0x40`, `0x42`, `0x3c`, `0x3f`
+    - staged `S_I2C_CTL` handling around register `0x43`
 
 ## Evidence Baseline
 
@@ -98,19 +107,27 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 1. Treat the first `powerdown-v1` clean-boot test as a negative result.
 2. Use the clean-boot identify-debug result as the new baseline:
    - repeated chip-ID read timeouts `-110`
-3. Use that result to determine whether the next real fix is:
-   - staged `ov5675` GPIO release sequencing
-   - board-data regulator consumer follow-up
-   - remaining PMIC or sensor wake-up sequencing detail
-4. Treat label-only `GPIO1` / `GPIO2` swaps as low-signal with the current
+3. Treat all three staged `ov5675` GPIO-release clean boots from `2026-03-09`
+   as negative:
+   - `sequence=1`, `delay_us=2000`
+   - `sequence=2`, `delay_us=2000`
+   - control `sequence=0`
+4. Use the new Windows-source pull to determine whether the next real fix is:
+   - missing `WF` value-register programming
+   - missing staged `S_I2C_CTL` handling
+   - wrong Linux `CORE` / `VD` voltage assumption
+5. Treat label-only `GPIO1` / `GPIO2` swaps as low-signal with the current
    `ov5675` power sequence:
    - both control lines are driven in lockstep during power-on and power-off
    - the next meaningful electrical change is polarity, not another pure role
      swap
-5. Treat both one-line polarity variants as negative:
+6. Treat both one-line polarity variants as negative:
    - `GPIO2` active-high: negative
    - `GPIO1` active-high: negative
-6. Keep full kernel rebuilds as a fallback only when a change stops being
+7. Do not jump to a `gpio.4` / `UF` redesign first:
+   - the `UF` path is real
+   - local ACPI still favors `WFCS -> LNK0`
+8. Keep full kernel rebuilds as a fallback only when a change stops being
    module-local.
 
 ## Open Questions
@@ -125,27 +142,22 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
 - The first clean-boot identify-debug run was a real narrowing step:
   - `ov5675_identify_module()` is reached
   - repeated chip-ID reads time out with `-110`
+- The three staged `ov5675` GPIO-release clean boots were also negative.
 - The next open question is whether Linux now needs:
-  - different `GPIO1` / `GPIO2` polarity
-  - another board-data consumer or sequencing adjustment
+  - `WF` value-register programming before rail enables
+  - staged `S_I2C_CTL` behavior
+  - a different `CORE` / `VD` voltage assumption
 - The latest Windows-helper analysis adds one important guardrail:
   - the package has both `WF` and `UF` helper families
   - `UF` touches what Linux would call `gpio.4`
   - but this laptop's active ACPI path is still `WFCS -> LNK0`, so `gpio.4`
     should not be the first follow-up without stronger local evidence
 - Current diagnostic gap:
-  - we now know the identify stage times out; the next gap is whether that is
-    caused by the current lockstep GPIO release model, or a still-missing PMIC
-    wake-up step
-- Immediate next candidate:
-  - `reference/patches/ov5675-gpio-release-sequencing-debug-v1.patch`
-  - keep the existing `WF` / `LNK0` board-data structure
-  - keep the experiment module-local with a rebuild of `ov5675.ko`
-  - use module parameters to test staged release order and delay:
-    - simultaneous
-    - `powerdown` then `reset`
-    - `reset` then `powerdown`
-  - validate on a clean boot with `scripts/01-clean-boot-check.sh`
+  - we now know the identify stage times out
+  - lockstep GPIO release changes and staged `ov5675` release tests have all
+    been negative
+  - the next gap is which `WF` PMIC behavior Linux must reproduce for this
+    board
 - Is there any vendor firmware or Intel middleware dependency beyond standard kernel and firmware files?
 - Does this machine correspond to the Windows driver's `VoltageWF` path, `VoltageUF` path, or a narrower subclass selected via ACPI / board config?
 

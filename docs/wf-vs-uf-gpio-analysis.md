@@ -16,11 +16,12 @@ The Windows package clearly contains both `WF` and `UF` `TPS68470` helper
 families, and the `UF` path does manipulate `GPDO` bit `0x10`, which would be
 Linux `gpio.4`. But the local ACPI evidence still ties this machine's active
 sensor path to `WFCS -> LNK0`, not `UFCS -> LNK1`. The best-supported next
-Linux experiments are still:
+Linux work is now:
 
-- `GPIO1` / `GPIO2` role swap
-- `GPIO1` / `GPIO2` polarity experiments
-- remaining `WF`-side timing or sequencing detail
+- source-guided `WF`-side PMIC modeling
+- comparison of the recovered Windows voltage tuple against current Linux
+  board-data assumptions
+- only then, if needed, reconsider a different PMIC GPIO such as Linux `gpio.4`
 
 Blindly switching to a `gpio.4` design would be a hypothesis jump, not an
 evidence-driven next step.
@@ -72,6 +73,28 @@ From `disasm-voltage-wf-ioactive-gpio.txt`:
 
 That is strong evidence that the `WF` path uses PMIC regular GPIOs `1` and `2`
 as camera-control outputs.
+
+From `disasm-voltage-wf-constructor.txt`,
+`disasm-voltage-wf-initialize.txt`, and `disasm-voltage-wf-setconf.txt`:
+
+- the `WF` helper carries a five-voltage tuple:
+  - `VD = 1050 mV`
+  - `VA = 2800 mV`
+  - `VIO = 1800 mV`
+  - `VCM = 2800 mV`
+  - `VSIO = 1800 mV`
+- `WF::Initialize` writes PMIC value registers before later enable helpers run:
+  - `0x41`
+  - `0x40`
+  - `0x42`
+  - `0x3c`
+  - `0x3f`
+- `WF::SetVSIOCtl_IO` does not look like a single generic enable write:
+  - it reads `0x43`
+  - computes either `old | 0x02` or `old & 0xfc`
+  - writes the selected result back based on helper state
+
+That makes the remaining `WF` gap wider than just GPIO naming or polarity.
 
 ### `UF` path evidence
 
@@ -148,15 +171,22 @@ So the current best interpretation is:
 - they may correlate with different camera roles on some platforms
 - but on this laptop we do not yet have evidence that `WF` and `UF` are the
   RGB-vs-IR split
+- the latest recovered `WF` evidence also shows that Linux still lacks some
+  PMIC-side behavior even if the current `WF` / `LNK0` branch selection is
+  already correct
 
 But for this specific laptop, the current evidence still supports this order of
 operations:
 
 1. keep `WF` / `LNK0` as the primary model
-2. treat the earlier `GPIO1` / `GPIO2` role-swap result as a low-signal
-   negative result
-3. test `GPIO1` / `GPIO2` polarity variants
-4. if those fail, revisit whether this board is actually selecting a narrower
+2. treat the earlier `GPIO1` / `GPIO2` role-swap and both one-line polarity
+   variants as negative
+3. treat the newer staged `ov5675` GPIO release runs as negative as well:
+   sequence `1` with `2000 us`, sequence `2` with `2000 us`, and control
+   sequence `0` all still end at `-110`
+4. focus the next pass on `WF`-side PMIC behavior that Linux still does not
+   model
+5. only then revisit whether this board is actually selecting a narrower
    `UF`-style helper path or needs an extra PMIC GPIO such as Linux `gpio.4`
 
 ## Current Next Step
@@ -166,12 +196,19 @@ Use the clean-boot identify-timeout result as the baseline:
 - `chip id read attempt 1/5 failed: -110`
 - `... 5/5 failed: -110`
 
-Then prefer the next smallest Linux experiments in this order:
+The new guardrail is that three staged `ov5675` GPIO-release clean boots on
+`2026-03-09` were also negative:
 
-- board-data polarity experiments
-- remaining `WF`-side sequencing or delay detail
+- `sequence=1`, `delay_us=2000`: `-110`
+- `sequence=2`, `delay_us=2000`: `-110`
+- control `sequence=0`: `-110`
 
-After both one-line polarity follow-ups on `GPIO2` and `GPIO1`, the smallest
-remaining local experiment is no longer another single-line board-data change.
-The next better branch is staged `ov5675` GPIO release sequencing while still
-keeping the board on the `WF` / `LNK0` path.
+So the next better Linux branch is no longer another sensor-side GPIO-only
+variation. The highest-value source-guided follow-up is now:
+
+- compare the current Linux MSI `WF` assumptions against the recovered Windows
+  tuple and initialization path
+- determine whether Linux needs:
+  - `WF` value-register programming
+  - staged `S_I2C_CTL` handling
+  - a different `CORE` / `VD` voltage assumption

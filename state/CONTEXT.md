@@ -46,6 +46,16 @@ with strong evidence.
   - `ov5675` remains unbound
   - there are still no `/dev/v4l-subdev*` nodes
   - the `gpio-swap-v1` clean-boot run did not change that pattern
+  - the three staged `ov5675` GPIO-release clean boots from `2026-03-09` also
+    did not change that pattern:
+    - `sequence=1`, `delay_us=2000`
+    - `sequence=2`, `delay_us=2000`
+    - control `sequence=0`
+  - the latest Windows-source pull now shows concrete `WF` PMIC behavior that
+    Linux does not yet model:
+    - default/configured voltage tuple `1050 / 2800 / 1800 / 2800 / 1800`
+    - PMIC value-register writes `0x41`, `0x40`, `0x42`, `0x3c`, `0x3f`
+    - staged `S_I2C_CTL` handling around register `0x43`
 
 ## Latest Debug Result
 
@@ -90,6 +100,31 @@ with strong evidence.
   - `... 5/5 failed: -110`
   - `ov5675 i2c-OVTI5675:00: failed to find sensor: -110`
   - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
+- Clean boot with staged `ov5675` GPIO release `sequence=1`,
+  `delay_us=2000`:
+  - `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+  - `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+  - `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+  - `ov5675 i2c-OVTI5675:00: applying gpio release sequence=1 delay_us=2000`
+  - `... 5/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: failed to find sensor: -110`
+  - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
+- Clean boot with staged `ov5675` GPIO release `sequence=2`,
+  `delay_us=2000`:
+  - `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+  - `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+  - `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+  - `ov5675 i2c-OVTI5675:00: applying gpio release sequence=2 delay_us=2000`
+  - `... 5/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: failed to find sensor: -110`
+  - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
+- Clean boot with control `ov5675` GPIO release `sequence=0`:
+  - `intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00`
+  - `intel-ipu7 0000:00:05.0: Connected 1 cameras`
+  - `int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21`
+  - `... 5/5 failed: -110`
+  - `ov5675 i2c-OVTI5675:00: failed to find sensor: -110`
+  - `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110`
 - Conclusion:
   - the clean-boot identify-debug run replaced the old ambiguous `-5` result
     with the real remaining sensor-side error
@@ -100,9 +135,14 @@ with strong evidence.
     because both control lines are driven in lockstep
   - the first one-line polarity follow-up on `GPIO2` was also negative
   - the second one-line polarity follow-up on `GPIO1` was also negative
-  - with both one-line polarity variants now negative, the next likely patch
-    space is staged `ov5675` GPIO release sequencing or remaining PMIC
-    wake-up sequencing, not more single-line polarity guesses
+  - the three staged `ov5675` GPIO-release clean boots were also negative
+  - the latest Windows-source pull now shows that Linux still lacks some
+    `WF`-side PMIC behavior:
+    - value-register programming
+    - staged `S_I2C_CTL` handling
+    - possibly the correct `VD` / `CORE` voltage assumption
+  - the next likely patch space is now PMIC-side `WF` modeling, not another
+    `ov5675`-only GPIO release variation
   - the newer Windows-helper analysis does show a separate `UF` path that
     touches what Linux would call `gpio.4`, but current ACPI evidence still
     keeps this laptop aligned with the `WF` / `LNK0` path
@@ -112,22 +152,22 @@ with strong evidence.
 1. Keep using `scripts/patch-kernel.sh` to make the local patch stack
    repeatable.
 2. Use the clean-boot `-110` identify timeout as the new baseline.
-3. Next fix candidates to test:
-   - staged `ov5675` `reset` / `powerdown` release order and delay
-   - board-data regulator consumer or sequencing detail
-   - deeper `WF`-side PMIC or sensor wake-up sequencing from the Windows path
-4. Do not jump to a `gpio.4` / `UF` redesign first:
+3. Treat the staged `ov5675` GPIO-release runs as negative:
+   - `sequence=1`, `delay_us=2000`
+   - `sequence=2`, `delay_us=2000`
+   - control `sequence=0`
+4. Next fix candidates to test:
+   - `WF` value-register programming
+   - staged `S_I2C_CTL` handling
+   - current Linux `CORE` / `VD` voltage assumptions
+5. Do not jump to a `gpio.4` / `UF` redesign first:
    - Windows supports both helper families
    - local ACPI still favors `WFCS -> LNK0`
-5. Keep clean-boot checkpoints as the primary truth source. Reload-only checks
+6. Keep clean-boot checkpoints as the primary truth source. Reload-only checks
    are still secondary once the boot-time path has already failed.
-6. Immediate next module-only test:
-   - apply `reference/patches/ov5675-gpio-release-sequencing-debug-v1.patch`
-   - rebuild only `drivers/media/i2c/ov5675.ko`
-   - install the module
-   - set one staged-release variant via `/etc/modprobe.d/ov5675-debug.conf`
-   - reboot
-   - run `scripts/01-clean-boot-check.sh` with a sequencing label
+7. Keep the latest Windows-source artifacts close at hand:
+   - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/power-sequencing-notes.md`
+   - `docs/wf-vs-uf-gpio-analysis.md`
 
 ## Key Paths
 
@@ -146,6 +186,8 @@ with strong evidence.
   - `docs/webcam-status.md`
 - `WF` vs `UF` Windows helper analysis:
   - `docs/wf-vs-uf-gpio-analysis.md`
+- Windows `WF` power-path note:
+  - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/power-sequencing-notes.md`
 - Next module-only sequencing follow-up:
   - `docs/ov5675-gpio-release-sequencing-followup.md`
   - `docs/int3472-gpio1-powerdown-active-high-followup.md`

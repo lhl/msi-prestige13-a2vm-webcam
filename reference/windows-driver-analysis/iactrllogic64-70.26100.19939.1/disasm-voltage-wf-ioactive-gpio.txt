@@ -87,5 +87,78 @@ Disassembly of section .text:
    140012f05:	eb 38                	jmp    0x140012f3f
    140012f07:	0f ae e8             	lfence
    140012f0a:	8a 44 24 40          	mov    al,BYTE PTR [rsp+0x40]
-   140012f0e:	41                   	rex.B
-   140012f0f:	8b                   	.byte 0x8b
+   140012f0e:	41 8b d6             	mov    edx,r14d
+   140012f11:	24 fc                	and    al,0xfc
+   140012f13:	44 8b ce             	mov    r9d,esi
+   140012f16:	44 0f b6 c0          	movzx  r8d,al
+   140012f1a:	48 8b cb             	mov    rcx,rbx
+   140012f1d:	e8 be dc ff ff       	call   0x140010be0
+   140012f22:	85 c0                	test   eax,eax
+   140012f24:	79 40                	jns    0x140012f66
+   140012f26:	48 8b 0d fb 00 01 00 	mov    rcx,QWORD PTR [rip+0x100fb]        # 0x140023028
+   140012f2d:	48 3b cd             	cmp    rcx,rbp
+   140012f30:	74 34                	je     0x140012f66
+   140012f32:	8b 49 2c             	mov    ecx,DWORD PTR [rcx+0x2c]
+   140012f35:	40 84 ce             	test   sil,cl
+   140012f38:	74 2c                	je     0x140012f66
+   140012f3a:	ba 49 00 00 00       	mov    edx,0x49
+   140012f3f:	89 44 24 30          	mov    DWORD PTR [rsp+0x30],eax
+   140012f43:	0f ae e8             	lfence
+   140012f46:	48 8b 0d db 00 01 00 	mov    rcx,QWORD PTR [rip+0x100db]        # 0x140023028
+   140012f4d:	4d 8b cc             	mov    r9,r12
+   140012f50:	44 89 74 24 28       	mov    DWORD PTR [rsp+0x28],r14d
+   140012f55:	4d 8b c5             	mov    r8,r13
+   140012f58:	4c 89 7c 24 20       	mov    QWORD PTR [rsp+0x20],r15
+   140012f5d:	48 8b 49 18          	mov    rcx,QWORD PTR [rcx+0x18]
+   140012f61:	e8 26 ff fe ff       	call   0x140002e8c
+   140012f66:	41 be 43 00 00 00    	mov    r14d,0x43
+   140012f6c:	4c 8d 44 24 40       	lea    r8,[rsp+0x40]
+   140012f71:	41 8b d6             	mov    edx,r14d
+   140012f74:	44 8b ce             	mov    r9d,esi
+   140012f77:	48 8b cb             	mov    rcx,rbx
+   140012f7a:	e8 2d db ff ff       	call   0x140010aac
+   140012f7f:	85 c0                	test   eax,eax
+   140012f81:	79 41                	jns    0x140012fc4
+   140012f83:	48 8b 0d 9e 00 01 00 	mov    rcx,QWORD PTR [rip+0x1009e]        # 0x140023028
+   140012f8a:	48 3b cd             	cmp    rcx,rbp
+   140012f8d:	74 4d                	je     0x140012fdc
+   140012f8f:	8b 49 2c             	mov    ecx,DWORD PTR [rcx+0x2c]
+   140012f92:	40 84 ce             	test   sil,cl
+   140012f95:	74 45                	je     0x140012fdc
+   140012f97:	0f ae e8             	lfence
+   140012f9a:	48 8b 0d 87 00 01 00 	mov    rcx,QWORD PTR [rip+0x10087]        # 0x140023028
+   140012fa1:	41 8d 56 07          	lea    edx,[r14+0x7]
+   140012fa5:	89 44 24 30          	mov    DWORD PTR [rsp+0x30],eax
+   140012fa9:	4d 8b cc             	mov    r9,r12
+   140012fac:	44 89 74 24 28       	mov    DWORD PTR [rsp+0x28],r14d
+   140012fb1:	4d 8b c5             	mov    r8,r13
+   140012fb4:	4c 89 7c 24 20       	mov    QWORD PTR [rsp+0x20],r15
+   140012fb9:	48 8b 49 18          	mov    rcx,QWORD PTR [rcx+0x18]
+   140012fbd:	e8 ca fe fe ff       	call   0x140002e8c
+   140012fc2:	eb 18                	jmp    0x140012fdc
+   140012fc4:	40 84 74 24 40       	test   BYTE PTR [rsp+0x40],sil
+   140012fc9:	75 11                	jne    0x140012fdc
+   140012fcb:	0f ae e8             	lfence
+   140012fce:	44 8a c6             	mov    r8b,sil
+   140012fd1:	48 8b d3             	mov    rdx,rbx
+   140012fd4:	48 8b cf             	mov    rcx,rdi
+   140012fd7:	e8 08 19 00 00       	call   0x1400148e4
+   140012fdc:	48 8d 4c 24 48       	lea    rcx,[rsp+0x48]
+   140012fe1:	e8 62 e0 fe ff       	call   0x140001048
+   140012fe6:	48 8b 4c 24 50       	mov    rcx,QWORD PTR [rsp+0x50]
+   140012feb:	48 33 cc             	xor    rcx,rsp
+   140012fee:	e8 2d 9c 00 00       	call   0x14001cc20
+   140012ff3:	4c 8d 5c 24 60       	lea    r11,[rsp+0x60]
+   140012ff8:	49 8b 5b 30          	mov    rbx,QWORD PTR [r11+0x30]
+   140012ffc:	49 8b 6b 40          	mov    rbp,QWORD PTR [r11+0x40]
+   140013000:	49 8b 73 48          	mov    rsi,QWORD PTR [r11+0x48]
+   140013004:	49 8b e3             	mov    rsp,r11
+   140013007:	41 5f                	pop    r15
+   140013009:	41 5e                	pop    r14
+   14001300b:	41 5d                	pop    r13
+   14001300d:	41 5c                	pop    r12
+   14001300f:	5f                   	pop    rdi
+   140013010:	c3                   	ret
+   140013011:	cc                   	int3
+   140013012:	cc                   	int3
+   140013013:	cc                   	int3

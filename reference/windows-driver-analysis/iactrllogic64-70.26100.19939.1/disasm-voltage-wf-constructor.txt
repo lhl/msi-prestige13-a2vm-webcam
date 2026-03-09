@@ -1,0 +1,35 @@
+
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/windows-driver-packages/msi-ov5675-70.26100.19939.1/extracted/iactrllogic64.sys:     file format pei-x86-64
+
+
+Disassembly of section .text:
+
+0000000140012764 <.text+0x11764>:
+   140012764:	40 53                	rex push rbx
+   140012766:	48 83 ec 30          	sub    rsp,0x30
+   14001276a:	48 8b 05 9f 09 01 00 	mov    rax,QWORD PTR [rip+0x1099f]        # 0x140023110
+   140012771:	48 33 c4             	xor    rax,rsp
+   140012774:	48 89 44 24 28       	mov    QWORD PTR [rsp+0x28],rax
+   140012779:	48 83 64 24 20 00    	and    QWORD PTR [rsp+0x20],0x0
+   14001277f:	48 8d 05 62 e4 00 00 	lea    rax,[rip+0xe462]        # 0x140020be8
+   140012786:	48 89 01             	mov    QWORD PTR [rcx],rax
+   140012789:	48 8d 15 e0 c2 00 00 	lea    rdx,[rip+0xc2e0]        # 0x14001ea70
+   140012790:	48 8b d9             	mov    rbx,rcx
+   140012793:	48 8d 4c 24 20       	lea    rcx,[rsp+0x20]
+   140012798:	e8 63 e8 fe ff       	call   0x140001000
+   14001279d:	83 63 14 00          	and    DWORD PTR [rbx+0x14],0x0
+   1400127a1:	48 8d 4c 24 20       	lea    rcx,[rsp+0x20]
+   1400127a6:	c7 43 0a f0 0a 08 07 	mov    DWORD PTR [rbx+0xa],0x7080af0
+   1400127ad:	c7 43 0e f0 0a 08 07 	mov    DWORD PTR [rbx+0xe],0x7080af0
+   1400127b4:	66 c7 43 08 1a 04    	mov    WORD PTR [rbx+0x8],0x41a
+   1400127ba:	e8 89 e8 fe ff       	call   0x140001048
+   1400127bf:	48 8b c3             	mov    rax,rbx
+   1400127c2:	48 8b 4c 24 28       	mov    rcx,QWORD PTR [rsp+0x28]
+   1400127c7:	48 33 cc             	xor    rcx,rsp
+   1400127ca:	e8 51 a4 00 00       	call   0x14001cc20
+   1400127cf:	48 83 c4 30          	add    rsp,0x30
+   1400127d3:	5b                   	pop    rbx
+   1400127d4:	c3                   	ret
+   1400127d5:	cc                   	int3
+   1400127d6:	cc                   	int3
+   1400127d7:	cc                   	int3
