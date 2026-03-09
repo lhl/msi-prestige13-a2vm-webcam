@@ -37,6 +37,8 @@ The remaining failure is now narrow and concrete:
 - every chip-ID read attempt still times out with `-110`
 - `ov5675` remains unbound
 - there are still no `/dev/v4l-subdev*` nodes
+- the first PMIC transaction after which readback collapses is now identified
+  as `VSIO` enable on `S_I2C_CTL` `0x43`
 
 That means this is no longer mainly a "Linux does not know the hardware"
 problem. It is now a "Linux still does not reproduce the exact PMIC behavior
@@ -257,6 +259,38 @@ to:
 ### 8. PMIC experiments 1-6 completed
 
 The first full PMIC batch is now done.
+
+### 9. `exp7` isolated the first bad PMIC transaction
+
+The next PMIC tracing step moved the project from "the PMIC path is still
+suspicious" to "the first bad operation is now known."
+
+`exp7` proved:
+
+- PMIC access is healthy through:
+  - clock setup
+  - `ANA` enable on `VACTL`
+  - `CORE` enable on `VDCTL`
+- the first bad PMIC transaction is:
+  - `VSIO` enable on `S_I2C_CTL` `0x43`
+- in that transition:
+  - `regmap_update_bits()` returns `0`
+  - immediate readback already fails with `-110`
+
+After that point:
+
+- `i2c_designware.1` logs repeated `controller timed out`
+- later PMIC readback collapses to `-110`
+- the sensor still ends at the same repeated chip-ID timeouts
+
+`exp7` also showed that broad post-failure PMIC snapshotting is too expensive
+to leave in place as the default path:
+
+- the timeout storm was large enough to interact badly with boot
+- one run hit a `boot.mount` timeout and emergency mode before `/boot` mounted
+  successfully after bypass
+- that looks like collateral from the instrumentation-amplified I2C timeout
+  path, not evidence that `/boot` is the root webcam problem
 
 Outcome:
 
@@ -686,14 +720,14 @@ Those branches have enough clean negatives now.
 
 Ordered by likely value:
 
-1. Tighten in-kernel PMIC instrumentation.
-   - log raw `regmap_read()`, `regmap_write()`, and `regmap_update_bits()`
-     return codes around:
-     - `0x43`
-     - `0x40`-`0x42`
-     - `0x47`
-     - `0x48`
-   - capture pre-write, post-write, and unwind state
+1. Run the narrower `S_I2C_CTL`-focused follow-up.
+   - keep the high-value `exp7` signal around `0x43`
+   - confirm in a lighter-weight run that:
+     - `ANA` enable still succeeds
+     - `CORE` enable still succeeds
+     - `VSIO` `S_I2C_CTL` `0x43` remains the first transition after which
+       PMIC readback fails
+   - avoid broad post-failure snapshots once the first `-110` appears
 
 2. Fix or replace the PMIC dump path.
    - figure out why post-boot userspace reads all fail

@@ -1,0 +1,5 @@
+CMD: git_safe status --short
+?? runs/2026-03-09/20260309T155228-pmic-raw-regmap-trace-update/
+?? runs/2026-03-09/20260309T155609-snapshot-exp7-clean-boot/
+
+EXIT_STATUS: 0

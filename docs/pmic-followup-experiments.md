@@ -7,10 +7,12 @@ update-and-verify workflows.
 
 As of the completed `2026-03-09` PMIC batch:
 
-- `exp1` through `exp6` are completed historical experiments
-- the highest-value next kernel-side follow-up is `exp7`
-- `exp7` is a raw PMIC regmap trace aimed at actual register truth during the
-  failing clean-boot probe window
+- `exp1` through `exp7` are completed historical experiments
+- the highest-value next kernel-side follow-up is `exp8`
+- `exp7` established that `VSIO` enable on `S_I2C_CTL` `0x43` is the first
+  PMIC transaction after which readback collapses to `-110`
+- `exp8` keeps that signal but avoids the broad post-failure snapshotting that
+  amplified boot delays in `exp7`
 
 ## Goal
 
@@ -216,6 +218,39 @@ Scripts:
 - `scripts/exp7-pmic-raw-regmap-trace-update.sh`
 - `scripts/exp7-pmic-raw-regmap-trace-verify.sh`
 
+Observed outcome:
+- informative, but too broad for routine reruns
+- healthy PMIC access persisted through:
+  - clock setup
+  - `ANA` enable
+  - `CORE` enable
+- the first bad PMIC transaction was:
+  - `VSIO` enable on `S_I2C_CTL` `0x43`
+- after that point:
+  - immediate readback failed with `-110`
+  - `i2c_designware.1` entered a timeout storm
+  - later PMIC accesses also failed with `-110`
+
+### 8. Focused `S_I2C_CTL` trace
+
+Purpose:
+- keep the high-value `exp7` signal around `S_I2C_CTL` `0x43`
+- log only the minimum PMIC transitions needed to confirm the failure point:
+  - `ANA` enable
+  - `CORE` enable
+  - `VSIO` enable / disable on `S_I2C_CTL`
+- avoid broad PMIC snapshotting once the bus starts timing out
+
+Default patch:
+- `reference/patches/pmic-si2c-ctl-focused-trace-v1.patch`
+
+Extra module rebuild/install:
+- `tps68470-regulator.ko`
+
+Scripts:
+- `scripts/exp8-s-i2c-ctl-focused-trace-update.sh`
+- `scripts/exp8-s-i2c-ctl-focused-trace-verify.sh`
+
 ## Typical usage
 
 Update, install modules, and reboot for experiment 2:
@@ -262,13 +297,13 @@ scripts/exp2-wf-s-i2c-ctl-verify.sh --dry-run
 Current highest-priority run:
 
 ```bash
-scripts/exp7-pmic-raw-regmap-trace-update.sh
+scripts/exp8-s-i2c-ctl-focused-trace-update.sh
 ```
 
 After reboot:
 
 ```bash
-scripts/exp7-pmic-raw-regmap-trace-verify.sh
+scripts/exp8-s-i2c-ctl-focused-trace-verify.sh
 ```
 
 ## Why the verify wrappers always do a PMIC dump
@@ -294,6 +329,8 @@ Use these wrappers in the same order as the current technical ranking:
 4. `WF::Initialize` value programming
 5. `WF` GPIO mode follow-up
 6. `UF` `gpio.4` last resort
+7. broad raw PMIC regmap trace
+8. focused `S_I2C_CTL` trace
 
 That ordering still matches the current source-backed assessment in:
 

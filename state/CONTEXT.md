@@ -55,6 +55,13 @@ with strong evidence.
   ended at the same `-110` identify timeout
 - `exp5` `WF` GPIO mode follow-up was negative
 - `exp6` `UF` / `gpio.4` last resort was negative
+- `exp7` raw PMIC regmap trace isolated the first bad PMIC transaction:
+  - PMIC access is healthy through clock setup plus `ANA` and `CORE` enable
+  - the first bad operation is `VSIO` enable on `S_I2C_CTL` `0x43`
+  - the `regmap_update_bits()` call returns `0`, but the immediate readback is
+    already `-110`
+  - after that point, `i2c_designware.1` starts timing out and later PMIC
+    accesses collapse to `-110`
 - the post-boot PMIC dump path is still not usable:
   - `scripts/pmic-reg-dump.sh` returned `ERROR` for all registers in
     representative PMIC experiment runs
@@ -67,28 +74,24 @@ with strong evidence.
 - Simple GPIO label / polarity / release-order guesses are mostly exhausted.
 - The strongest remaining gap is PMIC-side behavior Linux still does not model
   correctly, especially around:
-  - `S_I2C_CTL` `0x43`
+  - `S_I2C_CTL` `0x43` as the first operation that wedges PMIC readback
   - PMIC value/register state truth during the failing identify window
   - higher-level Windows config feeding `WF::SetConf` and selecting `WF`
     versus `UF`
 
 ## Next Best Steps
 
-1. Tighten in-kernel PMIC instrumentation around raw regmap writes, return
-   codes, and readback for:
-   - `0x43`
-   - `0x40`-`0x42`
-   - `0x47`
-   - `0x48`
+1. Run the narrower PMIC follow-up that keeps the `0x43` signal but avoids the
+   broad timeout amplification seen in `exp7`:
    - immediate next wrapper:
-     - `scripts/exp7-pmic-raw-regmap-trace-update.sh`
+     - `scripts/exp8-s-i2c-ctl-focused-trace-update.sh`
      - reboot
-     - `scripts/exp7-pmic-raw-regmap-trace-verify.sh`
+     - `scripts/exp8-s-i2c-ctl-focused-trace-verify.sh`
 2. Fix or replace the post-boot PMIC dump path so we can observe real register
    state after a failed clean boot.
 3. Extract more of the higher-level Windows config path above `WF::SetConf`.
-4. Do not spend more time on blind GPIO-only follow-ups until the PMIC
-   pass-through and register-state questions are clearer.
+4. Do not rerun the broad `exp7` snapshot patch as a default path; it amplified
+   the timeout storm enough to interact badly with boot.
 
 ## Key Paths
 

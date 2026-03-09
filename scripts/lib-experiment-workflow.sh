@@ -17,6 +17,7 @@ KNOWN_EXPERIMENT_PATCHES=(
   "reference/patches/ms13q3-wf-gpio-mode-followup-v1.patch"
   "reference/patches/ms13q3-uf-gpio4-last-resort-v1.patch"
   "reference/patches/pmic-raw-regmap-trace-v1.patch"
+  "reference/patches/pmic-si2c-ctl-focused-trace-v1.patch"
 )
 BASE_BUILD_DIRS=(
   "drivers/platform/x86/intel/int3472"
@@ -165,6 +166,11 @@ patch_state() {
 
 apply_experiment_patch() {
   local state
+
+  if (( DRY_RUN )); then
+    run_logged git -C "${KERNEL_TREE}" apply "${PATCH_PATH}"
+    return 0
+  fi
 
   state=$(patch_state "${KERNEL_TREE}" "${PATCH_PATH}")
   case "${state}" in

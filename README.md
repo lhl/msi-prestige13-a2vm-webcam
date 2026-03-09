@@ -146,13 +146,14 @@ msi-prestige13-a2vm-webcam/
    - `exp5` `WF` GPIO mode follow-up
    - `exp6` `UF` / `gpio.4` last resort
 4. Put the next effort into the PMIC behavior Linux still does not explain:
-   - raw regmap write/read results around `S_I2C_CTL` `0x43`
+   - why `S_I2C_CTL` `0x43` is the first PMIC transaction after which readback
+     collapses to `-110`
    - why post-boot PMIC register dumps still fail completely
    - the higher-level Windows config that feeds `WF::SetConf`
 5. The next concrete kernel-side run is:
-   - `scripts/exp7-pmic-raw-regmap-trace-update.sh`
+   - `scripts/exp8-s-i2c-ctl-focused-trace-update.sh`
    - reboot
-   - `scripts/exp7-pmic-raw-regmap-trace-verify.sh`
+   - `scripts/exp8-s-i2c-ctl-focused-trace-verify.sh`
 
 ## Related Docs
 

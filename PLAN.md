@@ -44,6 +44,12 @@ with strong evidence.
     and unwind hit `VSIO: failed to disable: -ETIMEDOUT`
   - `exp4` proved a `WF::Initialize`-style value-programming hook executed,
     but that alone still did not wake the sensor
+  - `exp7` isolated the first bad PMIC operation to `VSIO` enable on
+    `S_I2C_CTL` `0x43`
+  - in `exp7`, `regmap_update_bits()` on `0x43` returned `0`, but the
+    immediate readback already failed with `-110`
+  - after that point, `i2c_designware.1` entered a timeout storm and later
+    PMIC accesses also failed with `-110`
 - current leading interpretation:
   - the remaining gap is PMIC-side behavior, not basic platform support
   - we are missing either exact PMIC control behavior, exact runtime
@@ -53,17 +59,16 @@ with strong evidence.
 
 ### 1. PMIC state truth
 
-- [ ] Instrument raw PMIC regmap activity around:
-  - `S_I2C_CTL` `0x43`
-  - `VSIOVAL` `0x40`
-  - `VAVAL` `0x41`
-  - `VDVAL` `0x42`
-  - `VACTL` `0x47`
-  - `VDCTL` `0x48`
-- [ ] Log write intent, raw return code, and readback result for the PMIC
-  operations that matter on this board.
-- [ ] Capture the unwind path as carefully as the enable path so failures such
-  as the `exp2` `VSIO` disable timeout can be interpreted.
+- [ ] Narrow the next PMIC trace to the smallest set of operations needed to
+  confirm the `S_I2C_CTL` `0x43` failure without dragging the bus through
+  dozens of additional timeout reads.
+- [ ] Confirm in a lighter-weight run that:
+  - `ANA` enable still succeeds
+  - `CORE` enable still succeeds
+  - `VSIO` `S_I2C_CTL` `0x43` remains the first transition after which PMIC
+    readback fails
+- [ ] Avoid broad unwind and full-register snapshot tracing once the first
+  `-110` appears.
 
 ### 2. Post-boot PMIC visibility
 
@@ -97,7 +102,7 @@ with strong evidence.
    work.
 2. Do not spend more time on pure GPIO permutations for now.
 3. Put the next experiment budget into:
-   - raw PMIC regmap instrumentation
+   - focused `S_I2C_CTL` follow-up instrumentation
    - repairing PMIC readback visibility
    - deeper Windows config-path extraction
 4. Keep using:
@@ -107,14 +112,14 @@ with strong evidence.
    - `scripts/01-clean-boot-check.sh`
    to keep evidence reproducible
 5. The immediate next run should be:
-   - `scripts/exp7-pmic-raw-regmap-trace-update.sh`
+   - `scripts/exp8-s-i2c-ctl-focused-trace-update.sh`
    - reboot
-   - `scripts/exp7-pmic-raw-regmap-trace-verify.sh`
+   - `scripts/exp8-s-i2c-ctl-focused-trace-verify.sh`
 
 ## Open Questions
 
-- Why does the Linux `exp2` staged `S_I2C_CTL` path read back `0x00` even
-  though the helper path runs?
+- Why does the `S_I2C_CTL` `0x43` update path report success while immediate
+  PMIC readback collapses to `-110`?
 - Why does userspace PMIC register dumping fail completely after boot when the
   kernel can still log `TPS68470 REVID: 0x21`?
 - What exact higher-level Windows configuration feeds `WF::SetConf` on this
@@ -129,4 +134,5 @@ with strong evidence.
 - a full March 9 status report under `docs/`
 - reference-backed Windows PMIC notes under `reference/windows-driver-analysis/`
 - current support summary under `docs/webcam-status.md`
-- if feasible, the next patch-ready note for tighter PMIC instrumentation
+- if feasible, the next patch-ready note for tighter `S_I2C_CTL`-focused PMIC
+  instrumentation

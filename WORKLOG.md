@@ -2,6 +2,45 @@
 
 ## 2026-03-09
 
+### Analyze `exp7`, commit its run artifacts, and prepare a narrower `exp8`
+
+- Plan: record the new `exp7` run evidence and update the project assessment,
+  then replace the broad raw-regmap follow-up with a tighter `S_I2C_CTL`
+  experiment that keeps the key signal without amplifying boot delays.
+- Commands:
+  - reviewed the `exp7` update and verify artifacts:
+    - `sed -n '1,220p' runs/2026-03-09/20260309T155228-pmic-raw-regmap-trace-update/action.log`
+    - `sed -n '1,220p' runs/2026-03-09/20260309T155609-snapshot-exp7-clean-boot/focused-summary.txt`
+    - `sed -n '1,260p' runs/2026-03-09/20260309T155609-snapshot-exp7-clean-boot/experiment-journal.txt`
+    - `sed -n '1,200p' runs/2026-03-09/20260309T155609-snapshot-exp7-clean-boot/pmic-reg-dump.txt`
+  - reviewed the full previous-boot journal around the long timeout path:
+    - `journalctl -b -1 --no-pager | rg -n "i2c|ov5675|boot.mount|Emergency Mode|timed out"`
+    - `journalctl -b -1 -u boot.mount --no-pager -o short-full`
+  - generated a clean-source `exp8` patch from `git show HEAD:` copies under:
+    - `.tmp/exp8-gen/`
+  - validated `exp8` in a repo-local clean clone under:
+    - `.tmp/exp8-buildcheck/`
+  - `apply_patch` / shell updates:
+    - `reference/patches/pmic-si2c-ctl-focused-trace-v1.patch`
+    - `scripts/exp8-s-i2c-ctl-focused-trace-update.sh`
+    - `scripts/exp8-s-i2c-ctl-focused-trace-verify.sh`
+    - `scripts/lib-experiment-workflow.sh`
+    - `README.md`
+    - `docs/20260309-status-report.md`
+    - `docs/pmic-followup-experiments.md`
+    - `docs/webcam-status.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+- Result:
+  - `exp7` is now recorded as the first run that isolated the bad PMIC
+    transaction to `VSIO` enable on `S_I2C_CTL` `0x43`
+  - the long boot-side effect now looks like instrumentation-amplified I2C
+    timeout fallout, not a primary `/boot` or systemd root cause
+  - the repo now has `exp8`, a narrower follow-up designed to confirm the
+    `0x43` failure point without dragging the bus through dozens of extra
+    timeout reads
+
 ### Add the next PMIC kernel-instrumentation experiment for raw regmap trace
 
 - Plan: add a new PMIC experiment focused on raw register truth inside the

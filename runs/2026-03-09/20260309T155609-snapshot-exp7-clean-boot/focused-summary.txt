@@ -1,0 +1,311 @@
+Source: scripts/01-clean-boot-check.sh
+Purpose: capture the clean-boot checkpoint for the webcam bring-up path
+
+High-value boot log lines:
+Mar 09 15:53:58 p13 kernel: intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00
+Mar 09 15:53:58 p13 kernel: intel-ipu7 0000:00:05.0: Connected 1 cameras
+Mar 09 15:53:58 p13 kernel: int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21
+Mar 09 15:54:11 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -110
+Mar 09 15:54:12 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -110
+Mar 09 15:54:13 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -110
+Mar 09 15:54:14 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -110
+Mar 09 15:54:15 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -110
+Mar 09 15:54:15 p13 kernel: ov5675 i2c-OVTI5675:00: failed to find sensor: -110
+Mar 09 15:55:36 p13 kernel: ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110
+
+INT3472 driver state:
+/sys/bus/i2c/drivers/int3472-tps68470
+
+OV5675 driver state:
+ov5675-unbound
+
+v4l-subdev nodes:
+(none)
+
+Experiment workflow:
+id: exp7
+title: PMIC raw regmap trace
+doc: docs/pmic-followup-experiments.md
+default patch: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/pmic-raw-regmap-trace-v1.patch
+
+Experiment-specific boot lines (pmic_raw:|failed to find sensor|chip id read attempt):
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=POSTDIV2(0x06) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=BOOSTDIV(0x07) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=BUCKDIV(0x08) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=PLLSWR(0x09) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=XTALDIV(0x0a) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=PLLDIV(0x0b) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=POSTDIV(0x0c) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=PLLCTL(0x0d) ret=0 val=0x80
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=CLKCFG2(0x10) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=VSIOVAL(0x40) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=VAVAL(0x41) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=VDVAL(0x42) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=VACTL(0x47) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=VDCTL(0x48) ret=0 val=0x04
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=POSTDIV2(0x06) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=BUCKDIV(0x08) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=PLLSWR(0x09) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=XTALDIV(0x0a) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=PLLDIV(0x0b) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=POSTDIV(0x0c) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=PLLCTL(0x0d) ret=0 val=0x80
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=CLKCFG2(0x10) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=VAVAL(0x41) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=VDVAL(0x42) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=VACTL(0x47) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=VDCTL(0x48) ret=0 val=0x04
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(BOOSTDIV) write reg=BOOSTDIV(0x07) value=0x03 before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x03
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(BUCKDIV) write reg=BUCKDIV(0x08) value=0x02 before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x02
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(PLLSWR) write reg=PLLSWR(0x09) value=0x03 before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x03
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(XTALDIV) write reg=XTALDIV(0x0a) value=0xaa before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0xaa
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(PLLDIV) write reg=PLLDIV(0x0b) value=0x20 before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x20
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(POSTDIV) write reg=POSTDIV(0x0c) value=0x01 before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x01
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(POSTDIV2) write reg=POSTDIV2(0x06) value=0x01 before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x01
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(CLKCFG2) write reg=CLKCFG2(0x10) value=0x05 before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x05
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(PLLCTL) write reg=PLLCTL(0x0d) value=0xd0 before_ret=0 before=0x80 write_ret=0 after_ret=0 after=0xd0
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=VAVAL(0x41) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=VDVAL(0x42) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=VACTL(0x47) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=VDCTL(0x48) ret=0 val=0x04
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: set_voltage_sel(pre) CORE read reg=VCMVAL(0x3c) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: set_voltage_sel(pre) CORE read reg=VIOVAL(0x3f) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: set_voltage_sel(pre) CORE read reg=VSIOVAL(0x40) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: set_voltage_sel(pre) CORE read reg=VAVAL(0x41) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: set_voltage_sel(pre) CORE read reg=VDVAL(0x42) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: set_voltage_sel(pre) CORE read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: set_voltage_sel(pre) CORE read reg=VCMCTL(0x44) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: set_voltage_sel(pre) CORE read reg=VACTL(0x47) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: set_voltage_sel(pre) CORE read reg=VDCTL(0x48) ret=0 val=0x04
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: set_voltage_sel CORE update reg=VDVAL(0x42) mask=0x3f value=0x0c before_ret=0 before=0x00 update_ret=0 after_ret=0 after=0x0c
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: set_voltage_sel(post) CORE read reg=VCMVAL(0x3c) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: set_voltage_sel(post) CORE read reg=VIOVAL(0x3f) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: set_voltage_sel(post) CORE read reg=VSIOVAL(0x40) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: set_voltage_sel(post) CORE read reg=VAVAL(0x41) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: set_voltage_sel(post) CORE read reg=VDVAL(0x42) ret=0 val=0x0c
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: set_voltage_sel(post) CORE read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: set_voltage_sel(post) CORE read reg=VCMCTL(0x44) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: set_voltage_sel(post) CORE read reg=VACTL(0x47) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: set_voltage_sel(post) CORE read reg=VDCTL(0x48) ret=0 val=0x04
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: set_voltage_sel(pre) ANA read reg=VCMVAL(0x3c) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: set_voltage_sel(pre) ANA read reg=VIOVAL(0x3f) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: set_voltage_sel(pre) ANA read reg=VSIOVAL(0x40) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: set_voltage_sel(pre) ANA read reg=VAVAL(0x41) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: set_voltage_sel(pre) ANA read reg=VDVAL(0x42) ret=0 val=0x0c
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: set_voltage_sel(pre) ANA read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: set_voltage_sel(pre) ANA read reg=VCMCTL(0x44) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: set_voltage_sel(pre) ANA read reg=VACTL(0x47) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: set_voltage_sel(pre) ANA read reg=VDCTL(0x48) ret=0 val=0x04
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: set_voltage_sel ANA update reg=VAVAL(0x41) mask=0x7f value=0x6d before_ret=0 before=0x00 update_ret=0 after_ret=0 after=0x6d
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: set_voltage_sel(post) ANA read reg=VCMVAL(0x3c) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: set_voltage_sel(post) ANA read reg=VIOVAL(0x3f) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: set_voltage_sel(post) ANA read reg=VSIOVAL(0x40) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: set_voltage_sel(post) ANA read reg=VAVAL(0x41) ret=0 val=0x6d
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: set_voltage_sel(post) ANA read reg=VDVAL(0x42) ret=0 val=0x0c
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: set_voltage_sel(post) ANA read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: set_voltage_sel(post) ANA read reg=VCMCTL(0x44) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: set_voltage_sel(post) ANA read reg=VACTL(0x47) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: set_voltage_sel(post) ANA read reg=VDCTL(0x48) ret=0 val=0x04
+Mar 09 15:53:58 p13 kernel: regulator regulator.3: pmic_raw: set_voltage_sel(pre) VCM read reg=VCMVAL(0x3c) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.3: pmic_raw: set_voltage_sel(pre) VCM read reg=VIOVAL(0x3f) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: regulator regulator.3: pmic_raw: set_voltage_sel(pre) VCM read reg=VSIOVAL(0x40) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: regulator regulator.3: pmic_raw: set_voltage_sel(pre) VCM read reg=VAVAL(0x41) ret=0 val=0x6d
+Mar 09 15:53:58 p13 kernel: regulator regulator.3: pmic_raw: set_voltage_sel(pre) VCM read reg=VDVAL(0x42) ret=0 val=0x0c
+Mar 09 15:53:58 p13 kernel: regulator regulator.3: pmic_raw: set_voltage_sel(pre) VCM read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.3: pmic_raw: set_voltage_sel(pre) VCM read reg=VCMCTL(0x44) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.3: pmic_raw: set_voltage_sel(pre) VCM read reg=VACTL(0x47) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.3: pmic_raw: set_voltage_sel(pre) VCM read reg=VDCTL(0x48) ret=0 val=0x04
+Mar 09 15:53:58 p13 kernel: regulator regulator.3: pmic_raw: set_voltage_sel VCM update reg=VCMVAL(0x3c) mask=0x7f value=0x6d before_ret=0 before=0x00 update_ret=0 after_ret=0 after=0x6d
+Mar 09 15:53:58 p13 kernel: regulator regulator.3: pmic_raw: set_voltage_sel(post) VCM read reg=VCMVAL(0x3c) ret=0 val=0x6d
+Mar 09 15:53:58 p13 kernel: regulator regulator.3: pmic_raw: set_voltage_sel(post) VCM read reg=VIOVAL(0x3f) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: regulator regulator.3: pmic_raw: set_voltage_sel(post) VCM read reg=VSIOVAL(0x40) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: regulator regulator.3: pmic_raw: set_voltage_sel(post) VCM read reg=VAVAL(0x41) ret=0 val=0x6d
+Mar 09 15:53:58 p13 kernel: regulator regulator.3: pmic_raw: set_voltage_sel(post) VCM read reg=VDVAL(0x42) ret=0 val=0x0c
+Mar 09 15:53:58 p13 kernel: regulator regulator.3: pmic_raw: set_voltage_sel(post) VCM read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.3: pmic_raw: set_voltage_sel(post) VCM read reg=VCMCTL(0x44) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.3: pmic_raw: set_voltage_sel(post) VCM read reg=VACTL(0x47) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.3: pmic_raw: set_voltage_sel(post) VCM read reg=VDCTL(0x48) ret=0 val=0x04
+Mar 09 15:53:58 p13 kernel: regulator regulator.6: pmic_raw: set_voltage_sel AUX1 update reg=UNKNOWN(0x3d) mask=0x7f value=0x6d before_ret=0 before=0x00 update_ret=0 after_ret=0 after=0x6d
+Mar 09 15:53:58 p13 kernel: regulator regulator.7: pmic_raw: set_voltage_sel AUX2 update reg=UNKNOWN(0x3e) mask=0x7f value=0x34 before_ret=0 before=0x00 update_ret=0 after_ret=0 after=0x34
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VACTL(0x47) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDCTL(0x48) ret=0 val=0x04
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x0a before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x0a
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pll_enable) update reg=PLLCTL(0x0d) mask=0x01 value=0x01 before_ret=0 before=0xd0 update_ret=0 after_ret=0 after=0xd5
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VACTL(0x47) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDCTL(0x48) ret=0 val=0x04
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: enable(pre) ANA read reg=VCMVAL(0x3c) ret=0 val=0x6d
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: enable(pre) ANA read reg=VIOVAL(0x3f) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: enable(pre) ANA read reg=VSIOVAL(0x40) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: enable(pre) ANA read reg=VAVAL(0x41) ret=0 val=0x6d
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: enable(pre) ANA read reg=VDVAL(0x42) ret=0 val=0x0c
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: enable(pre) ANA read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: enable(pre) ANA read reg=VCMCTL(0x44) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: enable(pre) ANA read reg=VACTL(0x47) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: enable(pre) ANA read reg=VDCTL(0x48) ret=0 val=0x04
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: enable ANA update reg=VACTL(0x47) mask=0x01 value=0x01 before_ret=0 before=0x00 update_ret=0 after_ret=0 after=0x01
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: enable(post) ANA read reg=VCMVAL(0x3c) ret=0 val=0x6d
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: enable(post) ANA read reg=VIOVAL(0x3f) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: enable(post) ANA read reg=VSIOVAL(0x40) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: enable(post) ANA read reg=VAVAL(0x41) ret=0 val=0x6d
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: enable(post) ANA read reg=VDVAL(0x42) ret=0 val=0x0c
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: enable(post) ANA read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: enable(post) ANA read reg=VCMCTL(0x44) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: enable(post) ANA read reg=VACTL(0x47) ret=0 val=0x01
+Mar 09 15:53:58 p13 kernel: regulator regulator.2: pmic_raw: enable(post) ANA read reg=VDCTL(0x48) ret=0 val=0x04
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: enable(pre) CORE read reg=VCMVAL(0x3c) ret=0 val=0x6d
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: enable(pre) CORE read reg=VIOVAL(0x3f) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: enable(pre) CORE read reg=VSIOVAL(0x40) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: enable(pre) CORE read reg=VAVAL(0x41) ret=0 val=0x6d
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: enable(pre) CORE read reg=VDVAL(0x42) ret=0 val=0x0c
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: enable(pre) CORE read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: enable(pre) CORE read reg=VCMCTL(0x44) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: enable(pre) CORE read reg=VACTL(0x47) ret=0 val=0x01
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: enable(pre) CORE read reg=VDCTL(0x48) ret=0 val=0x04
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: enable CORE update reg=VDCTL(0x48) mask=0x01 value=0x01 before_ret=0 before=0x04 update_ret=0 after_ret=0 after=0x05
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: enable(post) CORE read reg=VCMVAL(0x3c) ret=0 val=0x6d
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: enable(post) CORE read reg=VIOVAL(0x3f) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: enable(post) CORE read reg=VSIOVAL(0x40) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: enable(post) CORE read reg=VAVAL(0x41) ret=0 val=0x6d
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: enable(post) CORE read reg=VDVAL(0x42) ret=0 val=0x0c
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: enable(post) CORE read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: enable(post) CORE read reg=VCMCTL(0x44) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: enable(post) CORE read reg=VACTL(0x47) ret=0 val=0x01
+Mar 09 15:53:58 p13 kernel: regulator regulator.1: pmic_raw: enable(post) CORE read reg=VDCTL(0x48) ret=0 val=0x05
+Mar 09 15:53:58 p13 kernel: regulator regulator.5: pmic_raw: enable(pre) VSIO read reg=VCMVAL(0x3c) ret=0 val=0x6d
+Mar 09 15:53:58 p13 kernel: regulator regulator.5: pmic_raw: enable(pre) VSIO read reg=VIOVAL(0x3f) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: regulator regulator.5: pmic_raw: enable(pre) VSIO read reg=VSIOVAL(0x40) ret=0 val=0x34
+Mar 09 15:53:58 p13 kernel: regulator regulator.5: pmic_raw: enable(pre) VSIO read reg=VAVAL(0x41) ret=0 val=0x6d
+Mar 09 15:53:58 p13 kernel: regulator regulator.5: pmic_raw: enable(pre) VSIO read reg=VDVAL(0x42) ret=0 val=0x0c
+Mar 09 15:53:58 p13 kernel: regulator regulator.5: pmic_raw: enable(pre) VSIO read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.5: pmic_raw: enable(pre) VSIO read reg=VCMCTL(0x44) ret=0 val=0x00
+Mar 09 15:53:58 p13 kernel: regulator regulator.5: pmic_raw: enable(pre) VSIO read reg=VACTL(0x47) ret=0 val=0x01
+Mar 09 15:53:58 p13 kernel: regulator regulator.5: pmic_raw: enable(pre) VSIO read reg=VDCTL(0x48) ret=0 val=0x05
+Mar 09 15:53:59 p13 kernel: regulator regulator.5: pmic_raw: enable VSIO update reg=S_I2C_CTL(0x43) mask=0x03 value=0x03 before_ret=0 before=0x00 update_ret=0 after_ret=-110 after=0x00
+Mar 09 15:54:00 p13 kernel: regulator regulator.5: pmic_raw: enable(post) VSIO read reg=VCMVAL(0x3c) ret=-110 val=0x00
+Mar 09 15:54:01 p13 kernel: regulator regulator.5: pmic_raw: enable(post) VSIO read reg=VIOVAL(0x3f) ret=-110 val=0x00
+Mar 09 15:54:02 p13 kernel: regulator regulator.5: pmic_raw: enable(post) VSIO read reg=VSIOVAL(0x40) ret=-110 val=0x00
+Mar 09 15:54:03 p13 kernel: regulator regulator.5: pmic_raw: enable(post) VSIO read reg=VAVAL(0x41) ret=-110 val=0x00
+Mar 09 15:54:04 p13 kernel: regulator regulator.5: pmic_raw: enable(post) VSIO read reg=VDVAL(0x42) ret=-110 val=0x00
+Mar 09 15:54:05 p13 kernel: regulator regulator.5: pmic_raw: enable(post) VSIO read reg=S_I2C_CTL(0x43) ret=-110 val=0x00
+Mar 09 15:54:06 p13 kernel: regulator regulator.5: pmic_raw: enable(post) VSIO read reg=VCMCTL(0x44) ret=-110 val=0x00
+Mar 09 15:54:07 p13 kernel: regulator regulator.5: pmic_raw: enable(post) VSIO read reg=VACTL(0x47) ret=-110 val=0x00
+Mar 09 15:54:08 p13 kernel: regulator regulator.5: pmic_raw: enable(post) VSIO read reg=VDCTL(0x48) ret=-110 val=0x00
+Mar 09 15:54:11 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -110
+Mar 09 15:54:12 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -110
+Mar 09 15:54:13 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -110
+Mar 09 15:54:14 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -110
+Mar 09 15:54:15 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -110
+Mar 09 15:54:15 p13 kernel: ov5675 i2c-OVTI5675:00: failed to find sensor: -110
+Mar 09 15:54:19 p13 kernel: regulator regulator.5: pmic_raw: disable(pre) VSIO read reg=VCMVAL(0x3c) ret=-110 val=0x00
+Mar 09 15:54:20 p13 kernel: regulator regulator.5: pmic_raw: disable(pre) VSIO read reg=VIOVAL(0x3f) ret=-110 val=0x00
+Mar 09 15:54:21 p13 kernel: regulator regulator.5: pmic_raw: disable(pre) VSIO read reg=VSIOVAL(0x40) ret=-110 val=0x00
+Mar 09 15:54:22 p13 kernel: regulator regulator.5: pmic_raw: disable(pre) VSIO read reg=VAVAL(0x41) ret=-110 val=0x00
+Mar 09 15:54:23 p13 kernel: regulator regulator.5: pmic_raw: disable(pre) VSIO read reg=VDVAL(0x42) ret=-110 val=0x00
+Mar 09 15:54:24 p13 kernel: regulator regulator.5: pmic_raw: disable(pre) VSIO read reg=S_I2C_CTL(0x43) ret=-110 val=0x00
+Mar 09 15:54:26 p13 kernel: regulator regulator.5: pmic_raw: disable(pre) VSIO read reg=VCMCTL(0x44) ret=-110 val=0x00
+Mar 09 15:54:27 p13 kernel: regulator regulator.5: pmic_raw: disable(pre) VSIO read reg=VACTL(0x47) ret=-110 val=0x00
+Mar 09 15:54:28 p13 kernel: regulator regulator.5: pmic_raw: disable(pre) VSIO read reg=VDCTL(0x48) ret=-110 val=0x00
+Mar 09 15:54:31 p13 kernel: regulator regulator.5: pmic_raw: disable VSIO update reg=S_I2C_CTL(0x43) mask=0x03 value=0x00 before_ret=-110 before=0x00 update_ret=-110 after_ret=-110 after=0x00
+Mar 09 15:54:32 p13 kernel: regulator regulator.1: pmic_raw: disable(pre) CORE read reg=VCMVAL(0x3c) ret=-110 val=0x00
+Mar 09 15:54:35 p13 kernel: regulator regulator.1: pmic_raw: disable(pre) CORE read reg=VIOVAL(0x3f) ret=-110 val=0x00
+Mar 09 15:54:36 p13 kernel: regulator regulator.1: pmic_raw: disable(pre) CORE read reg=VSIOVAL(0x40) ret=-110 val=0x00
+Mar 09 15:54:37 p13 kernel: regulator regulator.1: pmic_raw: disable(pre) CORE read reg=VAVAL(0x41) ret=-110 val=0x00
+Mar 09 15:54:38 p13 kernel: regulator regulator.1: pmic_raw: disable(pre) CORE read reg=VDVAL(0x42) ret=-110 val=0x00
+Mar 09 15:54:39 p13 kernel: regulator regulator.1: pmic_raw: disable(pre) CORE read reg=S_I2C_CTL(0x43) ret=-110 val=0x00
+Mar 09 15:54:40 p13 kernel: regulator regulator.1: pmic_raw: disable(pre) CORE read reg=VCMCTL(0x44) ret=-110 val=0x00
+Mar 09 15:54:41 p13 kernel: regulator regulator.1: pmic_raw: disable(pre) CORE read reg=VACTL(0x47) ret=-110 val=0x00
+Mar 09 15:54:42 p13 kernel: regulator regulator.1: pmic_raw: disable(pre) CORE read reg=VDCTL(0x48) ret=-110 val=0x00
+Mar 09 15:54:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV2(0x06) ret=-110 val=0x00
+Mar 09 15:54:44 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BOOSTDIV(0x07) ret=-110 val=0x00
+Mar 09 15:54:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BUCKDIV(0x08) ret=-110 val=0x00
+Mar 09 15:54:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLSWR(0x09) ret=-110 val=0x00
+Mar 09 15:54:47 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=XTALDIV(0x0a) ret=-110 val=0x00
+Mar 09 15:54:48 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLDIV(0x0b) ret=-110 val=0x00
+Mar 09 15:54:49 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV(0x0c) ret=-110 val=0x00
+Mar 09 15:54:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLCTL(0x0d) ret=-110 val=0x00
+Mar 09 15:54:51 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG1(0x0f) ret=-110 val=0x00
+Mar 09 15:54:52 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG2(0x10) ret=-110 val=0x00
+Mar 09 15:54:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VSIOVAL(0x40) ret=-110 val=0x00
+Mar 09 15:54:54 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VAVAL(0x41) ret=-110 val=0x00
+Mar 09 15:54:55 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDVAL(0x42) ret=-110 val=0x00
+Mar 09 15:54:56 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=S_I2C_CTL(0x43) ret=-110 val=0x00
+Mar 09 15:54:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VACTL(0x47) ret=-110 val=0x00
+Mar 09 15:54:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDCTL(0x48) ret=-110 val=0x00
+Mar 09 15:55:02 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pll_disable) update reg=PLLCTL(0x0d) mask=0x01 value=0x00 before_ret=-110 before=0x00 update_ret=-110 after_ret=-110 after=0x00
+Mar 09 15:55:05 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x00 before_ret=-110 before=0x00 write_ret=-110 after_ret=-110 after=0x00
+Mar 09 15:55:06 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV2(0x06) ret=-110 val=0x00
+Mar 09 15:55:07 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BOOSTDIV(0x07) ret=-110 val=0x00
+Mar 09 15:55:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BUCKDIV(0x08) ret=-110 val=0x00
+Mar 09 15:55:09 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLSWR(0x09) ret=-110 val=0x00
+Mar 09 15:55:10 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=XTALDIV(0x0a) ret=-110 val=0x00
+Mar 09 15:55:11 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLDIV(0x0b) ret=-110 val=0x00
+Mar 09 15:55:12 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV(0x0c) ret=-110 val=0x00
+Mar 09 15:55:13 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLCTL(0x0d) ret=-110 val=0x00
+Mar 09 15:55:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG1(0x0f) ret=-110 val=0x00
+Mar 09 15:55:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG2(0x10) ret=-110 val=0x00
+Mar 09 15:55:16 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VSIOVAL(0x40) ret=-110 val=0x00
+Mar 09 15:55:17 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VAVAL(0x41) ret=-110 val=0x00
+Mar 09 15:55:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDVAL(0x42) ret=-110 val=0x00
+Mar 09 15:55:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=S_I2C_CTL(0x43) ret=-110 val=0x00
+Mar 09 15:55:20 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VACTL(0x47) ret=-110 val=0x00
+Mar 09 15:55:21 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDCTL(0x48) ret=-110 val=0x00
+Mar 09 15:55:24 p13 kernel: regulator regulator.1: pmic_raw: disable CORE update reg=VDCTL(0x48) mask=0x01 value=0x00 before_ret=-110 before=0x00 update_ret=-110 after_ret=-110 after=0x00
+Mar 09 15:55:25 p13 kernel: regulator regulator.2: pmic_raw: disable(pre) ANA read reg=VCMVAL(0x3c) ret=-110 val=0x00
+Mar 09 15:55:26 p13 kernel: regulator regulator.2: pmic_raw: disable(pre) ANA read reg=VIOVAL(0x3f) ret=-110 val=0x00
+Mar 09 15:55:27 p13 kernel: regulator regulator.2: pmic_raw: disable(pre) ANA read reg=VSIOVAL(0x40) ret=-110 val=0x00
+Mar 09 15:55:28 p13 kernel: regulator regulator.2: pmic_raw: disable(pre) ANA read reg=VAVAL(0x41) ret=-110 val=0x00
+Mar 09 15:55:29 p13 kernel: regulator regulator.2: pmic_raw: disable(pre) ANA read reg=VDVAL(0x42) ret=-110 val=0x00
+Mar 09 15:55:30 p13 kernel: regulator regulator.2: pmic_raw: disable(pre) ANA read reg=S_I2C_CTL(0x43) ret=-110 val=0x00
+Mar 09 15:55:31 p13 kernel: regulator regulator.2: pmic_raw: disable(pre) ANA read reg=VCMCTL(0x44) ret=-110 val=0x00
+Mar 09 15:55:32 p13 kernel: regulator regulator.2: pmic_raw: disable(pre) ANA read reg=VACTL(0x47) ret=-110 val=0x00
+Mar 09 15:55:33 p13 kernel: regulator regulator.2: pmic_raw: disable(pre) ANA read reg=VDCTL(0x48) ret=-110 val=0x00
+Mar 09 15:55:36 p13 kernel: regulator regulator.2: pmic_raw: disable ANA update reg=VACTL(0x47) mask=0x01 value=0x00 before_ret=-110 before=0x00 update_ret=-110 after_ret=-110 after=0x00
+
+PMIC dump:
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-09/20260309T155609-snapshot-exp7-clean-boot/pmic-reg-dump.txt

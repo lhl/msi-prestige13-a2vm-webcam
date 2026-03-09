@@ -140,6 +140,34 @@ Interpretation:
 - the current `UF` / `gpio.4` branch is negative and remains a low-priority
   path
 
+### `exp7` raw PMIC regmap trace
+
+What it proved:
+
+- PMIC access is healthy through:
+  - clock setup
+  - `ANA` enable on `VACTL`
+  - `CORE` enable on `VDCTL`
+- the first bad PMIC transaction is `VSIO` enable on `S_I2C_CTL` `0x43`
+
+Key line:
+
+- `enable VSIO update reg=S_I2C_CTL(0x43) ... update_ret=0 after_ret=-110`
+
+Interpretation:
+
+- `0x43` is now the primary suspect, not `0x47` or `0x48`
+- the current Linux `VSIO` handling is likely tripping a PMIC/I2C state change
+  that makes subsequent PMIC accesses fail
+
+Operational note:
+
+- the broad `exp7` tracing also amplified the timeout storm enough to interact
+  badly with boot, including one `boot.mount` timeout / emergency-mode path
+  during the run
+- that looks like collateral from the PMIC/I2C timeout storm, not evidence
+  that `/boot` itself is the webcam blocker
+
 ## Current Assessment
 
 The honest assessment is:
@@ -169,8 +197,9 @@ What now looks most likely:
 1. We still cannot read back PMIC registers from userspace after boot.
    - `scripts/pmic-reg-dump.sh` currently returns `ERROR` for every register
      in representative runs.
-2. We still do not know why the `exp2` `S_I2C_CTL` write path logs success but
-   reads back as `0x00`.
+2. We now know the first bad PMIC transaction is `VSIO` enable on
+   `S_I2C_CTL`, but we still do not know why that update returns success while
+   immediate readback fails with `-110`.
 3. We still do not have the exact higher-level Windows configuration path that
    feeds `WF::SetConf` or chooses the `WF` versus `UF` branch for this board.
 4. We still do not have direct electrical truth for the PMIC GPIO and sensor
@@ -178,12 +207,12 @@ What now looks most likely:
 
 ## Next Steps
 
-1. Tighten in-kernel PMIC instrumentation around raw regmap write/read return
-   codes for `0x43`, `0x40`-`0x42`, `0x47`, and `0x48`.
+1. Run the narrower `S_I2C_CTL`-focused PMIC follow-up that keeps the key
+   `0x43` signal but avoids the broad timeout amplification seen in `exp7`.
    - immediate next wrapper:
-     - `scripts/exp7-pmic-raw-regmap-trace-update.sh`
+     - `scripts/exp8-s-i2c-ctl-focused-trace-update.sh`
      - reboot
-     - `scripts/exp7-pmic-raw-regmap-trace-verify.sh`
+     - `scripts/exp8-s-i2c-ctl-focused-trace-verify.sh`
 2. Fix or replace the post-boot PMIC dump path so we can see real register
    state after a failed clean boot.
 3. Extract the higher-level Windows config path that feeds `WF::SetConf` and
