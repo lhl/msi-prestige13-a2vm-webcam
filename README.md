@@ -37,6 +37,7 @@ Machine under test:
 - [`docs/ov5675-powerdown-followup.md`](./docs/ov5675-powerdown-followup.md) — next `ov5675` GPIO follow-up after the clean-boot serial-power result
 - [`docs/ov5675-identify-debug-followup.md`](./docs/ov5675-identify-debug-followup.md) — next `ov5675` debug/retry branch after the negative `powerdown-v1` result
 - [`docs/wf-vs-uf-gpio-analysis.md`](./docs/wf-vs-uf-gpio-analysis.md) — why the local evidence still favors the `WF` / `LNK0` GPIO model over a premature `gpio.4` pivot
+- [`docs/pmic-followup-experiments.md`](./docs/pmic-followup-experiments.md) — ordered `WF` / PMIC experiment matrix plus update/reboot/verify wrappers for experiments 1-6
 - [`docs/patch-kernel-workflow.md`](./docs/patch-kernel-workflow.md) — idempotent patch-stack workflow for the local `linux-mainline` tree
 - [`docs/test-routines.md`](./docs/test-routines.md) — numbered test wrappers for clean-boot and reload checkpoints
 - [`reference/README.md`](./reference/README.md) — captured upstream references
@@ -71,7 +72,10 @@ msi-prestige13-a2vm-webcam/
 │   ├── 01-clean-boot-check.sh
 │   ├── 02-ov5675-reload-check.sh
 │   ├── 03-ov5675-identify-debug-check.sh
+│   ├── exp*-*-update.sh
+│   ├── exp*-*-verify.sh
 │   ├── patch-kernel.sh
+│   ├── lib-experiment-workflow.sh
 │   └── webcam-run.sh
 ├── runs/
 │   └── README.md
@@ -80,6 +84,7 @@ msi-prestige13-a2vm-webcam/
 ├── docs/
 │   ├── README.md
 │   ├── module-iteration.md
+│   ├── pmic-followup-experiments.md
 │   ├── ipu-bridge-ovti5675-candidate.md
 │   ├── ov5675-diagnostic-patch.md
 │   ├── reprobe-harness.md
@@ -113,9 +118,10 @@ msi-prestige13-a2vm-webcam/
    `failed to find sensor: -5` did not change.
 3. Use the `ov5675` identify-debug branch as the clean-boot baseline:
    chip-ID reads now fail with `-110`, not the old collapsed `-5`.
-4. Use the `WF` vs `UF` analysis and the current clean-boot results to keep the
-   next debug branch focused on `WF`-side GPIO sequencing rather than a
-   premature jump to a different PMIC GPIO design.
+4. Use the ordered PMIC follow-up workflow in
+   [`docs/pmic-followup-experiments.md`](./docs/pmic-followup-experiments.md)
+   and the matching `scripts/exp*-*-update.sh` / `scripts/exp*-*-verify.sh`
+   wrappers for experiments 1-6.
 
 ## Related Docs
 

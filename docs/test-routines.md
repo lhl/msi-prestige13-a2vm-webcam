@@ -128,3 +128,15 @@ Current example from this repo:
 
 That later GPIO failure is still useful, but it is interpreted as fallout from
 the earlier timeout rather than as the primary blocker.
+
+## PMIC experiment wrappers
+
+The six PMIC-side follow-ups now have matching update/reboot/verify wrappers
+documented in `docs/pmic-followup-experiments.md`.
+
+Interpretation rule stays the same:
+
+- the `*-verify.sh` wrappers still use `scripts/01-clean-boot-check.sh` as the
+  first capture step
+- their extra journal grep and PMIC dump are appended as secondary evidence,
+  not as a replacement for the boot-time result

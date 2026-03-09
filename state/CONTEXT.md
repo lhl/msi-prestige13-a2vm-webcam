@@ -56,6 +56,14 @@ with strong evidence.
     - default/configured voltage tuple `1050 / 2800 / 1800 / 2800 / 1800`
     - PMIC value-register writes `0x41`, `0x40`, `0x42`, `0x3c`, `0x3f`
     - staged `S_I2C_CTL` handling around register `0x43`
+- The repo now also has scripted update/reboot/verify wrappers for the six
+  ordered PMIC follow-ups:
+  - `scripts/exp1-pmic-instrumentation-update.sh`
+  - `scripts/exp2-wf-s-i2c-ctl-update.sh`
+  - `scripts/exp3-ms13q3-vd-1050mv-update.sh`
+  - `scripts/exp4-wf-init-value-programming-update.sh`
+  - `scripts/exp5-wf-gpio-mode-followup-update.sh`
+  - `scripts/exp6-uf-gpio4-last-resort-update.sh`
 
 ## Latest Debug Result
 
@@ -160,12 +168,15 @@ with strong evidence.
    - `WF` value-register programming
    - staged `S_I2C_CTL` handling
    - current Linux `CORE` / `VD` voltage assumptions
-5. Do not jump to a `gpio.4` / `UF` redesign first:
+5. Use the matching `scripts/exp*-*-update.sh` and `scripts/exp*-*-verify.sh`
+   wrappers to keep those follow-ups repeatable across patching, module
+   install, reboot, and clean-boot verification.
+6. Do not jump to a `gpio.4` / `UF` redesign first:
    - Windows supports both helper families
    - local ACPI still favors `WFCS -> LNK0`
-6. Keep clean-boot checkpoints as the primary truth source. Reload-only checks
+7. Keep clean-boot checkpoints as the primary truth source. Reload-only checks
    are still secondary once the boot-time path has already failed.
-7. Keep the latest Windows-source artifacts close at hand:
+8. Keep the latest Windows-source artifacts close at hand:
    - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/power-sequencing-notes.md`
    - `docs/wf-vs-uf-gpio-analysis.md`
 
@@ -186,6 +197,15 @@ with strong evidence.
   - `docs/webcam-status.md`
 - `WF` vs `UF` Windows helper analysis:
   - `docs/wf-vs-uf-gpio-analysis.md`
+- PMIC experiment workflow:
+  - `docs/pmic-followup-experiments.md`
+  - `scripts/lib-experiment-workflow.sh`
+  - `scripts/exp1-pmic-instrumentation-update.sh`
+  - `scripts/exp2-wf-s-i2c-ctl-update.sh`
+  - `scripts/exp3-ms13q3-vd-1050mv-update.sh`
+  - `scripts/exp4-wf-init-value-programming-update.sh`
+  - `scripts/exp5-wf-gpio-mode-followup-update.sh`
+  - `scripts/exp6-uf-gpio4-last-resort-update.sh`
 - Windows `WF` power-path note:
   - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/power-sequencing-notes.md`
 - Next module-only sequencing follow-up:

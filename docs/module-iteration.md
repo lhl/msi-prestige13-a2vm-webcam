@@ -146,6 +146,9 @@ See also:
 
 - `docs/patch-kernel-workflow.md` for the idempotent patch-stack applicator and
   `tested` vs `candidate` profiles
+- `docs/pmic-followup-experiments.md` for the higher-level experiment wrappers
+  that combine patch application, module install, reboot, and clean-boot
+  verification for the six ordered PMIC follow-ups
 - `docs/ov5675-gpio-release-sequencing-followup.md` for the current
   module-only `ov5675` GPIO-sequencing debug branch
 - `docs/int3472-gpio1-powerdown-active-high-followup.md` for the latest

@@ -1,0 +1,70 @@
+[2026-03-09T04:41:33Z] experiment: exp1 PMIC path instrumentation
+[2026-03-09T04:41:33Z] doc: docs/pmic-followup-experiments.md
+[2026-03-09T04:41:33Z] kernel tree: /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline
+[2026-03-09T04:41:33Z] baseline profile: candidate
+[2026-03-09T04:41:33Z] patch: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ms13q3-int3472-tps68470-v1.patch
+[2026-03-09T04:41:33Z] module release: 7.0.0-rc2-1-mainline-dirty
+[2026-03-09T04:41:33Z] build jobs: 8
+[2026-03-09T04:41:33Z] dry-run: 1
+[2026-03-09T04:41:33Z] build directories:
+[2026-03-09T04:41:33Z]   - drivers/platform/x86/intel/int3472
+[2026-03-09T04:41:33Z]   - drivers/media/pci/intel
+[2026-03-09T04:41:33Z]   - drivers/media/i2c
+[2026-03-09T04:41:33Z]   - drivers/media/v4l2-core
+[2026-03-09T04:41:33Z]   - drivers/clk
+[2026-03-09T04:41:33Z]   - drivers/regulator
+[2026-03-09T04:41:33Z] module installs:
+[2026-03-09T04:41:33Z]   - drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.ko:kernel/drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.ko.zst
+[2026-03-09T04:41:33Z]   - drivers/media/pci/intel/ipu-bridge.ko:kernel/drivers/media/pci/intel/ipu-bridge.ko.zst
+[2026-03-09T04:41:33Z]   - drivers/media/i2c/ov5675.ko:kernel/drivers/media/i2c/ov5675.ko.zst
+[2026-03-09T04:41:33Z]   - drivers/media/v4l2-core/videodev.ko:kernel/drivers/media/v4l2-core/videodev.ko.zst
+[2026-03-09T04:41:33Z]   - drivers/clk/clk-tps68470.ko:kernel/drivers/clk/clk-tps68470.ko.zst
+[2026-03-09T04:41:33Z]   - drivers/regulator/tps68470-regulator.ko:kernel/drivers/regulator/tps68470-regulator.ko.zst
+[2026-03-09T04:41:33Z] CMD: git -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline status --short
+DRY_RUN: skipped
+[2026-03-09T04:41:33Z] CMD: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/scripts/patch-kernel.sh --kernel-tree /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline --profile candidate --status
+DRY_RUN: skipped
+[2026-03-09T04:41:33Z] CMD: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/scripts/patch-kernel.sh --kernel-tree /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline --profile candidate
+DRY_RUN: skipped
+[2026-03-09T04:41:33Z] experiment patch already applied: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ms13q3-int3472-tps68470-v1.patch
+[2026-03-09T04:41:33Z] CMD: make -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline -j 8 M=drivers/platform/x86/intel/int3472 modules
+DRY_RUN: skipped
+[2026-03-09T04:41:33Z] CMD: make -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline -j 8 M=drivers/media/pci/intel modules
+DRY_RUN: skipped
+[2026-03-09T04:41:33Z] CMD: make -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline -j 8 M=drivers/media/i2c modules
+DRY_RUN: skipped
+[2026-03-09T04:41:33Z] CMD: make -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline -j 8 M=drivers/media/v4l2-core modules
+DRY_RUN: skipped
+[2026-03-09T04:41:33Z] CMD: make -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline -j 8 M=drivers/clk modules
+DRY_RUN: skipped
+[2026-03-09T04:41:33Z] CMD: make -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline -j 8 M=drivers/regulator modules
+DRY_RUN: skipped
+[2026-03-09T04:41:33Z] CMD: zstd -T0 -f /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.ko -o /tmp/intel_skl_int3472_tps68470.dry-run.ko.zst
+DRY_RUN: skipped
+[2026-03-09T04:41:33Z] CMD: as_root install -Dm644 /tmp/intel_skl_int3472_tps68470.dry-run.ko.zst /usr/lib/modules/7.0.0-rc2-1-mainline-dirty/kernel/drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.ko.zst
+DRY_RUN: skipped
+[2026-03-09T04:41:33Z] CMD: zstd -T0 -f /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/pci/intel/ipu-bridge.ko -o /tmp/ipu-bridge.dry-run.ko.zst
+DRY_RUN: skipped
+[2026-03-09T04:41:33Z] CMD: as_root install -Dm644 /tmp/ipu-bridge.dry-run.ko.zst /usr/lib/modules/7.0.0-rc2-1-mainline-dirty/kernel/drivers/media/pci/intel/ipu-bridge.ko.zst
+DRY_RUN: skipped
+[2026-03-09T04:41:33Z] CMD: zstd -T0 -f /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/i2c/ov5675.ko -o /tmp/ov5675.dry-run.ko.zst
+DRY_RUN: skipped
+[2026-03-09T04:41:33Z] CMD: as_root install -Dm644 /tmp/ov5675.dry-run.ko.zst /usr/lib/modules/7.0.0-rc2-1-mainline-dirty/kernel/drivers/media/i2c/ov5675.ko.zst
+DRY_RUN: skipped
+[2026-03-09T04:41:33Z] CMD: zstd -T0 -f /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/v4l2-core/videodev.ko -o /tmp/videodev.dry-run.ko.zst
+DRY_RUN: skipped
+[2026-03-09T04:41:33Z] CMD: as_root install -Dm644 /tmp/videodev.dry-run.ko.zst /usr/lib/modules/7.0.0-rc2-1-mainline-dirty/kernel/drivers/media/v4l2-core/videodev.ko.zst
+DRY_RUN: skipped
+[2026-03-09T04:41:33Z] CMD: zstd -T0 -f /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/clk/clk-tps68470.ko -o /tmp/clk-tps68470.dry-run.ko.zst
+DRY_RUN: skipped
+[2026-03-09T04:41:33Z] CMD: as_root install -Dm644 /tmp/clk-tps68470.dry-run.ko.zst /usr/lib/modules/7.0.0-rc2-1-mainline-dirty/kernel/drivers/clk/clk-tps68470.ko.zst
+DRY_RUN: skipped
+[2026-03-09T04:41:33Z] CMD: zstd -T0 -f /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/regulator/tps68470-regulator.ko -o /tmp/tps68470-regulator.dry-run.ko.zst
+DRY_RUN: skipped
+[2026-03-09T04:41:33Z] CMD: as_root install -Dm644 /tmp/tps68470-regulator.dry-run.ko.zst /usr/lib/modules/7.0.0-rc2-1-mainline-dirty/kernel/drivers/regulator/tps68470-regulator.ko.zst
+DRY_RUN: skipped
+[2026-03-09T04:41:33Z] CMD: as_root depmod -a 7.0.0-rc2-1-mainline-dirty
+DRY_RUN: skipped
+[2026-03-09T04:41:33Z] update log directory: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-09/20260309T134132-pmic-instrumentation-update
+[2026-03-09T04:41:33Z] next step after reboot: scripts/exp1-pmic-instrumentation-verify.sh
+[2026-03-09T04:41:33Z] dry-run active; reboot skipped

@@ -2,6 +2,85 @@
 
 ## 2026-03-09
 
+### Add scripted update/reboot/verify wrappers for the six ordered PMIC follow-ups
+
+- Plan: turn the ordered PMIC-side follow-ups into repeatable wrapper scripts
+  that reuse the current patch-stack and clean-boot capture workflow, while
+  adding the missing root install, `depmod`, reboot, and post-boot PMIC-dump
+  steps.
+- Commands:
+  - reviewed the current workflow and capture helpers:
+    - `find scripts -maxdepth 2 -type f | sort`
+    - `sed -n '1,260p' scripts/patch-kernel.sh`
+    - `sed -n '1,260p' scripts/01-clean-boot-check.sh`
+    - `sed -n '1,320p' scripts/webcam-run.sh`
+    - `sed -n '1,260p' docs/module-iteration.md`
+    - `sed -n '1,260p' docs/test-routines.md`
+  - checked the current kernel module boundaries and install paths:
+    - `sed -n '1,220p' ~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472/Makefile`
+    - `find /usr/lib/modules/$(uname -r)/kernel/drivers/... | rg 'tps68470|ov5675|ipu-bridge|videodev'`
+  - added the shared workflow helper and per-experiment wrappers:
+    - `scripts/lib-experiment-workflow.sh`
+    - `scripts/exp1-pmic-instrumentation-update.sh`
+    - `scripts/exp1-pmic-instrumentation-verify.sh`
+    - `scripts/exp2-wf-s-i2c-ctl-update.sh`
+    - `scripts/exp2-wf-s-i2c-ctl-verify.sh`
+    - `scripts/exp3-ms13q3-vd-1050mv-update.sh`
+    - `scripts/exp3-ms13q3-vd-1050mv-verify.sh`
+    - `scripts/exp4-wf-init-value-programming-update.sh`
+    - `scripts/exp4-wf-init-value-programming-verify.sh`
+    - `scripts/exp5-wf-gpio-mode-followup-update.sh`
+    - `scripts/exp5-wf-gpio-mode-followup-verify.sh`
+    - `scripts/exp6-uf-gpio4-last-resort-update.sh`
+    - `scripts/exp6-uf-gpio4-last-resort-verify.sh`
+  - documented the workflow and refreshed repo entrypoints:
+    - `docs/pmic-followup-experiments.md`
+    - `README.md`
+    - `docs/README.md`
+    - `docs/module-iteration.md`
+    - `docs/test-routines.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+- Result:
+  - the repo now has one shared helper that does the careful parts consistently:
+    - validates the kernel tree and patch path
+    - applies the baseline patch stack via `scripts/patch-kernel.sh`
+    - applies one experiment patch
+    - rebuilds baseline plus experiment-specific module trees
+    - installs `.ko.zst` files into `/usr/lib/modules/<release>/...`
+    - runs `depmod`
+    - writes an update log under `runs/`
+    - prompts before reboot unless `--yes` is passed
+  - each of the six ordered PMIC experiments now has a matching
+    `*-update.sh` and `*-verify.sh` wrapper
+  - the verify side now standardizes:
+    - `scripts/01-clean-boot-check.sh`
+    - experiment-specific journal grep
+    - root PMIC register dump via `scripts/pmic-reg-dump.sh`
+    - `modinfo` capture for the installed baseline and experiment modules
+  - the shared helper now also supports a true `--dry-run` mode for both
+    update and verify wrappers:
+    - update dry-run resolves the patch path and kernel release, then prints
+      the patch/build/install/reboot actions without executing them
+    - verify dry-run prints the clean-boot check, journal grep, and PMIC dump
+      actions without executing them
+  - the new dry-run mode was exercised directly:
+    - `scripts/exp1-pmic-instrumentation-update.sh --patch reference/patches/ms13q3-int3472-tps68470-v1.patch --dry-run`
+    - `scripts/exp1-pmic-instrumentation-verify.sh --dry-run`
+  - that smoke test confirmed:
+    - the update wrapper prints the full patch/build/install/depmod/reboot flow
+      without touching the kernel tree or installed modules
+    - the verify wrapper prints the clean-boot check, journal grep, and PMIC
+      dump steps without executing them
+  - the workflow is now documented from the normal repo entrypoints instead of
+    only existing in the shell history
+- Decision:
+  - keep the experiment wrappers as workflow scaffolding even before every
+    default experiment patch file exists
+  - when drafting each new PMIC patch, use the default patch filename already
+    reserved by the matching wrapper unless there is a strong reason not to
+
 ### Pull more `WF` PMIC behavior into source artifacts and reassess the blocker
 
 - Plan: widen the Windows disassembly capture so the missing `WF`

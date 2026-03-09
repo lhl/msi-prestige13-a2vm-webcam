@@ -25,6 +25,7 @@ Current focus:
 - `docs/ov5675-powerdown-followup.md` — next `ov5675` GPIO follow-up after the clean-boot serial-power result
 - `docs/ov5675-identify-debug-followup.md` — next `ov5675` identify/debug branch after the negative `powerdown-v1` result
 - `docs/wf-vs-uf-gpio-analysis.md` — Windows helper-family analysis for deciding whether this laptop still matches the `WF` / `LNK0` GPIO model
+- `docs/pmic-followup-experiments.md` — ordered PMIC experiment matrix and the scripted update/reboot/verify workflow for experiments 1-6
 - `docs/patch-kernel-workflow.md` — idempotent patch-stack workflow for the local `linux-mainline` tree
 - `docs/test-routines.md` — numbered test wrappers for clean-boot and reload checkpoints
 

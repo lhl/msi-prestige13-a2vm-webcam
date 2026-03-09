@@ -116,18 +116,26 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
    - missing `WF` value-register programming
    - missing staged `S_I2C_CTL` handling
    - wrong Linux `CORE` / `VD` voltage assumption
-5. Treat label-only `GPIO1` / `GPIO2` swaps as low-signal with the current
+5. Use the scripted PMIC experiment wrappers for the ordered follow-ups above:
+   - `scripts/exp1-pmic-instrumentation-update.sh`
+   - `scripts/exp2-wf-s-i2c-ctl-update.sh`
+   - `scripts/exp3-ms13q3-vd-1050mv-update.sh`
+   - `scripts/exp4-wf-init-value-programming-update.sh`
+   - `scripts/exp5-wf-gpio-mode-followup-update.sh`
+   - `scripts/exp6-uf-gpio4-last-resort-update.sh`
+   - run the matching `*-verify.sh` wrapper after reboot
+6. Treat label-only `GPIO1` / `GPIO2` swaps as low-signal with the current
    `ov5675` power sequence:
    - both control lines are driven in lockstep during power-on and power-off
    - the next meaningful electrical change is polarity, not another pure role
      swap
-6. Treat both one-line polarity variants as negative:
+7. Treat both one-line polarity variants as negative:
    - `GPIO2` active-high: negative
    - `GPIO1` active-high: negative
-7. Do not jump to a `gpio.4` / `UF` redesign first:
+8. Do not jump to a `gpio.4` / `UF` redesign first:
    - the `UF` path is real
    - local ACPI still favors `WFCS -> LNK0`
-8. Keep full kernel rebuilds as a fallback only when a change stops being
+9. Keep full kernel rebuilds as a fallback only when a change stops being
    module-local.
 
 ## Open Questions
@@ -147,6 +155,9 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
   - `WF` value-register programming before rail enables
   - staged `S_I2C_CTL` behavior
   - a different `CORE` / `VD` voltage assumption
+- The repo now has scripted wrappers for those ordered experiments:
+  - update/install/reboot via `scripts/exp*-*-update.sh`
+  - clean-boot verification via `scripts/exp*-*-verify.sh`
 - The latest Windows-helper analysis adds one important guardrail:
   - the package has both `WF` and `UF` helper families
   - `UF` touches what Linux would call `gpio.4`
