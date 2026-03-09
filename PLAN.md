@@ -23,12 +23,11 @@ with strong evidence.
   - the old `No board-data found for this model` failure is gone
   - `ipu-bridge` now finds `OVTI5675:00`
   - the old clean-boot `Failed to enable dvdd: -ETIMEDOUT` line is gone
-- the current remaining clean-boot blocker is stable and narrow:
-  - `chip id read attempt 1/5 failed: -110`
-  - `...`
-  - `chip id read attempt 5/5 failed: -110`
-  - `failed to find sensor: -110`
-  - `probe with driver ov5675 failed with error -110`
+- the current remaining clean-boot blocker is now split into two observed
+  phases:
+  - the older baseline path still ends in `-110` chip-ID timeouts
+  - the latest `exp10` path avoids the PMIC timeout storm but still ends in
+    `-121` chip-ID failures
 - completed negative branches:
   - `GPIO1` / `GPIO2` role swap
   - both one-line polarity variants
@@ -58,20 +57,25 @@ with strong evidence.
     - IO-side `BIT(1)` reads back cleanly as `0x02`
     - the wedge begins only after the later GPIO-side `BIT(0)` update
     - the run now fails earlier at `failed to power on: -110`
+  - `exp10` kept only `BIT(1)` in the regulator path and changed the outcome:
+    - no `i2c_designware` timeout storm
+    - `ANA`, `CORE`, and `VSIO BIT(1)` all read back cleanly
+    - the sensor gets back to chip-ID reads, but they now fail with `-121`
 - current leading interpretation:
   - the remaining gap is PMIC-side behavior, not basic platform support
-  - we are missing either exact PMIC control behavior, exact runtime
-    conditions, or exact sensor control waveform truth
+  - the early regulator-phase `BIT(0)` write was wrong
+  - we are now missing either the later board-specific `BIT(0)` phase, exact
+    runtime conditions, or exact sensor control waveform truth
 
 ## Workstreams
 
 ### 1. PMIC state truth
 
-- [ ] Run the `BIT(1)`-only follow-up in the regulator `VSIO` path.
-- [ ] Determine whether keeping `BIT(1)` while omitting `BIT(0)` lets the bus
+- [x] Run the `BIT(1)`-only follow-up in the regulator `VSIO` path.
+- [x] Determine whether keeping `BIT(1)` while omitting `BIT(0)` lets the bus
   stay alive long enough to return to the sensor identify stage.
-- [ ] If it does, decide where a later board-specific `BIT(0)` assertion
-  belongs, if it belongs anywhere in Linux at all.
+- [ ] Decide where a later board-specific `BIT(0)` assertion belongs, if it
+  belongs anywhere in Linux at all.
 
 ### 2. Post-boot PMIC visibility
 
@@ -105,7 +109,7 @@ with strong evidence.
    work.
 2. Do not spend more time on pure GPIO permutations for now.
 3. Put the next experiment budget into:
-   - `BIT(1)`-only `S_I2C_CTL` follow-up
+   - a later-phase `BIT(0)` follow-up
    - repairing PMIC readback visibility
    - deeper Windows config-path extraction
 4. Keep using:
@@ -114,17 +118,15 @@ with strong evidence.
    - `scripts/exp*-*-verify.sh`
    - `scripts/01-clean-boot-check.sh`
    to keep evidence reproducible
-5. The immediate next run should be:
-   - `scripts/exp10-s-i2c-ctl-bit1-only-update.sh`
-   - reboot
-   - `scripts/exp10-s-i2c-ctl-bit1-only-verify.sh`
+5. The immediate next kernel-side run should test a later `BIT(0)` hook, not
+   reintroduce `BIT(0)` in the regulator `VSIO` path.
 
 ## Open Questions
 
 - Why does the `S_I2C_CTL` `0x43` update path report success while immediate
   PMIC readback collapses to `-110`?
-- Does omitting `BIT(0)` from the regulator-phase path restore the older
-  chip-ID timeout behavior or move the sensor further forward?
+- Where, if anywhere, does this board actually want the later `BIT(0)`
+  transition once the regulator-phase PMIC/I2C path is already healthy?
 - Why does userspace PMIC register dumping fail completely after boot when the
   kernel can still log `TPS68470 REVID: 0x21`?
 - What exact higher-level Windows configuration feeds `WF::SetConf` on this

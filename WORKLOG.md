@@ -2,6 +2,38 @@
 
 ## 2026-03-09
 
+### Review `exp10` and record the `-121` / no-timeout result
+
+- Plan: review the new `exp10` update and verify artifacts, capture what
+  changed technically, and update the live status docs to reflect that this
+  was a real behavioral change rather than a clean negative.
+- Commands:
+  - reviewed:
+    - `runs/2026-03-09/20260309T171305-s-i2c-ctl-bit1-only-update/metadata.env`
+    - `runs/2026-03-09/20260309T171414-snapshot-exp10-clean-boot/focused-summary.txt`
+    - `runs/2026-03-09/20260309T171414-snapshot-exp10-clean-boot/experiment-journal.txt`
+    - `runs/2026-03-09/20260309T171414-snapshot-exp10-clean-boot/pmic-reg-dump.txt`
+  - checked for residual timeout lines across the `exp10` verify run
+  - refreshed:
+    - `README.md`
+    - `docs/webcam-status.md`
+    - `docs/20260309-status-report.md`
+    - `docs/pmic-followup-experiments.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+- Result:
+  - `exp10` is not a clean negative
+  - keeping only `BIT(1)` in the regulator `VSIO` path removed the old PMIC
+    timeout storm
+  - the sensor now gets back to chip-ID reads and fails with `-121`
+    (`EREMOTEIO`) instead of `-110`
+  - that means the PMIC/I2C path stayed alive, but the sensor still did not
+    wake into a valid chip-ID response
+  - the next likely branch is a later-phase `BIT(0)` assertion or another
+    later wake-up / reset sequencing detail, not another early regulator-path
+    write
+
 ### Review `exp9`, record the `BIT(0)` finding, and add `exp10`
 
 - Plan: commit the successful `exp9` run evidence, update the project

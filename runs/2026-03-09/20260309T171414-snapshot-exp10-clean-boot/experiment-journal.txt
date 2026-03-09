@@ -1,0 +1,11 @@
+Mar 09 17:13:51 p13 kernel: regulator regulator.2: pmic_focus: enable ANA reg=VACTL(0x47) mask=0x01 value=0x01 before_ret=0 before=0x00 update_ret=0 after_ret=0 after=0x01
+Mar 09 17:13:51 p13 kernel: regulator regulator.1: pmic_focus: enable CORE reg=VDCTL(0x48) mask=0x01 value=0x01 before_ret=0 before=0x04 update_ret=0 after_ret=0 after=0x05
+Mar 09 17:13:51 p13 kernel: regulator regulator.5: pmic_focus: enable-bit1-only VSIO reg=S_I2C_CTL(0x43) mask=0x02 value=0x02 before_ret=0 before=0x00 update_ret=0 after_ret=0 after=0x02
+Mar 09 17:13:51 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -121
+Mar 09 17:13:51 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -121
+Mar 09 17:13:51 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -121
+Mar 09 17:13:51 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -121
+Mar 09 17:13:51 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -121
+Mar 09 17:13:51 p13 kernel: ov5675 i2c-OVTI5675:00: failed to find sensor: -121
+Mar 09 17:13:51 p13 kernel: regulator regulator.5: pmic_focus: disable-bit1-only VSIO reg=S_I2C_CTL(0x43) mask=0x02 value=0x00 before_ret=0 before=0x02 update_ret=0 after_ret=0 after=0x00
+Mar 09 17:13:51 p13 kernel: regulator regulator.2: pmic_focus: disable ANA reg=VACTL(0x47) mask=0x01 value=0x00 before_ret=0 before=0x01 update_ret=0 after_ret=0 after=0x00

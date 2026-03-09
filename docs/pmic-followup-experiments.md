@@ -7,8 +7,9 @@ update-and-verify workflows.
 
 As of the completed `2026-03-09` PMIC batch:
 
-- `exp1` through `exp9` are completed historical experiments
-- the highest-value next kernel-side follow-up is `exp10`
+- `exp1` through `exp10` are completed historical experiments
+- the highest-value next kernel-side follow-up is a later-phase `BIT(0)`
+  experiment, not another early regulator-path write
 - `exp7` established that `VSIO` enable on `S_I2C_CTL` `0x43` is the first
   PMIC transaction after which readback collapses to `-110`
 - `exp8` confirmed the same failure point with a narrower trace:
@@ -22,6 +23,8 @@ As of the completed `2026-03-09` PMIC batch:
 - `exp10` now tests the obvious next behavior:
   - keep `BIT(1)` in the regulator path
   - do not assert `BIT(0)` there
+  - and see whether the PMIC/I2C path stays alive long enough to change the
+    sensor failure mode
 
 ## Goal
 
@@ -316,6 +319,27 @@ Extra module rebuild/install:
 Scripts:
 - `scripts/exp10-s-i2c-ctl-bit1-only-update.sh`
 - `scripts/exp10-s-i2c-ctl-bit1-only-verify.sh`
+
+Observed outcome:
+- `ANA` enables cleanly:
+  - `before=0x00`
+  - `after=0x01`
+- `CORE` enables cleanly:
+  - `before=0x04`
+  - `after=0x05`
+- `VSIO BIT(1)` enables and disables cleanly:
+  - enable `before=0x00` -> `after=0x02`
+  - disable `before=0x02` -> `after=0x00`
+- the old PMIC timeout storm is gone
+- the sensor gets back to chip-ID reads, but all five now fail with `-121`
+  instead of `-110`
+
+Interpretation:
+- removing early `BIT(0)` is a real improvement, not a clean negative
+- the PMIC/I2C path now stays alive through the sensor identify window
+- the remaining question is what later wake-up behavior is still missing:
+  - a later `BIT(0)` phase
+  - or some separate reset / powerdown sequencing detail
 
 ## Typical usage
 

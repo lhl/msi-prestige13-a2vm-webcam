@@ -31,12 +31,12 @@ with strong evidence.
   - the old `No board-data found for this model` failure is gone
   - `ipu-bridge` now finds `OVTI5675:00` and reports one connected camera
   - the old clean-boot `Failed to enable dvdd: -ETIMEDOUT` line is gone
-- the current clean-boot blocker is still:
-  - `chip id read attempt 1/5 failed: -110`
+- the current best PMIC experiment clean-boot blocker is now:
+  - `chip id read attempt 1/5 failed: -121`
   - `...`
-  - `chip id read attempt 5/5 failed: -110`
-  - `failed to find sensor: -110`
-  - `probe with driver ov5675 failed with error -110`
+  - `chip id read attempt 5/5 failed: -121`
+  - `failed to find sensor: -121`
+  - `probe with driver ov5675 failed with error -121`
   - `ov5675` remains unbound
   - there are still no `/dev/v4l-subdev*` nodes
 
@@ -73,6 +73,11 @@ with strong evidence.
   - IO-side `BIT(1)` reads back cleanly as `0x02`
   - the wedge begins only after the later GPIO-side `BIT(0)` update
   - the run now fails earlier at `ov5675 ... failed to power on: -110`
+- `exp10` `BIT(1)`-only `S_I2C_CTL` changed the failure shape again:
+  - `ANA`, `CORE`, and `VSIO BIT(1)` all read back cleanly
+  - the old `i2c_designware.1` timeout storm is gone
+  - the sensor gets back to chip-ID reads, but they now fail with `-121`
+  - `VSIO BIT(1)` also disables cleanly on unwind
 - the post-boot PMIC dump path is still not usable:
   - `scripts/pmic-reg-dump.sh` returned `ERROR` for all registers in
     representative PMIC experiment runs
@@ -85,18 +90,16 @@ with strong evidence.
 - Simple GPIO label / polarity / release-order guesses are mostly exhausted.
 - The strongest remaining gap is PMIC-side behavior Linux still does not model
   correctly, especially around:
-  - `S_I2C_CTL` `0x43` as the first operation that wedges PMIC readback
+  - where the later `S_I2C_CTL` `BIT(0)` phase belongs, if anywhere
   - PMIC value/register state truth during the failing identify window
   - higher-level Windows config feeding `WF::SetConf` and selecting `WF`
     versus `UF`
 
 ## Next Best Steps
 
-1. Run the `BIT(1)`-only PMIC follow-up in the regulator `VSIO` path:
-   - immediate next wrapper:
-     - `scripts/exp10-s-i2c-ctl-bit1-only-update.sh`
-     - reboot
-     - `scripts/exp10-s-i2c-ctl-bit1-only-verify.sh`
+1. Design the next kernel-side follow-up around a later `BIT(0)` hypothesis:
+   - do not reintroduce `BIT(0)` in the early regulator `VSIO` path
+   - prefer a later GPIO-active or sensor-release phase hook
 2. Fix or replace the post-boot PMIC dump path so we can observe real register
    state after a failed clean boot.
 3. Extract more of the higher-level Windows config path above `WF::SetConf`.

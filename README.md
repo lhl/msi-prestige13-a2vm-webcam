@@ -8,12 +8,13 @@ the MSI Prestige 13 AI+ Evo A2VMG / A2VM family.
 - Current verdict: the webcam is still not working end to end.
 - Best current summary: `docs/webcam-status.md`
 - Full March 9 status report: `docs/20260309-status-report.md`
-- Current leading blocker: Linux now reaches `ov5675` sensor identification on
-  a clean boot, but every chip-ID read still times out with `-110` even after
-  the first six PMIC follow-up experiments.
+- Current leading blocker: with the latest `exp10` PMIC follow-up, Linux keeps
+  the PMIC/I2C path alive long enough to reach `ov5675` sensor identification
+  without the old timeout storm, but every chip-ID read still fails with
+  `-121`.
 - Current leading interpretation: the remaining gap is no longer basic IPU7
   support, sensor discovery, or the first MSI board-data patch. It is now a
-  narrower PMIC-side wake-up / pass-through / sequencing problem.
+  narrower late-stage PMIC / sensor wake-up / sequencing problem.
 
 Machine under test:
 
@@ -146,16 +147,15 @@ msi-prestige13-a2vm-webcam/
    - `exp5` `WF` GPIO mode follow-up
    - `exp6` `UF` / `gpio.4` last resort
 4. Put the next effort into the PMIC behavior Linux still does not explain:
-   - why `S_I2C_CTL` `0x43` is the first PMIC transaction after which readback
-     collapses to `-110`
-   - why the GPIO-side `BIT(0)` step wedges PMIC access while the IO-side
-     `BIT(1)` step reads back cleanly
+   - why the regulator-phase `BIT(1)`-only `S_I2C_CTL` path keeps PMIC access
+     healthy but still leaves the sensor returning `-121`
+   - where, if anywhere, the later GPIO-side `BIT(0)` step belongs
    - why post-boot PMIC register dumps still fail completely
    - the higher-level Windows config that feeds `WF::SetConf`
-5. The next concrete kernel-side run is:
-   - `scripts/exp10-s-i2c-ctl-bit1-only-update.sh`
-   - reboot
-   - `scripts/exp10-s-i2c-ctl-bit1-only-verify.sh`
+5. The next concrete kernel-side work is:
+   - a later-phase `BIT(0)` follow-up, not another early regulator-path write
+   - likely tied to the board-specific GPIO-active phase rather than `VSIO`
+     regulator enable
 
 ## Related Docs
 

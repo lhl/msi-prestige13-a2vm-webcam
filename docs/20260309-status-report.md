@@ -366,6 +366,47 @@ That earlier failure is expected from the split-step patch because it returns
 the first bad `0x43` readback directly instead of letting the probe proceed to
 later sensor-ID retries.
 
+### 12. `exp10` removed the PMIC bus wedge, but the sensor still returns `-121`
+
+`exp10` kept only the IO-side `BIT(1)` behavior in the regulator `VSIO` path
+and stopped asserting `BIT(0)` there.
+
+That run materially changed the failure shape:
+
+- `ANA` enable is still clean
+- `CORE` enable is still clean
+- `VSIO BIT(1)` enable is still clean:
+  - `before=0x00`
+  - `after=0x02`
+  - `after_ret=0`
+- the system now reaches the sensor chip-ID loop without the earlier PMIC
+  timeout storm
+- all five chip-ID reads fail with `-121`, not `-110`
+- `VSIO BIT(1)` also disables cleanly:
+  - `before=0x02`
+  - `after=0x00`
+  - `after_ret=0`
+
+This is the first PMIC experiment that cleanly separated two classes of
+failure:
+
+- the old `-110` path was a PMIC/I2C-path wedge
+- the new `-121` path keeps the bus alive but still does not produce a valid
+  sensor response
+
+Inference:
+
+- the early regulator-phase `BIT(0)` write is wrong on this board
+- `BIT(1)` alone is closer to the Windows behavior Linux needs
+- but `BIT(1)` alone is still not sufficient to wake the sensor into a valid
+  chip-ID response
+
+That leaves the next likely gaps as:
+
+- a later, board-specific `BIT(0)` assertion tied to the GPIO-active phase
+- or a separate missing wake-up / reset / powerdown sequencing detail that is
+  only relevant once the PMIC/I2C path remains healthy
+
 ## Windows Driver Extraction State
 
 ### What we have
@@ -780,6 +821,8 @@ Those branches have enough clean negatives now.
 2. `S_I2C_CTL` ambiguity:
    - `BIT(1)` reads back cleanly as `0x02`
    - the later `BIT(0)` transition is the first one that wedges PMIC access
+   - omitting `BIT(0)` removes the wedge, but the sensor still fails chip-ID
+     reads with `-121`
 3. incomplete Windows reconstruction:
    - still missing the higher-level config-selection truth
 4. lack of electrical truth:
@@ -789,11 +832,11 @@ Those branches have enough clean negatives now.
 
 Ordered by likely value:
 
-1. Run the `BIT(1)`-only `S_I2C_CTL` follow-up.
+1. Design the next follow-up around a later-phase `BIT(0)` hypothesis.
    - keep the Windows-like IO-side `BIT(1)` update in the regulator path
-   - do not assert `BIT(0)` there
-   - determine whether the bus stays alive long enough to return to the older
-     chip-ID timeout stage or move the sensor further forward
+   - do not reintroduce `BIT(0)` there
+   - determine whether a later GPIO-active or sensor-release phase is where
+     the board actually wants `BIT(0)`
 
 2. Fix or replace the PMIC dump path.
    - figure out why post-boot userspace reads all fail
