@@ -837,6 +837,10 @@ Ordered by likely value:
    - do not reintroduce `BIT(0)` there
    - determine whether a later GPIO-active or sensor-release phase is where
      the board actually wants `BIT(0)`
+   - immediate next wrapper:
+     - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-update.sh`
+     - reboot
+     - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-verify.sh`
 
 2. Fix or replace the PMIC dump path.
    - figure out why post-boot userspace reads all fail

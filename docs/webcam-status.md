@@ -285,6 +285,10 @@ What now looks most likely:
    - do not put `BIT(0)` back into the early regulator `VSIO` path
    - prefer a board-specific later hook tied to the GPIO-active phase or
      sensor release stage
+   - immediate next wrapper:
+     - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-update.sh`
+     - reboot
+     - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-verify.sh`
 2. Fix or replace the post-boot PMIC dump path so we can see real register
    state after a failed clean boot.
 3. Extract the higher-level Windows config path that feeds `WF::SetConf` and

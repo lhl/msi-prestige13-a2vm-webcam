@@ -8,8 +8,9 @@ update-and-verify workflows.
 As of the completed `2026-03-09` PMIC batch:
 
 - `exp1` through `exp10` are completed historical experiments
-- the highest-value next kernel-side follow-up is a later-phase `BIT(0)`
-  experiment, not another early regulator-path write
+- the highest-value next kernel-side follow-up is `exp11`
+- `exp11` is the later-phase `BIT(0)` experiment, not another early
+  regulator-path write
 - `exp7` established that `VSIO` enable on `S_I2C_CTL` `0x43` is the first
   PMIC transaction after which readback collapses to `-110`
 - `exp8` confirmed the same failure point with a narrower trace:
@@ -341,6 +342,26 @@ Interpretation:
   - a later `BIT(0)` phase
   - or some separate reset / powerdown sequencing detail
 
+### 11. Later GPIO-phase `BIT(0)`
+
+Purpose:
+- keep `exp10`'s `BIT(1)`-only regulator path
+- assert `BIT(0)` later, when the sensor-control GPIOs actually transition into
+  their active low state
+- test whether this later PMIC GPIO-active phase is where the board really
+  wants `SetVSIOCtl_GPIO`
+
+Default patch:
+- `reference/patches/pmic-si2c-ctl-late-gpio-bit0-v1.patch`
+
+Extra module rebuild/install:
+- `tps68470-regulator.ko`
+- `gpio-tps68470.ko`
+
+Scripts:
+- `scripts/exp11-s-i2c-ctl-late-gpio-bit0-update.sh`
+- `scripts/exp11-s-i2c-ctl-late-gpio-bit0-verify.sh`
+
 ## Typical usage
 
 Update, install modules, and reboot for experiment 2:
@@ -387,13 +408,13 @@ scripts/exp2-wf-s-i2c-ctl-verify.sh --dry-run
 Current highest-priority run:
 
 ```bash
-scripts/exp10-s-i2c-ctl-bit1-only-update.sh
+scripts/exp11-s-i2c-ctl-late-gpio-bit0-update.sh
 ```
 
 After reboot:
 
 ```bash
-scripts/exp10-s-i2c-ctl-bit1-only-verify.sh
+scripts/exp11-s-i2c-ctl-late-gpio-bit0-verify.sh
 ```
 
 ## Why the verify wrappers always do a PMIC dump

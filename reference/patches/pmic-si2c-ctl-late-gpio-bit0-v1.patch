@@ -1,0 +1,209 @@
+diff --git a/drivers/gpio/gpio-tps68470.c b/drivers/gpio/gpio-tps68470.c
+index d4fbdf90e190..b76ff68c52ce 100644
+--- a/drivers/gpio/gpio-tps68470.c
++++ b/drivers/gpio/gpio-tps68470.c
+@@ -26,6 +26,45 @@ struct tps68470_gpio_data {
+ 	struct gpio_chip gc;
+ };
+ 
++static bool tps68470_gpio_is_sensor_control(unsigned int offset)
++{
++	return offset == 1 || offset == 2;
++}
++
++static int tps68470_gpio_sync_si2c_ctl_gpio_phase(struct tps68470_gpio_data *tps68470_gpio,
++						  unsigned int offset, int value)
++{
++	struct regmap *regmap = tps68470_gpio->tps68470_regmap;
++	unsigned int before = 0, after = 0;
++	unsigned int desired = value ? 0 : BIT(0);
++	int before_ret, ret, after_ret;
++
++	if (!tps68470_gpio_is_sensor_control(offset))
++		return 0;
++
++	before_ret = regmap_read(regmap, TPS68470_REG_S_I2C_CTL, &before);
++	if (before_ret)
++		return 0;
++
++	if (!(before & BIT(1)))
++		return 0;
++
++	if (!!(before & BIT(0)) == !!desired)
++		return 0;
++
++	ret = regmap_update_bits(regmap, TPS68470_REG_S_I2C_CTL, BIT(0), desired);
++	after_ret = regmap_read(regmap, TPS68470_REG_S_I2C_CTL, &after);
++
++	dev_info(tps68470_gpio->gc.parent,
++		 "pmic_gpio: sensor-gpio.%u value=%d reg=S_I2C_CTL(0x43) mask=0x01 value=0x%02x before_ret=%d before=0x%02x update_ret=%d after_ret=%d after=0x%02x\n",
++		 offset, value, desired, before_ret, before, ret, after_ret, after);
++
++	if (ret)
++		return ret;
++
++	return after_ret;
++}
++
+ static int tps68470_gpio_get(struct gpio_chip *gc, unsigned int offset)
+ {
+ 	struct tps68470_gpio_data *tps68470_gpio = gpiochip_get_data(gc);
+@@ -76,14 +115,23 @@ static int tps68470_gpio_set(struct gpio_chip *gc, unsigned int offset,
+ 	struct tps68470_gpio_data *tps68470_gpio = gpiochip_get_data(gc);
+ 	struct regmap *regmap = tps68470_gpio->tps68470_regmap;
+ 	unsigned int reg = TPS68470_REG_GPDO;
++	int ret;
+ 
+ 	if (offset >= TPS68470_N_REGULAR_GPIO) {
+ 		reg = TPS68470_REG_SGPO;
+ 		offset -= TPS68470_N_REGULAR_GPIO;
+ 	}
+ 
+-	return regmap_update_bits(regmap, reg, BIT(offset),
+-				  value ? BIT(offset) : 0);
++	ret = regmap_update_bits(regmap, reg, BIT(offset),
++				 value ? BIT(offset) : 0);
++	if (ret)
++		return ret;
++
++	if (reg == TPS68470_REG_GPDO)
++		return tps68470_gpio_sync_si2c_ctl_gpio_phase(tps68470_gpio,
++							      offset, value);
++
++	return 0;
+ }
+ 
+ static int tps68470_gpio_output(struct gpio_chip *gc, unsigned int offset,
+diff --git a/drivers/regulator/tps68470-regulator.c b/drivers/regulator/tps68470-regulator.c
+index de7db7690f6b..f5487fed32be 100644
+--- a/drivers/regulator/tps68470-regulator.c
++++ b/drivers/regulator/tps68470-regulator.c
+@@ -20,6 +20,7 @@
+ #include <linux/kernel.h>
+ #include <linux/mfd/tps68470.h>
+ #include <linux/module.h>
++#include <linux/regmap.h>
+ #include <linux/platform_data/tps68470.h>
+ #include <linux/platform_device.h>
+ #include <linux/regulator/driver.h>
+@@ -54,9 +55,65 @@ static const struct linear_range tps68470_core_ranges[] = {
+ 	REGULATOR_LINEAR_RANGE(900000, 0, 42, 25000),
+ };
+ 
++static const char *tps68470_regulator_reg_name(unsigned int reg)
++{
++	switch (reg) {
++	case TPS68470_REG_S_I2C_CTL:
++		return "S_I2C_CTL";
++	case TPS68470_REG_VACTL:
++		return "VACTL";
++	case TPS68470_REG_VDCTL:
++		return "VDCTL";
++	default:
++		return "UNKNOWN";
++	}
++}
++
++static int tps68470_regulator_update_bits_focus(struct regulator_dev *rdev,
++						unsigned int reg,
++						unsigned int mask,
++						unsigned int value,
++						const char *tag)
++{
++	unsigned int before = 0;
++	unsigned int after = 0;
++	int before_ret;
++	int ret;
++	int after_ret;
++
++	before_ret = regmap_read(rdev->regmap, reg, &before);
++	ret = regmap_update_bits(rdev->regmap, reg, mask, value);
++	after_ret = regmap_read(rdev->regmap, reg, &after);
++
++	dev_info(&rdev->dev,
++		 "pmic_focus: %s %s reg=%s(0x%02x) mask=0x%02x value=0x%02x before_ret=%d before=0x%02x update_ret=%d after_ret=%d after=0x%02x\n",
++		 tag, rdev->desc->name,
++		 tps68470_regulator_reg_name(reg), reg, mask, value,
++		 before_ret, before, ret, after_ret, after);
++
++	return ret;
++}
++
++static int tps68470_regulator_enable_vsio_bit1_only(struct regulator_dev *rdev)
++{
++	return tps68470_regulator_update_bits_focus(rdev,
++						    TPS68470_REG_S_I2C_CTL,
++						    BIT(1), BIT(1),
++						    "enable-bit1-only");
++}
++
++static int tps68470_regulator_disable_vsio_bit1_only(struct regulator_dev *rdev)
++{
++	return tps68470_regulator_update_bits_focus(rdev,
++						    TPS68470_REG_S_I2C_CTL,
++						    BIT(1), 0,
++						    "disable-bit1-only");
++}
++
+ static int tps68470_regulator_enable(struct regulator_dev *rdev)
+ {
+ 	struct tps68470_regulator_data *data = rdev->reg_data;
++	unsigned int value;
+ 	int ret;
+ 
+ 	/* The Core buck regulator needs the PMIC's PLL to be enabled */
+@@ -68,16 +125,54 @@ static int tps68470_regulator_enable(struct regulator_dev *rdev)
+ 		}
+ 	}
+ 
++	if (rdev->desc->id == TPS68470_ANA ||
++	    rdev->desc->id == TPS68470_CORE) {
++		if (rdev->desc->enable_is_inverted) {
++			value = rdev->desc->disable_val;
++		} else {
++			value = rdev->desc->enable_val;
++			if (!value)
++				value = rdev->desc->enable_mask;
++		}
++
++		return tps68470_regulator_update_bits_focus(rdev,
++							    rdev->desc->enable_reg,
++							    rdev->desc->enable_mask,
++							    value, "enable");
++	}
++
++	if (rdev->desc->id == TPS68470_VSIO)
++		return tps68470_regulator_enable_vsio_bit1_only(rdev);
++
+ 	return regulator_enable_regmap(rdev);
+ }
+ 
+ static int tps68470_regulator_disable(struct regulator_dev *rdev)
+ {
+ 	struct tps68470_regulator_data *data = rdev->reg_data;
++	unsigned int value;
+ 
+ 	if (rdev->desc->id == TPS68470_CORE)
+ 		clk_disable_unprepare(data->clk);
+ 
++	if (rdev->desc->id == TPS68470_VSIO)
++		return tps68470_regulator_disable_vsio_bit1_only(rdev);
++
++	if (rdev->desc->id == TPS68470_ANA) {
++		if (rdev->desc->enable_is_inverted) {
++			value = rdev->desc->enable_val;
++			if (!value)
++				value = rdev->desc->enable_mask;
++		} else {
++			value = rdev->desc->disable_val;
++		}
++
++		return tps68470_regulator_update_bits_focus(rdev,
++							    rdev->desc->enable_reg,
++							    rdev->desc->enable_mask,
++							    value, "disable");
++	}
++
+ 	return regulator_disable_regmap(rdev);
+ }
+ 

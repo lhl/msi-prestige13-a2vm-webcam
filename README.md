@@ -153,9 +153,9 @@ msi-prestige13-a2vm-webcam/
    - why post-boot PMIC register dumps still fail completely
    - the higher-level Windows config that feeds `WF::SetConf`
 5. The next concrete kernel-side work is:
-   - a later-phase `BIT(0)` follow-up, not another early regulator-path write
-   - likely tied to the board-specific GPIO-active phase rather than `VSIO`
-     regulator enable
+   - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-update.sh`
+   - reboot
+   - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-verify.sh`
 
 ## Related Docs
 
@@ -193,6 +193,8 @@ msi-prestige13-a2vm-webcam/
   — split-step `S_I2C_CTL` experiment patch for `exp9`
 - [`reference/patches/pmic-si2c-ctl-bit1-only-v1.patch`](./reference/patches/pmic-si2c-ctl-bit1-only-v1.patch)
   — `BIT(1)`-only `S_I2C_CTL` experiment patch for `exp10`
+- [`reference/patches/pmic-si2c-ctl-late-gpio-bit0-v1.patch`](./reference/patches/pmic-si2c-ctl-late-gpio-bit0-v1.patch)
+  — later GPIO-phase `BIT(0)` experiment patch for `exp11`
 - [`reference/patches/ms13q3-vd-1050mv-v1.patch`](./reference/patches/ms13q3-vd-1050mv-v1.patch)
   — `VD = 1050 mV` experiment patch
 - [`reference/patches/ms13q3-wf-init-value-programming-v1.patch`](./reference/patches/ms13q3-wf-init-value-programming-v1.patch)

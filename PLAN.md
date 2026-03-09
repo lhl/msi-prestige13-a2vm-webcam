@@ -109,7 +109,7 @@ with strong evidence.
    work.
 2. Do not spend more time on pure GPIO permutations for now.
 3. Put the next experiment budget into:
-   - a later-phase `BIT(0)` follow-up
+   - `exp11` later-phase `BIT(0)` follow-up
    - repairing PMIC readback visibility
    - deeper Windows config-path extraction
 4. Keep using:
@@ -118,8 +118,10 @@ with strong evidence.
    - `scripts/exp*-*-verify.sh`
    - `scripts/01-clean-boot-check.sh`
    to keep evidence reproducible
-5. The immediate next kernel-side run should test a later `BIT(0)` hook, not
-   reintroduce `BIT(0)` in the regulator `VSIO` path.
+5. The immediate next kernel-side run is:
+   - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-update.sh`
+   - reboot
+   - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-verify.sh`
 
 ## Open Questions
 

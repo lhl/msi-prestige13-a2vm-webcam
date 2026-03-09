@@ -2,6 +2,42 @@
 
 ## 2026-03-09
 
+### Add `exp11` for a later GPIO-phase `BIT(0)` assertion
+
+- Plan: turn the post-`exp10` hypothesis into a runnable experiment by keeping
+  the `BIT(1)`-only regulator path and moving `BIT(0)` into the later
+  sensor-GPIO active phase.
+- Commands:
+  - reviewed:
+    - `drivers/gpio/gpio-tps68470.c`
+    - `drivers/media/i2c/ov5675.c`
+    - Windows notes around `IoActive_GPIO` and `SetVSIOCtl_GPIO`
+  - generated a repo-local buildcheck tree with `exp10` applied
+  - created:
+    - `reference/patches/pmic-si2c-ctl-late-gpio-bit0-v1.patch`
+    - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-update.sh`
+    - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-verify.sh`
+  - validated:
+    - `bash -n scripts/lib-experiment-workflow.sh scripts/exp11-s-i2c-ctl-late-gpio-bit0-update.sh scripts/exp11-s-i2c-ctl-late-gpio-bit0-verify.sh`
+    - `git -C .tmp/exp11-buildcheck apply --check reference/patches/pmic-si2c-ctl-late-gpio-bit0-v1.patch`
+    - repo-local module build for:
+      - `drivers/regulator`
+      - `drivers/gpio`
+    - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-update.sh --dry-run`
+  - refreshed:
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/webcam-status.md`
+    - `docs/20260309-status-report.md`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+- Result:
+  - `exp11` is the concrete next run
+  - it keeps `BIT(1)` in the regulator path
+  - it asserts and clears `BIT(0)` later, alongside sensor GPIO active-state
+    transitions in `gpio-tps68470`
+
 ### Review `exp10` and record the `-121` / no-timeout result
 
 - Plan: review the new `exp10` update and verify artifacts, capture what

@@ -97,9 +97,12 @@ with strong evidence.
 
 ## Next Best Steps
 
-1. Design the next kernel-side follow-up around a later `BIT(0)` hypothesis:
-   - do not reintroduce `BIT(0)` in the early regulator `VSIO` path
-   - prefer a later GPIO-active or sensor-release phase hook
+1. Run the next kernel-side follow-up around the later `BIT(0)` hypothesis:
+   - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-update.sh`
+   - reboot
+   - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-verify.sh`
+   - this keeps `BIT(1)` in the regulator path and moves `BIT(0)` to the
+     later sensor-GPIO active phase
 2. Fix or replace the post-boot PMIC dump path so we can observe real register
    state after a failed clean boot.
 3. Extract more of the higher-level Windows config path above `WF::SetConf`.
