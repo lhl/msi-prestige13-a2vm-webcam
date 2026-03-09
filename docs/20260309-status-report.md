@@ -332,6 +332,40 @@ Interpretation:
   - the later GPIO-side `BIT(0)` step
   - or only after both are set
 
+### 11. `exp9` showed that `BIT(0)` is the bad `0x43` edge
+
+`exp9` split the `S_I2C_CTL` enable path into two separate operations:
+
+- IO-side `BIT(1)` update with immediate readback
+- later GPIO-side `BIT(0)` update with immediate readback
+
+That run produced the clearest PMIC result so far:
+
+- `BIT(1)` is clean:
+  - `before=0x00`
+  - `after=0x02`
+  - `after_ret=0`
+- the wedge begins only after `BIT(0)`:
+  - `before=0x02`
+  - `update_ret=0`
+  - `after_ret=-110`
+
+This sharpened the interpretation again:
+
+- Linux is not generically wrong about touching `0x43`
+- Linux is very likely wrong to assert `BIT(0)` in this early regulator-phase
+  `VSIO` path
+
+Operationally, `exp9` also changed the visible failure mode:
+
+- the run no longer reached chip-ID attempts
+- instead it failed earlier at:
+  - `ov5675 ... failed to power on: -110`
+
+That earlier failure is expected from the split-step patch because it returns
+the first bad `0x43` readback directly instead of letting the probe proceed to
+later sensor-ID retries.
+
 ## Windows Driver Extraction State
 
 ### What we have
@@ -744,7 +778,8 @@ Those branches have enough clean negatives now.
 1. PMIC readback gap:
    - post-boot PMIC dumps still fail completely
 2. `S_I2C_CTL` ambiguity:
-   - staged Linux experiment path runs, but readback stays `0x00`
+   - `BIT(1)` reads back cleanly as `0x02`
+   - the later `BIT(0)` transition is the first one that wedges PMIC access
 3. incomplete Windows reconstruction:
    - still missing the higher-level config-selection truth
 4. lack of electrical truth:
@@ -754,12 +789,11 @@ Those branches have enough clean negatives now.
 
 Ordered by likely value:
 
-1. Run the split-step `S_I2C_CTL` follow-up.
-   - keep the high-value `exp8` signal around `0x43`
-   - split the enable path so it logs:
-     - the IO-side `BIT(1)` write and readback
-     - the later GPIO-side `BIT(0)` write and readback
-   - determine which transition actually wedges PMIC access
+1. Run the `BIT(1)`-only `S_I2C_CTL` follow-up.
+   - keep the Windows-like IO-side `BIT(1)` update in the regulator path
+   - do not assert `BIT(0)` there
+   - determine whether the bus stays alive long enough to return to the older
+     chip-ID timeout stage or move the sensor further forward
 
 2. Fix or replace the PMIC dump path.
    - figure out why post-boot userspace reads all fail

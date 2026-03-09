@@ -192,6 +192,27 @@ Interpretation:
   - does the wedge happen on the IO-side `BIT(1)` transition
   - or on the later GPIO-side `BIT(0)` transition
 
+### `exp9` split-step `S_I2C_CTL` trace
+
+What it proved:
+
+- the IO-side `BIT(1)` step is safe in the regulator path
+- the later `BIT(0)` step is the first bad PMIC transition
+
+Key lines:
+
+- `pmic_split: enable VSIO step=bit1 ... before=0x00 ... after=0x02`
+- `pmic_split: enable VSIO step=bit0 ... before=0x02 ... update_ret=0 after_ret=-110`
+
+Interpretation:
+
+- Linux is not generically wrong about `0x43`; it is specifically wrong to
+  assert `BIT(0)` in this early regulator-phase path
+- the most plausible next move is to leave `BIT(1)` in place and stop setting
+  `BIT(0)` there
+- if that keeps the bus alive, the later question becomes where the board
+  really wants `BIT(0)` to be asserted
+
 ## Current Assessment
 
 The honest assessment is:
@@ -221,9 +242,8 @@ What now looks most likely:
 1. We still cannot read back PMIC registers from userspace after boot.
    - `scripts/pmic-reg-dump.sh` currently returns `ERROR` for every register
      in representative runs.
-2. We now know the first bad PMIC transaction is `VSIO` enable on
-   `S_I2C_CTL`, but we still do not know why that update returns success while
-   immediate readback fails with `-110`.
+2. We now know the bad PMIC transition is specifically the later `BIT(0)` set
+   on `S_I2C_CTL` after `BIT(1)` has already read back cleanly as `0x02`.
 3. We still do not have the exact higher-level Windows configuration path that
    feeds `WF::SetConf` or chooses the `WF` versus `UF` branch for this board.
 4. We still do not have direct electrical truth for the PMIC GPIO and sensor
@@ -231,12 +251,13 @@ What now looks most likely:
 
 ## Next Steps
 
-1. Run the split-step `S_I2C_CTL` PMIC follow-up that separates the Windows-like
-   IO-side `BIT(1)` step from the later GPIO-side `BIT(0)` step.
+1. Run the `BIT(1)`-only `S_I2C_CTL` PMIC follow-up.
+   - keep the Windows-like IO-side `BIT(1)` step
+   - do not assert GPIO-side `BIT(0)` in the regulator path
    - immediate next wrapper:
-     - `scripts/exp9-s-i2c-ctl-split-step-trace-update.sh`
+     - `scripts/exp10-s-i2c-ctl-bit1-only-update.sh`
      - reboot
-     - `scripts/exp9-s-i2c-ctl-split-step-trace-verify.sh`
+     - `scripts/exp10-s-i2c-ctl-bit1-only-verify.sh`
 2. Fix or replace the post-boot PMIC dump path so we can see real register
    state after a failed clean boot.
 3. Extract the higher-level Windows config path that feeds `WF::SetConf` and

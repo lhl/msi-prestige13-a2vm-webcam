@@ -148,14 +148,14 @@ msi-prestige13-a2vm-webcam/
 4. Put the next effort into the PMIC behavior Linux still does not explain:
    - why `S_I2C_CTL` `0x43` is the first PMIC transaction after which readback
      collapses to `-110`
-   - whether the bad transition happens on the IO-side `BIT(1)` step, the
-     later GPIO-side `BIT(0)` step, or both
+   - why the GPIO-side `BIT(0)` step wedges PMIC access while the IO-side
+     `BIT(1)` step reads back cleanly
    - why post-boot PMIC register dumps still fail completely
    - the higher-level Windows config that feeds `WF::SetConf`
 5. The next concrete kernel-side run is:
-   - `scripts/exp9-s-i2c-ctl-split-step-trace-update.sh`
+   - `scripts/exp10-s-i2c-ctl-bit1-only-update.sh`
    - reboot
-   - `scripts/exp9-s-i2c-ctl-split-step-trace-verify.sh`
+   - `scripts/exp10-s-i2c-ctl-bit1-only-verify.sh`
 
 ## Related Docs
 
@@ -191,6 +191,8 @@ msi-prestige13-a2vm-webcam/
   — narrower `S_I2C_CTL` confirmation patch used in `exp8`
 - [`reference/patches/pmic-si2c-ctl-split-step-trace-v1.patch`](./reference/patches/pmic-si2c-ctl-split-step-trace-v1.patch)
   — split-step `S_I2C_CTL` experiment patch for `exp9`
+- [`reference/patches/pmic-si2c-ctl-bit1-only-v1.patch`](./reference/patches/pmic-si2c-ctl-bit1-only-v1.patch)
+  — `BIT(1)`-only `S_I2C_CTL` experiment patch for `exp10`
 - [`reference/patches/ms13q3-vd-1050mv-v1.patch`](./reference/patches/ms13q3-vd-1050mv-v1.patch)
   — `VD = 1050 mV` experiment patch
 - [`reference/patches/ms13q3-wf-init-value-programming-v1.patch`](./reference/patches/ms13q3-wf-init-value-programming-v1.patch)

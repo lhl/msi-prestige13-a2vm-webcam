@@ -69,6 +69,10 @@ with strong evidence.
     readback fails with `-110`
   - the timeout storm still persists, though without the `exp7` emergency-mode
     outcome
+- `exp9` split-step `S_I2C_CTL` trace answered the next narrow question:
+  - IO-side `BIT(1)` reads back cleanly as `0x02`
+  - the wedge begins only after the later GPIO-side `BIT(0)` update
+  - the run now fails earlier at `ov5675 ... failed to power on: -110`
 - the post-boot PMIC dump path is still not usable:
   - `scripts/pmic-reg-dump.sh` returned `ERROR` for all registers in
     representative PMIC experiment runs
@@ -88,12 +92,11 @@ with strong evidence.
 
 ## Next Best Steps
 
-1. Run the split-step PMIC follow-up that keeps the `0x43` signal but separates
-   the Windows-like IO-side and GPIO-side updates:
+1. Run the `BIT(1)`-only PMIC follow-up in the regulator `VSIO` path:
    - immediate next wrapper:
-     - `scripts/exp9-s-i2c-ctl-split-step-trace-update.sh`
+     - `scripts/exp10-s-i2c-ctl-bit1-only-update.sh`
      - reboot
-     - `scripts/exp9-s-i2c-ctl-split-step-trace-verify.sh`
+     - `scripts/exp10-s-i2c-ctl-bit1-only-verify.sh`
 2. Fix or replace the post-boot PMIC dump path so we can observe real register
    state after a failed clean boot.
 3. Extract more of the higher-level Windows config path above `WF::SetConf`.

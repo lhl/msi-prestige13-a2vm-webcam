@@ -7,8 +7,8 @@ update-and-verify workflows.
 
 As of the completed `2026-03-09` PMIC batch:
 
-- `exp1` through `exp8` are completed historical experiments
-- the highest-value next kernel-side follow-up is `exp9`
+- `exp1` through `exp9` are completed historical experiments
+- the highest-value next kernel-side follow-up is `exp10`
 - `exp7` established that `VSIO` enable on `S_I2C_CTL` `0x43` is the first
   PMIC transaction after which readback collapses to `-110`
 - `exp8` confirmed the same failure point with a narrower trace:
@@ -16,8 +16,12 @@ As of the completed `2026-03-09` PMIC batch:
   - `CORE` enable still succeeds
   - the combined `VSIO` enable on `0x43` still returns success but immediate
     readback fails with `-110`
-- `exp9` now splits the `0x43` path into an explicit `BIT(1)` substep and
-  `BIT(0)` substep so we can see which transition wedges PMIC access
+- `exp9` answered the split-step question:
+  - IO-side `BIT(1)` writes and reads back cleanly as `0x02`
+  - the wedge begins only after the later GPIO-side `BIT(0)` update
+- `exp10` now tests the obvious next behavior:
+  - keep `BIT(1)` in the regulator path
+  - do not assert `BIT(0)` there
 
 ## Goal
 
@@ -284,6 +288,35 @@ Scripts:
 - `scripts/exp9-s-i2c-ctl-split-step-trace-update.sh`
 - `scripts/exp9-s-i2c-ctl-split-step-trace-verify.sh`
 
+Observed outcome:
+- `BIT(1)` is clean:
+  - `before=0x00`
+  - `after=0x02`
+  - `after_ret=0`
+- the wedge begins on `BIT(0)`:
+  - `before=0x02`
+  - `update_ret=0`
+  - `after_ret=-110`
+- this run failed earlier than the older identify-timeout path:
+  - `ov5675 ... failed to power on: -110`
+
+### 10. `BIT(1)`-only `S_I2C_CTL`
+
+Purpose:
+- keep only the IO-side `BIT(1)` behavior in the regulator `VSIO` enable path
+- do not assert `BIT(0)` there
+- test whether the bus stays alive long enough to reach sensor identify again
+
+Default patch:
+- `reference/patches/pmic-si2c-ctl-bit1-only-v1.patch`
+
+Extra module rebuild/install:
+- `tps68470-regulator.ko`
+
+Scripts:
+- `scripts/exp10-s-i2c-ctl-bit1-only-update.sh`
+- `scripts/exp10-s-i2c-ctl-bit1-only-verify.sh`
+
 ## Typical usage
 
 Update, install modules, and reboot for experiment 2:
@@ -330,13 +363,13 @@ scripts/exp2-wf-s-i2c-ctl-verify.sh --dry-run
 Current highest-priority run:
 
 ```bash
-scripts/exp9-s-i2c-ctl-split-step-trace-update.sh
+scripts/exp10-s-i2c-ctl-bit1-only-update.sh
 ```
 
 After reboot:
 
 ```bash
-scripts/exp9-s-i2c-ctl-split-step-trace-verify.sh
+scripts/exp10-s-i2c-ctl-bit1-only-verify.sh
 ```
 
 ## Why the verify wrappers always do a PMIC dump

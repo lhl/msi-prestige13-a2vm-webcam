@@ -19,6 +19,7 @@ KNOWN_EXPERIMENT_PATCHES=(
   "reference/patches/pmic-raw-regmap-trace-v1.patch"
   "reference/patches/pmic-si2c-ctl-focused-trace-v1.patch"
   "reference/patches/pmic-si2c-ctl-split-step-trace-v1.patch"
+  "reference/patches/pmic-si2c-ctl-bit1-only-v1.patch"
 )
 BASE_BUILD_DIRS=(
   "drivers/platform/x86/intel/int3472"

@@ -1,0 +1,22 @@
+[2026-03-09T07:59:43Z] experiment: exp9 S_I2C_CTL split-step trace
+[2026-03-09T07:59:43Z] doc: docs/pmic-followup-experiments.md
+[2026-03-09T07:59:43Z] kernel tree: /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline
+[2026-03-09T07:59:43Z] baseline profile: candidate
+[2026-03-09T07:59:43Z] patch: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/pmic-si2c-ctl-split-step-trace-v1.patch
+[2026-03-09T07:59:43Z] module release: 7.0.0-rc2-1-mainline-dirty
+[2026-03-09T07:59:43Z] build jobs: 8
+[2026-03-09T07:59:43Z] dry-run: 0
+[2026-03-09T07:59:43Z] build directories:
+[2026-03-09T07:59:43Z]   - drivers/platform/x86/intel/int3472
+[2026-03-09T07:59:43Z]   - drivers/media/pci/intel
+[2026-03-09T07:59:43Z]   - drivers/media/i2c
+[2026-03-09T07:59:43Z]   - drivers/regulator
+[2026-03-09T07:59:43Z] module installs:
+[2026-03-09T07:59:43Z]   - drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.ko:kernel/drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.ko.zst
+[2026-03-09T07:59:43Z]   - drivers/media/pci/intel/ipu-bridge.ko:kernel/drivers/media/pci/intel/ipu-bridge.ko.zst
+[2026-03-09T07:59:43Z]   - drivers/media/i2c/ov5675.ko:kernel/drivers/media/i2c/ov5675.ko.zst
+[2026-03-09T07:59:43Z]   - drivers/regulator/tps68470-regulator.ko:kernel/drivers/regulator/tps68470-regulator.ko.zst
+[2026-03-09T07:59:43Z] resetting experiment-touched files back to kernel HEAD before baseline reapply
+[2026-03-09T07:59:43Z] CMD: git -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline checkout -- drivers/media/v4l2-core/v4l2-common.c drivers/clk/clk-tps68470.c drivers/regulator/tps68470-regulator.c drivers/platform/x86/intel/int3472/tps68470_board_data.c include/linux/platform_data/tps68470.h drivers/gpio/gpio-tps68470.c drivers/regulator/tps68470-regulator.c	2026-03-09 16:52:58.335578551 +0900 drivers/regulator/tps68470-regulator.c	2026-03-09 16:53:18.416405692 +0900
+error: pathspec 'drivers/regulator/tps68470-regulator.c	2026-03-09 16:52:58.335578551 +0900' did not match any file(s) known to git
+error: pathspec 'drivers/regulator/tps68470-regulator.c	2026-03-09 16:53:18.416405692 +0900' did not match any file(s) known to git

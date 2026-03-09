@@ -54,6 +54,10 @@ with strong evidence.
     - `ANA` and `CORE` still enable cleanly
     - the first bad transition is still the `VSIO` write to `0x43`
     - the boot delay persists even without the broader `exp7` snapshots
+  - `exp9` split the `0x43` path and answered the main question:
+    - IO-side `BIT(1)` reads back cleanly as `0x02`
+    - the wedge begins only after the later GPIO-side `BIT(0)` update
+    - the run now fails earlier at `failed to power on: -110`
 - current leading interpretation:
   - the remaining gap is PMIC-side behavior, not basic platform support
   - we are missing either exact PMIC control behavior, exact runtime
@@ -63,13 +67,11 @@ with strong evidence.
 
 ### 1. PMIC state truth
 
-- [ ] Run the split-step follow-up that logs `0x43` after:
-  - the IO-side `BIT(1)` update
-  - the later GPIO-side `BIT(0)` update
-- [ ] Determine which of those two substeps is the first one to wedge PMIC
-  access and trigger the later timeout storm.
-- [ ] Keep the scope narrow enough that the experiment stays bootable without
-  emergency-mode fallout.
+- [ ] Run the `BIT(1)`-only follow-up in the regulator `VSIO` path.
+- [ ] Determine whether keeping `BIT(1)` while omitting `BIT(0)` lets the bus
+  stay alive long enough to return to the sensor identify stage.
+- [ ] If it does, decide where a later board-specific `BIT(0)` assertion
+  belongs, if it belongs anywhere in Linux at all.
 
 ### 2. Post-boot PMIC visibility
 
@@ -103,7 +105,7 @@ with strong evidence.
    work.
 2. Do not spend more time on pure GPIO permutations for now.
 3. Put the next experiment budget into:
-   - split-step `S_I2C_CTL` follow-up instrumentation
+   - `BIT(1)`-only `S_I2C_CTL` follow-up
    - repairing PMIC readback visibility
    - deeper Windows config-path extraction
 4. Keep using:
@@ -113,16 +115,16 @@ with strong evidence.
    - `scripts/01-clean-boot-check.sh`
    to keep evidence reproducible
 5. The immediate next run should be:
-   - `scripts/exp9-s-i2c-ctl-split-step-trace-update.sh`
+   - `scripts/exp10-s-i2c-ctl-bit1-only-update.sh`
    - reboot
-   - `scripts/exp9-s-i2c-ctl-split-step-trace-verify.sh`
+   - `scripts/exp10-s-i2c-ctl-bit1-only-verify.sh`
 
 ## Open Questions
 
 - Why does the `S_I2C_CTL` `0x43` update path report success while immediate
   PMIC readback collapses to `-110`?
-- If `0x43` is the culprit, does the wedge happen on the IO-side `BIT(1)`
-  stage, the GPIO-side `BIT(0)` stage, or only after both are set?
+- Does omitting `BIT(0)` from the regulator-phase path restore the older
+  chip-ID timeout behavior or move the sensor further forward?
 - Why does userspace PMIC register dumping fail completely after boot when the
   kernel can still log `TPS68470 REVID: 0x21`?
 - What exact higher-level Windows configuration feeds `WF::SetConf` on this

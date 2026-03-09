@@ -2,6 +2,43 @@
 
 ## 2026-03-09
 
+### Review `exp9`, record the `BIT(0)` finding, and add `exp10`
+
+- Plan: commit the successful `exp9` run evidence, update the project
+  assessment with the new `BIT(1)` versus `BIT(0)` result, and add a
+  `BIT(1)`-only follow-up as `exp10`.
+- Commands:
+  - reviewed:
+    - `runs/2026-03-09/20260309T170124-s-i2c-ctl-split-step-trace-update/metadata.env`
+    - `runs/2026-03-09/20260309T170336-snapshot-exp9-clean-boot/focused-summary.txt`
+    - `runs/2026-03-09/20260309T170336-snapshot-exp9-clean-boot/experiment-journal.txt`
+    - `runs/2026-03-09/20260309T170336-snapshot-exp9-clean-boot/pmic-reg-dump.txt`
+  - generated the next experiment patch from a clean kernel `HEAD` copy:
+    - `reference/patches/pmic-si2c-ctl-bit1-only-v1.patch`
+  - added the next wrapper pair:
+    - `scripts/exp10-s-i2c-ctl-bit1-only-update.sh`
+    - `scripts/exp10-s-i2c-ctl-bit1-only-verify.sh`
+  - validated `exp10`:
+    - `git clone --shared ~/.cache/paru/clone/linux-mainline/src/linux-mainline .tmp/exp10-buildcheck`
+    - `git -C .tmp/exp10-buildcheck apply --check reference/patches/pmic-si2c-ctl-bit1-only-v1.patch`
+    - repo-local `drivers/regulator` build with copied `.config` and `Module.symvers`
+    - `scripts/exp10-s-i2c-ctl-bit1-only-update.sh --dry-run`
+  - refreshed status/control docs:
+    - `README.md`
+    - `docs/pmic-followup-experiments.md`
+    - `docs/webcam-status.md`
+    - `docs/20260309-status-report.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+- Result:
+  - `exp9` showed that `BIT(1)` reads back cleanly and `BIT(0)` is the first
+    bad `0x43` transition
+  - `exp10` is now the next concrete test:
+    - keep `BIT(1)` in the regulator path
+    - omit `BIT(0)` there
+    - see whether the bus stays alive and sensor probe progresses again
+
 ### Fix `exp9` reset-path parsing after the first real wrapper run
 
 - Plan: repair the experiment reset helper so patch headers with timestamps do

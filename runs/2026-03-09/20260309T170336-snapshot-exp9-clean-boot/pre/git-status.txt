@@ -1,0 +1,7 @@
+CMD: git_safe status --short
+?? runs/2026-03-09/20260309T165942-s-i2c-ctl-split-step-trace-update/
+?? runs/2026-03-09/20260309T170054-s-i2c-ctl-split-step-trace-update/
+?? runs/2026-03-09/20260309T170124-s-i2c-ctl-split-step-trace-update/
+?? runs/2026-03-09/20260309T170336-snapshot-exp9-clean-boot/
+
+EXIT_STATUS: 0
