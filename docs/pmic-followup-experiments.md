@@ -67,6 +67,8 @@ All six `*-verify.sh` wrappers do this after reboot:
 - run `sudo scripts/pmic-reg-dump.sh` and save the output into the same run
   directory
 - capture `modinfo` for the baseline plus experiment-specific modules
+- normalize the run-directory ownership back to the invoking user if any
+  root-assisted step left files owned by `root`
 
 ## Experiment order
 

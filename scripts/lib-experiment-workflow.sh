@@ -100,6 +100,34 @@ module_name_from_map() {
   basename "${src_rel%.ko}" | tr '-' '_'
 }
 
+ownership_target() {
+  if [[ "${EUID}" -eq 0 && -n "${SUDO_USER:-}" ]]; then
+    printf '%s:%s\n' "${SUDO_UID:-$(id -u "${SUDO_USER}")}" "${SUDO_GID:-$(id -g "${SUDO_USER}")}"
+  else
+    printf '%s:%s\n' "$(id -u)" "$(id -g)"
+  fi
+}
+
+normalize_run_dir_owner() {
+  local run_dir="$1"
+  local owner_spec target_uid target_gid mismatch=""
+
+  owner_spec=$(ownership_target)
+  target_uid="${owner_spec%%:*}"
+  target_gid="${owner_spec#*:}"
+
+  mismatch=$(find "${run_dir}" \( ! -uid "${target_uid}" -o ! -gid "${target_gid}" \) -print -quit 2>/dev/null || true)
+  if [[ -z "${mismatch}" ]]; then
+    return 0
+  fi
+
+  if [[ "${EUID}" -eq 0 ]]; then
+    chown -R "${target_uid}:${target_gid}" "${run_dir}"
+  else
+    sudo chown -R "${target_uid}:${target_gid}" "${run_dir}"
+  fi
+}
+
 patch_state() {
   local tree="$1"
   local patch="$2"
@@ -410,6 +438,7 @@ verify_after_boot() {
   fi
 
   capture_module_info "${run_dir}"
+  normalize_run_dir_owner "${run_dir}"
   append_experiment_summary "${summary_path}" "${journal_path}" "${pmic_path}"
 
   printf 'Experiment journal: %s\n' "${journal_path}"

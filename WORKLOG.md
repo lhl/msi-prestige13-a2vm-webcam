@@ -2,6 +2,30 @@
 
 ## 2026-03-09
 
+### Normalize verify-run ownership after root-assisted capture
+
+- Plan: keep the new verify wrappers usable from a normal user checkout even
+  when one of the capture steps writes root-owned files into the run directory.
+- Commands:
+  - reviewed the shared helper and verify workflow note:
+    - `sed -n '1,180p' scripts/lib-experiment-workflow.sh`
+    - `sed -n '1,120p' docs/pmic-followup-experiments.md`
+  - `apply_patch` updating:
+    - `scripts/lib-experiment-workflow.sh`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+  - validated the helper and wrapper entrypoint:
+    - `bash -n scripts/lib-experiment-workflow.sh`
+    - `scripts/exp1-pmic-instrumentation-verify.sh --dry-run`
+- Result:
+  - the shared helper now checks whether anything in the verify run directory is
+    owned by a different uid/gid and, if so, runs `chown -R` back to the
+    invoking user
+  - this closes the mixed-ownership gap after root-assisted PMIC dumps or other
+    future verify-side capture steps
+  - the verify wrapper still parses and resolves its commands cleanly after the
+    change
+
 ### Add scripted update/reboot/verify wrappers for the six ordered PMIC follow-ups
 
 - Plan: turn the ordered PMIC-side follow-ups into repeatable wrapper scripts
