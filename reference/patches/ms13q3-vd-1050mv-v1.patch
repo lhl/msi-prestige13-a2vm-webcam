@@ -1,0 +1,13 @@
+--- a/drivers/platform/x86/intel/int3472/tps68470_board_data.c
++++ b/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+@@ -248,8 +248,8 @@
+ 
+ static const struct regulator_init_data msi_ms13q3_tps68470_core_reg_init_data = {
+ 	.constraints = {
+-		.min_uV = 1200000,
+-		.max_uV = 1200000,
++		.min_uV = 1050000,
++		.max_uV = 1050000,
+ 		.apply_uV = true,
+ 		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
+ 	},

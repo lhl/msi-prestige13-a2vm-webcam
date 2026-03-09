@@ -2,6 +2,50 @@
 
 ## 2026-03-09
 
+### Create runnable default PMIC experiment patches and add sequential-run isolation
+
+- Plan: turn the PMIC experiment wrappers from scaffolding into a truly runnable
+  sequence by creating all six default experiment patch files and teaching the
+  update helper to reverse any earlier PMIC experiment patch before applying
+  the selected one.
+- Commands:
+  - reviewed the current wrapper and patch-stack behavior:
+    - `sed -n '1,320p' scripts/lib-experiment-workflow.sh`
+    - `sed -n '1,320p' scripts/patch-kernel.sh`
+    - `sed -n '1,260p' docs/pmic-followup-experiments.md`
+  - reviewed the live kernel sources for the targeted experiment deltas:
+    - `sed -n '700,840p' .../drivers/media/v4l2-core/v4l2-common.c`
+    - `sed -n '1,280p' .../drivers/clk/clk-tps68470.c`
+    - `sed -n '1,260p' .../drivers/regulator/tps68470-regulator.c`
+    - `sed -n '1,340p' .../drivers/platform/x86/intel/int3472/tps68470_board_data.c`
+    - `sed -n '1,280p' .../drivers/gpio/gpio-tps68470.c`
+  - regenerated each new default patch from a modified temporary copy of the
+    live kernel source using `diff -u`
+  - validated the result:
+    - `git -C ~/.cache/paru/clone/linux-mainline/src/linux-mainline apply --check ...`
+    - `bash -n scripts/lib-experiment-workflow.sh scripts/exp6-uf-gpio4-last-resort-update.sh`
+- Result:
+  - all six default PMIC experiment patch files now exist and apply cleanly:
+    - `reference/patches/pmic-path-instrumentation-v1.patch`
+    - `reference/patches/ms13q3-wf-s-i2c-ctl-staging-v1.patch`
+    - `reference/patches/ms13q3-vd-1050mv-v1.patch`
+    - `reference/patches/ms13q3-wf-init-value-programming-v1.patch`
+    - `reference/patches/ms13q3-wf-gpio-mode-followup-v1.patch`
+    - `reference/patches/ms13q3-uf-gpio4-last-resort-v1.patch`
+  - the shared update helper now reverses any previously-applied PMIC
+    experiment patch by default before applying the selected one
+  - that means the six PMIC experiments can now be run sequentially on one
+    kernel tree without the later runs silently becoming cumulative
+  - `exp6` now rebuilds and installs both:
+    - `intel_skl_int3472_tps68470.ko`
+    - `gpio-tps68470.ko`
+    because the last-resort `gpio.4` hypothesis needs both board-data and GPIO
+    path changes
+  - the repo now has a concrete default command path for each PMIC experiment:
+    - `scripts/expN-...-update.sh`
+    - reboot
+    - `scripts/expN-...-verify.sh`
+
 ### Record the first wrapper smoke test and its limits
 
 - Plan: preserve the first end-to-end wrapper run so the repo records what was

@@ -29,6 +29,8 @@ high-safety pattern:
 - They require the experiment patch file to exist.
   - If the default patch file has not been created yet, the wrapper stops with a
     clear error and tells you to create it or pass `--patch FILE`.
+- The current default experiment patch files now exist under:
+  - `reference/patches/`
 - They compare the kernel tree's `make kernelrelease` value against `uname -r`
   by default.
   - This is intentional. It reduces the chance of installing modules into the
@@ -42,6 +44,11 @@ high-safety pattern:
     selection, then prints the actions without patching, building, installing
     modules, running `depmod`, rebooting, or executing the verify-side capture.
 - They write an update log under `runs/<date>/...-update/` before reboot.
+- They now reset any previously-applied PMIC experiment patch back out of the
+  kernel tree before applying the selected one.
+  - This keeps `exp2` from accidentally becoming `exp1 + exp2`, and so on.
+  - Use `--keep-experiment-patches` only if you intentionally want cumulative
+    patching.
 
 ## Shared behavior
 
@@ -147,6 +154,7 @@ Default patch:
 - `reference/patches/ms13q3-wf-gpio-mode-followup-v1.patch`
 
 Extra module rebuild/install:
+- `intel_skl_int3472_tps68470.ko`
 - `gpio-tps68470.ko`
 
 Scripts:

@@ -1,0 +1,47 @@
+--- a/drivers/platform/x86/intel/int3472/tps68470_board_data.c
++++ b/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+@@ -358,7 +358,12 @@
+ 	.dev_id = "i2c-OVTI5675:00",
+ 	.table = {
+ 		GPIO_LOOKUP("tps68470-gpio", 1, "reset", GPIO_ACTIVE_LOW),
+-		GPIO_LOOKUP("tps68470-gpio", 2, "powerdown", GPIO_ACTIVE_LOW),
++		/*
++		 * Last-resort UF-style follow-up: move the powerdown consumer
++		 * onto gpio.4, which is the GPDO bit the Windows UF helper
++		 * manipulates.
++		 */
++		GPIO_LOOKUP("tps68470-gpio", 4, "powerdown", GPIO_ACTIVE_LOW),
+ 		{ }
+ 	}
+ };
+--- a/drivers/gpio/gpio-tps68470.c
++++ b/drivers/gpio/gpio-tps68470.c
+@@ -76,14 +76,26 @@
+ 	struct tps68470_gpio_data *tps68470_gpio = gpiochip_get_data(gc);
+ 	struct regmap *regmap = tps68470_gpio->tps68470_regmap;
+ 	unsigned int reg = TPS68470_REG_GPDO;
++	unsigned int val = 0;
++	int ret;
+ 
+ 	if (offset >= TPS68470_N_REGULAR_GPIO) {
+ 		reg = TPS68470_REG_SGPO;
+ 		offset -= TPS68470_N_REGULAR_GPIO;
+ 	}
+ 
+-	return regmap_update_bits(regmap, reg, BIT(offset),
+-				  value ? BIT(offset) : 0);
++	ret = regmap_update_bits(regmap, reg, BIT(offset),
++				 value ? BIT(offset) : 0);
++	if (ret)
++		return ret;
++
++	if (reg == TPS68470_REG_GPDO && offset == 4 &&
++	    !regmap_read(regmap, reg, &val))
++		dev_info(tps68470_gpio->gc.parent,
++			 "UF gpio.4 last resort: GPDO=0x%02x value=%d\n",
++			 val, value);
++
++	return 0;
+ }
+ 
+ static int tps68470_gpio_output(struct gpio_chip *gc, unsigned int offset,

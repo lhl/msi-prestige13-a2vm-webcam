@@ -64,6 +64,16 @@ with strong evidence.
   - `scripts/exp4-wf-init-value-programming-update.sh`
   - `scripts/exp5-wf-gpio-mode-followup-update.sh`
   - `scripts/exp6-uf-gpio4-last-resort-update.sh`
+  - the default patch files for those wrappers now exist under:
+    - `reference/patches/pmic-path-instrumentation-v1.patch`
+    - `reference/patches/ms13q3-wf-s-i2c-ctl-staging-v1.patch`
+    - `reference/patches/ms13q3-vd-1050mv-v1.patch`
+    - `reference/patches/ms13q3-wf-init-value-programming-v1.patch`
+    - `reference/patches/ms13q3-wf-gpio-mode-followup-v1.patch`
+    - `reference/patches/ms13q3-uf-gpio4-last-resort-v1.patch`
+  - the shared update helper now resets previously-applied PMIC experiment
+    patches by default before applying the selected one, so the experiments can
+    be run sequentially on one kernel tree without cumulative contamination
 
 ## Latest Debug Result
 
@@ -171,6 +181,9 @@ with strong evidence.
 5. Use the matching `scripts/exp*-*-update.sh` and `scripts/exp*-*-verify.sh`
    wrappers to keep those follow-ups repeatable across patching, module
    install, reboot, and clean-boot verification.
+   - the wrappers now have real default patch files
+   - the update side now resets older PMIC experiment patches unless
+     `--keep-experiment-patches` is passed
 6. Do not jump to a `gpio.4` / `UF` redesign first:
    - Windows supports both helper families
    - local ACPI still favors `WFCS -> LNK0`

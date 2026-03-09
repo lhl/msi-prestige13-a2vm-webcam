@@ -1,0 +1,157 @@
+--- a/include/linux/platform_data/tps68470.h
++++ b/include/linux/platform_data/tps68470.h
+@@ -10,6 +10,8 @@
+ #ifndef __PDATA_TPS68470_H
+ #define __PDATA_TPS68470_H
+ 
++#include <linux/types.h>
++
+ enum tps68470_regulators {
+ 	TPS68470_CORE,
+ 	TPS68470_ANA,
+@@ -23,8 +25,17 @@
+ 
+ struct regulator_init_data;
+ 
++struct tps68470_regulator_wf_init_data {
++	u16 core_mv;
++	u16 ana_mv;
++	u16 vcm_mv;
++	u16 vio_mv;
++	u16 vsio_mv;
++};
++
+ struct tps68470_regulator_platform_data {
+ 	const struct regulator_init_data *reg_init_data[TPS68470_NUM_REGULATORS];
++	const struct tps68470_regulator_wf_init_data *wf_init_data;
+ };
+ 
+ struct tps68470_clk_consumer {
+--- a/drivers/platform/x86/intel/int3472/tps68470_board_data.c
++++ b/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+@@ -316,6 +316,14 @@
+ 	},
+ };
+ 
++static const struct tps68470_regulator_wf_init_data msi_ms13q3_tps68470_wf_init_data = {
++	.core_mv = 1050,
++	.ana_mv = 2800,
++	.vcm_mv = 2800,
++	.vio_mv = 1800,
++	.vsio_mv = 1800,
++};
++
+ static const struct tps68470_regulator_platform_data msi_ms13q3_tps68470_pdata = {
+ 	.reg_init_data = {
+ 		[TPS68470_CORE] = &msi_ms13q3_tps68470_core_reg_init_data,
+@@ -326,6 +334,7 @@
+ 		[TPS68470_AUX1] = &msi_ms13q3_tps68470_aux1_reg_init_data,
+ 		[TPS68470_AUX2] = &msi_ms13q3_tps68470_aux2_reg_init_data,
+ 	},
++	.wf_init_data = &msi_ms13q3_tps68470_wf_init_data,
+ };
+ 
+ static struct gpiod_lookup_table surface_go_int347a_gpios = {
+--- a/drivers/regulator/tps68470-regulator.c
++++ b/drivers/regulator/tps68470-regulator.c
+@@ -27,6 +27,9 @@
+ 
+ struct tps68470_regulator_data {
+ 	struct clk *clk;
++	struct regmap *regmap;
++	const struct tps68470_regulator_wf_init_data *wf_init_data;
++	bool wf_init_pending;
+ };
+ 
+ #define TPS68470_REGULATOR(_name, _id, _ops, _n,			\
+@@ -54,11 +57,66 @@
+ 	REGULATOR_LINEAR_RANGE(900000, 0, 42, 25000),
+ };
+ 
++static unsigned int tps68470_core_mv_to_sel(unsigned int mv)
++{
++	unsigned int uv = mv * 1000;
++	unsigned int sel;
++
++	if (uv <= 900000)
++		return 0;
++
++	sel = DIV_ROUND_UP(uv - 900000, 25000);
++	return min(sel, (unsigned int)TPS68470_VDVAL_DVOLT_MASK);
++}
++
++static unsigned int tps68470_ldo_mv_to_sel(unsigned int mv)
++{
++	unsigned int uv = mv * 1000;
++	unsigned int sel;
++
++	if (uv <= 875000)
++		return 0;
++
++	sel = DIV_ROUND_UP(uv - 875000, 17800);
++	return min(sel, (unsigned int)TPS68470_VAVAL_AVOLT_MASK);
++}
++
++static int tps68470_apply_wf_init_data(struct regulator_dev *rdev)
++{
++	struct tps68470_regulator_data *data = rdev->reg_data;
++	const struct tps68470_regulator_wf_init_data *wf = data->wf_init_data;
++
++	dev_info(&rdev->dev,
++		 "applying WF init value programming: VD=%umV VA=%umV VCM=%umV VIO=%umV VSIO=%umV\n",
++		 wf->core_mv, wf->ana_mv, wf->vcm_mv, wf->vio_mv, wf->vsio_mv);
++
++	regmap_write(data->regmap, TPS68470_REG_VAVAL,
++		     tps68470_ldo_mv_to_sel(wf->ana_mv));
++	regmap_write(data->regmap, TPS68470_REG_VSIOVAL,
++		     tps68470_ldo_mv_to_sel(wf->vsio_mv));
++	regmap_write(data->regmap, TPS68470_REG_VDVAL,
++		     tps68470_core_mv_to_sel(wf->core_mv));
++	regmap_write(data->regmap, TPS68470_REG_VCMVAL,
++		     tps68470_ldo_mv_to_sel(wf->vcm_mv));
++	regmap_write(data->regmap, TPS68470_REG_VIOVAL,
++		     tps68470_ldo_mv_to_sel(wf->vio_mv));
++
++	return 0;
++}
++
+ static int tps68470_regulator_enable(struct regulator_dev *rdev)
+ {
+ 	struct tps68470_regulator_data *data = rdev->reg_data;
+ 	int ret;
+ 
++	if (rdev->desc->id == TPS68470_ANA && data->wf_init_pending &&
++	    data->wf_init_data) {
++		ret = tps68470_apply_wf_init_data(rdev);
++		if (ret)
++			return ret;
++		data->wf_init_pending = false;
++	}
++
+ 	/* The Core buck regulator needs the PMIC's PLL to be enabled */
+ 	if (rdev->desc->id == TPS68470_CORE) {
+ 		ret = clk_prepare_enable(data->clk);
+@@ -75,6 +133,9 @@
+ {
+ 	struct tps68470_regulator_data *data = rdev->reg_data;
+ 
++	if (rdev->desc->id == TPS68470_ANA && data->wf_init_data)
++		data->wf_init_pending = true;
++
+ 	if (rdev->desc->id == TPS68470_CORE)
+ 		clk_disable_unprepare(data->clk);
+ 
+@@ -152,8 +213,12 @@
+ 	if (IS_ERR(data->clk))
+ 		return dev_err_probe(dev, PTR_ERR(data->clk), "getting tps68470-clk\n");
+ 
++	data->regmap = dev_get_drvdata(dev->parent);
++	data->wf_init_data = pdata ? pdata->wf_init_data : NULL;
++	data->wf_init_pending = !!data->wf_init_data;
++
+ 	config.dev = dev->parent;
+-	config.regmap = dev_get_drvdata(dev->parent);
++	config.regmap = data->regmap;
+ 	config.driver_data = data;
+ 
+ 	for (i = 0; i < TPS68470_NUM_REGULATORS; i++) {

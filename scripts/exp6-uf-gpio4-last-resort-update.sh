@@ -10,9 +10,11 @@ EXPERIMENT_DOC="docs/pmic-followup-experiments.md"
 EXPERIMENT_PATCH_DEFAULT="reference/patches/ms13q3-uf-gpio4-last-resort-v1.patch"
 EXPERIMENT_VERIFY_SCRIPT="exp6-uf-gpio4-last-resort-verify.sh"
 EXPERIMENT_BUILD_DIRS=(
+  "drivers/platform/x86/intel/int3472"
   "drivers/gpio"
 )
 EXPERIMENT_MODULE_MAP=(
+  "drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.ko:kernel/drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.ko.zst"
   "drivers/gpio/gpio-tps68470.ko:kernel/drivers/gpio/gpio-tps68470.ko.zst"
 )
 EXPERIMENT_VERIFY_JOURNAL_PATTERN='gpio.4|GPDO|UF|LNK1|failed to find sensor|chip id read attempt|sensor identified on attempt'

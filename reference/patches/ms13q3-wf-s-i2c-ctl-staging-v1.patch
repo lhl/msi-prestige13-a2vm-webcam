@@ -1,0 +1,97 @@
+--- a/drivers/regulator/tps68470-regulator.c
++++ b/drivers/regulator/tps68470-regulator.c
+@@ -14,6 +14,7 @@
+ //	Rajmohan Mani <rajmohan.mani@intel.com>
+ 
+ #include <linux/clk.h>
++#include <linux/delay.h>
+ #include <linux/device.h>
+ #include <linux/err.h>
+ #include <linux/init.h>
+@@ -27,6 +28,7 @@
+ 
+ struct tps68470_regulator_data {
+ 	struct clk *clk;
++	struct regmap *regmap;
+ };
+ 
+ #define TPS68470_REGULATOR(_name, _id, _ops, _n,			\
+@@ -54,6 +56,47 @@
+ 	REGULATOR_LINEAR_RANGE(900000, 0, 42, 25000),
+ };
+ 
++static int tps68470_regulator_enable_vsio_staged(struct regulator_dev *rdev)
++{
++	struct tps68470_regulator_data *data = rdev->reg_data;
++	unsigned int val = 0;
++	int ret;
++
++	regmap_read(data->regmap, TPS68470_REG_S_I2C_CTL, &val);
++	dev_info(&rdev->dev, "WF S_I2C_CTL staged enable start old=0x%02x\n", val);
++
++	ret = regmap_update_bits(data->regmap, TPS68470_REG_S_I2C_CTL, BIT(1), BIT(1));
++	if (ret)
++		return ret;
++
++	usleep_range(1000, 1500);
++
++	ret = regmap_update_bits(data->regmap, TPS68470_REG_S_I2C_CTL, BIT(0), BIT(0));
++	if (ret)
++		return ret;
++
++	regmap_read(data->regmap, TPS68470_REG_S_I2C_CTL, &val);
++	dev_info(&rdev->dev, "WF S_I2C_CTL staged enable done S_I2C_CTL=0x%02x\n",
++		 val);
++
++	return 0;
++}
++
++static int tps68470_regulator_disable_vsio_staged(struct regulator_dev *rdev)
++{
++	struct tps68470_regulator_data *data = rdev->reg_data;
++	unsigned int val = 0;
++	int ret;
++
++	ret = regmap_update_bits(data->regmap, TPS68470_REG_S_I2C_CTL,
++				 GENMASK(1, 0), 0);
++	regmap_read(data->regmap, TPS68470_REG_S_I2C_CTL, &val);
++	dev_info(&rdev->dev, "WF S_I2C_CTL staged disable S_I2C_CTL=0x%02x\n",
++		 val);
++
++	return ret;
++}
++
+ static int tps68470_regulator_enable(struct regulator_dev *rdev)
+ {
+ 	struct tps68470_regulator_data *data = rdev->reg_data;
+@@ -68,6 +111,9 @@
+ 		}
+ 	}
+ 
++	if (rdev->desc->id == TPS68470_VSIO)
++		return tps68470_regulator_enable_vsio_staged(rdev);
++
+ 	return regulator_enable_regmap(rdev);
+ }
+ 
+@@ -75,6 +121,9 @@
+ {
+ 	struct tps68470_regulator_data *data = rdev->reg_data;
+ 
++	if (rdev->desc->id == TPS68470_VSIO)
++		return tps68470_regulator_disable_vsio_staged(rdev);
++
+ 	if (rdev->desc->id == TPS68470_CORE)
+ 		clk_disable_unprepare(data->clk);
+ 
+@@ -152,8 +201,9 @@
+ 	if (IS_ERR(data->clk))
+ 		return dev_err_probe(dev, PTR_ERR(data->clk), "getting tps68470-clk\n");
+ 
++	data->regmap = dev_get_drvdata(dev->parent);
+ 	config.dev = dev->parent;
+-	config.regmap = dev_get_drvdata(dev->parent);
++	config.regmap = data->regmap;
+ 	config.driver_data = data;
+ 
+ 	for (i = 0; i < TPS68470_NUM_REGULATORS; i++) {

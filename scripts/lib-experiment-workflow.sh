@@ -7,6 +7,14 @@ DEFAULT_KERNEL_TREE="${HOME}/.cache/paru/clone/linux-mainline/src/linux-mainline
 DEFAULT_BASELINE_PROFILE="candidate"
 DEFAULT_PMIC_BUS="13"
 DEFAULT_PMIC_ADDR="0x48"
+KNOWN_EXPERIMENT_PATCHES=(
+  "reference/patches/pmic-path-instrumentation-v1.patch"
+  "reference/patches/ms13q3-wf-s-i2c-ctl-staging-v1.patch"
+  "reference/patches/ms13q3-vd-1050mv-v1.patch"
+  "reference/patches/ms13q3-wf-init-value-programming-v1.patch"
+  "reference/patches/ms13q3-wf-gpio-mode-followup-v1.patch"
+  "reference/patches/ms13q3-uf-gpio4-last-resort-v1.patch"
+)
 BASE_BUILD_DIRS=(
   "drivers/platform/x86/intel/int3472"
   "drivers/media/pci/intel"
@@ -29,6 +37,7 @@ SKIP_REBOOT=0
 YES_REBOOT=0
 DRY_RUN=0
 SKIP_PMIC_DUMP=0
+RESET_EXPERIMENT_PATCHES=1
 PMIC_BUS="${DEFAULT_PMIC_BUS}"
 PMIC_ADDR="${DEFAULT_PMIC_ADDR}"
 VERIFY_LABEL=""
@@ -160,6 +169,41 @@ apply_experiment_patch() {
       die "experiment patch conflicts with the current kernel tree: ${PATCH_PATH}"
       ;;
   esac
+}
+
+reverse_patch_if_applied() {
+  local patch="$1"
+  local state
+
+  state=$(patch_state "${KERNEL_TREE}" "${patch}")
+  case "${state}" in
+    applied)
+      log "reverse previously-applied experiment patch: ${patch}"
+      run_logged git -C "${KERNEL_TREE}" apply --reverse "${patch}"
+      ;;
+    applicable)
+      ;;
+    *)
+      die "cannot safely reset experiment patch from kernel tree: ${patch}"
+      ;;
+  esac
+}
+
+reset_known_experiment_patches() {
+  local rel patch
+
+  if (( ! RESET_EXPERIMENT_PATCHES )); then
+    log "keeping any previously-applied experiment patches"
+    return 0
+  fi
+
+  for rel in "${KNOWN_EXPERIMENT_PATCHES[@]}"; do
+    patch="${REPO_ROOT}/${rel}"
+    if [[ "${patch}" == "${PATCH_PATH}" || ! -f "${patch}" ]]; then
+      continue
+    fi
+    reverse_patch_if_applied "${patch}"
+  done
 }
 
 prepare_action_dir() {
@@ -483,6 +527,9 @@ parse_update_args() {
       --dry-run)
         DRY_RUN=1
         ;;
+      --keep-experiment-patches)
+        RESET_EXPERIMENT_PATCHES=0
+        ;;
       -h|--help)
         cat <<EOF_HELP
 Usage:
@@ -496,6 +543,9 @@ Options:
   --build-jobs N         Parallel jobs for make.
   --no-reboot            Skip reboot at the end.
   --yes                  Reboot without an interactive prompt.
+  --keep-experiment-patches
+                         Do not reverse previously-applied experiment patches
+                         before applying the selected one.
   --dry-run              Validate inputs and print actions without patching,
                          building, installing modules, or rebooting.
 EOF_HELP
@@ -581,6 +631,7 @@ experiment_update_main() {
   write_update_metadata "${module_release}"
   print_update_summary "${module_release}"
 
+  reset_known_experiment_patches
   run_logged git -C "${KERNEL_TREE}" status --short
   run_logged "${REPO_ROOT}/scripts/patch-kernel.sh" --kernel-tree "${KERNEL_TREE}" --profile "${BASELINE_PROFILE}" --status
   run_logged "${REPO_ROOT}/scripts/patch-kernel.sh" --kernel-tree "${KERNEL_TREE}" --profile "${BASELINE_PROFILE}"

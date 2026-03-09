@@ -124,6 +124,10 @@ Reach a point where the built-in webcam is usable from normal Linux userspace, o
    - `scripts/exp5-wf-gpio-mode-followup-update.sh`
    - `scripts/exp6-uf-gpio4-last-resort-update.sh`
    - run the matching `*-verify.sh` wrapper after reboot
+   - the default experiment patch files now exist under `reference/patches/`
+   - the update wrappers now reverse previously-applied PMIC experiment patches
+     by default so the experiments can be run sequentially with clean
+     attribution
 6. Treat label-only `GPIO1` / `GPIO2` swaps as low-signal with the current
    `ov5675` power sequence:
    - both control lines are driven in lockstep during power-on and power-off
