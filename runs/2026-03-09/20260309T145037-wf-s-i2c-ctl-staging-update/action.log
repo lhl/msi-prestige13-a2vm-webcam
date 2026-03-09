@@ -1,0 +1,234 @@
+[2026-03-09T05:50:37Z] experiment: exp2 WF S_I2C_CTL staging
+[2026-03-09T05:50:37Z] doc: docs/pmic-followup-experiments.md
+[2026-03-09T05:50:37Z] kernel tree: /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline
+[2026-03-09T05:50:37Z] baseline profile: candidate
+[2026-03-09T05:50:37Z] patch: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ms13q3-wf-s-i2c-ctl-staging-v1.patch
+[2026-03-09T05:50:37Z] module release: 7.0.0-rc2-1-mainline-dirty
+[2026-03-09T05:50:37Z] build jobs: 8
+[2026-03-09T05:50:37Z] dry-run: 0
+[2026-03-09T05:50:37Z] build directories:
+[2026-03-09T05:50:37Z]   - drivers/platform/x86/intel/int3472
+[2026-03-09T05:50:37Z]   - drivers/media/pci/intel
+[2026-03-09T05:50:37Z]   - drivers/media/i2c
+[2026-03-09T05:50:37Z]   - drivers/regulator
+[2026-03-09T05:50:37Z] module installs:
+[2026-03-09T05:50:37Z]   - drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.ko:kernel/drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.ko.zst
+[2026-03-09T05:50:37Z]   - drivers/media/pci/intel/ipu-bridge.ko:kernel/drivers/media/pci/intel/ipu-bridge.ko.zst
+[2026-03-09T05:50:37Z]   - drivers/media/i2c/ov5675.ko:kernel/drivers/media/i2c/ov5675.ko.zst
+[2026-03-09T05:50:37Z]   - drivers/regulator/tps68470-regulator.ko:kernel/drivers/regulator/tps68470-regulator.ko.zst
+[2026-03-09T05:50:37Z] resetting experiment-touched files back to kernel HEAD before baseline reapply
+[2026-03-09T05:50:37Z] CMD: git -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline checkout -- drivers/media/v4l2-core/v4l2-common.c drivers/clk/clk-tps68470.c drivers/regulator/tps68470-regulator.c drivers/platform/x86/intel/int3472/tps68470_board_data.c include/linux/platform_data/tps68470.h drivers/gpio/gpio-tps68470.c
+[2026-03-09T05:50:38Z] CMD: git -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline status --short
+ M drivers/media/i2c/ov5675.c
+ M drivers/media/pci/intel/ipu-bridge.c
+?? drivers/media/i2c/ov5675.c.orig
+?? drivers/media/pci/intel/ipu-bridge.c.orig
+?? localversion.10-pkgrel
+?? localversion.20-pkgname
+?? version
+[2026-03-09T05:50:38Z] CMD: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/scripts/patch-kernel.sh --kernel-tree /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline --profile candidate --status
+note: kernel tree is already dirty; patch state will be checked file-by-file
+error: failed to create temporary status tree at /tmp/patch-kernel-status.mPZm7W/tree; check /tmp free space or user quota
+[2026-03-09T05:50:38Z] warning: patch status check failed; continuing with baseline apply
+[2026-03-09T05:50:38Z] CMD: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/scripts/patch-kernel.sh --kernel-tree /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline --profile candidate
+note: kernel tree is already dirty; patch state will be checked file-by-file
+[apply] ms13q3-board-data
+[skip]  ipu-bridge-ovti5675 already applied
+[skip]  ov5675-serial-power-on already applied
+[skip]  ov5675-powerdown-followup already applied
+[skip]  ov5675-identify-debug already applied
+[skip]  ov5675-gpio-release-sequencing-debug already applied
+
+Applied: 1
+Skipped: 5
+Conflicts: 0
+[2026-03-09T05:50:39Z] CMD: git -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline apply /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ms13q3-wf-s-i2c-ctl-staging-v1.patch
+[2026-03-09T05:50:39Z] CMD: make -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline -j 8 M=drivers/platform/x86/intel/int3472 modules
+make: Entering directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline'
+make[1]: Entering directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472'
+  CC [M]  discrete.o
+  CC [M]  discrete_quirks.o
+  CC [M]  clk_and_regulator.o
+  CC [M]  led.o
+  CC [M]  tps68470.o
+  CC [M]  tps68470_board_data.o
+  CC [M]  common.o
+In file included from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/linkage.h:6,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/linkage.h:8,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/printk.h:8,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/asm-generic/bug.h:31,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/bug.h:193,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/alternative.h:9,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/barrier.h:5,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/list.h:11,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/dmi.h:5,
+                 from discrete_quirks.c:4:
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/ibt.h:77:1: warning: ‘nocf_check’ attribute ignored. Use ‘-fcf-protection’ option to enable it [-Wattributes]
+   77 | extern __noendbr bool is_endbr(u32 *val);
+      | ^~~~~~
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/ibt.h:78:1: warning: ‘nocf_check’ attribute ignored. Use ‘-fcf-protection’ option to enable it [-Wattributes]
+   78 | extern __noendbr u64 ibt_save(bool disable);
+      | ^~~~~~
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/ibt.h:79:1: warning: ‘nocf_check’ attribute ignored. Use ‘-fcf-protection’ option to enable it [-Wattributes]
+   79 | extern __noendbr void ibt_restore(u64 save);
+      | ^~~~~~
+In file included from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/linkage.h:6,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/linkage.h:8,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/printk.h:8,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/asm-generic/bug.h:31,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/bug.h:193,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/alternative.h:9,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/barrier.h:5,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/list.h:11,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/dmi.h:5,
+                 from tps68470_board_data.c:12:
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/ibt.h:77:1: warning: ‘nocf_check’ attribute ignored. Use ‘-fcf-protection’ option to enable it [-Wattributes]
+   77 | extern __noendbr bool is_endbr(u32 *val);
+      | ^~~~~~
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/ibt.h:78:1: warning: ‘nocf_check’ attribute ignored. Use ‘-fcf-protection’ option to enable it [-Wattributes]
+   78 | extern __noendbr u64 ibt_save(bool disable);
+      | ^~~~~~
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/ibt.h:79:1: warning: ‘nocf_check’ attribute ignored. Use ‘-fcf-protection’ option to enable it [-Wattributes]
+   79 | extern __noendbr void ibt_restore(u64 save);
+      | ^~~~~~
+In file included from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/linkage.h:6,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/linkage.h:8,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/printk.h:8,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/asm-generic/bug.h:31,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/bug.h:193,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/alternative.h:9,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/barrier.h:5,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/list.h:11,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/resource_ext.h:9,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/acpi.h:14,
+                 from led.c:4:
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/ibt.h:77:1: warning: ‘nocf_check’ attribute ignored. Use ‘-fcf-protection’ option to enable it [-Wattributes]
+   77 | extern __noendbr bool is_endbr(u32 *val);
+      | ^~~~~~
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/ibt.h:78:1: warning: ‘nocf_check’ attribute ignored. Use ‘-fcf-protection’ option to enable it [-Wattributes]
+   78 | extern __noendbr u64 ibt_save(bool disable);
+      | ^~~~~~
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/ibt.h:79:1: warning: ‘nocf_check’ attribute ignored. Use ‘-fcf-protection’ option to enable it [-Wattributes]
+   79 | extern __noendbr void ibt_restore(u64 save);
+      | ^~~~~~
+In file included from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/linkage.h:6,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/linkage.h:8,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/printk.h:8,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/asm-generic/bug.h:31,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/bug.h:193,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/alternative.h:9,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/barrier.h:5,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/list.h:11,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/resource_ext.h:9,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/acpi.h:14,
+                 from tps68470.c:4:
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/ibt.h:77:1: warning: ‘nocf_check’ attribute ignored. Use ‘-fcf-protection’ option to enable it [-Wattributes]
+   77 | extern __noendbr bool is_endbr(u32 *val);
+      | ^~~~~~
+In file included from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/linkage.h:6,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/linkage.h:8,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/printk.h:8,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/asm-generic/bug.h:31,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/bug.h:193,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/alternative.h:9,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/barrier.h:5,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/list.h:11,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/resource_ext.h:9,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/acpi.h:14,
+                 from clk_and_regulator.c:4:
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/ibt.h:77:1: warning: ‘nocf_check’ attribute ignored. Use ‘-fcf-protection’ option to enable it [-Wattributes]
+   77 | extern __noendbr bool is_endbr(u32 *val);
+      | ^~~~~~
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/ibt.h:78:1: warning: ‘nocf_check’ attribute ignored. Use ‘-fcf-protection’ option to enable it [-Wattributes]
+   78 | extern __noendbr u64 ibt_save(bool disable);
+      | ^~~~~~
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/ibt.h:78:1: warning: ‘nocf_check’ attribute ignored. Use ‘-fcf-protection’ option to enable it [-Wattributes]
+   78 | extern __noendbr u64 ibt_save(bool disable);
+      | ^~~~~~
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/ibt.h:79:1: warning: ‘nocf_check’ attribute ignored. Use ‘-fcf-protection’ option to enable it [-Wattributes]
+   79 | extern __noendbr void ibt_restore(u64 save);
+      | ^~~~~~
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/ibt.h:79:1: warning: ‘nocf_check’ attribute ignored. Use ‘-fcf-protection’ option to enable it [-Wattributes]
+   79 | extern __noendbr void ibt_restore(u64 save);
+      | ^~~~~~
+In file included from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/linkage.h:6,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/linkage.h:8,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/printk.h:8,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/asm-generic/bug.h:31,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/bug.h:193,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/alternative.h:9,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/barrier.h:5,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/list.h:11,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/resource_ext.h:9,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/acpi.h:14,
+                 from discrete.c:4:
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/ibt.h:77:1: warning: ‘nocf_check’ attribute ignored. Use ‘-fcf-protection’ option to enable it [-Wattributes]
+   77 | extern __noendbr bool is_endbr(u32 *val);
+      | ^~~~~~
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/ibt.h:78:1: warning: ‘nocf_check’ attribute ignored. Use ‘-fcf-protection’ option to enable it [-Wattributes]
+   78 | extern __noendbr u64 ibt_save(bool disable);
+      | ^~~~~~
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/ibt.h:79:1: warning: ‘nocf_check’ attribute ignored. Use ‘-fcf-protection’ option to enable it [-Wattributes]
+   79 | extern __noendbr void ibt_restore(u64 save);
+      | ^~~~~~
+In file included from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/linkage.h:6,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/linkage.h:8,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/printk.h:8,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/asm-generic/bug.h:31,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/bug.h:193,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/alternative.h:9,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/barrier.h:5,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/list.h:11,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/resource_ext.h:9,
+                 from /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/acpi.h:14,
+                 from common.c:4:
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/ibt.h:77:1: warning: ‘nocf_check’ attribute ignored. Use ‘-fcf-protection’ option to enable it [-Wattributes]
+   77 | extern __noendbr bool is_endbr(u32 *val);
+      | ^~~~~~
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/ibt.h:78:1: warning: ‘nocf_check’ attribute ignored. Use ‘-fcf-protection’ option to enable it [-Wattributes]
+   78 | extern __noendbr u64 ibt_save(bool disable);
+      | ^~~~~~
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/arch/x86/include/asm/ibt.h:79:1: warning: ‘nocf_check’ attribute ignored. Use ‘-fcf-protection’ option to enable it [-Wattributes]
+   79 | extern __noendbr void ibt_restore(u64 save);
+      | ^~~~~~
+tps68470_board_data.c:458:1: fatal error: error writing to /tmp/ccbCIvRA.s: Disk quota exceeded
+  458 | }
+      | ^
+compilation terminated.
+make[3]: *** [/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/scripts/Makefile.build:289: tps68470_board_data.o] Error 1
+make[3]: *** Waiting for unfinished jobs....
+led.c:60:1: fatal error: error writing to /tmp/ccc0EroU.s: Disk quota exceeded
+   60 | }
+      | ^
+compilation terminated.
+make[3]: *** [/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/scripts/Makefile.build:289: led.o] Error 1
+discrete_quirks.c:21:1: fatal error: error writing to /tmp/ccA7rdhE.s: Disk quota exceeded
+   21 | };
+      | ^
+compilation terminated.
+make[3]: *** [/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/scripts/Makefile.build:289: discrete_quirks.o] Error 1
+tps68470.c:265:1: fatal error: error writing to /tmp/cc5ch1BG.s: Disk quota exceeded
+  265 | MODULE_SOFTDEP("pre: clk-tps68470 tps68470-regulator");
+      | ^~~~~~~~~~~~~~
+compilation terminated.
+make[3]: *** [/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/scripts/Makefile.build:289: tps68470.o] Error 1
+common.c:90:1: fatal error: error writing to /tmp/ccUnKvxr.s: Disk quota exceeded
+   90 | MODULE_LICENSE("GPL");
+      | ^~~~~~~~~~~~~~
+compilation terminated.
+make[3]: *** [/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/scripts/Makefile.build:289: common.o] Error 1
+clk_and_regulator.c:256:1: fatal error: error writing to /tmp/ccdx3pTz.s: Disk quota exceeded
+  256 | }
+      | ^
+compilation terminated.
+make[3]: *** [/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/scripts/Makefile.build:289: clk_and_regulator.o] Error 1
+discrete.c:517:1: fatal error: error writing to /tmp/cc4hbjf0.s: Disk quota exceeded
+  517 | MODULE_IMPORT_NS("INTEL_INT3472");
+      | ^~~~~~~~~~~~~~~~
+compilation terminated.
+make[3]: *** [/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/scripts/Makefile.build:289: discrete.o] Error 1
+make[2]: *** [/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/Makefile:2101: .] Error 2
+make[1]: *** [/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/Makefile:248: __sub-make] Error 2
+make[1]: Leaving directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472'
+make: *** [Makefile:248: __sub-make] Error 2
+make: Leaving directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline'

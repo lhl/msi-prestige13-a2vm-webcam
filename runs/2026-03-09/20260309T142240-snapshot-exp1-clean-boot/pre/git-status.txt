@@ -1,0 +1,6 @@
+CMD: git_safe status --short
+?? runs/2026-03-09/20260309T141702-pmic-instrumentation-update/
+?? runs/2026-03-09/20260309T142113-pmic-instrumentation-update/
+?? runs/2026-03-09/20260309T142240-snapshot-exp1-clean-boot/
+
+EXIT_STATUS: 0

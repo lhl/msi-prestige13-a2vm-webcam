@@ -2,6 +2,21 @@
 
 ## 2026-03-09
 
+### Record the March 9 PMIC experiment run batch before analysis
+
+- Plan: check in the latest PMIC experiment artifacts as a clean evidence
+  bundle before interpreting the results.
+- Scope:
+  - `exp1` rerun with working instrumentation
+  - repeated `exp2` update attempts across workflow fixes
+  - final `exp2` clean-boot verify
+  - `exp3` through `exp6` update and clean-boot verify runs
+- Result:
+  - the repo now carries the raw run directories for this batch under
+    `runs/2026-03-09/`
+  - interpretation is intentionally deferred to the next analysis step so the
+    commit captures evidence, not conclusions
+
 ### Ignore the repo-local temp root created by experiment wrappers
 
 - Plan: keep the new repo-local temp root from polluting `git status` on every

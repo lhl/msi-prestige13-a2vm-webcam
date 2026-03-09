@@ -1,0 +1,12 @@
+filename:       /lib/modules/7.0.0-rc2-1-mainline-dirty/kernel/drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.ko.zst
+softdep:        pre: clk-tps68470 tps68470-regulator
+import_ns:      INTEL_INT3472
+license:        GPL v2
+author:         Daniel Scally <djrscally@gmail.com>
+description:    Intel SkyLake INT3472 ACPI TPS68470 Device Driver
+srcversion:     0630567B4319C63B845DA4C
+alias:          acpi*:INT3472:*
+depends:        intel_skl_int3472_common
+name:           intel_skl_int3472_tps68470
+retpoline:      Y
+vermagic:       7.0.0-rc2-1-mainline-dirty SMP preempt mod_unload 

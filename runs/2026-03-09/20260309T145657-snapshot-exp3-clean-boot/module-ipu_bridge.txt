@@ -1,0 +1,8 @@
+filename:       /lib/modules/7.0.0-rc2-1-mainline-dirty/kernel/drivers/media/pci/intel/ipu-bridge.ko.zst
+description:    Intel IPU Sensors Bridge driver
+license:        GPL
+srcversion:     200C60B7F8574E75C3C965F
+depends:        
+name:           ipu_bridge
+retpoline:      Y
+vermagic:       7.0.0-rc2-1-mainline-dirty SMP preempt mod_unload 

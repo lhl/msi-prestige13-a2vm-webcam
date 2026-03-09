@@ -1,0 +1,407 @@
+[2026-03-09T05:58:53Z] experiment: exp5 WF GPIO mode follow-up
+[2026-03-09T05:58:53Z] doc: docs/pmic-followup-experiments.md
+[2026-03-09T05:58:53Z] kernel tree: /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline
+[2026-03-09T05:58:53Z] baseline profile: candidate
+[2026-03-09T05:58:53Z] patch: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ms13q3-wf-gpio-mode-followup-v1.patch
+[2026-03-09T05:58:53Z] module release: 7.0.0-rc2-1-mainline-dirty
+[2026-03-09T05:58:53Z] build jobs: 8
+[2026-03-09T05:58:53Z] dry-run: 0
+[2026-03-09T05:58:53Z] build directories:
+[2026-03-09T05:58:53Z]   - drivers/platform/x86/intel/int3472
+[2026-03-09T05:58:53Z]   - drivers/media/pci/intel
+[2026-03-09T05:58:53Z]   - drivers/media/i2c
+[2026-03-09T05:58:53Z]   - drivers/gpio
+[2026-03-09T05:58:53Z] module installs:
+[2026-03-09T05:58:53Z]   - drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.ko:kernel/drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.ko.zst
+[2026-03-09T05:58:53Z]   - drivers/media/pci/intel/ipu-bridge.ko:kernel/drivers/media/pci/intel/ipu-bridge.ko.zst
+[2026-03-09T05:58:53Z]   - drivers/media/i2c/ov5675.ko:kernel/drivers/media/i2c/ov5675.ko.zst
+[2026-03-09T05:58:53Z]   - drivers/gpio/gpio-tps68470.ko:kernel/drivers/gpio/gpio-tps68470.ko.zst
+[2026-03-09T05:58:53Z] resetting experiment-touched files back to kernel HEAD before baseline reapply
+[2026-03-09T05:58:53Z] CMD: git -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline checkout -- drivers/media/v4l2-core/v4l2-common.c drivers/clk/clk-tps68470.c drivers/regulator/tps68470-regulator.c drivers/platform/x86/intel/int3472/tps68470_board_data.c include/linux/platform_data/tps68470.h drivers/gpio/gpio-tps68470.c
+[2026-03-09T05:58:53Z] CMD: git -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline status --short
+ M drivers/media/i2c/ov5675.c
+ M drivers/media/pci/intel/ipu-bridge.c
+?? drivers/media/i2c/ov5675.c.orig
+?? drivers/media/pci/intel/ipu-bridge.c.orig
+?? localversion.10-pkgrel
+?? localversion.20-pkgname
+?? version
+[2026-03-09T05:58:54Z] CMD: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/scripts/patch-kernel.sh --kernel-tree /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline --profile candidate --status
+note: kernel tree is already dirty; patch state will be checked file-by-file
+Kernel tree: /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline
+Profile: candidate
+
+STATE        PATCH                        TIER       FILE
+applicable   ms13q3-board-data            tested     /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ms13q3-int3472-tps68470-v1.patch
+applied      ipu-bridge-ovti5675          tested     /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ipu-bridge-ovti5675-v1.patch
+applied      ov5675-serial-power-on       tested     /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ov5675-serial-power-on-v1.patch
+applied      ov5675-powerdown-followup    candidate  /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ov5675-powerdown-followup-v1.patch
+applied      ov5675-identify-debug        candidate  /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ov5675-identify-debug-v1.patch
+applied      ov5675-gpio-release-sequencing-debug candidate  /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ov5675-gpio-release-sequencing-debug-v1.patch
+[2026-03-09T05:59:06Z] CMD: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/scripts/patch-kernel.sh --kernel-tree /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline --profile candidate
+note: kernel tree is already dirty; patch state will be checked file-by-file
+[apply] ms13q3-board-data
+[skip]  ipu-bridge-ovti5675 already applied
+[skip]  ov5675-serial-power-on already applied
+[skip]  ov5675-powerdown-followup already applied
+[skip]  ov5675-identify-debug already applied
+[skip]  ov5675-gpio-release-sequencing-debug already applied
+
+Applied: 1
+Skipped: 5
+Conflicts: 0
+[2026-03-09T05:59:06Z] CMD: git -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline apply /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ms13q3-wf-gpio-mode-followup-v1.patch
+[2026-03-09T05:59:06Z] CMD: make -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline -j 8 M=drivers/platform/x86/intel/int3472 modules
+make: Entering directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline'
+make[1]: Entering directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472'
+  CC [M]  tps68470.o
+  CC [M]  tps68470_board_data.o
+  LD [M]  intel_skl_int3472_tps68470.o
+  MODPOST Module.symvers
+  CC [M]  intel_skl_int3472_tps68470.mod.o
+  LD [M]  intel_skl_int3472_tps68470.ko
+  BTF [M] intel_skl_int3472_tps68470.ko
+make[1]: Leaving directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472'
+make: Leaving directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline'
+[2026-03-09T05:59:09Z] CMD: make -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline -j 8 M=drivers/media/pci/intel modules
+make: Entering directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline'
+make[1]: Entering directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/pci/intel'
+make[1]: Leaving directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/pci/intel'
+make: Leaving directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline'
+[2026-03-09T05:59:09Z] CMD: make -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline -j 8 M=drivers/media/i2c modules
+make: Entering directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline'
+make[1]: Entering directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/i2c'
+make[1]: Leaving directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/i2c'
+make: Leaving directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline'
+[2026-03-09T05:59:11Z] CMD: make -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline -j 8 M=drivers/gpio modules
+make: Entering directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline'
+make[1]: Entering directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/gpio'
+  CC [M]  gpio-regmap.o
+  CC [M]  gpio-mmio.o
+  CC [M]  dev-sync-probe.o
+  CC [M]  gpio-74x164.o
+  CC [M]  gpio-adp5520.o
+  CC [M]  gpio-aggregator.o
+  CC [M]  gpio-altera.o
+  CC [M]  gpio-amd8111.o
+  CC [M]  gpio-amd-fch.o
+  CC [M]  gpio-amdpt.o
+  CC [M]  gpio-arizona.o
+  CC [M]  gpio-bd9571mwv.o
+  CC [M]  gpio-cgbc.o
+  CC [M]  gpio-cros-ec.o
+  CC [M]  gpio-da9052.o
+  CC [M]  gpio-da9055.o
+  CC [M]  gpio-dln2.o
+  CC [M]  gpio-ds4520.o
+  CC [M]  gpio-dwapb.o
+  CC [M]  gpio-exar.o
+  CC [M]  gpio-f7188x.o
+  CC [M]  gpio-fxl6408.o
+  CC [M]  gpio-graniterapids.o
+  CC [M]  gpio-ich.o
+  CC [M]  gpio-idio-16.o
+  CC [M]  gpio-it87.o
+  CC [M]  gpio-janz-ttl.o
+  CC [M]  gpio-kempld.o
+  CC [M]  gpio-latch.o
+  CC [M]  gpio-ljca.o
+  CC [M]  gpio-lp3943.o
+  CC [M]  gpio-lp873x.o
+  CC [M]  gpio-madera.o
+  CC [M]  gpio-max3191x.o
+  CC [M]  gpio-max7300.o
+  CC [M]  gpio-max7301.o
+  CC [M]  gpio-max730x.o
+  CC [M]  gpio-max732x.o
+  CC [M]  gpio-max7360.o
+  CC [M]  gpio-mb86s7x.o
+  CC [M]  gpio-mc33880.o
+  CC [M]  gpio-menz127.o
+  CC [M]  gpio-ml-ioh.o
+  CC [M]  gpio-mockup.o
+  CC [M]  gpio-mpsse.o
+  CC [M]  gpio-nct6694.o
+  CC [M]  gpio-palmas.o
+  CC [M]  gpio-pca953x.o
+  CC [M]  gpio-pca9570.o
+  CC [M]  gpio-pcf857x.o
+  CC [M]  gpio-pcie-idio-24.o
+  CC [M]  gpio-pci-idio-16.o
+  CC [M]  gpio-pisosr.o
+  CC [M]  gpio-rdc321x.o
+  CC [M]  gpio-sch311x.o
+  CC [M]  gpio-sch.o
+  CC [M]  gpio-sim.o
+  CC [M]  gpio-siox.o
+  CC [M]  gpio-tpic2810.o
+  CC [M]  gpio-tps65086.o
+  CC [M]  gpio-tps65912.o
+  CC [M]  gpio-tps68470.o
+  CC [M]  gpio-tqmx86.o
+  CC [M]  gpio-twl4030.o
+  CC [M]  gpio-twl6040.o
+  CC [M]  gpio-usbio.o
+  CC [M]  gpio-viperboard.o
+  CC [M]  gpio-virtio.o
+  CC [M]  gpio-vx855.o
+  CC [M]  gpio-wcove.o
+  CC [M]  gpio-winbond.o
+  CC [M]  gpio-wm831x.o
+  CC [M]  gpio-wm8350.o
+  CC [M]  gpio-wm8994.o
+  CC [M]  gpio-ws16c48.o
+  CC [M]  gpio-xilinx.o
+  CC [M]  gpio-xra1403.o
+  LD [M]  gpio-generic.o
+  MODPOST Module.symvers
+  CC [M]  gpio-regmap.mod.o
+  CC [M]  .module-common.o
+  CC [M]  gpio-generic.mod.o
+  CC [M]  dev-sync-probe.mod.o
+  CC [M]  gpio-74x164.mod.o
+  CC [M]  gpio-adp5520.mod.o
+  CC [M]  gpio-aggregator.mod.o
+  CC [M]  gpio-altera.mod.o
+  CC [M]  gpio-amd8111.mod.o
+  CC [M]  gpio-amd-fch.mod.o
+  CC [M]  gpio-amdpt.mod.o
+  CC [M]  gpio-arizona.mod.o
+  CC [M]  gpio-bd9571mwv.mod.o
+  CC [M]  gpio-cgbc.mod.o
+  CC [M]  gpio-cros-ec.mod.o
+  CC [M]  gpio-da9052.mod.o
+  CC [M]  gpio-da9055.mod.o
+  CC [M]  gpio-dln2.mod.o
+  CC [M]  gpio-ds4520.mod.o
+  CC [M]  gpio-dwapb.mod.o
+  CC [M]  gpio-exar.mod.o
+  CC [M]  gpio-f7188x.mod.o
+  CC [M]  gpio-fxl6408.mod.o
+  CC [M]  gpio-graniterapids.mod.o
+  CC [M]  gpio-ich.mod.o
+  CC [M]  gpio-idio-16.mod.o
+  CC [M]  gpio-it87.mod.o
+  CC [M]  gpio-janz-ttl.mod.o
+  CC [M]  gpio-kempld.mod.o
+  CC [M]  gpio-latch.mod.o
+  CC [M]  gpio-ljca.mod.o
+  CC [M]  gpio-lp3943.mod.o
+  CC [M]  gpio-lp873x.mod.o
+  CC [M]  gpio-madera.mod.o
+  CC [M]  gpio-max3191x.mod.o
+  CC [M]  gpio-max7300.mod.o
+  CC [M]  gpio-max7301.mod.o
+  CC [M]  gpio-max730x.mod.o
+  CC [M]  gpio-max732x.mod.o
+  CC [M]  gpio-max7360.mod.o
+  CC [M]  gpio-mb86s7x.mod.o
+  CC [M]  gpio-mc33880.mod.o
+  CC [M]  gpio-menz127.mod.o
+  CC [M]  gpio-ml-ioh.mod.o
+  CC [M]  gpio-mockup.mod.o
+  CC [M]  gpio-mpsse.mod.o
+  CC [M]  gpio-nct6694.mod.o
+  CC [M]  gpio-palmas.mod.o
+  CC [M]  gpio-pca953x.mod.o
+  CC [M]  gpio-pca9570.mod.o
+  CC [M]  gpio-pcf857x.mod.o
+  CC [M]  gpio-pcie-idio-24.mod.o
+  CC [M]  gpio-pci-idio-16.mod.o
+  CC [M]  gpio-pisosr.mod.o
+  CC [M]  gpio-rdc321x.mod.o
+  CC [M]  gpio-sch311x.mod.o
+  CC [M]  gpio-sch.mod.o
+  CC [M]  gpio-sim.mod.o
+  CC [M]  gpio-siox.mod.o
+  CC [M]  gpio-tpic2810.mod.o
+  CC [M]  gpio-tps65086.mod.o
+  CC [M]  gpio-tps65912.mod.o
+  CC [M]  gpio-tps68470.mod.o
+  CC [M]  gpio-tqmx86.mod.o
+  CC [M]  gpio-twl4030.mod.o
+  CC [M]  gpio-twl6040.mod.o
+  CC [M]  gpio-usbio.mod.o
+  CC [M]  gpio-viperboard.mod.o
+  CC [M]  gpio-virtio.mod.o
+  CC [M]  gpio-vx855.mod.o
+  CC [M]  gpio-wcove.mod.o
+  CC [M]  gpio-winbond.mod.o
+  CC [M]  gpio-wm831x.mod.o
+  CC [M]  gpio-wm8350.mod.o
+  CC [M]  gpio-wm8994.mod.o
+  CC [M]  gpio-ws16c48.mod.o
+  CC [M]  gpio-xilinx.mod.o
+  CC [M]  gpio-xra1403.mod.o
+  LD [M]  gpio-regmap.ko
+  LD [M]  gpio-generic.ko
+  BTF [M] gpio-regmap.ko
+  BTF [M] gpio-generic.ko
+  LD [M]  dev-sync-probe.ko
+  BTF [M] dev-sync-probe.ko
+  LD [M]  gpio-74x164.ko
+  LD [M]  gpio-adp5520.ko
+  BTF [M] gpio-adp5520.ko
+  LD [M]  gpio-aggregator.ko
+  LD [M]  gpio-altera.ko
+  BTF [M] gpio-74x164.ko
+  BTF [M] gpio-aggregator.ko
+  LD [M]  gpio-amd8111.ko
+  BTF [M] gpio-amd8111.ko
+  LD [M]  gpio-amd-fch.ko
+  BTF [M] gpio-altera.ko
+  LD [M]  gpio-amdpt.ko
+  LD [M]  gpio-arizona.ko
+  BTF [M] gpio-amdpt.ko
+  BTF [M] gpio-amd-fch.ko
+  BTF [M] gpio-arizona.ko
+  LD [M]  gpio-bd9571mwv.ko
+  LD [M]  gpio-cgbc.ko
+  LD [M]  gpio-cros-ec.ko
+  BTF [M] gpio-cros-ec.ko
+  BTF [M] gpio-bd9571mwv.ko
+  LD [M]  gpio-da9052.ko
+  BTF [M] gpio-cgbc.ko
+  LD [M]  gpio-da9055.ko
+  BTF [M] gpio-da9052.ko
+  BTF [M] gpio-da9055.ko
+  LD [M]  gpio-dln2.ko
+  LD [M]  gpio-ds4520.ko
+  BTF [M] gpio-dln2.ko
+  BTF [M] gpio-ds4520.ko
+  LD [M]  gpio-dwapb.ko
+  LD [M]  gpio-exar.ko
+  BTF [M] gpio-exar.ko
+  BTF [M] gpio-dwapb.ko
+  LD [M]  gpio-f7188x.ko
+  LD [M]  gpio-fxl6408.ko
+  LD [M]  gpio-graniterapids.ko
+  BTF [M] gpio-f7188x.ko
+  BTF [M] gpio-graniterapids.ko
+  LD [M]  gpio-ich.ko
+  BTF [M] gpio-fxl6408.ko
+  LD [M]  gpio-idio-16.ko
+  BTF [M] gpio-idio-16.ko
+  LD [M]  gpio-it87.ko
+  LD [M]  gpio-janz-ttl.ko
+  BTF [M] gpio-it87.ko
+  BTF [M] gpio-ich.ko
+  BTF [M] gpio-janz-ttl.ko
+  LD [M]  gpio-kempld.ko
+  BTF [M] gpio-kempld.ko
+  LD [M]  gpio-latch.ko
+  LD [M]  gpio-ljca.ko
+  BTF [M] gpio-ljca.ko
+  LD [M]  gpio-lp3943.ko
+  LD [M]  gpio-lp873x.ko
+  BTF [M] gpio-latch.ko
+  BTF [M] gpio-lp3943.ko
+  BTF [M] gpio-lp873x.ko
+  LD [M]  gpio-madera.ko
+  BTF [M] gpio-madera.ko
+  LD [M]  gpio-max3191x.ko
+  BTF [M] gpio-max3191x.ko
+  LD [M]  gpio-max7301.ko
+  LD [M]  gpio-max7300.ko
+  LD [M]  gpio-max730x.ko
+  BTF [M] gpio-max730x.ko
+  BTF [M] gpio-max7300.ko
+  LD [M]  gpio-max732x.ko
+  BTF [M] gpio-max7301.ko
+  BTF [M] gpio-max732x.ko
+  LD [M]  gpio-max7360.ko
+  LD [M]  gpio-mb86s7x.ko
+  BTF [M] gpio-max7360.ko
+  BTF [M] gpio-mb86s7x.ko
+  LD [M]  gpio-mc33880.ko
+  BTF [M] gpio-mc33880.ko
+  LD [M]  gpio-menz127.ko
+  BTF [M] gpio-menz127.ko
+  LD [M]  gpio-ml-ioh.ko
+  LD [M]  gpio-mockup.ko
+  BTF [M] gpio-ml-ioh.ko
+  LD [M]  gpio-mpsse.ko
+  BTF [M] gpio-mpsse.ko
+  LD [M]  gpio-nct6694.ko
+  BTF [M] gpio-mockup.ko
+  LD [M]  gpio-palmas.ko
+  LD [M]  gpio-pca953x.ko
+  BTF [M] gpio-nct6694.ko
+  BTF [M] gpio-palmas.ko
+  BTF [M] gpio-pca953x.ko
+  LD [M]  gpio-pca9570.ko
+  BTF [M] gpio-pca9570.ko
+  LD [M]  gpio-pcf857x.ko
+  LD [M]  gpio-pcie-idio-24.ko
+  BTF [M] gpio-pcf857x.ko
+  BTF [M] gpio-pcie-idio-24.ko
+  LD [M]  gpio-pci-idio-16.ko
+  LD [M]  gpio-pisosr.ko
+  LD [M]  gpio-rdc321x.ko
+  BTF [M] gpio-pisosr.ko
+  BTF [M] gpio-rdc321x.ko
+  LD [M]  gpio-sch311x.ko
+  BTF [M] gpio-pci-idio-16.ko
+  BTF [M] gpio-sch311x.ko
+  LD [M]  gpio-sch.ko
+  BTF [M] gpio-sch.ko
+  LD [M]  gpio-sim.ko
+  LD [M]  gpio-siox.ko
+  BTF [M] gpio-sim.ko
+  LD [M]  gpio-tpic2810.ko
+  BTF [M] gpio-siox.ko
+  BTF [M] gpio-tpic2810.ko
+  LD [M]  gpio-tps65086.ko
+  LD [M]  gpio-tps65912.ko
+  LD [M]  gpio-tps68470.ko
+  LD [M]  gpio-tqmx86.ko
+  BTF [M] gpio-tps65086.ko
+  LD [M]  gpio-twl4030.ko
+  BTF [M] gpio-tps65912.ko
+  BTF [M] gpio-tqmx86.ko
+  BTF [M] gpio-twl4030.ko
+  LD [M]  gpio-twl6040.ko
+  BTF [M] gpio-twl6040.ko
+  LD [M]  gpio-usbio.ko
+  BTF [M] gpio-tps68470.ko
+  LD [M]  gpio-viperboard.ko
+  BTF [M] gpio-usbio.ko
+  BTF [M] gpio-viperboard.ko
+  LD [M]  gpio-virtio.ko
+  LD [M]  gpio-vx855.ko
+  BTF [M] gpio-vx855.ko
+  LD [M]  gpio-wcove.ko
+  LD [M]  gpio-winbond.ko
+  LD [M]  gpio-wm831x.ko
+  BTF [M] gpio-wcove.ko
+  LD [M]  gpio-wm8350.ko
+  BTF [M] gpio-winbond.ko
+  BTF [M] gpio-virtio.ko
+  BTF [M] gpio-wm831x.ko
+  BTF [M] gpio-wm8350.ko
+  LD [M]  gpio-wm8994.ko
+  LD [M]  gpio-ws16c48.ko
+  BTF [M] gpio-wm8994.ko
+  BTF [M] gpio-ws16c48.ko
+  LD [M]  gpio-xilinx.ko
+  BTF [M] gpio-xilinx.ko
+  LD [M]  gpio-xra1403.ko
+  BTF [M] gpio-xra1403.ko
+make[1]: Leaving directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/gpio'
+make: Leaving directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline'
+[2026-03-09T05:59:22Z] CMD: zstd -T0 -f /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.ko -o /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/intel_skl_int3472_tps68470.yQZ0E5.ko.zst
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.ko : 31.10%   (   498 KiB =>    155 KiB, /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/intel_skl_int3472_tps68470.yQZ0E5.ko.zst) 
+[2026-03-09T05:59:22Z] CMD: as_root install -Dm644 /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/intel_skl_int3472_tps68470.yQZ0E5.ko.zst /usr/lib/modules/7.0.0-rc2-1-mainline-dirty/kernel/drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.ko.zst
+[2026-03-09T05:59:22Z] CMD: zstd -T0 -f /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/pci/intel/ipu-bridge.ko -o /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/ipu-bridge.8JjX81.ko.zst
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/pci/intel/ipu-bridge.ko : 32.22%   (   519 KiB =>    167 KiB, /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/ipu-bridge.8JjX81.ko.zst) 
+[2026-03-09T05:59:22Z] CMD: as_root install -Dm644 /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/ipu-bridge.8JjX81.ko.zst /usr/lib/modules/7.0.0-rc2-1-mainline-dirty/kernel/drivers/media/pci/intel/ipu-bridge.ko.zst
+[2026-03-09T05:59:22Z] CMD: zstd -T0 -f /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/i2c/ov5675.ko -o /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/ov5675.IIevxc.ko.zst
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/i2c/ov5675.ko : 31.12%   (   664 KiB =>    207 KiB, /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/ov5675.IIevxc.ko.zst) 
+[2026-03-09T05:59:22Z] CMD: as_root install -Dm644 /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/ov5675.IIevxc.ko.zst /usr/lib/modules/7.0.0-rc2-1-mainline-dirty/kernel/drivers/media/i2c/ov5675.ko.zst
+[2026-03-09T05:59:22Z] CMD: zstd -T0 -f /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/gpio/gpio-tps68470.ko -o /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/gpio-tps68470.8qRVf3.ko.zst
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/gpio/gpio-tps68470.ko : 30.42%   (   379 KiB =>    115 KiB, /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/gpio-tps68470.8qRVf3.ko.zst) 
+[2026-03-09T05:59:22Z] CMD: as_root install -Dm644 /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/gpio-tps68470.8qRVf3.ko.zst /usr/lib/modules/7.0.0-rc2-1-mainline-dirty/kernel/drivers/gpio/gpio-tps68470.ko.zst
+[2026-03-09T05:59:22Z] CMD: as_root depmod -a 7.0.0-rc2-1-mainline-dirty
+[2026-03-09T05:59:24Z] update log directory: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-09/20260309T145853-wf-gpio-mode-followup-update
+[2026-03-09T05:59:24Z] next step after reboot: scripts/exp5-wf-gpio-mode-followup-verify.sh
+[2026-03-09T05:59:27Z] reboot confirmed by user

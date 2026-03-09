@@ -1,0 +1,9 @@
+filename:       /lib/modules/7.0.0-rc2-1-mainline-dirty/kernel/drivers/clk/clk-tps68470.ko.zst
+license:        GPL
+description:    clock driver for TPS68470 pmic
+alias:          platform:tps68470-clk
+srcversion:     35334D36975F0E263CE16F9
+depends:        
+name:           clk_tps68470
+retpoline:      Y
+vermagic:       7.0.0-rc2-1-mainline-dirty SMP preempt mod_unload 

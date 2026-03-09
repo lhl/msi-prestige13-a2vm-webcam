@@ -1,0 +1,7 @@
+Mar 09 14:56:34 p13 kernel: int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21
+Mar 09 14:56:38 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -110
+Mar 09 14:56:39 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -110
+Mar 09 14:56:40 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -110
+Mar 09 14:56:41 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -110
+Mar 09 14:56:42 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -110
+Mar 09 14:56:42 p13 kernel: ov5675 i2c-OVTI5675:00: failed to find sensor: -110

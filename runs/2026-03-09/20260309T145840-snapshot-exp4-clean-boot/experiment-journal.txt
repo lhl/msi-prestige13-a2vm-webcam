@@ -1,0 +1,24 @@
+Mar 09 14:57:58 p13 kernel: last_pfn = 0x87f800 max_arch_pfn = 0x400000000
+Mar 09 14:57:58 p13 kernel: last_pfn = 0x70000 max_arch_pfn = 0x400000000
+Mar 09 14:57:58 p13 kernel: pci_bus 0000:00: root bus resource [mem 0x2000000000-0x3fbfffffff window]
+Mar 09 14:57:58 p13 kernel: pci 0000:00:07.0: bridge window [io  0x3000-0x3fff]: assigned
+Mar 09 14:57:58 p13 kernel: pci 0000:00:07.1: bridge window [io  0x4000-0x4fff]: assigned
+Mar 09 14:57:58 p13 kernel: pci 0000:00:07.0:   bridge window [io  0x3000-0x3fff]
+Mar 09 14:57:58 p13 kernel: pci 0000:00:07.1:   bridge window [io  0x4000-0x4fff]
+Mar 09 14:57:58 p13 kernel: pci_bus 0000:00: resource 8 [mem 0x2000000000-0x3fbfffffff window]
+Mar 09 14:57:58 p13 kernel: pci_bus 0000:01: resource 0 [io  0x3000-0x3fff]
+Mar 09 14:57:58 p13 kernel: pci_bus 0000:2b: resource 0 [io  0x4000-0x4fff]
+Mar 09 14:57:58 p13 kernel: serial8250: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+Mar 09 14:57:58 p13 kernel: [drm] Initialized simpledrm 1.0.0 for simple-framebuffer.0 on minor 0
+Mar 09 14:58:00 p13 kernel: [drm] Initialized xe 1.1.0 for 0000:00:02.0 on minor 0
+Mar 09 14:58:03 p13 kernel: [drm] Initialized intel_vpu 1.0.0 for 0000:00:0b.0 on minor 0
+Mar 09 14:58:03 p13 kernel: regulator regulator.2: applying WF init value programming: VD=1050mV VA=2800mV VCM=2800mV VIO=1800mV VSIO=1800mV
+Mar 09 14:58:06 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -110
+Mar 09 14:58:07 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -110
+Mar 09 14:58:08 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -110
+Mar 09 14:58:09 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -110
+Mar 09 14:58:10 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -110
+Mar 09 14:58:10 p13 kernel: ov5675 i2c-OVTI5675:00: failed to find sensor: -110
+Mar 09 14:58:20 p13 kernel:  blocking_notifier_call_chain+0x42/0x70
+Mar 09 14:58:20 p13 kernel:  blocking_notifier_call_chain+0x42/0x70
+Mar 09 14:58:20 p13 kernel:  blocking_notifier_call_chain+0x42/0x70

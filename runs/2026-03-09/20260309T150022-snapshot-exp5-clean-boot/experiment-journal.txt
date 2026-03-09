@@ -1,0 +1,10 @@
+Mar 09 14:59:47 p13 kernel: tps68470-gpio tps68470-gpio: WF GPIO mode follow-up: gpio.1 GPCTL1A pre-clear=0x00
+Mar 09 14:59:47 p13 kernel: tps68470-gpio tps68470-gpio: WF GPIO mode follow-up: gpio.1 GPCTL1A output=0x02
+Mar 09 14:59:47 p13 kernel: tps68470-gpio tps68470-gpio: WF GPIO mode follow-up: gpio.2 GPCTL2A pre-clear=0x00
+Mar 09 14:59:47 p13 kernel: tps68470-gpio tps68470-gpio: WF GPIO mode follow-up: gpio.2 GPCTL2A output=0x02
+Mar 09 14:59:50 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -110
+Mar 09 14:59:51 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -110
+Mar 09 14:59:52 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -110
+Mar 09 14:59:53 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -110
+Mar 09 14:59:54 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -110
+Mar 09 14:59:54 p13 kernel: ov5675 i2c-OVTI5675:00: failed to find sensor: -110

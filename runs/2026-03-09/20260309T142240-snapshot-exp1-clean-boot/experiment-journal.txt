@@ -1,0 +1,13 @@
+Mar 09 14:22:01 p13 kernel: ov5675 i2c-OVTI5675:00: resolved xvclk provider via common clock framework at 19200000 Hz
+Mar 09 14:22:01 p13 kernel: tps68470-clk tps68470-clk: tps68470_clk_prepare PLLCTL=0xd5 CLKCFG1=0x0a CLKCFG2=0x05 rate=19200000
+Mar 09 14:22:01 p13 kernel: regulator regulator.2: tps68470_regulator_enable(after) ANA S_I2C_CTL=0x00 VACTL=0x01 VDCTL=0x04
+Mar 09 14:22:01 p13 kernel: regulator regulator.1: tps68470_regulator_enable(before) CORE S_I2C_CTL=0x00 VACTL=0x01 VDCTL=0x04
+Mar 09 14:22:01 p13 kernel: regulator regulator.1: tps68470_regulator_enable(after) CORE S_I2C_CTL=0x00 VACTL=0x01 VDCTL=0x05
+Mar 09 14:22:04 p13 kernel: regulator regulator.5: tps68470_regulator_enable(after) VSIO S_I2C_CTL=0x00 VACTL=0x00 VDCTL=0x00
+Mar 09 14:22:07 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -110
+Mar 09 14:22:08 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -110
+Mar 09 14:22:09 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -110
+Mar 09 14:22:10 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -110
+Mar 09 14:22:11 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -110
+Mar 09 14:22:11 p13 kernel: ov5675 i2c-OVTI5675:00: failed to find sensor: -110
+Mar 09 14:22:19 p13 kernel: tps68470-clk tps68470-clk: tps68470_clk_unprepare PLLCTL=0x00 CLKCFG1=0x00 CLKCFG2=0x00 rate=19200000

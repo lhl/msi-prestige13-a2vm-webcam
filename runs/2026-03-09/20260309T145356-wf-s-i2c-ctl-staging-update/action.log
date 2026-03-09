@@ -1,0 +1,98 @@
+[2026-03-09T05:53:56Z] experiment: exp2 WF S_I2C_CTL staging
+[2026-03-09T05:53:56Z] doc: docs/pmic-followup-experiments.md
+[2026-03-09T05:53:56Z] kernel tree: /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline
+[2026-03-09T05:53:56Z] baseline profile: candidate
+[2026-03-09T05:53:56Z] patch: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ms13q3-wf-s-i2c-ctl-staging-v1.patch
+[2026-03-09T05:53:56Z] module release: 7.0.0-rc2-1-mainline-dirty
+[2026-03-09T05:53:56Z] build jobs: 8
+[2026-03-09T05:53:56Z] dry-run: 0
+[2026-03-09T05:53:56Z] build directories:
+[2026-03-09T05:53:56Z]   - drivers/platform/x86/intel/int3472
+[2026-03-09T05:53:56Z]   - drivers/media/pci/intel
+[2026-03-09T05:53:56Z]   - drivers/media/i2c
+[2026-03-09T05:53:56Z]   - drivers/regulator
+[2026-03-09T05:53:56Z] module installs:
+[2026-03-09T05:53:56Z]   - drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.ko:kernel/drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.ko.zst
+[2026-03-09T05:53:56Z]   - drivers/media/pci/intel/ipu-bridge.ko:kernel/drivers/media/pci/intel/ipu-bridge.ko.zst
+[2026-03-09T05:53:56Z]   - drivers/media/i2c/ov5675.ko:kernel/drivers/media/i2c/ov5675.ko.zst
+[2026-03-09T05:53:56Z]   - drivers/regulator/tps68470-regulator.ko:kernel/drivers/regulator/tps68470-regulator.ko.zst
+[2026-03-09T05:53:56Z] resetting experiment-touched files back to kernel HEAD before baseline reapply
+[2026-03-09T05:53:56Z] CMD: git -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline checkout -- drivers/media/v4l2-core/v4l2-common.c drivers/clk/clk-tps68470.c drivers/regulator/tps68470-regulator.c drivers/platform/x86/intel/int3472/tps68470_board_data.c include/linux/platform_data/tps68470.h drivers/gpio/gpio-tps68470.c
+[2026-03-09T05:53:57Z] CMD: git -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline status --short
+ M drivers/media/i2c/ov5675.c
+ M drivers/media/pci/intel/ipu-bridge.c
+?? drivers/media/i2c/ov5675.c.orig
+?? drivers/media/pci/intel/ipu-bridge.c.orig
+?? localversion.10-pkgrel
+?? localversion.20-pkgname
+?? version
+[2026-03-09T05:53:57Z] CMD: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/scripts/patch-kernel.sh --kernel-tree /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline --profile candidate --status
+note: kernel tree is already dirty; patch state will be checked file-by-file
+Kernel tree: /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline
+Profile: candidate
+
+STATE        PATCH                        TIER       FILE
+applicable   ms13q3-board-data            tested     /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ms13q3-int3472-tps68470-v1.patch
+applied      ipu-bridge-ovti5675          tested     /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ipu-bridge-ovti5675-v1.patch
+applied      ov5675-serial-power-on       tested     /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ov5675-serial-power-on-v1.patch
+applied      ov5675-powerdown-followup    candidate  /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ov5675-powerdown-followup-v1.patch
+applied      ov5675-identify-debug        candidate  /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ov5675-identify-debug-v1.patch
+applied      ov5675-gpio-release-sequencing-debug candidate  /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ov5675-gpio-release-sequencing-debug-v1.patch
+[2026-03-09T05:54:07Z] CMD: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/scripts/patch-kernel.sh --kernel-tree /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline --profile candidate
+note: kernel tree is already dirty; patch state will be checked file-by-file
+[apply] ms13q3-board-data
+[skip]  ipu-bridge-ovti5675 already applied
+[skip]  ov5675-serial-power-on already applied
+[skip]  ov5675-powerdown-followup already applied
+[skip]  ov5675-identify-debug already applied
+[skip]  ov5675-gpio-release-sequencing-debug already applied
+
+Applied: 1
+Skipped: 5
+Conflicts: 0
+[2026-03-09T05:54:07Z] CMD: git -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline apply /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ms13q3-wf-s-i2c-ctl-staging-v1.patch
+[2026-03-09T05:54:07Z] CMD: make -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline -j 8 M=drivers/platform/x86/intel/int3472 modules
+make: Entering directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline'
+make[1]: Entering directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472'
+  CC [M]  tps68470_board_data.o
+  LD [M]  intel_skl_int3472_tps68470.o
+  MODPOST Module.symvers
+  LD [M]  intel_skl_int3472_tps68470.ko
+  BTF [M] intel_skl_int3472_tps68470.ko
+make[1]: Leaving directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472'
+make: Leaving directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline'
+[2026-03-09T05:54:08Z] CMD: make -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline -j 8 M=drivers/media/pci/intel modules
+make: Entering directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline'
+make[1]: Entering directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/pci/intel'
+make[1]: Leaving directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/pci/intel'
+make: Leaving directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline'
+[2026-03-09T05:54:09Z] CMD: make -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline -j 8 M=drivers/media/i2c modules
+make: Entering directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline'
+make[1]: Entering directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/i2c'
+make[1]: Leaving directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/i2c'
+make: Leaving directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline'
+[2026-03-09T05:54:11Z] CMD: make -C /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline -j 8 M=drivers/regulator modules
+make: Entering directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline'
+make[1]: Entering directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/regulator'
+  CC [M]  tps68470-regulator.o
+  MODPOST Module.symvers
+  LD [M]  tps68470-regulator.ko
+  BTF [M] tps68470-regulator.ko
+make[1]: Leaving directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/regulator'
+make: Leaving directory '/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline'
+[2026-03-09T05:54:13Z] CMD: zstd -T0 -f /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.ko -o /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/intel_skl_int3472_tps68470.8UEiUw.ko.zst
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.ko : 31.10%   (   498 KiB =>    155 KiB, /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/intel_skl_int3472_tps68470.8UEiUw.ko.zst) 
+[2026-03-09T05:54:13Z] CMD: as_root install -Dm644 /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/intel_skl_int3472_tps68470.8UEiUw.ko.zst /usr/lib/modules/7.0.0-rc2-1-mainline-dirty/kernel/drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.ko.zst
+[2026-03-09T05:54:15Z] CMD: zstd -T0 -f /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/pci/intel/ipu-bridge.ko -o /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/ipu-bridge.1GpZLU.ko.zst
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/pci/intel/ipu-bridge.ko : 32.22%   (   519 KiB =>    167 KiB, /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/ipu-bridge.1GpZLU.ko.zst) 
+[2026-03-09T05:54:15Z] CMD: as_root install -Dm644 /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/ipu-bridge.1GpZLU.ko.zst /usr/lib/modules/7.0.0-rc2-1-mainline-dirty/kernel/drivers/media/pci/intel/ipu-bridge.ko.zst
+[2026-03-09T05:54:15Z] CMD: zstd -T0 -f /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/i2c/ov5675.ko -o /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/ov5675.41LHaW.ko.zst
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/i2c/ov5675.ko : 31.12%   (   664 KiB =>    207 KiB, /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/ov5675.41LHaW.ko.zst) 
+[2026-03-09T05:54:15Z] CMD: as_root install -Dm644 /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/ov5675.41LHaW.ko.zst /usr/lib/modules/7.0.0-rc2-1-mainline-dirty/kernel/drivers/media/i2c/ov5675.ko.zst
+[2026-03-09T05:54:15Z] CMD: zstd -T0 -f /home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/regulator/tps68470-regulator.ko -o /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/tps68470-regulator.Hwiy4y.ko.zst
+/home/lhl/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/regulator/tps68470-regulator.ko : 31.01%   (   444 KiB =>    138 KiB, /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/tps68470-regulator.Hwiy4y.ko.zst) 
+[2026-03-09T05:54:15Z] CMD: as_root install -Dm644 /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/tps68470-regulator.Hwiy4y.ko.zst /usr/lib/modules/7.0.0-rc2-1-mainline-dirty/kernel/drivers/regulator/tps68470-regulator.ko.zst
+[2026-03-09T05:54:15Z] CMD: as_root depmod -a 7.0.0-rc2-1-mainline-dirty
+[2026-03-09T05:54:17Z] update log directory: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-09/20260309T145356-wf-s-i2c-ctl-staging-update
+[2026-03-09T05:54:17Z] next step after reboot: scripts/exp2-wf-s-i2c-ctl-verify.sh
+[2026-03-09T05:54:19Z] reboot confirmed by user

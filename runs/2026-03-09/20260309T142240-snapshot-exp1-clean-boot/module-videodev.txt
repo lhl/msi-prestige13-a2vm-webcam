@@ -1,0 +1,10 @@
+filename:       /lib/modules/7.0.0-rc2-1-mainline-dirty/kernel/drivers/media/v4l2-core/videodev.ko.zst
+alias:          char-major-81-*
+license:        GPL
+description:    Video4Linux2 core driver
+author:         Alan Cox, Mauro Carvalho Chehab <mchehab@kernel.org>, Bill Dirks, Justin Schoeman, Gerd Knorr
+srcversion:     A2F556F88951A04D8578C71
+depends:        mc
+name:           videodev
+retpoline:      Y
+vermagic:       7.0.0-rc2-1-mainline-dirty SMP preempt mod_unload 

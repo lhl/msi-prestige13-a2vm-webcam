@@ -1,0 +1,45 @@
+CMD: journalctl -k --since '2026-03-09T05:21:55Z' --no-pager | grep -En 'tps68470|INT3472|OVTI5675|ov5675|intel-ipu7|board-data|subdev|ipu7' || true
+1033:Mar 09 14:22:01 p13 kernel: intel_ipu7: module is from the staging directory, the quality is unknown, you have been warned.
+1039:Mar 09 14:22:01 p13 kernel: intel-ipu7 0000:00:05.0: enabling device (0000 -> 0002)
+1040:Mar 09 14:22:01 p13 kernel: intel-ipu7 0000:00:05.0: Device 0x645d (rev: 0x4)
+1041:Mar 09 14:22:01 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 PCI BAR0 base 0x0000003014000000 BAR2 base 0x0000003016336000
+1042:Mar 09 14:22:01 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 PCI BAR0 mapped at 00000000ce84d655
+1044:Mar 09 14:22:01 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 SKU 0 in secure mode mask 0x0
+1048:Mar 09 14:22:01 p13 kernel: intel-ipu7 0000:00:05.0: firmware cpd file: intel/ipu/ipu7_fw.bin
+1049:Mar 09 14:22:01 p13 kernel: intel-ipu7 0000:00:05.0: FW binary0 info:
+1050:Mar 09 14:22:01 p13 kernel: intel-ipu7 0000:00:05.0: Name:  psys
+1051:Mar 09 14:22:01 p13 kernel: intel-ipu7 0000:00:05.0: Version:  1.1.9.240627135220
+1053:Mar 09 14:22:01 p13 kernel: intel-ipu7 0000:00:05.0: Timestamp:  build_id:331942702
+1054:Mar 09 14:22:01 p13 kernel: intel-ipu7 0000:00:05.0: Commit:  commit_id:d84f5c35
+1055:Mar 09 14:22:01 p13 kernel: intel-ipu7 0000:00:05.0: FW binary1 info:
+1056:Mar 09 14:22:01 p13 kernel: intel-ipu7 0000:00:05.0: Name:  isys
+1057:Mar 09 14:22:01 p13 kernel: intel-ipu7 0000:00:05.0: Version:  1.1.9.240627135318
+1058:Mar 09 14:22:01 p13 kernel: intel-ipu7 0000:00:05.0: Timestamp:  build_id:3823931988
+1059:Mar 09 14:22:01 p13 kernel: intel-ipu7 0000:00:05.0: Commit:  commit_id:d84f5c35
+1061:Mar 09 14:22:01 p13 kernel: intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00
+1062:Mar 09 14:22:01 p13 kernel: intel-ipu7 0000:00:05.0: Connected 1 cameras
+1064:Mar 09 14:22:01 p13 kernel: int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21
+1066:Mar 09 14:22:01 p13 kernel: intel-ipu7 0000:00:05.0: Sending BOOT_LOAD to CSE
+1068:Mar 09 14:22:01 p13 kernel: tps68470-clk tps68470-clk: tps68470_clk_probe PLLCTL=0xd0 CLKCFG1=0x00 CLKCFG2=0x05 rate=19200000
+1086:Mar 09 14:22:01 p13 kernel: intel-ipu7 0000:00:05.0: Sending AUTHENTICATE_RUN to CSE
+1087:Mar 09 14:22:01 p13 kernel: ov5675 i2c-OVTI5675:00: resolved xvclk provider via common clock framework at 19200000 Hz
+1091:Mar 09 14:22:01 p13 kernel: tps68470-clk tps68470-clk: tps68470_clk_prepare PLLCTL=0xd5 CLKCFG1=0x0a CLKCFG2=0x05 rate=19200000
+1092:Mar 09 14:22:01 p13 kernel: regulator regulator.2: tps68470_regulator_enable(after) ANA S_I2C_CTL=0x00 VACTL=0x01 VDCTL=0x04
+1093:Mar 09 14:22:01 p13 kernel: regulator regulator.1: tps68470_regulator_enable(before) CORE S_I2C_CTL=0x00 VACTL=0x01 VDCTL=0x04
+1094:Mar 09 14:22:01 p13 kernel: regulator regulator.1: tps68470_regulator_enable(after) CORE S_I2C_CTL=0x00 VACTL=0x01 VDCTL=0x05
+1100:Mar 09 14:22:01 p13 kernel: intel-ipu7 0000:00:05.0: CSE authenticate_run done
+1110:Mar 09 14:22:04 p13 kernel: regulator regulator.5: tps68470_regulator_enable(after) VSIO S_I2C_CTL=0x00 VACTL=0x00 VDCTL=0x00
+1114:Mar 09 14:22:07 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -110
+1116:Mar 09 14:22:08 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -110
+1118:Mar 09 14:22:09 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -110
+1120:Mar 09 14:22:10 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -110
+1122:Mar 09 14:22:11 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -110
+1123:Mar 09 14:22:11 p13 kernel: ov5675 i2c-OVTI5675:00: failed to find sensor: -110
+1133:Mar 09 14:22:19 p13 kernel: tps68470-clk tps68470-clk: tps68470_clk_unprepare PLLCTL=0x00 CLKCFG1=0x00 CLKCFG2=0x00 rate=19200000
+1141:Mar 09 14:22:21 p13 kernel: Modules linked in: fat libarc4 btmtk snd_pcm_dmaengine rapl processor_thermal_device_pci gpio_tps68470 intel_cstate processor_thermal_device btrtl snd_pcm processor_thermal_wt_hint platform_temperature_control btbcm intel_rapl_msr snd_timer btintel processor_thermal_soc_slider iwlwifi intel_uncore snd platform_profile soundcore bluetooth pcspkr spi_intel_pci mei_me processor_thermal_rfim wmi_bmof msi_wmi msi_wmi_platform spi_intel crc8 processor_thermal_rapl mei cfg80211 intel_skl_int3472_tps68470(OE) intel_ipu7(C) intel_rapl_common processor_thermal_wt_req intel_vpu processor_thermal_power_floor rfkill processor_thermal_mbox ipu_bridge(OE) int3403_thermal intel_pmc_core int340x_thermal_zone ov5675(OE) tps68470_regulator(OE) v4l2_fwnode v4l2_async pmt_telemetry clk_tps68470(OE) int3400_thermal pmt_discovery videodev(OE) intel_hid acpi_thermal_rel pmt_class intel_skl_int3472_discrete sparse_keymap mc acpi_tad intel_skl_int3472_common intel_pmc_ssram_telemetry acpi_pad joydev mousedev mac_hid rtsx_pci_sdmmc
+1193:Mar 09 14:22:21 p13 kernel: Modules linked in: fat libarc4 btmtk snd_pcm_dmaengine rapl processor_thermal_device_pci gpio_tps68470 intel_cstate processor_thermal_device btrtl snd_pcm processor_thermal_wt_hint platform_temperature_control btbcm intel_rapl_msr snd_timer btintel processor_thermal_soc_slider iwlwifi intel_uncore snd platform_profile soundcore bluetooth pcspkr spi_intel_pci mei_me processor_thermal_rfim wmi_bmof msi_wmi msi_wmi_platform spi_intel crc8 processor_thermal_rapl mei cfg80211 intel_skl_int3472_tps68470(OE) intel_ipu7(C) intel_rapl_common processor_thermal_wt_req intel_vpu processor_thermal_power_floor rfkill processor_thermal_mbox ipu_bridge(OE) int3403_thermal intel_pmc_core int340x_thermal_zone ov5675(OE) tps68470_regulator(OE) v4l2_fwnode v4l2_async pmt_telemetry clk_tps68470(OE) int3400_thermal pmt_discovery videodev(OE) intel_hid acpi_thermal_rel pmt_class intel_skl_int3472_discrete sparse_keymap mc acpi_tad intel_skl_int3472_common intel_pmc_ssram_telemetry acpi_pad joydev mousedev mac_hid rtsx_pci_sdmmc
+1245:Mar 09 14:22:21 p13 kernel: Modules linked in: fat libarc4 btmtk snd_pcm_dmaengine rapl processor_thermal_device_pci gpio_tps68470 intel_cstate processor_thermal_device btrtl snd_pcm processor_thermal_wt_hint platform_temperature_control btbcm intel_rapl_msr snd_timer btintel processor_thermal_soc_slider iwlwifi intel_uncore snd platform_profile soundcore bluetooth pcspkr spi_intel_pci mei_me processor_thermal_rfim wmi_bmof msi_wmi msi_wmi_platform spi_intel crc8 processor_thermal_rapl mei cfg80211 intel_skl_int3472_tps68470(OE) intel_ipu7(C) intel_rapl_common processor_thermal_wt_req intel_vpu processor_thermal_power_floor rfkill processor_thermal_mbox ipu_bridge(OE) int3403_thermal intel_pmc_core int340x_thermal_zone ov5675(OE) tps68470_regulator(OE) v4l2_fwnode v4l2_async pmt_telemetry clk_tps68470(OE) int3400_thermal pmt_discovery videodev(OE) intel_hid acpi_thermal_rel pmt_class intel_skl_int3472_discrete sparse_keymap mc acpi_tad intel_skl_int3472_common intel_pmc_ssram_telemetry acpi_pad joydev mousedev mac_hid rtsx_pci_sdmmc
+1295:Mar 09 14:22:21 p13 kernel: ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110
+1316:Mar 09 14:22:22 p13 kernel: intel_ipu7_isys: module is from the staging directory, the quality is unknown, you have been warned.
+
+EXIT_STATUS: 0

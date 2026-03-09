@@ -1,0 +1,5 @@
+CMD: ls -l /sys/bus/acpi/devices/OVTI5675:00 2>/dev/null || true; find /sys/bus/acpi/devices/OVTI5675:00 -maxdepth 2 2>/dev/null | sort || true
+lrwxrwxrwx 1 root root 0 Mar  9 14:56 /sys/bus/acpi/devices/OVTI5675:00 -> ../../../devices/LNXSYSTM:00/LNXSYBUS:00/OVTI5675:00
+/sys/bus/acpi/devices/OVTI5675:00
+
+EXIT_STATUS: 0

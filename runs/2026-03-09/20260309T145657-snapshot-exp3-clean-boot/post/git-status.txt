@@ -1,0 +1,17 @@
+CMD: git_safe status --short
+?? runs/2026-03-09/20260309T141702-pmic-instrumentation-update/
+?? runs/2026-03-09/20260309T142113-pmic-instrumentation-update/
+?? runs/2026-03-09/20260309T142240-snapshot-exp1-clean-boot/
+?? runs/2026-03-09/20260309T142411-wf-s-i2c-ctl-staging-update/
+?? runs/2026-03-09/20260309T143706-wf-s-i2c-ctl-staging-update/
+?? runs/2026-03-09/20260309T144151-wf-s-i2c-ctl-staging-update/
+?? runs/2026-03-09/20260309T144640-wf-s-i2c-ctl-staging-update/
+?? runs/2026-03-09/20260309T144644-wf-s-i2c-ctl-staging-update/
+?? runs/2026-03-09/20260309T144705-wf-s-i2c-ctl-staging-update/
+?? runs/2026-03-09/20260309T145037-wf-s-i2c-ctl-staging-update/
+?? runs/2026-03-09/20260309T145356-wf-s-i2c-ctl-staging-update/
+?? runs/2026-03-09/20260309T145527-snapshot-exp2-clean-boot/
+?? runs/2026-03-09/20260309T145540-ms13q3-vd-1050mv-update/
+?? runs/2026-03-09/20260309T145657-snapshot-exp3-clean-boot/
+
+EXIT_STATUS: 0

@@ -1,0 +1,42 @@
+Source: scripts/01-clean-boot-check.sh
+Purpose: capture the clean-boot checkpoint for the webcam bring-up path
+
+High-value boot log lines:
+Mar 09 15:01:29 p13 kernel: intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00
+Mar 09 15:01:29 p13 kernel: intel-ipu7 0000:00:05.0: Connected 1 cameras
+Mar 09 15:01:29 p13 kernel: int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21
+Mar 09 15:01:32 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -110
+Mar 09 15:01:33 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -110
+Mar 09 15:01:34 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -110
+Mar 09 15:01:35 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -110
+Mar 09 15:01:36 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -110
+Mar 09 15:01:36 p13 kernel: ov5675 i2c-OVTI5675:00: failed to find sensor: -110
+Mar 09 15:01:46 p13 kernel: ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110
+
+INT3472 driver state:
+/sys/bus/i2c/drivers/int3472-tps68470
+
+OV5675 driver state:
+ov5675-unbound
+
+v4l-subdev nodes:
+(none)
+
+Experiment workflow:
+id: exp6
+title: UF gpio.4 last resort
+doc: docs/pmic-followup-experiments.md
+default patch: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ms13q3-uf-gpio4-last-resort-v1.patch
+
+Experiment-specific boot lines (gpio.4|GPDO|UF|LNK1|failed to find sensor|chip id read attempt|sensor identified on attempt):
+Mar 09 15:01:29 p13 kernel: tps68470-gpio tps68470-gpio: UF gpio.4 last resort: GPDO=0x00 value=0
+Mar 09 15:01:29 p13 kernel: tps68470-gpio tps68470-gpio: UF gpio.4 last resort: GPDO=0x00 value=0
+Mar 09 15:01:32 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -110
+Mar 09 15:01:33 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -110
+Mar 09 15:01:34 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -110
+Mar 09 15:01:35 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -110
+Mar 09 15:01:36 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -110
+Mar 09 15:01:36 p13 kernel: ov5675 i2c-OVTI5675:00: failed to find sensor: -110
+
+PMIC dump:
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-09/20260309T150222-snapshot-exp6-clean-boot/pmic-reg-dump.txt
