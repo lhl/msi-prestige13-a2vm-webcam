@@ -2,6 +2,18 @@
 
 ## 2026-03-09
 
+### Ignore the repo-local temp root created by experiment wrappers
+
+- Plan: keep the new repo-local temp root from polluting `git status` on every
+  experiment run.
+- Commands:
+  - checked for an existing `.gitignore`
+  - `apply_patch` adding:
+    - `.gitignore`
+- Result:
+  - the wrapper temp root `/.tmp/` is now ignored by git
+  - run evidence under `runs/` remains intentionally unignored
+
 ### Move experiment temp files off /tmp and into a repo-local temp root
 
 - Plan: stop PMIC experiment runs from failing on `/tmp` quota by defaulting
