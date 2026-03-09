@@ -2,6 +2,43 @@
 
 ## 2026-03-09
 
+### Publish the March 9 status report and refresh stale top-level docs
+
+- Plan: turn the completed PMIC experiment batch and Windows extraction state
+  into one current report, then refresh the repo entrypoints so they point at
+  the real current state instead of treating the PMIC batch as future work.
+- Commands:
+  - reviewed the stale control docs and current summaries:
+    - `sed -n '1,220p' README.md`
+    - `sed -n '1,220p' docs/README.md`
+    - `sed -n '1,260p' docs/webcam-status.md`
+    - `sed -n '1,260p' PLAN.md`
+    - `sed -n '1,220p' state/CONTEXT.md`
+  - reviewed the completed PMIC run batch and Windows extraction notes:
+    - `sed -n '1,260p' reference/windows-driver-analysis/.../power-sequencing-notes.md`
+    - `for d in runs/2026-03-09/*snapshot-exp{1,2,3,4,5,6}-clean-boot; do ...; done`
+    - `sed -n '1,340p' ~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472/tps68470_board_data.c`
+  - `apply_patch` updating:
+    - `README.md`
+    - `docs/README.md`
+    - `docs/webcam-status.md`
+    - `docs/20260309-status-report.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+- Result:
+  - the repo root now points directly at the full March 9 status report
+  - the short status, plan, and restart capsule now reflect the completed
+    PMIC batch instead of describing it as pending work
+  - the new report records:
+    - current Linux state
+    - Windows extraction state
+    - tooling state
+    - experiment interpretation
+    - comparison to simpler `TPS68470` bring-up efforts such as Surface Go
+    - the fundamental data still missing
+    - the next batch of work
+
 ### Record the March 9 PMIC experiment run batch before analysis
 
 - Plan: check in the latest PMIC experiment artifacts as a clean evidence
