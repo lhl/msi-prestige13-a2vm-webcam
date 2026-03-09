@@ -190,21 +190,46 @@ reverse_patch_if_applied() {
   esac
 }
 
-reset_known_experiment_patches() {
-  local rel patch
+patch_touched_files() {
+  local patch="$1"
 
-  if (( ! RESET_EXPERIMENT_PATCHES )); then
-    log "keeping any previously-applied experiment patches"
-    return 0
-  fi
+  sed -n -e 's#^--- a/##p' -e 's#^+++ b/##p' "${patch}" | \
+    rg -v '^/dev/null$' || true
+}
+
+collect_reset_paths() {
+  local rel patch
+  local -a files=()
 
   for rel in "${KNOWN_EXPERIMENT_PATCHES[@]}"; do
     patch="${REPO_ROOT}/${rel}"
-    if [[ "${patch}" == "${PATCH_PATH}" || ! -f "${patch}" ]]; then
+    if [[ ! -f "${patch}" ]]; then
       continue
     fi
-    reverse_patch_if_applied "${patch}"
+    while IFS= read -r file; do
+      [[ -n "${file}" ]] && files+=("${file}")
+    done < <(patch_touched_files "${patch}")
   done
+
+  unique_items "${files[@]}"
+}
+
+reset_known_experiment_patches() {
+  local -a files=()
+
+  if (( ! RESET_EXPERIMENT_PATCHES )); then
+    log "keeping current experiment-touched files without reset"
+    return 0
+  fi
+
+  mapfile -t files < <(collect_reset_paths)
+  if (( ${#files[@]} == 0 )); then
+    log "no experiment-touched files found to reset"
+    return 0
+  fi
+
+  log "resetting experiment-touched files back to kernel HEAD before baseline reapply"
+  run_logged git -C "${KERNEL_TREE}" checkout -- "${files[@]}"
 }
 
 prepare_action_dir() {

@@ -2,6 +2,31 @@
 
 ## 2026-03-09
 
+### Replace patch-reversal isolation with file reset plus baseline reapply
+
+- Plan: switch the PMIC experiment wrappers from patch-reversal isolation to
+  the more robust model of resetting the known experiment-touched files back to
+  kernel `HEAD`, then reapplying the baseline profile and the selected
+  experiment patch.
+- Trigger:
+  - the first `exp2` run failed while trying to reverse `exp1` because the
+    legacy and fixed `exp1` patch variants overlap but are not identical
+- Commands:
+  - reviewed the shared workflow helper and the failed `exp2` update log
+  - `apply_patch` updating:
+    - `scripts/lib-experiment-workflow.sh`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+- Result:
+  - the wrappers no longer depend on reverse-applying the previous experiment
+    patch cleanly
+  - instead they restore the tracked files touched by any known PMIC
+    experiment patch back to kernel `HEAD`
+  - then they reapply the baseline `candidate` patch stack and finally the
+    selected experiment patch
+  - this matches the intended isolation model more closely and avoids the
+    specific `exp1` legacy/fixed overlap failure seen at the start of `exp2`
+
 ### Fix the exp1 instrumentation patch compile failure and preserve rerun recovery
 
 - Plan: repair the real `exp1` PMIC instrumentation patch after the first live

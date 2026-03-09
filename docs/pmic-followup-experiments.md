@@ -44,9 +44,13 @@ high-safety pattern:
     selection, then prints the actions without patching, building, installing
     modules, running `depmod`, rebooting, or executing the verify-side capture.
 - They write an update log under `runs/<date>/...-update/` before reboot.
-- They now reset any previously-applied PMIC experiment patch back out of the
-  kernel tree before applying the selected one.
-  - This keeps `exp2` from accidentally becoming `exp1 + exp2`, and so on.
+- They now reset the known experiment-touched source files back to kernel
+  `HEAD` before reapplying the baseline profile and the selected experiment
+  patch.
+  - This is intentionally stronger than trying to reverse the old experiment
+    patch in place.
+  - It keeps `exp2` from accidentally becoming `exp1 + exp2`, and it is more
+    robust when an experiment patch is revised between runs.
   - Use `--keep-experiment-patches` only if you intentionally want cumulative
     patching.
 
