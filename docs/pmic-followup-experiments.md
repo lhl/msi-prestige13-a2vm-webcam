@@ -154,7 +154,6 @@ Default patch:
 - `reference/patches/ms13q3-wf-gpio-mode-followup-v1.patch`
 
 Extra module rebuild/install:
-- `intel_skl_int3472_tps68470.ko`
 - `gpio-tps68470.ko`
 
 Scripts:
@@ -171,6 +170,7 @@ Default patch:
 - `reference/patches/ms13q3-uf-gpio4-last-resort-v1.patch`
 
 Extra module rebuild/install:
+- `intel_skl_int3472_tps68470.ko`
 - `gpio-tps68470.ko`
 
 Scripts:

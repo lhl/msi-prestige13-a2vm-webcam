@@ -2,6 +2,28 @@
 
 ## 2026-03-09
 
+### Correct the experiment 5 / experiment 6 wrapper note
+
+- Plan: fix the PMIC workflow doc so its rebuild/install scope matches the
+  actual runnable wrappers and patches before handing over the final sequential
+  command list.
+- Commands:
+  - reviewed the generated experiment wrappers and default patch contents:
+    - `sed -n '1,260p' scripts/exp5-wf-gpio-mode-followup-update.sh`
+    - `sed -n '1,260p' scripts/exp6-uf-gpio4-last-resort-update.sh`
+    - `sed -n '1,260p' reference/patches/ms13q3-wf-gpio-mode-followup-v1.patch`
+    - `sed -n '1,260p' reference/patches/ms13q3-uf-gpio4-last-resort-v1.patch`
+  - `apply_patch` updating:
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+- Result:
+  - the workflow note now matches the actual runnable experiment scope:
+    - `exp5` rebuilds only `gpio-tps68470.ko`
+    - `exp6` rebuilds both `intel_skl_int3472_tps68470.ko` and
+      `gpio-tps68470.ko`
+  - the correction is documentation-only; the wrappers and default patch files
+    were already aligned with the intended behavior
+
 ### Create runnable default PMIC experiment patches and add sequential-run isolation
 
 - Plan: turn the PMIC experiment wrappers from scaffolding into a truly runnable
