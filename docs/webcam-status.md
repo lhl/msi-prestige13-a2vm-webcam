@@ -241,6 +241,33 @@ Interpretation:
 - the next question is whether the board wants a later `BIT(0)` assertion or
   some other later wake-up / reset sequencing step after the regulator phase
 
+### `exp11` late GPIO-phase `BIT(0)`
+
+What it proved:
+
+- this specific later-phase `BIT(0)` hook is not the fix
+- the old timeout storm returns when the late `BIT(0)` write fires
+- `exp10` remains the best clean-boot state so far
+
+Key lines:
+
+- `pmic_focus: enable-bit1-only VSIO reg=S_I2C_CTL(0x43) ... after=0x02`
+- `ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -121`
+- `tps68470-gpio ... pmic_gpio: sensor-gpio.1 value=0 ... before=0x02 update_ret=0 after_ret=-110`
+- repeated `i2c_designware.1: controller timed out`
+
+Interpretation:
+
+- a late `BIT(0)` tied to this GPIO-active hook still wedges PMIC access
+- it did not improve chip-ID behavior
+- on this implementation, the only observed late `BIT(0)` event was
+  `sensor-gpio.1 value=0`, which suggests the current hook is either still the
+  wrong phase or still the wrong signal
+- the useful state to preserve is still `exp10`:
+  - `BIT(1)` only
+  - no timeout storm
+  - chip-ID loop reaches `-121`
+
 ## Current Assessment
 
 The honest assessment is:
@@ -274,24 +301,26 @@ What now looks most likely:
    on `S_I2C_CTL` after `BIT(1)` has already read back cleanly as `0x02`.
 3. We also now know that omitting `BIT(0)` keeps the PMIC/I2C path alive, but
    still leaves the sensor failing chip-ID reads with `-121`.
-4. We still do not have the exact higher-level Windows configuration path that
+4. We now have one negative result for a late `BIT(0)` hook tied to the
+   current GPIO-active implementation: it reintroduces the PMIC wedge.
+5. We still do not have the exact higher-level Windows configuration path that
    feeds `WF::SetConf` or chooses the `WF` versus `UF` branch for this board.
-5. We still do not have direct electrical truth for the PMIC GPIO and sensor
+6. We still do not have direct electrical truth for the PMIC GPIO and sensor
    reset / powerdown waveform.
 
 ## Next Steps
 
-1. Design the next PMIC follow-up around a later-phase `BIT(0)` hypothesis.
-   - do not put `BIT(0)` back into the early regulator `VSIO` path
-   - prefer a board-specific later hook tied to the GPIO-active phase or
-     sensor release stage
-   - immediate next wrapper:
-     - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-update.sh`
-     - reboot
-     - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-verify.sh`
-2. Fix or replace the post-boot PMIC dump path so we can see real register
+1. Keep `exp10` as the best functional PMIC state for now.
+   - do not reintroduce `BIT(0)` in the early regulator path
+   - do not treat the current `exp11` GPIO hook as a likely fix
+2. When resuming, narrow the later-phase question further.
+   - determine why the observed late `BIT(0)` event only showed up on
+     `sensor-gpio.1`
+   - determine whether Windows ties `SetVSIOCtl_GPIO` to a different GPIO
+     phase than our current hook
+3. Fix or replace the post-boot PMIC dump path so we can see real register
    state after a failed clean boot.
-3. Extract the higher-level Windows config path that feeds `WF::SetConf` and
+4. Extract the higher-level Windows config path that feeds `WF::SetConf` and
    selects `WF` versus `UF`.
-4. Avoid spending more time on blind GPIO permutations until the PMIC
+5. Avoid spending more time on blind GPIO permutations until the PMIC
    pass-through and register-state questions are answered.

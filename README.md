@@ -152,10 +152,11 @@ msi-prestige13-a2vm-webcam/
    - where, if anywhere, the later GPIO-side `BIT(0)` step belongs
    - why post-boot PMIC register dumps still fail completely
    - the higher-level Windows config that feeds `WF::SetConf`
-5. The next concrete kernel-side work is:
-   - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-update.sh`
-   - reboot
-   - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-verify.sh`
+5. The current best PMIC experiment state is still `exp10`.
+   - `exp11` showed that one modeled late `BIT(0)` hook still re-wedges PMIC
+     access
+   - the next work should narrow the exact later signal/phase before another
+     kernel experiment
 
 ## Related Docs
 

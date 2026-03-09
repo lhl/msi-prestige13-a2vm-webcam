@@ -78,6 +78,12 @@ with strong evidence.
   - the old `i2c_designware.1` timeout storm is gone
   - the sensor gets back to chip-ID reads, but they now fail with `-121`
   - `VSIO BIT(1)` also disables cleanly on unwind
+- `exp11` tested one later GPIO-phase `BIT(0)` hook:
+  - chip-ID behavior stayed at `-121`
+  - the observed late `BIT(0)` event was:
+    - `pmic_gpio: sensor-gpio.1 value=0 ... before=0x02 update_ret=0 after_ret=-110`
+  - after that point, the old timeout storm returned
+  - so `exp10` remains the best clean-boot PMIC state
 - the post-boot PMIC dump path is still not usable:
   - `scripts/pmic-reg-dump.sh` returned `ERROR` for all registers in
     representative PMIC experiment runs
@@ -91,22 +97,24 @@ with strong evidence.
 - The strongest remaining gap is PMIC-side behavior Linux still does not model
   correctly, especially around:
   - where the later `S_I2C_CTL` `BIT(0)` phase belongs, if anywhere
+  - why the current late hook only showed up on `sensor-gpio.1`
   - PMIC value/register state truth during the failing identify window
   - higher-level Windows config feeding `WF::SetConf` and selecting `WF`
     versus `UF`
 
 ## Next Best Steps
 
-1. Run the next kernel-side follow-up around the later `BIT(0)` hypothesis:
-   - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-update.sh`
-   - reboot
-   - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-verify.sh`
-   - this keeps `BIT(1)` in the regulator path and moves `BIT(0)` to the
-     later sensor-GPIO active phase
-2. Fix or replace the post-boot PMIC dump path so we can observe real register
+1. Keep `exp10` as the best PMIC state when resuming.
+   - `BIT(1)` in the regulator path
+   - no early or currently-modeled late `BIT(0)` write
+2. Before another kernel run, narrow the later `BIT(0)` question:
+   - why did the current hook only appear on `sensor-gpio.1`
+   - is the real Windows analogue tied to a different GPIO phase than our
+     current `gpio_set()` hook
+3. Fix or replace the post-boot PMIC dump path so we can observe real register
    state after a failed clean boot.
-3. Extract more of the higher-level Windows config path above `WF::SetConf`.
-4. Do not rerun the broad `exp7` snapshot patch as a default path; it amplified
+4. Extract more of the higher-level Windows config path above `WF::SetConf`.
+5. Do not rerun the broad `exp7` snapshot patch as a default path; it amplified
    the timeout storm enough to interact badly with boot.
 
 ## Key Paths

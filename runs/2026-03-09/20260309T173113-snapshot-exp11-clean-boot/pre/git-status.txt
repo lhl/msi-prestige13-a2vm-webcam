@@ -1,0 +1,5 @@
+CMD: git_safe status --short
+?? runs/2026-03-09/20260309T172910-s-i2c-ctl-late-gpio-bit0-update/
+?? runs/2026-03-09/20260309T173113-snapshot-exp11-clean-boot/
+
+EXIT_STATUS: 0

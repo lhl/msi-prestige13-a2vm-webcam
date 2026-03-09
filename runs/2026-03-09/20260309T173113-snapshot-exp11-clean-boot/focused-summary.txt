@@ -1,0 +1,96 @@
+Source: scripts/01-clean-boot-check.sh
+Purpose: capture the clean-boot checkpoint for the webcam bring-up path
+
+High-value boot log lines:
+Mar 09 17:30:02 p13 kernel: intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00
+Mar 09 17:30:02 p13 kernel: intel-ipu7 0000:00:05.0: Connected 1 cameras
+Mar 09 17:30:02 p13 kernel: int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21
+Mar 09 17:30:02 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -121
+Mar 09 17:30:02 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -121
+Mar 09 17:30:02 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -121
+Mar 09 17:30:02 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -121
+Mar 09 17:30:02 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -121
+Mar 09 17:30:02 p13 kernel: ov5675 i2c-OVTI5675:00: failed to find sensor: -121
+Mar 09 17:30:53 p13 kernel: ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -121
+
+INT3472 driver state:
+/sys/bus/i2c/drivers/int3472-tps68470
+
+OV5675 driver state:
+ov5675-unbound
+
+v4l-subdev nodes:
+(none)
+
+Experiment workflow:
+id: exp11
+title: S_I2C_CTL late GPIO-phase BIT(0)
+doc: docs/pmic-followup-experiments.md
+default patch: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/pmic-si2c-ctl-late-gpio-bit0-v1.patch
+
+Experiment-specific boot lines (pmic_focus:|pmic_gpio:|controller timed out|failed to power on|failed to find sensor|chip id read attempt|sensor identified on attempt):
+Mar 09 17:30:02 p13 kernel: regulator regulator.2: pmic_focus: enable ANA reg=VACTL(0x47) mask=0x01 value=0x01 before_ret=0 before=0x00 update_ret=0 after_ret=0 after=0x01
+Mar 09 17:30:02 p13 kernel: regulator regulator.1: pmic_focus: enable CORE reg=VDCTL(0x48) mask=0x01 value=0x01 before_ret=0 before=0x04 update_ret=0 after_ret=0 after=0x05
+Mar 09 17:30:02 p13 kernel: regulator regulator.5: pmic_focus: enable-bit1-only VSIO reg=S_I2C_CTL(0x43) mask=0x02 value=0x02 before_ret=0 before=0x00 update_ret=0 after_ret=0 after=0x02
+Mar 09 17:30:02 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -121
+Mar 09 17:30:02 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -121
+Mar 09 17:30:02 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -121
+Mar 09 17:30:02 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -121
+Mar 09 17:30:02 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -121
+Mar 09 17:30:02 p13 kernel: ov5675 i2c-OVTI5675:00: failed to find sensor: -121
+Mar 09 17:30:03 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:03 p13 kernel: tps68470-gpio tps68470-gpio: pmic_gpio: sensor-gpio.1 value=0 reg=S_I2C_CTL(0x43) mask=0x01 value=0x01 before_ret=0 before=0x02 update_ret=0 after_ret=-110 after=0x00
+Mar 09 17:30:04 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:05 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:06 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:07 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:07 p13 kernel: regulator regulator.5: pmic_focus: disable-bit1-only VSIO reg=S_I2C_CTL(0x43) mask=0x02 value=0x00 before_ret=-110 before=0x00 update_ret=-110 after_ret=-110 after=0x00
+Mar 09 17:30:08 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:09 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:10 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:11 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:12 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:13 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:14 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:15 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:16 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:17 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:19 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:20 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:21 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:22 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:23 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:24 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:25 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:26 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:27 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:28 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:29 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:30 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:31 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:32 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:33 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:34 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:35 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:36 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:37 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:38 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:39 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:40 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:41 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:42 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:43 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:44 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:45 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:46 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:47 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:48 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:49 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:50 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:51 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:52 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:53 p13 kernel: i2c_designware i2c_designware.1: controller timed out
+Mar 09 17:30:53 p13 kernel: regulator regulator.2: pmic_focus: disable ANA reg=VACTL(0x47) mask=0x01 value=0x00 before_ret=-110 before=0x00 update_ret=-110 after_ret=-110 after=0x00
+
+PMIC dump:
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-09/20260309T173113-snapshot-exp11-clean-boot/pmic-reg-dump.txt

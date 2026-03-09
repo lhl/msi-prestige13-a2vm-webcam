@@ -2,6 +2,32 @@
 
 ## 2026-03-09
 
+### Review `exp11` and record the late-hook negative result
+
+- Plan: review the `exp11` update and verify artifacts, determine whether the
+  later GPIO-phase `BIT(0)` hook improved sensor identify, and update the docs
+  to reflect the result.
+- Commands:
+  - reviewed:
+    - `runs/2026-03-09/20260309T172910-s-i2c-ctl-late-gpio-bit0-update/metadata.env`
+    - `runs/2026-03-09/20260309T173113-snapshot-exp11-clean-boot/focused-summary.txt`
+    - `runs/2026-03-09/20260309T173113-snapshot-exp11-clean-boot/experiment-journal.txt`
+    - `runs/2026-03-09/20260309T173113-snapshot-exp11-clean-boot/pmic-reg-dump.txt`
+  - refreshed:
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/webcam-status.md`
+    - `docs/20260309-status-report.md`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+- Result:
+  - `exp11` is negative
+  - chip-ID behavior stayed at `-121`
+  - the observed late `BIT(0)` event on `sensor-gpio.1` immediately wedged
+    PMIC access again and brought back the timeout storm
+  - `exp10` remains the best current PMIC state
+
 ### Add `exp11` for a later GPIO-phase `BIT(0)` assertion
 
 - Plan: turn the post-`exp10` hypothesis into a runnable experiment by keeping

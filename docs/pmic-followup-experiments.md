@@ -7,10 +7,9 @@ update-and-verify workflows.
 
 As of the completed `2026-03-09` PMIC batch:
 
-- `exp1` through `exp10` are completed historical experiments
-- the highest-value next kernel-side follow-up is `exp11`
-- `exp11` is the later-phase `BIT(0)` experiment, not another early
-  regulator-path write
+- `exp1` through `exp11` are completed historical experiments
+- `exp10` remains the best current PMIC state
+- `exp11` was the first late-phase `BIT(0)` experiment and came back negative
 - `exp7` established that `VSIO` enable on `S_I2C_CTL` `0x43` is the first
   PMIC transaction after which readback collapses to `-110`
 - `exp8` confirmed the same failure point with a narrower trace:
@@ -362,6 +361,20 @@ Scripts:
 - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-update.sh`
 - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-verify.sh`
 
+Observed outcome:
+- `ANA`, `CORE`, and regulator-side `VSIO BIT(1)` still read back cleanly
+- chip-ID behavior stays at `-121`
+- when the late GPIO hook fires, PMIC access wedges again:
+  - `pmic_gpio: sensor-gpio.1 value=0 ... before=0x02 update_ret=0 after_ret=-110`
+- the old `i2c_designware.1: controller timed out` storm returns
+
+Interpretation:
+- this specific later GPIO-phase `BIT(0)` hook is negative
+- `exp10` remains the best clean-boot PMIC state
+- the remaining question is more specific now:
+  - why did the observed hook only fire on `sensor-gpio.1`
+  - and what is the real Windows analogue of `SetVSIOCtl_GPIO`
+
 ## Typical usage
 
 Update, install modules, and reboot for experiment 2:
@@ -405,16 +418,10 @@ Preview the clean-boot verification steps without running them:
 scripts/exp2-wf-s-i2c-ctl-verify.sh --dry-run
 ```
 
-Current highest-priority run:
+Current best PMIC experiment state:
 
 ```bash
-scripts/exp11-s-i2c-ctl-late-gpio-bit0-update.sh
-```
-
-After reboot:
-
-```bash
-scripts/exp11-s-i2c-ctl-late-gpio-bit0-verify.sh
+exp10 = BIT(1)-only regulator path
 ```
 
 ## Why the verify wrappers always do a PMIC dump

@@ -407,6 +407,34 @@ That leaves the next likely gaps as:
 - or a separate missing wake-up / reset / powerdown sequencing detail that is
   only relevant once the PMIC/I2C path remains healthy
 
+### 13. `exp11` showed that the current late GPIO-phase `BIT(0)` hook still wedges PMIC access
+
+`exp11` kept `exp10`'s regulator-side `BIT(1)` behavior and moved `BIT(0)` into
+the later sensor-GPIO active phase inside `gpio-tps68470`.
+
+That did not fix the webcam.
+
+Observed behavior:
+
+- `ANA` enable is still clean
+- `CORE` enable is still clean
+- `VSIO BIT(1)` still reads back cleanly as `0x02`
+- the sensor still reaches chip-ID reads and still fails them with `-121`
+- when the late GPIO hook fires, PMIC access wedges again:
+  - `pmic_gpio: sensor-gpio.1 value=0 ... before=0x02 update_ret=0 after_ret=-110`
+- after that point, the old `i2c_designware.1: controller timed out` storm
+  returns
+
+Interpretation:
+
+- `exp10` remains the best clean-boot state so far
+- this specific later-phase `BIT(0)` hook is not the right Linux analogue for
+  the Windows `SetVSIOCtl_GPIO` step
+- the remaining question is narrower:
+  - wrong signal?
+  - wrong phase?
+  - or both?
+
 ## Windows Driver Extraction State
 
 ### What we have
@@ -823,6 +851,8 @@ Those branches have enough clean negatives now.
    - the later `BIT(0)` transition is the first one that wedges PMIC access
    - omitting `BIT(0)` removes the wedge, but the sensor still fails chip-ID
      reads with `-121`
+   - the current late GPIO-phase `BIT(0)` hook also wedges PMIC access, so
+     that implementation is now a negative result
 3. incomplete Windows reconstruction:
    - still missing the higher-level config-selection truth
 4. lack of electrical truth:
@@ -832,27 +862,26 @@ Those branches have enough clean negatives now.
 
 Ordered by likely value:
 
-1. Design the next follow-up around a later-phase `BIT(0)` hypothesis.
-   - keep the Windows-like IO-side `BIT(1)` update in the regulator path
-   - do not reintroduce `BIT(0)` there
-   - determine whether a later GPIO-active or sensor-release phase is where
-     the board actually wants `BIT(0)`
-   - immediate next wrapper:
-     - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-update.sh`
-     - reboot
-     - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-verify.sh`
+1. Keep `exp10` as the best current PMIC state.
+   - `BIT(1)` in the regulator path
+   - no early or currently-modeled late `BIT(0)` write
 
-2. Fix or replace the PMIC dump path.
+2. When resuming, narrow the later-phase `BIT(0)` question further.
+   - determine why the observed late hook only fired on `sensor-gpio.1`
+   - determine whether Windows ties `SetVSIOCtl_GPIO` to a different GPIO
+     phase than our current Linux hook
+
+3. Fix or replace the PMIC dump path.
    - figure out why post-boot userspace reads all fail
    - if necessary, add a kernel-side debug dump instead of relying on `i2cget`
 
-3. Recover the higher-level Windows config path.
+4. Recover the higher-level Windows config path.
    - determine what feeds `WF::SetConf`
    - determine what selects `WF` versus `UF`
    - determine whether this laptop consumes a board-specific config blob that
      Linux still lacks
 
-4. Only after steps 1-3, decide whether a second PMIC behavior patch batch is
+5. Only after steps 1-4, decide whether a second PMIC behavior patch batch is
    justified.
    - likely target:
      - a more faithful `S_I2C_CTL` reproduction

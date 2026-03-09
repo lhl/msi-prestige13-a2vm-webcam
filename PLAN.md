@@ -61,6 +61,11 @@ with strong evidence.
     - no `i2c_designware` timeout storm
     - `ANA`, `CORE`, and `VSIO BIT(1)` all read back cleanly
     - the sensor gets back to chip-ID reads, but they now fail with `-121`
+  - `exp11` tested one later GPIO-phase `BIT(0)` hook and came back negative:
+    - chip-ID behavior stayed at `-121`
+    - the late `BIT(0)` write on `sensor-gpio.1` immediately wedged PMIC
+      readback again
+    - the old timeout storm returned
 - current leading interpretation:
   - the remaining gap is PMIC-side behavior, not basic platform support
   - the early regulator-phase `BIT(0)` write was wrong
@@ -74,8 +79,8 @@ with strong evidence.
 - [x] Run the `BIT(1)`-only follow-up in the regulator `VSIO` path.
 - [x] Determine whether keeping `BIT(1)` while omitting `BIT(0)` lets the bus
   stay alive long enough to return to the sensor identify stage.
-- [ ] Decide where a later board-specific `BIT(0)` assertion belongs, if it
-  belongs anywhere in Linux at all.
+- [ ] Decide whether a later board-specific `BIT(0)` assertion belongs
+  anywhere in Linux at all, and if so on which signal/phase.
 
 ### 2. Post-boot PMIC visibility
 
@@ -109,7 +114,7 @@ with strong evidence.
    work.
 2. Do not spend more time on pure GPIO permutations for now.
 3. Put the next experiment budget into:
-   - `exp11` later-phase `BIT(0)` follow-up
+   - narrower analysis of the late-phase `BIT(0)` question
    - repairing PMIC readback visibility
    - deeper Windows config-path extraction
 4. Keep using:
@@ -118,10 +123,9 @@ with strong evidence.
    - `scripts/exp*-*-verify.sh`
    - `scripts/01-clean-boot-check.sh`
    to keep evidence reproducible
-5. The immediate next kernel-side run is:
-   - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-update.sh`
-   - reboot
-   - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-verify.sh`
+5. Do not treat `exp11` as the new baseline.
+   - keep `exp10` as the best current PMIC state
+   - only revisit late `BIT(0)` after narrowing the exact signal/phase
 
 ## Open Questions
 
@@ -129,6 +133,8 @@ with strong evidence.
   PMIC readback collapses to `-110`?
 - Where, if anywhere, does this board actually want the later `BIT(0)`
   transition once the regulator-phase PMIC/I2C path is already healthy?
+- Why did the current late hook only show up on `sensor-gpio.1`, not a cleaner
+  earlier GPIO-active phase?
 - Why does userspace PMIC register dumping fail completely after boot when the
   kernel can still log `TPS68470 REVID: 0x21`?
 - What exact higher-level Windows configuration feeds `WF::SetConf` on this
