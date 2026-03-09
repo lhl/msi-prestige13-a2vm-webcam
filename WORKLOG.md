@@ -2,6 +2,39 @@
 
 ## 2026-03-09
 
+### Record the first wrapper smoke test and its limits
+
+- Plan: preserve the first end-to-end wrapper run so the repo records what was
+  actually validated, while being explicit that this was a workflow/idempotency
+  check rather than a real PMIC instrumentation experiment.
+- Commands:
+  - reviewed the update and verify artifacts:
+    - `sed -n '1,220p' runs/2026-03-09/20260309T134730-pmic-instrumentation-update/action.log`
+    - `sed -n '1,220p' runs/2026-03-09/20260309T134803-pmic-instrumentation-update/action.log`
+    - `sed -n '1,220p' runs/2026-03-09/20260309T134918-pmic-instrumentation-update/action.log`
+    - `sed -n '1,220p' runs/2026-03-09/20260309T135102-snapshot-exp1-clean-boot/focused-summary.txt`
+    - `sed -n '1,220p' runs/2026-03-09/20260309T135102-snapshot-exp1-clean-boot/experiment-journal.txt`
+    - `sed -n '1,220p' runs/2026-03-09/20260309T135102-snapshot-exp1-clean-boot/pmic-reg-dump.txt`
+- Result:
+  - the wrapper sequence behaved as intended across:
+    - `--dry-run`
+    - `--no-reboot`
+    - a repeated real update before reboot
+    - post-reboot verify
+  - all three update runs used the explicit override patch
+    `reference/patches/ms13q3-int3472-tps68470-v1.patch`
+  - that means this bundle validates wrapper argument handling, rebuild/install
+    flow, reboot handoff, and verify capture, but does not validate the planned
+    PMIC instrumentation patch for `exp1`
+  - the clean-boot result stayed on the known failure:
+    five `chip id read attempt ... failed: -110` lines followed by
+    `failed to find sensor: -110`
+  - the experiment-specific grep did not show new PMIC instrumentation lines,
+    which is expected because the instrumentation patch was not part of this
+    run
+  - the PMIC dump returned `ERROR` for every queried register, so this run does
+    not add a usable PMIC register-state datapoint either
+
 ### Normalize verify-run ownership after root-assisted capture
 
 - Plan: keep the new verify wrappers usable from a normal user checkout even

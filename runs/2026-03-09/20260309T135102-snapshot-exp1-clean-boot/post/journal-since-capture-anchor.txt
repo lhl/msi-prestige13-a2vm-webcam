@@ -1,0 +1,37 @@
+CMD: journalctl -k --since '2026-03-09T04:49:56Z' --no-pager | grep -En 'tps68470|INT3472|OVTI5675|ov5675|intel-ipu7|board-data|subdev|ipu7' || true
+1032:Mar 09 13:50:01 p13 kernel: intel_ipu7: module is from the staging directory, the quality is unknown, you have been warned.
+1039:Mar 09 13:50:01 p13 kernel: intel-ipu7 0000:00:05.0: enabling device (0000 -> 0002)
+1040:Mar 09 13:50:01 p13 kernel: intel-ipu7 0000:00:05.0: Device 0x645d (rev: 0x4)
+1041:Mar 09 13:50:01 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 PCI BAR0 base 0x0000003014000000 BAR2 base 0x0000003016336000
+1042:Mar 09 13:50:01 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 PCI BAR0 mapped at 00000000b07bdb4d
+1044:Mar 09 13:50:01 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 SKU 0 in secure mode mask 0x0
+1045:Mar 09 13:50:01 p13 kernel: int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21
+1051:Mar 09 13:50:01 p13 kernel: intel-ipu7 0000:00:05.0: firmware cpd file: intel/ipu/ipu7_fw.bin
+1055:Mar 09 13:50:01 p13 kernel: intel-ipu7 0000:00:05.0: FW binary0 info:
+1056:Mar 09 13:50:01 p13 kernel: intel-ipu7 0000:00:05.0: Name:  psys
+1057:Mar 09 13:50:01 p13 kernel: intel-ipu7 0000:00:05.0: Version:  1.1.9.240627135220
+1058:Mar 09 13:50:01 p13 kernel: intel-ipu7 0000:00:05.0: Timestamp:  build_id:331942702
+1059:Mar 09 13:50:01 p13 kernel: intel-ipu7 0000:00:05.0: Commit:  commit_id:d84f5c35
+1060:Mar 09 13:50:01 p13 kernel: intel-ipu7 0000:00:05.0: FW binary1 info:
+1061:Mar 09 13:50:01 p13 kernel: intel-ipu7 0000:00:05.0: Name:  isys
+1062:Mar 09 13:50:01 p13 kernel: intel-ipu7 0000:00:05.0: Version:  1.1.9.240627135318
+1063:Mar 09 13:50:01 p13 kernel: intel-ipu7 0000:00:05.0: Timestamp:  build_id:3823931988
+1064:Mar 09 13:50:01 p13 kernel: intel-ipu7 0000:00:05.0: Commit:  commit_id:d84f5c35
+1065:Mar 09 13:50:01 p13 kernel: intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00
+1067:Mar 09 13:50:01 p13 kernel: intel-ipu7 0000:00:05.0: Connected 1 cameras
+1069:Mar 09 13:50:01 p13 kernel: intel-ipu7 0000:00:05.0: Sending BOOT_LOAD to CSE
+1089:Mar 09 13:50:01 p13 kernel: intel-ipu7 0000:00:05.0: Sending AUTHENTICATE_RUN to CSE
+1090:Mar 09 13:50:01 p13 kernel: intel-ipu7 0000:00:05.0: CSE authenticate_run done
+1100:Mar 09 13:50:04 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -110
+1102:Mar 09 13:50:05 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -110
+1104:Mar 09 13:50:06 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -110
+1106:Mar 09 13:50:07 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -110
+1108:Mar 09 13:50:08 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -110
+1109:Mar 09 13:50:08 p13 kernel: ov5675 i2c-OVTI5675:00: failed to find sensor: -110
+1122:Mar 09 13:50:15 p13 kernel: Modules linked in: fat libarc4 snd_pcm btrtl processor_thermal_wt_hint rapl platform_temperature_control snd_timer intel_cstate btbcm gpio_tps68470 iwlwifi processor_thermal_soc_slider intel_rapl_msr btintel snd platform_profile intel_uncore pcspkr wmi_bmof processor_thermal_rfim bluetooth soundcore processor_thermal_rapl spi_intel_pci crc8 spi_intel msi_wmi_platform msi_wmi intel_rapl_common intel_skl_int3472_tps68470(OE) cfg80211 processor_thermal_wt_req mei_me processor_thermal_power_floor intel_ipu7(C) processor_thermal_mbox int3403_thermal ov5675(OE) mei v4l2_fwnode rfkill intel_vpu ipu_bridge(OE) v4l2_async int340x_thermal_zone intel_pmc_core tps68470_regulator(OE) pmt_telemetry clk_tps68470(OE) videodev(OE) pmt_discovery intel_skl_int3472_discrete intel_hid pmt_class int3400_thermal sparse_keymap mc acpi_thermal_rel intel_pmc_ssram_telemetry intel_skl_int3472_common acpi_tad acpi_pad joydev mousedev mac_hid hid_multitouch ucsi_acpi typec_ucsi rtsx_pci_sdmmc roles mmc_core typec xe drm_ttm_helper ttm
+1174:Mar 09 13:50:15 p13 kernel: Modules linked in: fat libarc4 snd_pcm btrtl processor_thermal_wt_hint rapl platform_temperature_control snd_timer intel_cstate btbcm gpio_tps68470 iwlwifi processor_thermal_soc_slider intel_rapl_msr btintel snd platform_profile intel_uncore pcspkr wmi_bmof processor_thermal_rfim bluetooth soundcore processor_thermal_rapl spi_intel_pci crc8 spi_intel msi_wmi_platform msi_wmi intel_rapl_common intel_skl_int3472_tps68470(OE) cfg80211 processor_thermal_wt_req mei_me processor_thermal_power_floor intel_ipu7(C) processor_thermal_mbox int3403_thermal ov5675(OE) mei v4l2_fwnode rfkill intel_vpu ipu_bridge(OE) v4l2_async int340x_thermal_zone intel_pmc_core tps68470_regulator(OE) pmt_telemetry clk_tps68470(OE) videodev(OE) pmt_discovery intel_skl_int3472_discrete intel_hid pmt_class int3400_thermal sparse_keymap mc acpi_thermal_rel intel_pmc_ssram_telemetry intel_skl_int3472_common acpi_tad acpi_pad joydev mousedev mac_hid hid_multitouch ucsi_acpi typec_ucsi rtsx_pci_sdmmc roles mmc_core typec xe drm_ttm_helper ttm
+1226:Mar 09 13:50:15 p13 kernel: Modules linked in: fat libarc4 snd_pcm btrtl processor_thermal_wt_hint rapl platform_temperature_control snd_timer intel_cstate btbcm gpio_tps68470 iwlwifi processor_thermal_soc_slider intel_rapl_msr btintel snd platform_profile intel_uncore pcspkr wmi_bmof processor_thermal_rfim bluetooth soundcore processor_thermal_rapl spi_intel_pci crc8 spi_intel msi_wmi_platform msi_wmi intel_rapl_common intel_skl_int3472_tps68470(OE) cfg80211 processor_thermal_wt_req mei_me processor_thermal_power_floor intel_ipu7(C) processor_thermal_mbox int3403_thermal ov5675(OE) mei v4l2_fwnode rfkill intel_vpu ipu_bridge(OE) v4l2_async int340x_thermal_zone intel_pmc_core tps68470_regulator(OE) pmt_telemetry clk_tps68470(OE) videodev(OE) pmt_discovery intel_skl_int3472_discrete intel_hid pmt_class int3400_thermal sparse_keymap mc acpi_thermal_rel intel_pmc_ssram_telemetry intel_skl_int3472_common acpi_tad acpi_pad joydev mousedev mac_hid hid_multitouch ucsi_acpi typec_ucsi rtsx_pci_sdmmc roles mmc_core typec xe drm_ttm_helper ttm
+1276:Mar 09 13:50:15 p13 kernel: ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -110
+1301:Mar 09 13:50:15 p13 kernel: intel_ipu7_isys: module is from the staging directory, the quality is unknown, you have been warned.
+
+EXIT_STATUS: 0
