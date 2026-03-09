@@ -2,6 +2,34 @@
 
 ## 2026-03-09
 
+### Fix missing regmap header in exp2 and exp4 regulator patches
+
+- Plan: fix the remaining PMIC experiment patches that add `regmap_*()` calls
+  in `tps68470-regulator.c` without also adding the required
+  `#include <linux/regmap.h>`.
+- Trigger:
+  - the first real `exp2` build failed with implicit declarations for
+    `regmap_read()` and `regmap_update_bits()`
+- Commands:
+  - reviewed the failed `exp2` update output
+  - reviewed the `exp2` and `exp4` default patch files:
+    - `sed -n '1,220p' reference/patches/ms13q3-wf-s-i2c-ctl-staging-v1.patch`
+    - `sed -n '1,260p' reference/patches/ms13q3-wf-init-value-programming-v1.patch`
+  - searched the patch set for `regmap_*()` users and existing `regmap.h`
+    includes:
+    - `rg -n "regmap_(read|write|update_bits)|<linux/regmap.h>" reference/patches/*.patch`
+  - `apply_patch` updating:
+    - `reference/patches/ms13q3-wf-s-i2c-ctl-staging-v1.patch`
+    - `reference/patches/ms13q3-wf-init-value-programming-v1.patch`
+    - `WORKLOG.md`
+- Result:
+  - `exp2` now adds `#include <linux/regmap.h>` before its staged
+    `S_I2C_CTL` regulator helper
+  - `exp4` now adds the same include before its `WF::Initialize`-style value
+    programming helper
+  - this removes the same compile-time defect that already surfaced once in
+    `exp1` and again in the first real `exp2` run
+
 ### Replace patch-reversal isolation with file reset plus baseline reapply
 
 - Plan: switch the PMIC experiment wrappers from patch-reversal isolation to
