@@ -659,7 +659,9 @@ experiment_update_main() {
 
   reset_known_experiment_patches
   run_logged git -C "${KERNEL_TREE}" status --short
-  run_logged "${REPO_ROOT}/scripts/patch-kernel.sh" --kernel-tree "${KERNEL_TREE}" --profile "${BASELINE_PROFILE}" --status
+  if ! run_logged "${REPO_ROOT}/scripts/patch-kernel.sh" --kernel-tree "${KERNEL_TREE}" --profile "${BASELINE_PROFILE}" --status; then
+    log "warning: patch status check failed; continuing with baseline apply"
+  fi
   run_logged "${REPO_ROOT}/scripts/patch-kernel.sh" --kernel-tree "${KERNEL_TREE}" --profile "${BASELINE_PROFILE}"
   apply_experiment_patch
   build_module_dirs

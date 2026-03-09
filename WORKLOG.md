@@ -2,6 +2,38 @@
 
 ## 2026-03-09
 
+### Make update wrappers resilient when patch-kernel status snapshot fails
+
+- Plan: fix the `exp*-update.sh` path that appeared to stall at
+  `scripts/patch-kernel.sh --status` by making status failures explicit and
+  non-fatal.
+- Trigger:
+  - repeated `exp2` runs stopped after:
+    - `note: kernel tree is already dirty; patch state will be checked file-by-file`
+  - update logs showed no later output, which pointed at the status snapshot
+    phase before baseline apply
+- Commands:
+  - reviewed the failing `exp2` action logs under:
+    - `runs/2026-03-09/20260309T144640-wf-s-i2c-ctl-staging-update/`
+    - `runs/2026-03-09/20260309T144644-wf-s-i2c-ctl-staging-update/`
+    - `runs/2026-03-09/20260309T144705-wf-s-i2c-ctl-staging-update/`
+  - reviewed `scripts/patch-kernel.sh` status-tree creation and
+    `scripts/lib-experiment-workflow.sh` update flow
+  - `apply_patch` updating:
+    - `scripts/patch-kernel.sh`
+    - `scripts/lib-experiment-workflow.sh`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+- Result:
+  - `scripts/patch-kernel.sh --status` now errors with an explicit message if
+    it cannot create/apply the temporary status tree (for example `/tmp`
+    space/quota pressure)
+  - experiment update wrappers now treat the status snapshot as best-effort:
+    they log a warning and continue with baseline apply instead of aborting the
+    whole update
+  - docs now reflect that `--status` visibility is attempted but not a hard
+    prerequisite for applying baseline + experiment patch
+
 ### Fix missing regmap header in exp2 and exp4 regulator patches
 
 - Plan: fix the remaining PMIC experiment patches that add `regmap_*()` calls

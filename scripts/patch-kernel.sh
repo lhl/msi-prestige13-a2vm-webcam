@@ -237,12 +237,16 @@ create_status_tree() {
   STATUS_TREE="${tmpdir}/tree"
   trap cleanup_status_tree EXIT
 
-  git clone --shared --quiet "${KERNEL_TREE}" "${STATUS_TREE}" >/dev/null 2>&1
+  if ! git clone --shared --quiet "${KERNEL_TREE}" "${STATUS_TREE}" >/dev/null 2>&1; then
+    die "failed to create temporary status tree at ${STATUS_TREE}; check /tmp free space or user quota"
+  fi
 
   if ! git -C "${KERNEL_TREE}" diff --quiet HEAD --; then
     diff_file="${tmpdir}/tree-state.patch"
     git -C "${KERNEL_TREE}" diff --binary HEAD -- > "${diff_file}"
-    git -C "${STATUS_TREE}" apply "${diff_file}"
+    if ! git -C "${STATUS_TREE}" apply "${diff_file}" >/dev/null 2>&1; then
+      die "failed to apply working-tree diff to temporary status tree; check /tmp free space or user quota"
+    fi
   fi
 
   normalize_tree_for_profile "${STATUS_TREE}" 1

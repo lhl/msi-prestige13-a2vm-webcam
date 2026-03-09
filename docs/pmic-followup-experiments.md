@@ -60,7 +60,10 @@ All six `*-update.sh` wrappers do this:
 
 - log the intended kernel tree, baseline profile, patch path, build dirs, and
   module install targets
-- run `scripts/patch-kernel.sh --status`
+- attempt `scripts/patch-kernel.sh --status` for visibility
+  - if status cannot be captured (for example `/tmp` space/quota pressure while
+    creating the temporary status tree), the wrapper logs a warning and
+    continues with baseline apply
 - apply the selected baseline profile
 - apply the experiment patch if it is not already present
 - rebuild the baseline module set:
