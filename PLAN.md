@@ -1,8 +1,9 @@
 # Webcam Bring-Up Plan
 
-Updated: 2026-03-09
+Updated: 2026-03-11
 
-This is the active plan after the completed March 9 PMIC experiment batch.
+This is the active plan after the completed March 9 PMIC experiment batch and
+the decision to prioritize the Antti-model `exp13`-`exp17` branch set.
 
 ## Goal
 
@@ -61,16 +62,31 @@ with strong evidence.
     - no `i2c_designware` timeout storm
     - `ANA`, `CORE`, and `VSIO BIT(1)` all read back cleanly
     - the sensor gets back to chip-ID reads, but they now fail with `-121`
-  - `exp11` tested one later GPIO-phase `BIT(0)` hook and came back negative:
-    - chip-ID behavior stayed at `-121`
-    - the late `BIT(0)` write on `sensor-gpio.1` immediately wedged PMIC
-      readback again
-    - the old timeout storm returned
+- `exp11` tested one later GPIO-phase `BIT(0)` hook and came back negative:
+  - chip-ID behavior stayed at `-121`
+  - the late `BIT(0)` write on `sensor-gpio.1` immediately wedged PMIC
+    readback again
+  - the old timeout storm returned
+- `exp12` came back negative as a direct fix, but it added one useful answer:
+  - the Antti-inspired daisy-chain setup lands on `GPIO1` / `GPIO2`
+  - the current `MS-13Q3` sensor lookup then immediately re-drives both lines
+    back to output mode
+  - the sensor failure shape still ends at `-121`
+- the current `MS-13Q3` `GPIO1` / `GPIO2` board model is still only a
+  candidate, not a validated wiring map:
+  - the original board-data patch introduced it as a first-pass guess
+  - the later label-swap and polarity tests were lower-signal than they first
+    looked because current `ov5675` drives both logical descriptors together
+- Antti Laakso's working Prestige 14 patch on the same `OV5675` / `TPS68470` /
+  Lunar Lake generation is now the strongest external wiring prior:
+  - `GPIO1` / `GPIO2` reserved for daisy-chain
+  - remote sensor-control lines moved elsewhere
 - current leading interpretation:
   - the remaining gap is PMIC-side behavior, not basic platform support
   - the early regulator-phase `BIT(0)` write was wrong
-  - we are now missing either the later board-specific `BIT(0)` phase, exact
-    runtime conditions, or exact sensor control waveform truth
+  - the current Linux `GPIO1` / `GPIO2` board model may also be wrong
+  - the next high-value work is to test the Antti-style daisy-chain model
+    without immediately re-overriding it in Linux
 
 ## Workstreams
 
@@ -100,37 +116,69 @@ with strong evidence.
 - [ ] Determine whether a board-specific config blob or policy object exists in
   the Windows driver path that Linux does not model yet.
 
-### 4. Patch design
+### 4. Antti-model branch design
 
-- [ ] Use the PMIC instrumentation plus improved Windows reconstruction to
-  decide whether a second PMIC behavior patch batch is justified.
-- [ ] Avoid blind GPIO-only follow-ups unless new evidence makes one credible.
-- [ ] Keep full kernel rebuilds as fallback only when module-local iteration is
-  no longer enough.
+- [x] Stage a separate Antti-inspired daisy-chain cross-check as `exp12`
+  without replacing `exp10` as the verified baseline.
+- [ ] Stage `exp13`: keep `exp10`, enable daisy-chain, and remove
+  `OVTI5675:00` use of `GPIO1` / `GPIO2`.
+- [ ] Stage `exp14`: carry `exp13` forward and test `GPIO9` as the first
+  remote control-line candidate.
+- [ ] Stage `exp15`: carry `exp13` forward and test `GPIO7` as the alternate
+  remote control-line candidate.
+- [ ] Stage `exp16`: carry the clean daisy-chain branch forward and test the
+  best two-line `GPIO7` / `GPIO9` approximation.
+- [ ] Make `exp13` self-diagnosing.
+  - add a one-shot `dump_stack()` for any daisy-chain-enabled attempt to drive
+    `GPIO1` or `GPIO2` as outputs
+- [ ] Stage `exp17`: re-test `S_I2C_CTL BIT(0)` only on top of a clean
+  daisy-chain-isolated branch.
 
 ## Near-Term Priority
 
-1. Treat the completed March 9 PMIC batch as the new baseline, not as pending
-   work.
-2. Do not spend more time on pure GPIO permutations for now.
-3. Put the next experiment budget into:
-   - narrower analysis of the late-phase `BIT(0)` question
-   - repairing PMIC readback visibility
-   - deeper Windows config-path extraction
-4. Keep using:
+1. Keep `exp10` as the verified PMIC baseline while staging the next branch
+   set.
+2. Treat `exp12` as completed collision evidence, not as a direct test of
+   Antti's working model.
+3. Run `exp13` first.
+   - prove whether Linux can leave `GPIO1` / `GPIO2` in Antti-style
+     daisy-chain input mode for the full probe window
+4. Use `exp14` and `exp15` to answer the next constrained question.
+   - under current `ov5675` driver limits, is `GPIO9` or `GPIO7` the first
+     credible remote control-line candidate
+5. Use `exp16` as the closest current-driver approximation of Antti's remote
+   mapping only after the single-line branches have been isolated first.
+6. Add one self-diagnosing guard to `exp13`.
+   - if `GPIO1` / `GPIO2` still get reclaimed, a one-shot stack dump should
+     identify the call path immediately
+7. Use `exp17` as the explicit PMIC-side follow-up after the wiring-model
+   collision is removed.
+   - only stage it after `exp13` proves no reclaim
+   - carry forward the cleanest daisy-chain-isolated branch from `exp13`
+     through `exp16`
+8. Keep using:
    - `scripts/patch-kernel.sh`
    - `scripts/exp*-*-update.sh`
    - `scripts/exp*-*-verify.sh`
    - `scripts/01-clean-boot-check.sh`
    to keep evidence reproducible
-5. Do not treat `exp11` as the new baseline.
-   - keep `exp10` as the best current PMIC state
-   - only revisit late `BIT(0)` after narrowing the exact signal/phase
+9. Keep the broader Windows config-path and PMIC dump questions open, but do
+   not let them delay the next clean Antti-model branch tests.
 
 ## Open Questions
 
 - Why does the `S_I2C_CTL` `0x43` update path report success while immediate
   PMIC readback collapses to `-110`?
+- Can `exp13` prove that Linux no longer reclaims `GPIO1` / `GPIO2` once
+  daisy-chain mode is enabled?
+- If `exp13` still reclaims those lines, what exact call path does the new
+  one-shot stack dump point to?
+- Under current `ov5675` consumer behavior, is `GPIO9` or `GPIO7` the first
+  better remote control-line candidate?
+- If `exp16` is still negative, do we need an `ov5675` consumer change to
+  model Antti's dual-reset style more faithfully?
+- Once a clean daisy-chain branch exists, does `BIT(0)` become safe there or
+  does it still immediately re-wedge PMIC access?
 - Where, if anywhere, does this board actually want the later `BIT(0)`
   transition once the regulator-phase PMIC/I2C path is already healthy?
 - Why did the current late hook only show up on `sensor-gpio.1`, not a cleaner
@@ -149,5 +197,4 @@ with strong evidence.
 - a full March 9 status report under `docs/`
 - reference-backed Windows PMIC notes under `reference/windows-driver-analysis/`
 - current support summary under `docs/webcam-status.md`
-- if feasible, the next patch-ready note for tighter `S_I2C_CTL`-focused PMIC
-  instrumentation
+- patch-ready notes for `exp13` through `exp17`

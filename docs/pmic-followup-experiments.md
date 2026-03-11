@@ -1,15 +1,22 @@
 # PMIC Follow-Up Experiment Workflow
 
-Updated: 2026-03-09
+Updated: 2026-03-11
 
 This note turns the current ordered PMIC follow-up list into repeatable
 update-and-verify workflows.
 
-As of the completed `2026-03-09` PMIC batch:
+As of the completed `2026-03-11` `exp12` follow-up and the planned
+`exp13`-`exp17` branch set:
 
-- `exp1` through `exp11` are completed historical experiments
+- `exp1` through `exp12` are completed historical experiments
+- `exp13` through `exp17` are now the ordered next branch set to stage
 - `exp10` remains the best current PMIC state
 - `exp11` was the first late-phase `BIT(0)` experiment and came back negative
+- `exp12` was the first Antti-inspired daisy-chain cross-check and came back
+  negative as a fix:
+  - the daisy-chain input-mode setup landed
+  - Linux immediately re-drove `GPIO1` / `GPIO2` back to output mode
+  - the sensor failure shape stayed at `-121`
 - `exp7` established that `VSIO` enable on `S_I2C_CTL` `0x43` is the first
   PMIC transaction after which readback collapses to `-110`
 - `exp8` confirmed the same failure point with a narrower trace:
@@ -20,11 +27,12 @@ As of the completed `2026-03-09` PMIC batch:
 - `exp9` answered the split-step question:
   - IO-side `BIT(1)` writes and reads back cleanly as `0x02`
   - the wedge begins only after the later GPIO-side `BIT(0)` update
-- `exp10` now tests the obvious next behavior:
+- `exp10` is still the best verified PMIC state:
   - keep `BIT(1)` in the regulator path
   - do not assert `BIT(0)` there
-  - and see whether the PMIC/I2C path stays alive long enough to change the
-    sensor failure mode
+- `exp12` answered the first low-effort daisy-chain question:
+  - yes, Antti-style daisy-chain mode can be enabled on `GPIO1` / `GPIO2`
+  - but the current `MS-13Q3` sensor lookup immediately collides with it
 
 ## Goal
 
@@ -53,7 +61,8 @@ Make each PMIC experiment runnable with the same high-safety pattern:
 - They require the experiment patch file to exist.
   - If the default patch file has not been created yet, the wrapper stops with a
     clear error and tells you to create it or pass `--patch FILE`.
-- The current default experiment patch files now exist under:
+- The current default experiment patch files for implemented wrappers exist
+  under:
   - `reference/patches/`
 - They compare the kernel tree's `make kernelrelease` value against `uname -r`
   by default.
@@ -185,6 +194,7 @@ Default patch:
 - `reference/patches/ms13q3-wf-gpio-mode-followup-v1.patch`
 
 Extra module rebuild/install:
+- `tps68470-regulator.ko`
 - `gpio-tps68470.ko`
 
 Scripts:
@@ -375,6 +385,255 @@ Interpretation:
   - why did the observed hook only fire on `sensor-gpio.1`
   - and what is the real Windows analogue of `SetVSIOCtl_GPIO`
 
+### 12. Antti-inspired daisy-chain cross-check
+
+Purpose:
+- try the lowest-effort local version of Antti Laakso's Prestige 14
+  daisy-chain idea without pretending that the full Prestige 14 board-data
+  model must match this `MS-13Q3`
+- enable `tps68470` daisy-chain mode on PMIC `GPIO1` / `GPIO2`
+- keep the current `MS-13Q3` `reset` / `powerdown` lookup on those pins so
+  the logs can show whether Linux later re-drives them out of input mode
+
+Default patch:
+- `reference/patches/ms13q3-daisy-chain-crosscheck-v1.patch`
+
+Extra module rebuild/install:
+- `gpio-tps68470.ko`
+
+Scripts:
+- `scripts/exp12-ms13q3-daisy-chain-crosscheck-update.sh`
+- `scripts/exp12-ms13q3-daisy-chain-crosscheck-verify.sh`
+
+Observed outcome:
+- the Antti-inspired input-mode setup really landed:
+  - `probe-after gpio.1 ... ctl=0x00`
+  - `probe-after gpio.2 ... ctl=0x00`
+- Linux then immediately reclaimed both lines as outputs:
+  - `direction-output-after gpio.1 ... ctl=0x02`
+  - `direction-output-after gpio.2 ... ctl=0x02`
+- the clean-boot sensor failure shape stayed at:
+  - `chip id read attempt 1/5 failed: -121`
+  - `...`
+  - `failed to find sensor: -121`
+- the old timeout storm did not return on this run
+
+Interpretation:
+- the low-effort daisy-chain cross-check is negative as a direct fix
+- it is still useful because it proves the current `MS-13Q3` `GPIO1` /
+  `GPIO2` lookup model and the Antti daisy-chain model are immediately
+  competing with each other
+- if a stronger daisy-chain branch is ever attempted, it should stop treating
+  `GPIO1` / `GPIO2` as the direct sensor-control outputs rather than merely
+  enabling daisy-chain mode on top of the current lookup table
+- this run should be read as a wiring-model cross-check layered on the already
+  installed regulator behavior, not as a fresh replacement for the verified
+  `exp10` PMIC baseline
+- the `exp12` wrappers now reinstall `tps68470-regulator.ko` too so future
+  reruns do not accidentally inherit an older PMIC experiment module
+
+## Planned next branch set
+
+The next four experiments are the wiring-model branch set, and `exp17` is the
+explicit PMIC-side follow-up after that set. Their patch files and wrapper
+scripts do not exist yet.
+
+They are deliberately ordered so the first question is not "which GPIO is
+right?" but "can Linux stop overriding the Antti-style daisy-chain setup at
+all?"
+
+### 13. Daisy-chain isolation without OVTI5675 use of `GPIO1` / `GPIO2`
+
+Purpose:
+- run the first actual test of the Antti wiring model on this laptop rather
+  than another collision test
+- keep the verified `exp10` PMIC baseline in place
+- enable daisy-chain on `GPIO1` / `GPIO2`
+- stop exposing `GPIO1` / `GPIO2` to `OVTI5675:00` as `reset` /
+  `powerdown` consumers
+
+Planned patch shape:
+- start from the `exp10` `S_I2C_CTL BIT(1)`-only regulator behavior
+- keep `daisy_chain_enable = true` for `MS-13Q3`
+- remove the current `OVTI5675:00` lookup entries on `GPIO1` / `GPIO2`
+- add narrow logging for any later attempt to drive `GPIO1` / `GPIO2` back to
+  output mode
+- add a one-shot `dump_stack()` when daisy-chain mode is enabled and an output
+  transition is attempted on `GPIO1` or `GPIO2`
+- extend the daisy-chain logging so `GPIO7` and `GPIO9` activity is visible
+  during the same boot
+
+Module rebuild/install impact:
+- baseline module set
+- `intel_skl_int3472_tps68470.ko`
+- `gpio-tps68470.ko`
+- `tps68470-regulator.ko`
+
+Minimum useful success:
+- `GPIO1` / `GPIO2` stay in input mode for the whole `ov5675` probe window
+- the failure shape changes away from the flat current `exp10` / `exp12`
+  `-121` pattern
+
+Useful negative:
+- the sensor still fails, but the logs prove that Linux no longer reclaims
+  `GPIO1` / `GPIO2`
+- that would move the next question from "board code still wrong" to "which
+  remote control line is correct"
+- or the branch fails its no-reclaim goal, but the one-shot stack dump
+  immediately identifies who is still driving `GPIO1` / `GPIO2`
+
+Failure that invalidates the branch:
+- any later `direction-output-after gpio.1` or `gpio.2`
+- any new consumer still toggling `GPIO1` / `GPIO2` as outputs
+
+Interpretation:
+- if this branch cannot keep `GPIO1` / `GPIO2` in daisy-chain input mode, the
+  board modeling is still wrong before any GPIO7 / GPIO9 inference matters
+- if reclaim still happens, the stack dump should let the next patch target the
+  exact call path instead of repeating blind logging
+
+### 14. Daisy-chain plus `GPIO9` as the first remote control-line candidate
+
+Purpose:
+- test the first Antti-style remote GPIO candidate under the current `ov5675`
+  driver constraints
+- keep `GPIO1` / `GPIO2` reserved for daisy-chain only
+- avoid inventing a full two-line mapping before one remote line shows any
+  signal
+
+Planned patch shape:
+- carry forward the `exp13` daisy-chain isolation branch
+- add a single `OVTI5675:00` `reset` lookup on `GPIO9`
+- do not expose a `powerdown` line in this branch
+- keep the `GPIO1` / `GPIO2` / `GPIO7` / `GPIO9` instrumentation
+
+Why `GPIO9` first:
+- Antti's working Prestige 14 series uses `GPIO_LOOKUP_IDX(..., 9, "reset", 0,
+  ...)`
+- current `ov5675` only consumes `reset` index `0` plus optional `powerdown`
+  index `0`, so `GPIO9` is the closest literal first test of that model
+
+Minimum useful success:
+- `GPIO9` toggles during sensor power-on
+- `GPIO1` / `GPIO2` stay in daisy-chain mode
+- the result improves beyond a flat repeated `-121` read failure
+
+Useful negative:
+- behavior stays at `-121`, but `GPIO9` clearly becomes the active Linux
+  control line and `GPIO1` / `GPIO2` remain untouched
+
+Interpretation:
+- a flat negative here means "GPIO9 alone is insufficient" more than
+  "Antti's whole model is wrong"
+
+### 15. Daisy-chain plus `GPIO7` as the alternate remote control-line candidate
+
+Purpose:
+- test the second Antti remote GPIO candidate with the same isolated
+  daisy-chain setup
+- answer whether `GPIO7` is the more credible primary line on this board when
+  current `ov5675` can only consume one `reset` GPIO directly
+
+Planned patch shape:
+- carry forward the `exp13` daisy-chain isolation branch
+- add a single `OVTI5675:00` `reset` lookup on `GPIO7`
+- do not expose a `powerdown` line in this branch
+- keep the same `GPIO1` / `GPIO2` / `GPIO7` / `GPIO9` instrumentation
+
+Minimum useful success:
+- `GPIO7` toggles during sensor power-on
+- `GPIO1` / `GPIO2` stay in daisy-chain mode
+- failure shape improves relative to `exp10` / `exp12`
+
+Useful negative:
+- behavior is still flat `-121`, but the logs prove `GPIO7` can be isolated as
+  the only Linux-visible control line without reintroducing the `GPIO1` /
+  `GPIO2` collision
+
+Interpretation:
+- `exp14` and `exp15` together are meant to answer line identity under current
+  driver limits, not to prove final reset versus powerdown semantics
+
+### 16. Daisy-chain plus the best two-line `GPIO7` / `GPIO9` approximation
+
+Purpose:
+- run the closest current-driver approximation of Antti's working Prestige 14
+  board data
+- test whether this laptop needs both remote lines once one-line branches have
+  been isolated first
+
+Planned patch shape:
+- carry forward the cleanest `exp13` branch
+- keep `GPIO1` / `GPIO2` reserved for daisy-chain only
+- expose both remote lines to `OVTI5675:00`
+- default planned mapping:
+  - `reset` => `GPIO9`
+  - `powerdown` => `GPIO7`
+- if `exp14` or `exp15` produces a clearly stronger line candidate, preserve
+  that line as `reset` and use the other as `powerdown`
+- keep the same four-line instrumentation
+
+Why this is only `exp16`:
+- the current `MS-13Q3` `GPIO1` / `GPIO2` model was never validated strongly
+- the earlier swap/polarity results were low-signal because `ov5675` drives
+  both descriptors together
+- a two-line remote mapping is easier to interpret after the single-line
+  `GPIO9` and `GPIO7` branches have been run first
+
+Minimum useful success:
+- `GPIO1` / `GPIO2` remain daisy-chain inputs
+- the remote two-line waveform reaches `ov5675`
+- probe behavior moves later, changes shape, or binds the sensor
+
+Useful negative:
+- the branch stays at `-121`, but with no `GPIO1` / `GPIO2` reclaim and clear
+  `GPIO7` / `GPIO9` activity
+
+Interpretation:
+- if `exp16` is still flat, the next branch after it should revisit later
+  PMIC-side behavior only on top of the clean daisy-chain mapping, not on top
+  of the old `GPIO1` / `GPIO2` board data
+
+### 17. Clean daisy-chain plus targeted `BIT(0)` re-test
+
+Purpose:
+- explicitly test the remaining hypothesis that `S_I2C_CTL BIT(0)` only
+  becomes safe once `GPIO1` / `GPIO2` are truly left in daisy-chain input
+  mode
+- turn the current vague "revisit later `BIT(0)`" note into a concrete yes/no
+  experiment
+
+Preconditions:
+- `exp13` must first prove that Linux no longer reclaims `GPIO1` / `GPIO2`
+- use the cleanest daisy-chain-isolated parent branch from `exp13` through
+  `exp16`
+- prefer the best remote-line branch if one of `exp14` through `exp16` shows a
+  stronger signal than `exp13` alone
+
+Planned patch shape:
+- carry forward the cleanest daisy-chain-isolated branch
+- keep the one-shot reclaim `dump_stack()` guard in place
+- reintroduce `S_I2C_CTL BIT(0)` in one narrowly instrumented location only
+- log the exact pre-write and post-write `S_I2C_CTL` state as in the earlier
+  PMIC-focused branches
+- treat any return of the old timeout storm as an immediate negative
+
+Minimum useful success:
+- `BIT(0)` now reads back cleanly without re-wedging PMIC access
+- the sensor failure shape changes again or binds
+
+Useful negative:
+- the old `-110` / timeout-storm behavior returns immediately even though
+  `GPIO1` / `GPIO2` stayed in daisy-chain input mode
+- that would kill the "BIT(0) only becomes safe after clean daisy-chain"
+  hypothesis quickly
+
+Interpretation:
+- `exp17` is meant to validate or kill one remaining PMIC-side idea after the
+  wiring-model collision has been removed
+- it should not be mixed back into the old `GPIO1` / `GPIO2` direct-control
+  board model
+
 ## Typical usage
 
 Update, install modules, and reboot for experiment 2:
@@ -439,16 +698,26 @@ replace the boot log and it does not make claims it cannot support.
 
 ## Current interpretation
 
-Use these wrappers in the same order as the current technical ranking:
+Use the implemented wrappers and the planned next branch set according to the
+current evidence:
 
-1. instrumentation
-2. `S_I2C_CTL` staging
-3. `VD=1050 mV`
-4. `WF::Initialize` value programming
-5. `WF` GPIO mode follow-up
-6. `UF` `gpio.4` last resort
-7. broad raw PMIC regmap trace
-8. focused `S_I2C_CTL` trace
+1. Keep `exp10` as the best verified PMIC state when you need the cleanest
+   current branch.
+2. Treat `exp11` as a completed negative, not as a baseline.
+3. Treat `exp12` as a completed negative that proved the current `GPIO1` /
+   `GPIO2` lookup model immediately collides with Antti-style daisy-chain
+   setup.
+4. Use `exp13` through `exp16` as the next ordered wiring-model branch set:
+   - `exp13` proves whether Linux can leave `GPIO1` / `GPIO2` alone
+   - `exp14` tests `GPIO9` as the first remote candidate
+   - `exp15` tests `GPIO7` as the alternate remote candidate
+   - `exp16` is the closest current-driver approximation of Antti's working
+     remote-line model
+5. Use `exp17` as the explicit PMIC-side follow-up after a clean daisy-chain
+   branch exists.
+   - re-test `BIT(0)` only after `exp13` proves no reclaim
+6. Use `exp1` through `exp9` as the historical evidence chain that narrowed
+   the problem to `S_I2C_CTL` behavior and competing GPIO interpretations.
 
 That ordering still matches the current source-backed assessment in:
 

@@ -1,6 +1,6 @@
 # Context
 
-Updated: 2026-03-09
+Updated: 2026-03-11
 
 ## Objective
 
@@ -88,15 +88,72 @@ with strong evidence.
   - `scripts/pmic-reg-dump.sh` returned `ERROR` for all registers in
     representative PMIC experiment runs
 
+## What March 11 Added
+
+- preserved a full repo-local review of Antti Laakso's March 10, 2026 Prestige
+  14 patch thread under:
+  - `docs/antti-prestige14-thread-review.md`
+- recorded the main new upstream-relevance conclusion:
+  - another MSI `OV5675` / `TPS68470` wiring pattern likely exists
+  - on that pattern, `GPIO1` / `GPIO2` are used for daisy-chain mode rather
+    than as the direct sensor-control pair
+- ran `exp12` as a separate Antti-inspired cross-check:
+  - patch:
+    - `reference/patches/ms13q3-daisy-chain-crosscheck-v1.patch`
+  - scripts:
+    - `scripts/exp12-ms13q3-daisy-chain-crosscheck-update.sh`
+    - `scripts/exp12-ms13q3-daisy-chain-crosscheck-verify.sh`
+  - behavior:
+    - enable daisy-chain mode on `GPIO1` / `GPIO2`
+    - keep the current `MS-13Q3` `reset` / `powerdown` lookup on those same
+      pins
+    - log whether Linux later re-drives them out of input mode
+  - status:
+    - negative as a direct fix
+    - proved that Linux immediately re-drives both lines back to output mode
+    - first run should be read as layered on the previously installed
+      regulator behavior
+    - the `exp12` wrappers now reinstall `tps68470-regulator.ko` too so
+      reruns restore the baseline regulator module explicitly
+    - do not replace `exp10` as the best verified PMIC baseline
+- planned the next ordered Antti-model branch set:
+  - `exp13`: keep `exp10`, enable daisy-chain, and stop exposing `GPIO1` /
+    `GPIO2` to `OVTI5675:00`
+  - `exp14`: carry `exp13` forward and test `GPIO9` as the first remote
+    control-line candidate
+  - `exp15`: carry `exp13` forward and test `GPIO7` as the alternate remote
+    control-line candidate
+  - `exp16`: carry the clean daisy-chain branch forward and test the best
+    current-driver `GPIO7` / `GPIO9` approximation
+- added two planning refinements from follow-up review:
+  - `exp13` should be self-diagnosing with a one-shot `dump_stack()` if
+    `GPIO1` / `GPIO2` still get re-driven as outputs
+  - `exp17` should exist as an explicit clean-daisy-chain `BIT(0)` re-test
+    after `exp13` proves no reclaim
+- recorded one important design constraint for those branches:
+  - current `ov5675` only consumes `reset` index `0` plus optional
+    `powerdown` index `0`
+  - Antti's dual-reset board data therefore cannot be copied literally without
+    either single-line candidate runs first or an `ov5675` consumer change
+
 ## Current Interpretation
 
 - We are past the broad platform-support and board-data stage.
 - We are at the hard last-mile stage where the sensor exists but never wakes
   enough to answer chip-ID reads.
 - Simple GPIO label / polarity / release-order guesses are mostly exhausted.
+- the current Linux `GPIO1` / `GPIO2` board model is still only a candidate,
+  not a validated wiring map
+- Antti Laakso's working Prestige 14 patch is now the strongest external
+  wiring model for the next branch set
 - The strongest remaining gap is PMIC-side behavior Linux still does not model
   correctly, especially around:
-  - where the later `S_I2C_CTL` `BIT(0)` phase belongs, if anywhere
+  - whether Linux should stop using `GPIO1` / `GPIO2` as direct sensor-control
+    outputs on this board
+  - which remote line, `GPIO9` or `GPIO7`, is the first credible sensor
+    control candidate under current `ov5675` limits
+  - where the later `S_I2C_CTL` `BIT(0)` phase belongs, if anywhere, once the
+    daisy-chain wiring branch is isolated
   - why the current late hook only showed up on `sensor-gpio.1`
   - PMIC value/register state truth during the failing identify window
   - higher-level Windows config feeding `WF::SetConf` and selecting `WF`
@@ -107,14 +164,30 @@ with strong evidence.
 1. Keep `exp10` as the best PMIC state when resuming.
    - `BIT(1)` in the regulator path
    - no early or currently-modeled late `BIT(0)` write
-2. Before another kernel run, narrow the later `BIT(0)` question:
-   - why did the current hook only appear on `sensor-gpio.1`
-   - is the real Windows analogue tied to a different GPIO phase than our
-     current `gpio_set()` hook
-3. Fix or replace the post-boot PMIC dump path so we can observe real register
+2. Treat `exp12` as completed collision evidence, not as a clean Antti-model
+   test.
+   - it proved the current `GPIO1` / `GPIO2` lookup immediately overrides
+     daisy-chain setup
+3. Stage `exp13` next.
+   - keep daisy-chain on `GPIO1` / `GPIO2`
+   - remove `OVTI5675:00` use of those lines entirely
+   - prove whether Linux can leave them in input mode for the full probe
+4. Stage `exp14` and `exp15` after `exp13`.
+   - test `GPIO9` and `GPIO7` separately as the first remote control-line
+     candidates under current `ov5675` driver constraints
+5. Stage `exp16` only after the single-line branches.
+   - use the clean daisy-chain branch plus the best two-line `GPIO7` / `GPIO9`
+     approximation
+6. Keep `exp13` self-diagnosing.
+   - if reclaim still happens, the one-shot stack dump should identify the
+     output-driving call path immediately
+7. Stage `exp17` after `exp13` proves no reclaim.
+   - re-test `S_I2C_CTL BIT(0)` only on top of the cleanest daisy-chain
+     branch from `exp13` through `exp16`
+8. Fix or replace the post-boot PMIC dump path so we can observe real register
    state after a failed clean boot.
-4. Extract more of the higher-level Windows config path above `WF::SetConf`.
-5. Do not rerun the broad `exp7` snapshot patch as a default path; it amplified
+9. Extract more of the higher-level Windows config path above `WF::SetConf`.
+10. Do not rerun the broad `exp7` snapshot patch as a default path; it amplified
    the timeout storm enough to interact badly with boot.
 
 ## Key Paths

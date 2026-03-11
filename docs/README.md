@@ -10,6 +10,9 @@ Current focus:
 
 ## Core Docs
 
+- `docs/antti-prestige14-thread-review.md` — review of the March 10, 2026
+  Antti Laakso MSI Prestige 14 patch thread and what its daisy-chain model
+  means for this A2VMG
 - `docs/20260309-status-report.md` — complete March 9 reverse-engineering and
   experiment report
 - `docs/webcam-status.md` — short current Linux webcam support assessment for
@@ -22,8 +25,9 @@ Current focus:
   Windows `iactrllogic64.sys` analysis
 - `docs/linux-board-data-candidate.md` — original MSI
   `tps68470_board_data` hypothesis and first patched-test plan
-- `docs/pmic-followup-experiments.md` — ordered PMIC experiment matrix and the
-  scripted update/reboot/verify workflow for experiments 1-6
+- `docs/pmic-followup-experiments.md` — ordered PMIC experiment matrix, the
+  scripted update/reboot/verify workflow for experiments 1-12, and the planned
+  `exp13`-`exp17` Antti-model branch set
 - `docs/wf-vs-uf-gpio-analysis.md` — Windows helper-family analysis for
   deciding whether this laptop still matches the `WF` / `LNK0` GPIO model
 - `docs/patch-kernel-workflow.md` — idempotent patch-stack workflow for the
@@ -62,6 +66,8 @@ Current focus:
 ## References
 
 - `../reference/README.md` — index of captured upstream sources
+- `../reference/antti-patch/README.md` — local archive note for the March 10,
+  2026 Antti Laakso Prestige 14 Lore thread
 
 ## Expected Growth
 

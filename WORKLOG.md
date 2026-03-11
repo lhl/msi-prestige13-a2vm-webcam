@@ -1,5 +1,217 @@
 # Worklog
 
+## 2026-03-11
+
+### Add the `exp13` self-diagnosing guard and define `exp17`
+
+- Plan: review the follow-up feedback on the planned Antti-model branch set,
+  decide whether the reclaim-path stack dump and explicit `BIT(0)` re-test are
+  worth formalizing, and update the control docs if they improve experiment
+  discrimination.
+- Commands:
+  - reviewed:
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `README.md`
+    - `docs/README.md`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+  - refreshed:
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/README.md`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+- Result:
+  - `exp13` is now explicitly planned to be self-diagnosing:
+    - if `GPIO1` / `GPIO2` still get re-driven as outputs, a one-shot
+      `dump_stack()` should identify the exact reclaim call path immediately
+  - added `exp17` as an explicit follow-up:
+    - re-test `S_I2C_CTL BIT(0)` only after `exp13` proves no reclaim
+    - carry forward the cleanest daisy-chain-isolated branch from `exp13`
+      through `exp16`
+  - the active plan no longer leaves the post-`exp16` `BIT(0)` question as a
+    vague later note; it is now a named experiment with gating conditions
+
+### Plan `exp13` through `exp16` as the next ordered Antti-model branch set
+
+- Plan: turn the Antti review plus `exp12` collision result into a concrete
+  next experiment sequence, make the next branches explicit in the control
+  docs, and capture the main driver constraint that affects how faithfully
+  Antti's board data can be copied.
+- Commands:
+  - reviewed:
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `README.md`
+    - `docs/README.md`
+    - `docs/pmic-followup-experiments.md`
+    - `docs/int3472-gpio-swap-followup.md`
+    - `docs/int3472-gpio-polarity-followup.md`
+    - `runs/2026-03-09/20260309T171414-snapshot-exp10-clean-boot/focused-summary.txt`
+    - `runs/2026-03-11/20260311T064532-snapshot-exp12-clean-boot/focused-summary.txt`
+    - `reference/antti-patch/t.mbox`
+    - `~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472/tps68470_board_data.c`
+    - `~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/i2c/ov5675.c`
+    - `~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/gpio/gpiolib-devres.c`
+  - refreshed:
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/README.md`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+- Result:
+  - the next ordered branch set is now explicit:
+    - `exp13`: isolate daisy-chain by removing `OVTI5675:00` use of
+      `GPIO1` / `GPIO2`
+    - `exp14`: test `GPIO9` as the first remote control-line candidate
+    - `exp15`: test `GPIO7` as the alternate remote control-line candidate
+    - `exp16`: test the best current-driver two-line `GPIO7` / `GPIO9`
+      approximation
+  - recorded the main reason those branches must be staged in that order:
+    - current `ov5675` only consumes `reset` index `0` plus optional
+      `powerdown` index `0`
+    - Antti's dual-reset board data therefore cannot be copied literally as a
+      one-step drop-in on this laptop yet
+  - the control docs now treat `exp12` as collision evidence and move the next
+    experiment budget toward a clean Antti-model test rather than more
+    `GPIO1` / `GPIO2` permutations
+
+### Review `exp12` and record the immediate `GPIO1` / `GPIO2` collision
+
+- Plan: review the first real `exp12` update and verify artifacts, determine
+  whether the Antti-inspired daisy-chain setup changed the clean-boot failure
+  shape, and record whether Linux kept or overwrote the daisy-chain input-mode
+  configuration.
+- Commands:
+  - reviewed:
+    - `runs/2026-03-11/20260311T064420-ms13q3-daisy-chain-crosscheck-update/metadata.env`
+    - `runs/2026-03-11/20260311T064532-snapshot-exp12-clean-boot/focused-summary.txt`
+    - `runs/2026-03-11/20260311T064532-snapshot-exp12-clean-boot/experiment-journal.txt`
+    - `runs/2026-03-11/20260311T064532-snapshot-exp12-clean-boot/pmic-reg-dump.txt`
+  - refreshed:
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/webcam-status.md`
+    - `docs/pmic-followup-experiments.md`
+    - `docs/antti-prestige14-thread-review.md`
+    - `WORKLOG.md`
+- Result:
+  - `exp12` is negative as a direct fix
+  - the Antti-inspired daisy-chain setup really landed:
+    - `probe-after gpio.1 ... ctl=0x00`
+    - `probe-after gpio.2 ... ctl=0x00`
+  - Linux then immediately reclaimed both lines as outputs:
+    - `direction-output-after gpio.1 ... ctl=0x02`
+    - `direction-output-after gpio.2 ... ctl=0x02`
+  - the sensor failure shape stayed at `-121`
+  - the useful new conclusion is not "daisy-chain fixes it", but:
+    - the current `MS-13Q3` `GPIO1` / `GPIO2` lookup model and the Antti
+      daisy-chain model are directly competing on this laptop
+  - follow-up repo fix:
+    - updated the `exp12` wrappers to reinstall `tps68470-regulator.ko` too
+    - future reruns will not accidentally inherit an older PMIC experiment
+      regulator module
+
+### Stage `exp12` as an Antti-inspired daisy-chain cross-check
+
+- Plan: turn the Antti Prestige 14 daisy-chain idea into a separate local
+  `exp12` branch for `MS-13Q3`, keep it clearly separate from the verified
+  `exp10` baseline, and validate that the new patch and wrapper pair are
+  mechanically runnable before any hardware test.
+- Commands:
+  - reviewed:
+    - `scripts/lib-experiment-workflow.sh`
+    - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-update.sh`
+    - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-verify.sh`
+    - `docs/pmic-followup-experiments.md`
+    - `docs/antti-prestige14-thread-review.md`
+    - `~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/gpio/gpio-tps68470.c`
+    - `~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472/tps68470.c`
+    - `~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472/tps68470.h`
+    - `~/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/platform_data/tps68470.h`
+    - `reference/antti-patch/t.mbox`
+  - created:
+    - `reference/patches/ms13q3-daisy-chain-crosscheck-v1.patch`
+    - `scripts/exp12-ms13q3-daisy-chain-crosscheck-update.sh`
+    - `scripts/exp12-ms13q3-daisy-chain-crosscheck-verify.sh`
+  - refreshed:
+    - `scripts/lib-experiment-workflow.sh`
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/README.md`
+    - `docs/pmic-followup-experiments.md`
+    - `docs/antti-prestige14-thread-review.md`
+    - `WORKLOG.md`
+  - validated:
+    - `bash -n scripts/lib-experiment-workflow.sh scripts/exp12-ms13q3-daisy-chain-crosscheck-update.sh scripts/exp12-ms13q3-daisy-chain-crosscheck-verify.sh`
+    - `git -C .tmp/exp12-buildcheck-aZbJkY/tree apply --check reference/patches/ms13q3-daisy-chain-crosscheck-v1.patch`
+    - clean module build in `.tmp/exp12-buildcheck-aZbJkY/tree` for:
+      - `drivers/platform/x86/intel/int3472`
+      - `drivers/gpio`
+    - `scripts/exp12-ms13q3-daisy-chain-crosscheck-update.sh --dry-run`
+    - `scripts/exp12-ms13q3-daisy-chain-crosscheck-verify.sh --dry-run`
+- Result:
+  - staged `exp12` as a separate Antti-inspired wiring-model cross-check
+  - the patch now:
+    - passes `daisy_chain_enable` into the `tps68470-gpio` cell for
+      `MS-13Q3`
+    - forces PMIC `GPIO1` / `GPIO2` into Antti-style input mode at probe
+    - logs whether the current Linux `reset` / `powerdown` lookup later
+      re-drives those same lines
+  - preserved the intended interpretation in the control docs:
+    - `exp10` remains the best verified PMIC baseline
+    - `exp12` is staged, not yet run, and should not be treated as a new
+      default branch
+  - shell syntax, patch applicability, wrapper dry-runs, and clean module
+    builds all passed
+
+### Review Antti Laakso's Prestige 14 patch thread and preserve the conclusions
+
+- Plan: read the local copy of Antti Laakso's March 10, 2026 Lore thread,
+  compare it against the repo's current A2VMG state, and preserve both the
+  upstream thread summary and the local relevance assessment in the docs.
+- Commands:
+  - reviewed:
+    - `reference/antti-patch/t.mbox`
+    - `docs/webcam-status.md`
+    - `docs/20260309-status-report.md`
+    - `docs/wf-vs-uf-gpio-analysis.md`
+    - `docs/linux-board-data-candidate.md`
+    - `reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/power-sequencing-notes.md`
+    - `docs/module-iteration.md`
+  - attempted:
+    - direct fetch of
+      `https://lore.kernel.org/linux-media/20260310124427.693625-1-antti.laakso@linux.intel.com/T/`
+      from the current environment, but the live thread could not be retrieved
+      there during this session
+  - created:
+    - `docs/antti-prestige14-thread-review.md`
+    - `reference/antti-patch/README.md`
+  - refreshed:
+    - `docs/README.md`
+    - `reference/README.md`
+    - `README.md`
+    - `WORKLOG.md`
+- Result:
+  - preserved a full repo-local review of the Antti Prestige 14 thread
+  - recorded that the series mostly overlaps earlier board-enablement work
+    already proven locally, except for the daisy-chain branch
+  - captured the main new conclusion:
+    - another MSI `OV5675` / `TPS68470` wiring pattern likely exists
+    - on that pattern, PMIC `GPIO1` / `GPIO2` are used for daisy-chain mode
+      rather than as the direct sensor-control pair
+  - recorded the current local interpretation:
+    - this is important context, but not yet a direct fix for the A2VMG's
+      current late PMIC / sensor wake-up blocker
+  - documented that a local daisy-chain experiment would be mechanically easy
+    as a module-only branch, but not easy to interpret because it competes
+    with the current `GPIO1` / `GPIO2` model rather than simply extending it
+
 ## 2026-03-09
 
 ### Review `exp11` and record the late-hook negative result

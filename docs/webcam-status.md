@@ -1,6 +1,6 @@
 # Webcam Status
 
-Updated: 2026-03-09
+Updated: 2026-03-11
 
 ## Short Answer
 
@@ -18,6 +18,8 @@ the remaining blocker is now much narrower:
 - the `ov5675` driver now reaches chip-ID reads on a clean boot
 - under the latest `exp10` PMIC follow-up, the old PMIC timeout storm is gone
 - but every chip-ID read still fails, now with `-121`
+- the `exp12` daisy-chain cross-check proved that the current Linux
+  `GPIO1` / `GPIO2` lookup immediately overrides Antti-style daisy-chain setup
 
 That means the webcam is now blocked at sensor wake-up / later-stage PMIC
 behavior, not at basic discovery or graph construction.
@@ -267,6 +269,31 @@ Interpretation:
   - `BIT(1)` only
   - no timeout storm
   - chip-ID loop reaches `-121`
+
+### `exp12` Antti-inspired daisy-chain cross-check
+
+What it proved:
+
+- the low-effort local daisy-chain setup really executes
+- the current `MS-13Q3` Linux lookup model then immediately re-drives
+  `GPIO1` / `GPIO2` back to output mode
+- the sensor failure shape still ends at `-121`
+
+Key lines:
+
+- `exp12_daisy: probe-after gpio.1 ... ctl=0x00`
+- `exp12_daisy: probe-after gpio.2 ... ctl=0x00`
+- `exp12_daisy: direction-output-after gpio.1 ... ctl=0x02`
+- `exp12_daisy: direction-output-after gpio.2 ... ctl=0x02`
+- `ov5675 ... chip id read attempt 5/5 failed: -121`
+
+Interpretation:
+
+- this low-effort daisy-chain cross-check is negative as a direct fix
+- it is still useful because it shows the current `GPIO1` / `GPIO2` model and
+  the Antti daisy-chain model are not additive on this laptop
+- a serious daisy-chain branch would need different sensor-GPIO modeling, not
+  just daisy-chain enable on top of the current lookup table
 
 ## Current Assessment
 

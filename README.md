@@ -28,6 +28,9 @@ Machine under test:
   complete March 9 reverse-engineering and experiment report
 - [`docs/webcam-status.md`](./docs/webcam-status.md) — shorter live technical
   status
+- [`docs/antti-prestige14-thread-review.md`](./docs/antti-prestige14-thread-review.md)
+  — review of the March 10, 2026 Antti Laakso Prestige 14 patch thread and
+  what its daisy-chain model means for this A2VMG
 - [`state/CONTEXT.md`](./state/CONTEXT.md) — restart capsule with current
   objective and next actions
 - [`PLAN.md`](./PLAN.md) — active investigation plan and task queue
@@ -146,17 +149,24 @@ msi-prestige13-a2vm-webcam/
    - three staged `ov5675` GPIO-release variants
    - `exp5` `WF` GPIO mode follow-up
    - `exp6` `UF` / `gpio.4` last resort
-4. Put the next effort into the PMIC behavior Linux still does not explain:
-   - why the regulator-phase `BIT(1)`-only `S_I2C_CTL` path keeps PMIC access
-     healthy but still leaves the sensor returning `-121`
-   - where, if anywhere, the later GPIO-side `BIT(0)` step belongs
-   - why post-boot PMIC register dumps still fail completely
-   - the higher-level Windows config that feeds `WF::SetConf`
-5. The current best PMIC experiment state is still `exp10`.
+4. Use `exp13` through `exp17` as the next ordered experiment branch set:
+   - `exp13`: keep `exp10`, enable daisy-chain, and stop exposing `GPIO1` /
+     `GPIO2` to `OVTI5675:00`
+   - `exp14`: carry that branch forward and test `GPIO9` as the first remote
+     control-line candidate
+   - `exp15`: carry that branch forward and test `GPIO7` as the alternate
+     remote control-line candidate
+   - `exp16`: carry the clean daisy-chain branch forward and test the best
+     current-driver `GPIO7` / `GPIO9` approximation
+   - `exp17`: re-test `S_I2C_CTL BIT(0)` only after a clean daisy-chain branch
+     exists
+5. Keep `exp10` as the PMIC baseline while staging that branch set.
    - `exp11` showed that one modeled late `BIT(0)` hook still re-wedges PMIC
      access
-   - the next work should narrow the exact later signal/phase before another
-     kernel experiment
+   - `exp12` showed that the low-effort Antti-inspired daisy-chain setup is
+     immediately overridden by the current Linux `GPIO1` / `GPIO2` lookup
+   - do not spend more time on `GPIO1` / `GPIO2` label-only follow-ups until
+     one of `exp13` through `exp16` has run cleanly
 
 ## Related Docs
 
@@ -164,6 +174,9 @@ msi-prestige13-a2vm-webcam/
   complete March 9 status report with experiment results and next steps
 - [`docs/webcam-status.md`](./docs/webcam-status.md) — short current Linux
   support assessment for this laptop
+- [`docs/antti-prestige14-thread-review.md`](./docs/antti-prestige14-thread-review.md)
+  — preserved review of Antti Laakso's March 10, 2026 Prestige 14 patch
+  thread and its relevance to `MS-13Q3`
 - [`docs/kernel-tree-status.md`](./docs/kernel-tree-status.md) — exact local
   kernel-source path and original `INT3472` / `TPS68470` status
 - [`docs/reprobe-harness.md`](./docs/reprobe-harness.md) — safe module
@@ -178,6 +191,8 @@ msi-prestige13-a2vm-webcam/
 - [`reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/README.md`](./reference/windows-driver-analysis/iactrllogic64-70.26100.19939.1/README.md)
   — repeatable static-analysis artifact index for the MSI Windows control-logic
   driver
+- [`reference/antti-patch/README.md`](./reference/antti-patch/README.md) —
+  local archive note for Antti Laakso's March 10, 2026 Prestige 14 Lore thread
 - [`reference/patches/ms13q3-int3472-tps68470-v1.patch`](./reference/patches/ms13q3-int3472-tps68470-v1.patch)
   — current first-pass Linux board-data patch
 - [`reference/patches/ipu-bridge-ovti5675-v1.patch`](./reference/patches/ipu-bridge-ovti5675-v1.patch)
@@ -196,6 +211,8 @@ msi-prestige13-a2vm-webcam/
   — `BIT(1)`-only `S_I2C_CTL` experiment patch for `exp10`
 - [`reference/patches/pmic-si2c-ctl-late-gpio-bit0-v1.patch`](./reference/patches/pmic-si2c-ctl-late-gpio-bit0-v1.patch)
   — later GPIO-phase `BIT(0)` experiment patch for `exp11`
+- [`reference/patches/ms13q3-daisy-chain-crosscheck-v1.patch`](./reference/patches/ms13q3-daisy-chain-crosscheck-v1.patch)
+  — Antti-inspired daisy-chain cross-check patch for `exp12`
 - [`reference/patches/ms13q3-vd-1050mv-v1.patch`](./reference/patches/ms13q3-vd-1050mv-v1.patch)
   — `VD = 1050 mV` experiment patch
 - [`reference/patches/ms13q3-wf-init-value-programming-v1.patch`](./reference/patches/ms13q3-wf-init-value-programming-v1.patch)
