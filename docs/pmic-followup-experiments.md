@@ -19,6 +19,13 @@ capture/userspace validation:
   - buffer allocation and queueing succeeded
   - `VIDIOC_STREAMON` failed with `Link has been severed`
   - the raw output file stayed at `0` bytes
+- a later no-reboot userland format sweep narrowed that capture result
+  further:
+  - `/dev/video0` through `/dev/video7` all accepted `VIDIOC_S_FMT` to
+    `4096x3072 BA10`
+  - all eight nodes still failed `VIDIOC_STREAMON` with `Link has been
+    severed`
+  - all eight raw output files stayed at `0` bytes
 - `exp10` remains the best older PMIC control baseline
 - `exp11` was the first late-phase `BIT(0)` experiment and came back negative
 - `exp12` was the first Antti-inspired daisy-chain cross-check and came back
@@ -917,8 +924,11 @@ Observed outcome:
 Interpretation:
 - `exp19` proves the current blocker is no longer first bind or basic node
   presence
+- the later no-reboot format sweep rules out one simple explanation:
+  - the default `/dev/video0` capture-format mismatch was not by itself the
+    reason for failure
 - the remaining gap is now in the actual capture path:
-  - media routing or format setup
+  - explicit media-pad programming still not being applied
   - userspace-facing `isys` behavior
   - or a deeper `STREAMON`-time pipeline requirement that current userspace is
     not satisfying

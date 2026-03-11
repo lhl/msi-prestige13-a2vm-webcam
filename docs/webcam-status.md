@@ -45,10 +45,18 @@ the remaining blocker is now much narrower:
   - buffer setup and queueing succeed
   - `VIDIOC_STREAMON` fails with `Link has been severed`
   - the raw output file stays at `0` bytes
+- a later no-reboot userland format sweep then proved that the first visible
+  node-format mismatch was not sufficient to explain the failure:
+  - `/dev/video0` through `/dev/video7` all accepted `VIDIOC_S_FMT` to
+    `4096x3072 BA10`
+  - all eight nodes still failed `VIDIOC_STREAMON` with `Link has been
+    severed`
+  - all eight raw output files stayed at `0` bytes
 
 That means the webcam is no longer blocked at basic sensor wake-up. The next
-question is why the first userspace `STREAMON` fails on the first positive
-standard-`VSIO` branch.
+question is no longer just whether userspace picked the wrong capture-node
+format. The next question is whether explicit media-pad programming is still
+missing, or whether the remaining gap is deeper in the IPU7 capture path.
 
 For the full March 9 review, see `docs/20260309-status-report.md`.
 
@@ -84,6 +92,15 @@ frames on that branch. The first direct attempt now fails this way:
 - `VIDIOC_STREAMON returned -1 (Link has been severed)`
 - raw output size: `0` bytes
 - no new matching kernel journal lines appeared during the capture attempt
+
+The first higher-signal no-reboot follow-up still fails this way:
+
+- the media graph still reports `Intel IPU7 CSI2 0` at
+  `SGRBG10_1X10/4096x3072`
+- `/dev/video0` through `/dev/video7` all accept `4096x3072 BA10`
+- every tested node still fails `VIDIOC_STREAMON` with `Link has been severed`
+- every tested node still writes `0` bytes
+- no new matching kernel journal lines appeared during the sweep
 
 Functional consequences:
 
@@ -540,11 +557,15 @@ What now looks most likely:
    - the first raw `/dev/video0` stream reached `VIDIOC_STREAMON`
    - `VIDIOC_STREAMON` failed with `Link has been severed`
    - the raw output file stayed empty
-3. Investigate whether that severed-link failure is caused by missing media
-   routing or format setup, or by a deeper `isys` capture-path gap.
-4. Fix or replace the post-boot PMIC dump path so we can see real register
+3. Treat the no-reboot `4096x3072 BA10` sweep across `/dev/video0` through
+   `/dev/video7` as completed negative evidence too.
+   - all eight nodes accepted `VIDIOC_S_FMT`
+   - all eight nodes still failed `VIDIOC_STREAMON`
+4. Investigate whether the remaining failure needs explicit media-pad
+   programming or reflects a deeper `isys` capture-path gap.
+5. Fix or replace the post-boot PMIC dump path so we can see real register
    state after a successful sensor bind.
-5. Extract the higher-level Windows config path that feeds `WF::SetConf` and
+6. Extract the higher-level Windows config path that feeds `WF::SetConf` and
    selects `WF` versus `UF`.
-5. Avoid spending more time on blind `GPIO1` / `GPIO2` permutations.
+7. Avoid spending more time on blind `GPIO1` / `GPIO2` permutations.
    - `exp13` retired the reclaim question

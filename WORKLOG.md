@@ -2,6 +2,49 @@
 
 ## 2026-03-11
 
+### Run no-reboot userspace format sweep after `exp19`
+
+- Plan: test whether the visible `/dev/video0` node-format mismatch from
+  `exp19` was the main reason for the `VIDIOC_STREAMON` severed-link failure,
+  without changing the kernel or rebooting away from the current positive
+  `exp18` boot.
+- Commands:
+  - reviewed:
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/test-routines.md`
+    - `runs/2026-03-11/20260311T223717-snapshot-exp19-userspace-capture/post/media-ctl-media0.txt`
+    - `runs/2026-03-11/20260311T223717-snapshot-exp19-userspace-capture/userspace-capture/video0-all.txt`
+    - `runs/2026-03-11/20260311T223717-snapshot-exp19-userspace-capture/userspace-capture/video0-stream.txt`
+  - ran:
+    - direct no-reboot userspace sweep on `/dev/video0` through `/dev/video7`
+      with `v4l2-ctl --set-fmt-video=width=4096,height=3072,pixelformat=BA10`
+      plus `--stream-mmap=4 --stream-count=4 --stream-poll --verbose`
+    - `media-ctl -p -d /dev/media0`
+    - `journalctl -k --since <sweep-start>`
+  - recorded:
+    - `runs/2026-03-11/20260311T232226-userland-format-sweep/`
+    - `runs/2026-03-11/20260311T232226-userland-format-sweep/focused-summary.txt`
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/webcam-status.md`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+- Result:
+  - negative, but high-signal
+  - the userland-only format alignment itself works:
+    - `/dev/video0` through `/dev/video7` all accepted `VIDIOC_S_FMT`
+    - all eight nodes moved to `4096x3072 BA10`
+  - that alignment does not fix streaming:
+    - all eight nodes still failed `VIDIOC_STREAMON` with
+      `Link has been severed`
+    - all eight raw output files stayed at `0` bytes
+  - no matching kernel journal lines were emitted during the sweep
+  - the default `/dev/video0` format mismatch from `exp19` was therefore not
+    the whole cause of failure; the next userspace question is now explicit
+    media-pad setup versus a deeper `isys` capture-path gap
+
 ### Record `exp19` userspace-capture result
 
 - Plan: capture the first real `exp19` outcome, update the control docs to say

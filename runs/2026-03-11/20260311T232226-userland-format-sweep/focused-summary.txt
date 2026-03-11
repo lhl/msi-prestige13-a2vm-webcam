@@ -1,0 +1,57 @@
+Source: manual post-exp19 userspace format sweep
+Purpose: test whether aligning the capture-node format to the sensor/CSI format removes the severed-link STREAMON failure
+
+Sweep target:
+/dev/video0 through /dev/video7
+
+Requested capture format for every node:
+width=4096
+height=3072
+pixelformat=BA10
+
+Reference media-graph format on Intel IPU7 CSI2 0:
+              type V4L2 subdev subtype Unknown flags 0
+              device node name /dev/v4l-subdev0
+	pad0: SINK,MUST_CONNECT
+		[stream:0 fmt:SGRBG10_1X10/4096x3072 field:none]
+		<- "ov5675 10-0036":0 [ENABLED,IMMUTABLE]
+	pad1: SOURCE
+		[stream:0 fmt:SGRBG10_1X10/4096x3072 field:none
+		 crop.bounds:(0,0)/4096x3072
+		 crop:(0,0)/0x0]
+		-> "Intel IPU7 ISYS Capture 0":0 []
+	pad2: SOURCE
+
+High-level result:
+all tested capture nodes accepted VIDIOC_S_FMT to 4096x3072 BA10, but all still failed VIDIOC_STREAMON with Link has been severed and wrote 0-byte raw outputs
+
+Per-node raw output sizes (bytes):
+video0-ba10: 0
+video1-ba10: 0
+video2-ba10: 0
+video3-ba10: 0
+video4-ba10: 0
+video5-ba10: 0
+video6-ba10: 0
+video7-ba10: 0
+
+Per-node STREAMON result lines:
+video1-ba10-stream.txt:12:		VIDIOC_STREAMON returned -1 (Link has been severed)
+video1-ba10-stream.txt:15:VIDIOC_S_FMT: ok
+video6-ba10-stream.txt:12:		VIDIOC_STREAMON returned -1 (Link has been severed)
+video6-ba10-stream.txt:15:VIDIOC_S_FMT: ok
+video3-ba10-stream.txt:12:		VIDIOC_STREAMON returned -1 (Link has been severed)
+video3-ba10-stream.txt:15:VIDIOC_S_FMT: ok
+video2-ba10-stream.txt:12:		VIDIOC_STREAMON returned -1 (Link has been severed)
+video2-ba10-stream.txt:15:VIDIOC_S_FMT: ok
+video5-ba10-stream.txt:12:		VIDIOC_STREAMON returned -1 (Link has been severed)
+video5-ba10-stream.txt:15:VIDIOC_S_FMT: ok
+video0-ba10-stream.txt:12:		VIDIOC_STREAMON returned -1 (Link has been severed)
+video0-ba10-stream.txt:15:VIDIOC_S_FMT: ok
+video4-ba10-stream.txt:12:		VIDIOC_STREAMON returned -1 (Link has been severed)
+video4-ba10-stream.txt:15:VIDIOC_S_FMT: ok
+video7-ba10-stream.txt:12:		VIDIOC_STREAMON returned -1 (Link has been severed)
+video7-ba10-stream.txt:15:VIDIOC_S_FMT: ok
+
+Kernel journal lines since sweep start:
+(none matched)

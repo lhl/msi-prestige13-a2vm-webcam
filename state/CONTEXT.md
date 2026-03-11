@@ -40,6 +40,10 @@ with strong evidence.
   - the first raw `/dev/video0` stream now fails at `VIDIOC_STREAMON` with
     `Link has been severed`
   - the raw output file stays at `0` bytes
+  - a later no-reboot sweep forced `/dev/video0` through `/dev/video7` to
+    `4096x3072 BA10`
+  - all eight nodes accepted `VIDIOC_S_FMT`
+  - all eight still failed `VIDIOC_STREAMON` with `Link has been severed`
   - post-boot PMIC dumping still returns `ERROR` for every register
 
 ## What March 9 Added
@@ -177,6 +181,17 @@ with strong evidence.
     - `VIDIOC_STREAMON` failed with `Link has been severed`
     - the raw output file stayed at `0` bytes
     - no matching kernel journal lines appeared during the capture attempt
+- ran a no-reboot userspace format sweep on the same positive `exp18` boot:
+  - run:
+    - `runs/2026-03-11/20260311T232226-userland-format-sweep/`
+  - result:
+    - negative, but high-signal
+    - `/dev/video0` through `/dev/video7` all accepted `VIDIOC_S_FMT` to
+      `4096x3072 BA10`
+    - all eight nodes still failed `VIDIOC_STREAMON` with
+      `Link has been severed`
+    - all eight raw output files stayed at `0` bytes
+    - no matching kernel journal lines appeared during the sweep
 - ran `exp13` and recorded the first clean daisy-chain-isolation result:
   - update run:
     - `runs/2026-03-11/20260311T184340-ms13q3-daisy-chain-isolation-update/`
@@ -275,10 +290,19 @@ with strong evidence.
     setup, and queueing
   - `VIDIOC_STREAMON` then failed with `Link has been severed`
   - the raw output file stayed empty
+- the later no-reboot userspace format sweep is now completed evidence too:
+  - `/dev/video0` through `/dev/video7` all accepted `4096x3072 BA10`
+  - all eight nodes still failed `VIDIOC_STREAMON` with
+    `Link has been severed`
+  - the default `/dev/video0` format mismatch was therefore not sufficient to
+    explain the failure
 - The strongest remaining gap is no longer basic PMIC `BIT(0)` safety; it is
   now:
-  - why the first `STREAMON` fails on the positive `exp18` branch
+  - why `STREAMON` still fails on the positive `exp18` branch after node-side
+    format alignment
   - reliable post-boot PMIC dump visibility after a successful sensor bind
+  - whether explicit media-pad programming is still missing or the gap is
+    deeper in `isys`
   - whether any remaining Antti-parity cleanup is needed only for
     upstreamability, not basic sensor bring-up
   - higher-level Windows config feeding `WF::SetConf` and selecting `WF`
@@ -294,30 +318,34 @@ with strong evidence.
    - `/dev/video0` opened and queued buffers successfully
    - `VIDIOC_STREAMON` failed with `Link has been severed`
    - the raw output file stayed empty
-3. Investigate whether that severed-link failure is caused by missing media
-   routing or format setup, or by a deeper `isys` capture-path gap.
-4. Treat `exp12` as completed collision evidence, not as a clean Antti-model
+3. Treat the no-reboot `4096x3072 BA10` sweep across `/dev/video0` through
+   `/dev/video7` as completed negative evidence too.
+   - all eight nodes accepted `VIDIOC_S_FMT`
+   - all eight nodes still failed `VIDIOC_STREAMON`
+4. Investigate whether the remaining severed-link failure needs explicit
+   media-pad programming or reflects a deeper `isys` capture-path gap.
+5. Treat `exp12` as completed collision evidence, not as a clean Antti-model
    test.
    - it proved the current `GPIO1` / `GPIO2` lookup immediately overrides
      daisy-chain setup
-5. Treat `exp13` as completed evidence, not as the next branch to run.
+6. Treat `exp13` as completed evidence, not as the next branch to run.
    - it proved Linux can leave `GPIO1` / `GPIO2` in daisy-chain input mode
    - it did not improve the repeated `-121` chip-ID failure
-6. Treat `exp14` as completed evidence, not as the next branch to run.
+7. Treat `exp14` as completed evidence, not as the next branch to run.
    - it proved `GPIO9` is active
    - it also proved `GPIO9` alone is insufficient
-7. Treat `exp15` as completed evidence, not as the next branch to run.
+8. Treat `exp15` as completed evidence, not as the next branch to run.
    - it proved `GPIO7` is active
    - it also proved `GPIO7` alone is insufficient
-8. Treat `exp16` as completed evidence, not as the next branch to run.
+9. Treat `exp16` as completed evidence, not as the next branch to run.
    - it proved the current two-line approximation drives both remote lines
    - it also proved the clean remote-line branch still stays flat at `-121`
-9. Treat `exp17` as completed evidence, not as a future branch.
+10. Treat `exp17` as completed evidence, not as a future branch.
    - it proved one late `S_I2C_CTL BIT(0)` write is safe on the clean
      remote-line branch
    - the observed PMIC write moved `S_I2C_CTL` from `0x02` to `0x03`
    - the sensor still stayed flat at `-121`
-10. Treat `exp18` as completed positive evidence.
+11. Treat `exp18` as completed positive evidence.
    - standard `VSIO` enable read back cleanly as `0x03`
    - the old timeout storm did not return
    - the media graph now contains `ov5675 10-0036`

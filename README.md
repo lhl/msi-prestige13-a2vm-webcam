@@ -12,7 +12,9 @@ the MSI Prestige 13 AI+ Evo A2VMG / A2VM family.
   graph with stock regulator-side `VSIO = 0x03`, so the remaining gap is no
   longer first sensor wake-up; `exp19` shows the first raw userspace stream on
   `/dev/video0` now fails later at `VIDIOC_STREAMON` with `Link has been
-  severed`, plus broken post-boot PMIC visibility.
+  severed`, and a later no-reboot `4096x3072 BA10` sweep across `/dev/video0`
+  through `/dev/video7` still fails the same way, plus broken post-boot PMIC
+  visibility.
 - Current leading interpretation: the clean daisy-chain branch plus standard
   `VSIO` is the first positive local baseline, and any remaining Antti-thread
   drift is now more likely to matter for cleanup/upstreamability than for basic
@@ -178,11 +180,14 @@ msi-prestige13-a2vm-webcam/
    - standard `VSIO` now reads back cleanly as `0x03`
    - the old timeout storm does not return
    - the media graph now contains `ov5675 10-0036`
-7. Use `exp19` plus `scripts/04-userspace-capture-check.sh` as the next
-   reproducible step.
+7. Use `exp19` plus the later no-reboot format sweep as the current capture
+   truth source.
    - reuse the positive `exp18` patch unchanged
    - the first `/dev/video0` stream attempt now reaches `VIDIOC_STREAMON`
      and fails there with `Link has been severed`
+   - forcing `/dev/video0` through `/dev/video7` to `4096x3072 BA10` is
+     accepted at `VIDIOC_S_FMT`, but all eight nodes still fail
+     `VIDIOC_STREAMON` with `Link has been severed`
 8. Treat post-boot PMIC visibility as secondary to the new userspace
    `STREAMON` failure until the capture-path result is understood.
 

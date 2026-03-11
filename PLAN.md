@@ -34,6 +34,10 @@ with strong evidence.
   - the first raw `/dev/video0` stream now fails at `VIDIOC_STREAMON` with
     `Link has been severed`
   - the raw output file stays at `0` bytes
+  - a later no-reboot sweep forced `/dev/video0` through `/dev/video7` to
+    `4096x3072 BA10`
+  - all eight nodes accepted `VIDIOC_S_FMT`
+  - all eight still failed `VIDIOC_STREAMON` with `Link has been severed`
   - the post-boot PMIC dump path still returns `ERROR` for every register
 - completed negative branches:
   - `GPIO1` / `GPIO2` role swap
@@ -132,8 +136,8 @@ with strong evidence.
   is in place
 - `exp19` proved the first userspace stream fails later at `STREAMON`, not at
   sensor bind
-- the next high-value discriminator is whether that severed-link failure is
-  caused by missing media setup or by a deeper capture-path gap
+- the next high-value discriminator is whether that severed-link failure needs
+  explicit media-pad programming or reflects a deeper capture-path gap
 
 ## Workstreams
 
@@ -142,8 +146,11 @@ with strong evidence.
 - [x] Stage and run `exp19` on top of the positive `exp18` patch.
 - [x] Determine whether raw `v4l2-ctl` streaming on `/dev/video0` succeeds,
   times out, or fails with a userspace-visible pipeline error.
-- [ ] Determine whether the `VIDIOC_STREAMON` `Link has been severed` failure
-  is caused by missing route/format setup or by a deeper capture-path gap.
+- [x] Determine whether the default `/dev/video0` capture-node format mismatch
+  is the main cause of the `VIDIOC_STREAMON` failure.
+- [ ] Determine whether the remaining `VIDIOC_STREAMON`
+  `Link has been severed` failure needs explicit media-pad programming or
+  reflects a deeper capture-path gap.
 
 ### 2. Post-boot PMIC visibility
 
@@ -194,46 +201,50 @@ with strong evidence.
    - `/dev/video0` opened and queued buffers successfully
    - `VIDIOC_STREAMON` failed with `Link has been severed`
    - the raw output file stayed empty
-3. Investigate whether that severed-link failure is caused by missing media
-   routing or format setup, or by a deeper `isys` capture-path gap.
-4. Treat `exp12` as completed collision evidence, not as a direct test of
+3. Treat the no-reboot `4096x3072 BA10` sweep across `/dev/video0` through
+   `/dev/video7` as completed negative evidence too.
+   - all eight nodes accepted `VIDIOC_S_FMT`
+   - all eight nodes still failed `VIDIOC_STREAMON`
+4. Investigate whether the remaining severed-link failure needs explicit
+   media-pad programming or reflects a deeper `isys` capture-path gap.
+5. Treat `exp12` as completed collision evidence, not as a direct test of
    Antti's working model.
-5. Treat `exp13` as completed evidence, not as the next branch to run.
+6. Treat `exp13` as completed evidence, not as the next branch to run.
    - it proved Linux can leave `GPIO1` / `GPIO2` in Antti-style
      daisy-chain input mode for the observed probe window
    - it did not improve the flat repeated `-121` chip-ID failure
-6. Treat `exp14` as completed evidence, not as the next branch to run.
+7. Treat `exp14` as completed evidence, not as the next branch to run.
    - it proved `GPIO9` is active
    - it also proved `GPIO9` alone is insufficient
-7. Treat `exp15` as completed evidence, not as the next branch to run.
+8. Treat `exp15` as completed evidence, not as the next branch to run.
    - it proved `GPIO7` is active
    - it also proved `GPIO7` alone is insufficient
-8. Treat `exp16` as completed evidence, not as the next branch to run.
+9. Treat `exp16` as completed evidence, not as the next branch to run.
    - it proved the current two-line approximation drives both remote lines
    - it also proved that combined remote-line activity still stays flat at
      repeated `-121`
-9. Treat `exp17` as completed evidence, not as a future branch.
+10. Treat `exp17` as completed evidence, not as a future branch.
    - it proved the clean remote-line branch can tolerate one later
      `S_I2C_CTL BIT(0)` assertion
    - the observed late write read back cleanly as `0x03`
    - the sensor still stayed flat at repeated `-121`
    - the old timeout storm did not return
-10. Treat `exp18` as completed evidence, not as a future branch.
+11. Treat `exp18` as completed evidence, not as a future branch.
    - standard regulator-side `VSIO` enable read back cleanly as `0x03`
    - the old timeout storm did not return
    - the media graph gained `ov5675 10-0036` linked to `Intel IPU7 CSI2 0`
    - the verify-side PMIC dump still came back all `ERROR`
-11. Treat post-boot PMIC visibility as secondary to the new `STREAMON`
+12. Treat post-boot PMIC visibility as secondary to the new `STREAMON`
     failure until the capture-path result is understood.
-12. Fix or replace the post-boot PMIC dump path so PMIC state remains visible
+13. Fix or replace the post-boot PMIC dump path so PMIC state remains visible
     after a successful sensor bind.
-13. Keep using:
+14. Keep using:
    - `scripts/patch-kernel.sh`
    - `scripts/exp*-*-update.sh`
    - `scripts/exp*-*-verify.sh`
    - `scripts/01-clean-boot-check.sh`
    to keep evidence reproducible
-14. Keep the broader Windows config-path and any remaining Antti-parity cleanup
+15. Keep the broader Windows config-path and any remaining Antti-parity cleanup
     questions open, but do not let them delay capture validation on the now
     positive `exp18` branch.
 
@@ -243,9 +254,10 @@ with strong evidence.
   PMIC readback collapses to `-110`?
 - With `exp13` proving no reclaim, why does the clean daisy-chain-isolated
   branch still end at flat repeated `-121` chip-ID failures?
-- Why does raw `/dev/video0` capture now reach `VIDIOC_STREAMON` but fail there
-  with `Link has been severed` while the media graph still shows
-  `ov5675 10-0036` linked into `Intel IPU7 CSI2 0`?
+- Why does raw capture still fail at `VIDIOC_STREAMON` with `Link has been
+  severed` even after `/dev/video0` through `/dev/video7` are forced to the
+  same `4096x3072 BA10` shape that the media graph reports on
+  `Intel IPU7 CSI2 0`?
 - Where, if anywhere, does this board actually want the later `BIT(0)`
   transition once the regulator-phase PMIC/I2C path is already healthy and one
   late `sensor-gpio.9` write can already read back as `0x03`?
