@@ -29,7 +29,6 @@ sudo modprobe v4l2loopback video_nr=42 card_label="MSI Webcam Bridge" exclusive_
 # Other apps can now use /dev/video42 as a webcam:
 #   ffplay -f v4l2 /dev/video42
 #   mpv av://v4l2:/dev/video42
-#   (browser WebRTC, etc.)
 ```
 
 ### Single JPEG capture
@@ -112,6 +111,41 @@ autovideosink (preview)  OR  v4l2sink -> /dev/video42 (loopback)
 The IPU7 ISYS only delivers raw Bayer — there is no hardware ISP path exposed
 yet in mainline. The GStreamer `bayer2rgb` element handles debayering in software.
 
+## Browser / Chrome Usage
+
+Browser webcam support on Linux goes through PipeWire and the XDG Desktop
+Portal, not V4L2 directly. The path is:
+
+```
+Browser -> xdg-desktop-portal -> PipeWire -> camera source
+```
+
+**Current status: not yet working.** Chrome does not currently see the webcam.
+The likely issues are:
+
+1. The default `--loopback` output is 2592x1944, which is not a standard webcam
+   resolution. Browsers expect modes like 640x480, 1280x720, or 1920x1080.
+2. PipeWire may not be picking up `/dev/video42` as a camera source.
+
+Use the `--browser` flag to output at 1280x720, which is the most
+browser-friendly resolution:
+
+```bash
+./scripts/webcam-preview.sh --browser
+```
+
+Then test whether Chrome sees the device. If PipeWire needs additional
+configuration, that is a separate step — see the "Remaining Work" section
+in `docs/webcam-status.md`.
+
+### Future: libcamera
+
+`libcamera` with its SoftwareISP pipeline handler could provide a cleaner
+long-term path: it can consume raw Bayer sensors directly, handle debayering,
+and provide auto-exposure and auto-white-balance. PipeWire has a native
+`libcamera` source module. This is untested — `libcamera` tools are not yet
+installed on this machine.
+
 ## Known Issues
 
 - `csi2-0 error: Received packet is too long` warnings appear in dmesg during
@@ -121,5 +155,5 @@ yet in mainline. The GStreamer `bayer2rgb` element handles debayering in softwar
   converted formats fail at STREAMON)
 - `ffmpeg` and `mpv` cannot open `/dev/video0` directly (Broken pipe at
   STREAMON); use the v4l2loopback bridge instead
-- Full resolution (2592x1944) is the only working mode; lower resolutions
-  have not been tested
+- `cheese` does not work (tested, did not produce video)
+- Chrome/browser webcam access is not yet working (see above)

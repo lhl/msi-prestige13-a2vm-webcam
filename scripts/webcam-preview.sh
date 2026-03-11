@@ -4,6 +4,7 @@
 # Usage:
 #   ./scripts/webcam-preview.sh              # direct preview window
 #   ./scripts/webcam-preview.sh --loopback   # feed v4l2loopback (/dev/video42)
+#   ./scripts/webcam-preview.sh --browser    # loopback at 1280x720 for browser use
 #   ./scripts/webcam-preview.sh --snapshot out.jpg   # single JPEG capture
 #
 # Sensor controls (run while streaming or before):
@@ -21,11 +22,16 @@
 set -euo pipefail
 
 SENSOR_SUBDEV=/dev/v4l-subdev4
+MEDIA_DEV=/dev/media0
 VIDEO_DEV=/dev/video0
 LOOPBACK_DEV=/dev/video42
 WIDTH=2592
 HEIGHT=1944
 FPS=30
+
+# Loopback output defaults (overridden by --browser)
+OUT_WIDTH=$WIDTH
+OUT_HEIGHT=$HEIGHT
 
 # --- defaults ----------------------------------------------------------------
 MODE=preview
@@ -42,6 +48,7 @@ usage() {
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --loopback)   MODE=loopback; shift ;;
+        --browser)    MODE=loopback; OUT_WIDTH=1280; OUT_HEIGHT=720; shift ;;
         --snapshot)   MODE=snapshot; SNAPSHOT_PATH="${2:?--snapshot requires a path}"; shift 2 ;;
         --exposure)   EXPOSURE="$2"; shift 2 ;;
         --gain)       ANALOGUE_GAIN="$2"; shift 2 ;;
@@ -55,11 +62,11 @@ done
 echo "=== Configuring media pipeline ==="
 
 # Enable CSI2:1 -> Capture 0 link
-media-ctl -l "\"Intel IPU7 CSI2 0\":1 -> \"Intel IPU7 ISYS Capture 0\":0 [1]" 2>/dev/null || true
+media-ctl -d "$MEDIA_DEV" -l "\"Intel IPU7 CSI2 0\":1 -> \"Intel IPU7 ISYS Capture 0\":0 [1]" 2>/dev/null || true
 
 # Set pad formats to native sensor resolution
-media-ctl -V "\"Intel IPU7 CSI2 0\":0/0 [fmt:SGRBG10_1X10/${WIDTH}x${HEIGHT}]"
-media-ctl -V "\"Intel IPU7 CSI2 0\":1/0 [fmt:SGRBG10_1X10/${WIDTH}x${HEIGHT}]"
+media-ctl -d "$MEDIA_DEV" -V "\"Intel IPU7 CSI2 0\":0/0 [fmt:SGRBG10_1X10/${WIDTH}x${HEIGHT}]"
+media-ctl -d "$MEDIA_DEV" -V "\"Intel IPU7 CSI2 0\":1/0 [fmt:SGRBG10_1X10/${WIDTH}x${HEIGHT}]"
 
 # Set capture node format
 v4l2-ctl -d "$VIDEO_DEV" --set-fmt-video="width=${WIDTH},height=${HEIGHT},pixelformat=BA10"
@@ -107,14 +114,22 @@ case "$MODE" in
             echo "  sudo modprobe v4l2loopback video_nr=42 card_label='MSI Webcam Bridge' exclusive_caps=1"
             exit 1
         fi
-        echo "=== Feeding v4l2loopback at $LOOPBACK_DEV (Ctrl+C to stop) ==="
-        echo "Other apps can now open $LOOPBACK_DEV as a normal webcam."
+        SCALE_STEP=""
+        if [[ "$OUT_WIDTH" != "$WIDTH" || "$OUT_HEIGHT" != "$HEIGHT" ]]; then
+            SCALE_STEP="! videoscale ! video/x-raw,width=${OUT_WIDTH},height=${OUT_HEIGHT} "
+            echo "=== Feeding v4l2loopback at $LOOPBACK_DEV (${OUT_WIDTH}x${OUT_HEIGHT}, Ctrl+C to stop) ==="
+        else
+            echo "=== Feeding v4l2loopback at $LOOPBACK_DEV (${OUT_WIDTH}x${OUT_HEIGHT}, Ctrl+C to stop) ==="
+        fi
+        echo "Other apps can now open $LOOPBACK_DEV as a webcam."
+        # shellcheck disable=SC2086
         exec gst-launch-1.0 \
             v4l2src device="$VIDEO_DEV" io-mode=mmap \
             ! "$SRC_CAPS" \
             ! bayer2rgb \
             ! videoconvert \
-            ! "video/x-raw,format=YUY2,width=${WIDTH},height=${HEIGHT},framerate=${FPS}/1" \
+            $SCALE_STEP \
+            ! "video/x-raw,format=YUY2,width=${OUT_WIDTH},height=${OUT_HEIGHT},framerate=${FPS}/1" \
             ! v4l2sink device="$LOOPBACK_DEV" sync=false
         ;;
 
