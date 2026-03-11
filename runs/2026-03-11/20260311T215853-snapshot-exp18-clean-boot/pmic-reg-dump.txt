@@ -1,0 +1,72 @@
+# TPS68470 register dump
+# date=20260311T125901Z
+# bus=13 addr=0x48
+
+## Identity
+0xff   = ERROR   # REVID
+
+## Clock registers
+# Windows StartClock writes these in order.
+# If all zero + PLLCTL=0x80, clock was never started.
+0x06   = ERROR   # POSTDIV2
+0x07   = ERROR   # BOOSTDIV
+0x08   = ERROR   # BUCKDIV
+0x09   = ERROR   # PLLSWR
+0x0a   = ERROR   # XTALDIV
+0x0b   = ERROR   # PLLDIV
+0x0c   = ERROR   # POSTDIV
+0x0d   = ERROR   # PLLCTL           (bit0=PLL_EN, 0x80=disabled/bypass)
+0x0e   = ERROR   # CLKCFG1          (output enable A/B)
+0x0f   = ERROR   # CLKSTAT          (PLL lock status, read-only)
+0x10   = ERROR   # CLKCFG2          (drive strength)
+
+## Regulator value registers
+# Windows WF::Initialize programs these BEFORE enable.
+# Expected WF values: VDVAL~1050mV, VAVAL~2800mV, VSIOVAL~1800mV, VIOVAL~1800mV, VCMVAL~2800mV
+0x3c   = ERROR   # VCMVAL           (Windows WF object +0x0e => reg 0x3c)
+0x3d   = ERROR   # VCMVAL_high?     (check adjacency)
+0x3f   = ERROR   # VIOVAL           (Windows WF object +0x0c => reg 0x3f)
+0x40   = ERROR   # VSIOVAL          (Windows WF object +0x10 => reg 0x40)
+0x41   = ERROR   # VAVAL            (Windows WF object +0x0a => reg 0x41)
+0x42   = ERROR   # VDVAL            (Windows WF object +0x08 => reg 0x42)
+
+## Regulator control/enable registers
+# These are the enable bits that Linux regulator framework should toggle.
+0x43   = ERROR   # S_I2C_CTL        (bit0=VSIO_EN?, bit1=S_I2C_EN?)
+0x44   = ERROR   # VCMCTL           (bit0=VCM_EN)
+0x45   = ERROR   # not documented   (check for stray writes)
+0x46   = ERROR   # not documented   (check for stray writes)
+0x47   = ERROR   # VACTL            (bit0=VA_EN)
+0x48   = ERROR   # VDCTL            (bit0=VD_EN)
+
+## AUX regulators
+0x50   = ERROR   # AUX1CTL?
+0x51   = ERROR   # AUX2CTL?
+
+## GPIO registers
+# Windows IoActive_GPIO reads/writes GPCTL1A and GPCTL2A.
+# Mode bits: low 2 bits = mode (0=HiZ, 1=output, ...). Mask 0xfc clears mode.
+0x16   = ERROR   # GPCTL1A          (GPIO1 control)
+0x17   = ERROR   # GPCTL1B          (GPIO1 control B)
+0x18   = ERROR   # GPCTL2A          (GPIO2 control)
+0x19   = ERROR   # GPCTL2B          (GPIO2 control B)
+0x1a   = ERROR   # GPCTL3A?
+0x1b   = ERROR   # GPCTL3B?
+
+## GPIO data output register
+0x26   = ERROR   # GPDIVAL          (GPIO data input)
+0x27   = ERROR   # GPDO             (GPIO data output, bit4=gpio.4 used by UF path)
+
+## Summary interpretation
+#
+# If PLLCTL=0x80 and CLKCFG1=0x00: clock never enabled (sensor can't respond to I2C)
+# If S_I2C_CTL=0x00: sensor I2C pass-through not enabled
+# If VACTL=0x00 and VDCTL bit0=0: regulators not enabled
+# If value registers are all 0x00 or 0x34: Linux may not have programmed them
+#
+# Compare value registers against the Windows WF tuple:
+#   VD  = 1050 mV  (Linux board-data currently says 1200 mV -- MISMATCH)
+#   VA  = 2800 mV  (Linux board-data says 2815.2 mV -- close)
+#   VIO = 1800 mV  (Linux board-data says 1800.6 mV -- close)
+#   VCM = 2800 mV  (Linux board-data says 2815.2 mV -- close)
+#  VSIO = 1800 mV  (Linux board-data says 1800.6 mV -- close)

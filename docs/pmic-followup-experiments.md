@@ -5,14 +5,14 @@ Updated: 2026-03-11
 This note turns the current ordered PMIC follow-up list into repeatable
 update-and-verify workflows.
 
-As of the completed `2026-03-11` `exp17` follow-up and the staged `exp18`
-comparison:
+As of the completed `2026-03-11` `exp18` follow-up:
 
-- `exp1` through `exp17` are completed historical experiments
-- `exp18` is now the staged repo-local experiment:
-  - patch files exist under `reference/patches/`
-  - matching `update` / `verify` wrappers exist under `scripts/`
-- `exp10` remains the best current PMIC state
+- `exp1` through `exp18` are completed historical experiments
+- `exp18` is now the best current local branch:
+  - stock regulator-side `VSIO` enable read back cleanly as `0x03`
+  - the old timeout storm did not return
+  - the media graph gained `ov5675 10-0036`
+- `exp10` remains the best older PMIC control baseline
 - `exp11` was the first late-phase `BIT(0)` experiment and came back negative
 - `exp12` was the first Antti-inspired daisy-chain cross-check and came back
   negative as a fix:
@@ -53,10 +53,11 @@ comparison:
   - yes, one later `BIT(0)` write on `sensor-gpio.9` is safe and reads back
     as `0x03`
   - no, that still does not move the sensor off repeated `-121`
-- `exp18` is the next narrow comparison:
-  - keep the clean daisy-chain branch
-  - restore standard `VSIO` enable
-  - do not mix in endpoint-wait or broad regulator-set simplification yet
+- `exp18` answered the last narrow Antti-parity PMIC comparison:
+  - yes, full standard `VSIO` enable is safe on top of the clean daisy-chain
+    branch
+  - yes, the sensor now binds into the media graph as `ov5675 10-0036`
+  - no, the verify-side PMIC dump path is still not trustworthy after boot
 
 ## Goal
 
@@ -464,9 +465,9 @@ questions.
 
 They were deliberately ordered so the remaining question would not stay at
 "does Linux still reclaim the daisy-chain lines?" or "which lone remote line
-is right?" The result after `exp17` is that the named branch set is exhausted
-without a fix, and the next direct discriminator is now staged as `exp18`:
-restore standard `VSIO` enable on top of the clean daisy-chain branch.
+is right?" The result after `exp18` is that the named branch set is no longer
+blocked on PMIC `BIT(0)` safety: standard `VSIO` is now safe on the clean
+daisy-chain branch and the sensor binds into the media graph.
 
 ### 13. Daisy-chain isolation without OVTI5675 use of `GPIO1` / `GPIO2`
 
@@ -777,9 +778,8 @@ Interpretation:
 - `exp17` kills the simple "any later `BIT(0)` is toxic" hypothesis
 - it also proves that one safe later `BIT(0)` placement is still not enough to
   wake the sensor
-- the named Antti-model branch set is now exhausted without a fix
-- the next direct comparison should be `exp18`, restoring standard `VSIO`
-  enable on top of the same clean branch
+- the remaining direct PMIC question should now move to standard `VSIO` on top
+  of the same clean branch
 
 ### 18. Clean daisy-chain plus standard `VSIO` enable
 
@@ -812,8 +812,13 @@ Implemented patch shape:
     targeting the PMIC path around `S_I2C_CTL`, not PLL teardown
 
 Current status:
-- staged only
-- not yet run
+- completed on `2026-03-11`
+- result:
+  - `S_I2C_CTL` read back cleanly as `0x03` on enable and `0x00` on disable
+  - `GPIO1` / `GPIO2` stayed isolated in daisy-chain mode
+  - `GPIO7` / `GPIO9` were both active during the identify window
+  - the media graph gained `ov5675 10-0036` linked into `Intel IPU7 CSI2 0`
+  - the verify-side PMIC dump still came back all `ERROR`
 
 Minimum useful success:
 - standard `VSIO` enable now reads back cleanly on the clean daisy-chain
@@ -825,6 +830,13 @@ Useful negative:
   daisy-chain branch
 - that would strengthen the case that the local `BIT(1)`-only workaround is a
   real board-specific requirement candidate
+
+Interpretation:
+- `exp18` proves the old early `BIT(0)` wedge was not board-intrinsic in the
+  abstract; it depended on the older non-isolated branch shape
+- the main Antti-parity PMIC question is now answered positively on `MS-13Q3`
+- the next work should move to capture validation, userspace behavior, and
+  remaining post-boot PMIC visibility gaps
 
 ## Typical usage
 
@@ -891,10 +903,12 @@ replace the boot log and it does not make claims it cannot support.
 ## Current interpretation
 
 Use the implemented wrappers, the completed `exp13` through `exp17` evidence,
-and the staged `exp18` follow-up according to the current evidence:
+and the completed `exp18` follow-up according to the current evidence:
 
-1. Keep `exp10` as the best verified PMIC state when you need the cleanest
-   current branch.
+1. Use `exp18` as the best current local branch.
+   - standard `VSIO` now reads back cleanly as `0x03`
+   - the old timeout storm does not return
+   - the media graph now contains `ov5675 10-0036`
 2. Treat `exp11` as a completed negative, not as a baseline.
 3. Treat `exp12` as a completed negative that proved the current `GPIO1` /
    `GPIO2` lookup model immediately collides with Antti-style daisy-chain
@@ -916,13 +930,14 @@ and the staged `exp18` follow-up according to the current evidence:
    - it proved one later `sensor-gpio.9` `BIT(0)` write is safe and reads back
      as `0x03`
    - it also proved that this later PMIC transition is still insufficient
-9. Run `exp18` next as the narrow Antti-parity PMIC comparison.
-   - restore standard `VSIO` enable on top of the clean daisy-chain branch
-   - do not bundle in endpoint-wait or broad regulator simplification yet
+9. Treat `exp18` as completed positive evidence.
+   - standard regulator-side `VSIO` enable read back cleanly as `0x03`
+   - the media graph gained `ov5675 10-0036`
+   - the verify-side PMIC dump still came back all `ERROR`
 10. Use `exp1` through `exp9` as the historical evidence chain that narrowed
    the problem to `S_I2C_CTL` behavior and competing GPIO interpretations.
-11. Shift the next direct work to `ov5675` consumer/timing behavior and PMIC
-    dump visibility if `exp18` is also negative.
+11. Shift the next direct work to capture validation, userspace behavior, and
+    PMIC dump visibility on the now-positive `exp18` branch.
 
 That ordering still matches the current source-backed assessment in:
 

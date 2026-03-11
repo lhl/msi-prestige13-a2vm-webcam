@@ -1,0 +1,3 @@
+CMD: find /sys/devices/pci0000:00/0000:00:15.1/i2c_designware.1/i2c-1 -maxdepth 3 2>/dev/null | sort || true
+
+EXIT_STATUS: 0

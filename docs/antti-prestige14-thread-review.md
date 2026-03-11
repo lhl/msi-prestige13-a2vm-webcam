@@ -303,7 +303,7 @@ PMIC `VSIO` handling:
   - do not assert early `BIT(0)` there
 - `exp17` only re-tested a later GPIO-phase `BIT(0)` on top of that clean
   branch
-- that means the cleanest untested Antti-parity discriminator is now:
+- `exp18` then ran the cleanest Antti-parity discriminator directly:
   - standard `VSIO` enable on top of daisy-chain isolation
 
 Regulator-set shape:
@@ -339,33 +339,25 @@ That is why `exp17` should be read as:
 - strong evidence that a later `BIT(0)` is not categorically toxic
 - but not a faithful reproduction of Antti's PMIC behavior
 
-## Recommended Next Comparison Step
+## What `exp18` answered
 
-If the goal is to compare the local A2VMG branch against Antti's approach more
-faithfully, the next step should be narrow:
+`exp18` directly answered the narrow PMIC comparison in the positive:
 
-1. keep the clean daisy-chain-isolated branch
-2. keep the currently observed remote-line branch on `GPIO9` / `GPIO7`
-3. remove the local `BIT(1)`-only `VSIO` workaround
-4. restore standard `VSIO` enable behavior
+- standard regulator-side `VSIO` enable on the clean daisy-chain branch read
+  back cleanly as `0x03`
+- the old timeout storm did not return
+- the media graph gained `ov5675 10-0036` linked into `Intel IPU7 CSI2 0`
+- the verify-side PMIC dump still came back all `ERROR`
 
-Why this is the highest-signal next test:
+That means the biggest remaining Antti-vs-local delta is no longer "is the
+full `BIT(0)` path safe at all?" It is now:
 
-- it isolates the biggest remaining Antti-vs-local delta
-- it does not bundle in the lower-signal endpoint-wait patch, which the local
-  branch likely no longer needs
-- it does not bundle in the broader regulator-set simplification, which would
-  muddy interpretation
-- it directly answers whether daisy-chain isolation changes the meaning of the
-  old early `BIT(0)` wedge
+- whether any of the remaining drift matters only for cleanup/upstreamability
+- whether end-to-end capture works on the now-positive local branch
+- whether the broken post-boot PMIC dump path is hiding a smaller remaining
+  discrepancy
 
-So the next best experiment is not "copy all five Antti patches at once."
-
-It is:
-
-- standard `VSIO` enable plus clean daisy-chain isolation
-
-The repo now stages that exact narrow comparison as `exp18`:
+The repo staged and then ran that exact narrow comparison as `exp18`:
 
 - patch:
   - `reference/patches/ms13q3-daisy-chain-standard-vsio-v1.patch`
@@ -373,10 +365,9 @@ The repo now stages that exact narrow comparison as `exp18`:
   - `scripts/exp18-ms13q3-daisy-chain-standard-vsio-update.sh`
   - `scripts/exp18-ms13q3-daisy-chain-standard-vsio-verify.sh`
 
-If that still wedges immediately, the local `BIT(1)`-only workaround remains a
-real board-specific requirement candidate. If it becomes safe or changes the
-sensor failure shape, then the next branch can compare exact GPIO consumer
-shape or regulator simplification on top of that result.
+So the next best work is no longer another narrow PMIC comparison. It is
+capture validation and then deciding whether any remaining Antti-thread drift
+still matters once `ov5675` already binds into the graph.
 
 ## How Sure We Are About `GPIO1` / `GPIO2` On This A2VMG
 
@@ -421,15 +412,17 @@ The repo is already beyond:
 - missing endpoint creation
 - missing first-pass board data
 
-The current best checkpoint is still:
+The current best checkpoint is now:
 
-- `BIT(1)`-only `S_I2C_CTL`
+- clean daisy-chain isolation
+- stock regulator-side `S_I2C_CTL = 0x03`
 - no old PMIC timeout storm
-- sensor reaches chip-ID reads
-- chip-ID reads fail with `-121`
+- `ov5675 10-0036` present in the media graph
+- post-boot PMIC register visibility still broken
 
 So this thread does not replace the current leading interpretation that the
-remaining blocker is late PMIC / sensor wake-up behavior.
+remaining blocker is now capture validation and PMIC visibility, not first
+sensor wake-up.
 
 What it does change is the confidence model around GPIOs:
 

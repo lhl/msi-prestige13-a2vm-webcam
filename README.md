@@ -8,13 +8,14 @@ the MSI Prestige 13 AI+ Evo A2VMG / A2VM family.
 - Current verdict: the webcam is still not working end to end.
 - Best current summary: `docs/webcam-status.md`
 - Full March 9 status report: `docs/20260309-status-report.md`
-- Current leading blocker: with the latest `exp10` PMIC follow-up, Linux keeps
-  the PMIC/I2C path alive long enough to reach `ov5675` sensor identification
-  without the old timeout storm, but every chip-ID read still fails with
-  `-121`.
-- Current leading interpretation: the remaining gap is no longer basic IPU7
-  support, sensor discovery, or the first MSI board-data patch. It is now a
-  narrower late-stage PMIC / sensor wake-up / sequencing problem.
+- Current leading blocker: `exp18` now binds `ov5675 10-0036` into the media
+  graph with stock regulator-side `VSIO = 0x03`, so the remaining gap is no
+  longer first sensor wake-up; it is end-to-end capture/userspace validation
+  plus broken post-boot PMIC visibility.
+- Current leading interpretation: the clean daisy-chain branch plus standard
+  `VSIO` is the first positive local baseline, and any remaining Antti-thread
+  drift is now more likely to matter for cleanup/upstreamability than for basic
+  sensor bring-up.
 
 Machine under test:
 
@@ -149,7 +150,7 @@ msi-prestige13-a2vm-webcam/
    - three staged `ov5675` GPIO-release variants
    - `exp5` `WF` GPIO mode follow-up
    - `exp6` `UF` / `gpio.4` last resort
-4. Treat `exp13` through `exp17` as completed evidence.
+4. Treat `exp13` through `exp18` as completed evidence.
    - `exp13` proved Linux can leave `GPIO1` / `GPIO2` in daisy-chain input
      mode
    - `exp14` proved `GPIO9` is active, but insufficient as a lone reset line
@@ -160,19 +161,23 @@ msi-prestige13-a2vm-webcam/
    - `exp17` proved a later `S_I2C_CTL BIT(0)` on the clean remote-line branch
      is safe and reads back as `0x03`, but still does not move the sensor off
      repeated `-121`
-5. Keep `exp10` as the PMIC baseline for comparison work.
+   - `exp18` proved stock regulator-side `VSIO` enable is safe on the clean
+     daisy-chain branch and yields the first `ov5675 10-0036` sensor entity in
+     the media graph
+5. Keep `exp10` only as the older PMIC control baseline.
    - `exp11` showed that one modeled late `BIT(0)` hook still re-wedges PMIC
      access
    - `exp12` showed that the low-effort Antti-inspired daisy-chain setup is
      immediately overridden by the current Linux `GPIO1` / `GPIO2` lookup
-   - `exp13` through `exp17` then showed the clean daisy-chain branch is real,
-     both remote lines are active individually and together, and one late
-     `BIT(0)` placement is safe but still insufficient
-6. Use staged `exp18` as the next ordered Antti-parity PMIC follow-up.
-   - restore standard `VSIO` enable on top of the clean daisy-chain branch
-   - keep endpoint-wait and broader regulator-set changes out of this run
-7. Shift the next work to `ov5675` consumer/timing and PMIC-visibility gaps if
-   `exp18` is also negative.
+   - `exp13` through `exp18` then showed the clean daisy-chain branch is real,
+     both remote lines are active, standard `VSIO` is safe there, and sensor
+     bind is now possible
+6. Use `exp18` as the current best local branch for follow-up validation.
+   - standard `VSIO` now reads back cleanly as `0x03`
+   - the old timeout storm does not return
+   - the media graph now contains `ov5675 10-0036`
+7. Shift the next work to end-to-end capture validation and PMIC-visibility
+   gaps, not more blind PMIC remaps.
 
 ## Related Docs
 

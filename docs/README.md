@@ -27,8 +27,8 @@ Current focus:
   `tps68470_board_data` hypothesis and first patched-test plan
 - `docs/pmic-followup-experiments.md` — ordered PMIC experiment matrix and the
   scripted update/reboot/verify workflow for experiments 1-18; `exp13` through
-  `exp17` are now completed evidence, and `exp18` is the staged standard-`VSIO`
-  clean-daisy-chain comparison
+  `exp18` are now completed evidence, with `exp18` showing the first clean
+  standard-`VSIO` branch that binds `ov5675` into the media graph
 - `docs/wf-vs-uf-gpio-analysis.md` — Windows helper-family analysis for
   deciding whether this laptop still matches the `WF` / `LNK0` GPIO model
 - `docs/patch-kernel-workflow.md` — idempotent patch-stack workflow for the

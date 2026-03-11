@@ -205,19 +205,23 @@ with strong evidence.
    - the observed late write read back cleanly as `0x03`
    - the sensor still stayed flat at repeated `-121`
    - the old timeout storm did not return
-8. Run staged `exp18` next.
-   - restore standard `VSIO` enable on top of the clean daisy-chain branch
-   - do not bundle that with endpoint-wait or broad regulator-set changes yet
-9. Scope the `ov5675` consumer-model or timing gap directly if that still
-   stays negative.
-10. Keep using:
+8. Treat `exp18` as completed evidence, not as a future branch.
+   - standard regulator-side `VSIO` enable read back cleanly as `0x03`
+   - the old timeout storm did not return
+   - the media graph gained `ov5675 10-0036` linked to `Intel IPU7 CSI2 0`
+   - the verify-side PMIC dump still came back all `ERROR`
+9. Validate end-to-end capture or userspace behavior on the `exp18` branch.
+10. Fix or replace the post-boot PMIC dump path so PMIC state remains visible
+    after a successful sensor bind.
+11. Keep using:
    - `scripts/patch-kernel.sh`
    - `scripts/exp*-*-update.sh`
    - `scripts/exp*-*-verify.sh`
    - `scripts/01-clean-boot-check.sh`
    to keep evidence reproducible
-11. Keep the broader Windows config-path and PMIC dump questions open, but do
-    not let them delay the next narrow PMIC comparison branch.
+12. Keep the broader Windows config-path and any remaining Antti-parity cleanup
+    questions open, but do not let them delay capture validation on the now
+    positive `exp18` branch.
 
 ## Open Questions
 
@@ -249,5 +253,5 @@ with strong evidence.
 - a full March 9 status report under `docs/`
 - reference-backed Windows PMIC notes under `reference/windows-driver-analysis/`
 - current support summary under `docs/webcam-status.md`
-- recorded `exp13` / `exp14` / `exp15` / `exp16` / `exp17` run evidence plus
-  the staged `exp18` patch and wrapper scripts
+- recorded `exp13` / `exp14` / `exp15` / `exp16` / `exp17` / `exp18` run
+  evidence plus the staged experiment wrappers

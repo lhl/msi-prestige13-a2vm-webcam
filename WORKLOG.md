@@ -2,6 +2,48 @@
 
 ## 2026-03-11
 
+### Record `exp18` standard-`VSIO` result
+
+- Plan: capture the actual `exp18` outcome, update the control docs to reflect
+  that the narrow Antti-parity PMIC question is now answered, and preserve the
+  run artifacts plus the wrapper mode fix discovered during execution.
+- Commands:
+  - reviewed:
+    - `runs/2026-03-11/20260311T215725-ms13q3-daisy-chain-standard-vsio-update/action.log`
+    - `runs/2026-03-11/20260311T215725-ms13q3-daisy-chain-standard-vsio-update/metadata.env`
+    - `runs/2026-03-11/20260311T215853-snapshot-exp18-clean-boot/focused-summary.txt`
+    - `runs/2026-03-11/20260311T215853-snapshot-exp18-clean-boot/experiment-journal.txt`
+    - `runs/2026-03-11/20260311T215853-snapshot-exp18-clean-boot/pmic-reg-dump.txt`
+    - `runs/2026-03-11/20260311T215853-snapshot-exp18-clean-boot/post/media-ctl-media0.txt`
+    - `runs/2026-03-11/20260311T215853-snapshot-exp18-clean-boot/post/journal-relevant.txt`
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/README.md`
+    - `docs/webcam-status.md`
+    - `docs/pmic-followup-experiments.md`
+    - `docs/antti-prestige14-thread-review.md`
+    - `WORKLOG.md`
+  - refreshed:
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/README.md`
+    - `docs/webcam-status.md`
+    - `docs/pmic-followup-experiments.md`
+    - `docs/antti-prestige14-thread-review.md`
+    - `WORKLOG.md`
+- Result:
+  - `exp18` is positive, not just negative-without-timeouts:
+    - standard regulator-side `VSIO` enable read back cleanly as `0x03`
+    - the old timeout storm did not return
+    - the media graph gained `ov5675 10-0036` linked into `Intel IPU7 CSI2 0`
+  - this is the first local branch that moves past the old sensor wake-up
+    blocker under stock regulator-side `BIT(0)`
+  - the verify-side PMIC dump still came back all `ERROR`
+  - both `exp18` wrapper scripts are now executable (`100755`), matching the
+    older experiment wrappers
+
 ### Stage `exp18` as the narrow standard-`VSIO` daisy-chain comparison
 
 - Plan: turn the next Antti-parity PMIC discriminator into a real experiment

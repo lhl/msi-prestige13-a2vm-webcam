@@ -33,12 +33,16 @@ the remaining blocker is now much narrower:
 - `exp17` then proved that a later `S_I2C_CTL BIT(0)` on the clean remote-line
   branch can read back safely as `0x03`, but it still does not move the sensor
   off repeated `-121`
-- the repo now has a staged `exp18` patch plus wrapper pair for the next
-  narrow Antti-parity PMIC comparison:
-  - restore standard `VSIO` enable on top of the clean daisy-chain branch
+- `exp18` then proved that full standard `VSIO` enable on the clean
+  daisy-chain branch is also safe:
+  - `S_I2C_CTL` read back cleanly as `0x03`
+  - the old timeout storm did not return
+  - the media graph gained `ov5675 10-0036` linked into `Intel IPU7 CSI2 0`
+  - the verify-side PMIC dump still came back all `ERROR`
 
-That means the webcam is now blocked at sensor wake-up / later-stage PMIC
-behavior, not at basic discovery or graph construction.
+That means the webcam is no longer blocked at basic sensor wake-up. The next
+question is end-to-end capture and userspace behavior on the first positive
+standard-`VSIO` branch.
 
 For the full March 9 review, see `docs/20260309-status-report.md`.
 
@@ -518,19 +522,14 @@ What now looks most likely:
 
 ## Next Steps
 
-1. Keep `exp10` as the best functional PMIC state for now.
-   - do not reintroduce `BIT(0)` in the early regulator path
-   - do not treat the current `exp11` GPIO hook as a likely fix
-   - use `exp17` only as evidence that one later `BIT(0)` placement is safe,
-     not as a fix
-2. Run staged `exp18` next.
-   - restore standard `VSIO` enable on top of the clean daisy-chain branch
-   - do not bundle endpoint-wait or broader regulator-set changes yet
-3. Scope the `ov5675` consumer-model gap more directly if `exp18` is also
-   negative.
-4. Fix or replace the post-boot PMIC dump path so we can see real register
-   state after a failed clean boot.
-5. Extract the higher-level Windows config path that feeds `WF::SetConf` and
+1. Use `exp18` as the best current local branch.
+   - standard `VSIO` now reads back cleanly as `0x03`
+   - the old timeout storm does not return
+   - the media graph now includes `ov5675 10-0036`
+2. Validate capture and userspace behavior on the `exp18` branch.
+3. Fix or replace the post-boot PMIC dump path so we can see real register
+   state after a successful sensor bind.
+4. Extract the higher-level Windows config path that feeds `WF::SetConf` and
    selects `WF` versus `UF`.
-6. Avoid spending more time on blind `GPIO1` / `GPIO2` permutations.
+5. Avoid spending more time on blind `GPIO1` / `GPIO2` permutations.
    - `exp13` retired the reclaim question

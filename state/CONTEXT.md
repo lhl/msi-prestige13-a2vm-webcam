@@ -245,30 +245,18 @@ with strong evidence.
 - `exp17` proved that one late `S_I2C_CTL BIT(0)` assertion on the clean
   remote-line branch is safe and reads back as `0x03`, but is still
   insufficient
-- `exp18` is now staged as the next narrow Antti-parity PMIC comparison:
-  - patch:
-    - `reference/patches/ms13q3-daisy-chain-standard-vsio-v1.patch`
-  - scripts:
-    - `scripts/exp18-ms13q3-daisy-chain-standard-vsio-update.sh`
-    - `scripts/exp18-ms13q3-daisy-chain-standard-vsio-verify.sh`
-  - validation:
-    - patch applies cleanly on a fresh candidate-baseline temp tree
-    - both wrappers passed `--dry-run`
-  - goal:
-    - keep the clean daisy-chain branch
-    - restore standard `VSIO` enable
-    - do not bundle endpoint-wait or broad regulator-set changes yet
-- The strongest remaining gap is PMIC-side behavior Linux still does not model
-  correctly, especially around:
-  - whether the old early full `VSIO` enable only becomes safe once the clean
-    daisy-chain branch is already in place
-  - whether any earlier or differently placed late `S_I2C_CTL` `BIT(0)` phase
-    matters once the clean remote-line branch is already in place
-  - where the later `S_I2C_CTL` `BIT(0)` phase belongs, if anywhere, now that
-    one `sensor-gpio.9` write already reads back cleanly
-  - why the earlier late hook only showed up on `sensor-gpio.1` while `exp17`
-    later showed a safe `sensor-gpio.9` event
-  - PMIC value/register state truth during the failing identify window
+- `exp18` is now completed evidence:
+  - standard regulator-side `VSIO` enable read back cleanly as `0x03` on the
+    clean daisy-chain branch
+  - the old timeout storm did not return
+  - the media graph gained `ov5675 10-0036` linked into `Intel IPU7 CSI2 0`
+  - the verify-side PMIC dump still came back all `ERROR`
+- The strongest remaining gap is no longer basic PMIC `BIT(0)` safety; it is
+  now:
+  - end-to-end capture or userspace validation on the positive `exp18` branch
+  - reliable post-boot PMIC dump visibility after a successful sensor bind
+  - whether any remaining Antti-parity cleanup is needed only for
+    upstreamability, not basic sensor bring-up
   - higher-level Windows config feeding `WF::SetConf` and selecting `WF`
     versus `UF`
 
@@ -298,13 +286,13 @@ with strong evidence.
      remote-line branch
    - the observed PMIC write moved `S_I2C_CTL` from `0x02` to `0x03`
    - the sensor still stayed flat at `-121`
-8. Run staged `exp18` next.
-   - restore standard `VSIO` enable on top of the clean daisy-chain branch
-   - do not bundle in endpoint-wait or broad regulator-set changes yet
-9. Scope the `ov5675` consumer-model or timing gap directly if that still
-   stays negative.
+8. Treat `exp18` as completed positive evidence.
+   - standard `VSIO` enable read back cleanly as `0x03`
+   - the old timeout storm did not return
+   - the media graph now contains `ov5675 10-0036`
+9. Validate capture or userspace behavior on the `exp18` branch.
 10. Fix or replace the post-boot PMIC dump path so we can observe real register
-   state after a failed clean boot.
+   state after a successful sensor bind.
 11. Extract more of the higher-level Windows config path above `WF::SetConf`.
 12. Do not rerun the broad `exp7` snapshot patch as a default path; it amplified
     the timeout storm enough to interact badly with boot.
