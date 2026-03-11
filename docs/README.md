@@ -37,7 +37,8 @@ Current focus:
 - `docs/module-iteration.md` — faster module-only rebuild/install workflow for
   camera-path changes
 - `docs/test-routines.md` — numbered test wrappers for clean-boot, reload,
-  userspace-capture, and no-reboot format-sweep checkpoints
+  userspace-capture, no-reboot format-sweep, pipeline-setup, and higher-level
+  client compatibility checkpoints
 - `docs/ov5675-diagnostic-patch.md` — first `ov5675` probe-logging patch and
   exact module-only test steps
 - `docs/ipu-bridge-ovti5675-candidate.md` — `ipu-bridge` follow-up patch note

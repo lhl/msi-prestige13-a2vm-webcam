@@ -13,13 +13,17 @@ the MSI Prestige 13 AI+ Evo A2VMG / A2VM family.
   defaults are `Intel IPU7 CSI2 0` at `4096x3072` with the
   `CSI2:1 -> Capture 0` link disabled; explicit setup of the CSI2 pad formats,
   capture link, and `/dev/video0` format changes that to the working
-  `2592x1944` path and delivers raw frames. The main unresolved issues are the
-  5x `Received packet is too long` warnings with a one-scanline buffer delta,
-  broken post-boot PMIC visibility, higher-level application testing, and
-  patch cleanup for upstreaming.
+  `2592x1944` path and delivers raw frames. The latest `07` run proves that
+  this still falls short of normal usage: `ffmpeg` and `mpv` fail at
+  `VIDIOC_STREAMON` with `Broken pipe`, GStreamer `v4l2src` fails buffer-pool
+  allocation / `not-negotiated`, `libcamera` tools are not installed locally,
+  and `cheese` remains a manual GUI follow-up. The other main unresolved
+  issues are the 5x `Received packet is too long` warnings with a one-scanline
+  buffer delta, broken post-boot PMIC visibility, and patch cleanup for
+  upstreaming.
 - Current leading interpretation: basic bring-up is complete; remaining work is
-  warning cleanup, automation, higher-level userspace validation, and
-  upstreamability rather than first sensor wake-up.
+  client-compatibility cleanup, warning cleanup, automation, and upstreamability
+  rather than first sensor wake-up.
 
 Machine under test:
 
@@ -56,7 +60,7 @@ Machine under test:
 - [`docs/patch-kernel-workflow.md`](./docs/patch-kernel-workflow.md) —
   idempotent patch-stack workflow for the local `linux-mainline` tree
 - [`docs/test-routines.md`](./docs/test-routines.md) — numbered test wrappers
-  for clean-boot, reload, and userspace-capture checkpoints
+  for clean-boot, reload, userspace-capture, and normal-usage checkpoints
 - [`reference/README.md`](./reference/README.md) — captured upstream
   references
 
@@ -96,6 +100,8 @@ msi-prestige13-a2vm-webcam/
 │   ├── 03-ov5675-identify-debug-check.sh
 │   ├── 04-userspace-capture-check.sh
 │   ├── 05-userspace-format-sweep.sh
+│   ├── 06-media-pipeline-setup.sh
+│   ├── 07-normal-usage-check.sh
 │   ├── exp*-*-update.sh
 │   ├── exp*-*-verify.sh
 │   └── webcam-run.sh
@@ -188,14 +194,22 @@ msi-prestige13-a2vm-webcam/
      `Intel IPU7 CSI2 0` at `4096x3072` with `CSI2:1 -> Capture 0` disabled
    - steps 2-5 of the script change the working path to `2592x1944`,
      enable the capture link, and let `/dev/video0` stream raw Bayer frames
-8. Investigate the remaining `Received packet is too long` warnings as a
+8. Use `scripts/07-normal-usage-check.sh` as the current higher-level client
+   compatibility truth source.
+   - latest result:
+     - `ffmpeg`: `VIDIOC_STREAMON` `Broken pipe`
+     - `mpv`: same `Broken pipe` path through FFmpeg's V4L2 demuxer
+     - GStreamer `v4l2src`: buffer-pool activation failed, then
+       `not-negotiated`
+     - `libcamera` tools: missing locally
+9. Investigate the remaining `Received packet is too long` warnings as a
    geometry-alignment issue.
    - current hard clue: `bytesused = 10,077,696` while
      `Size Image = 10,082,880`
    - the `5,184`-byte delta is exactly one scanline at the current
      `Bytes per Line = 5,184`
-9. Treat post-boot PMIC visibility as secondary to capture-path cleanup now
-   that raw streaming works.
+10. Treat post-boot PMIC visibility as secondary to capture/client cleanup now
+    that raw streaming works.
 
 ## Related Docs
 

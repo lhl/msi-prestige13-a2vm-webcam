@@ -2,6 +2,47 @@
 
 ## 2026-03-12
 
+### Stage and run `07` as the first normal-usage client compatibility check
+
+- Plan: turn the "manual raw capture works, but can normal tools use it?"
+  question into one repeatable checkpoint, then record the first concrete
+  higher-level client failure shapes instead of leaving that gap as a vague
+  TODO.
+- Commands:
+  - created:
+    - `scripts/07-normal-usage-check.sh`
+  - ran:
+    - `bash -n scripts/07-normal-usage-check.sh`
+    - `scripts/07-normal-usage-check.sh --dry-run`
+    - `scripts/07-normal-usage-check.sh`
+  - run directory:
+    - `runs/2026-03-12/20260312T021942-snapshot-07-normal-usage-check/`
+  - refreshed:
+    - `README.md`
+    - `docs/README.md`
+    - `docs/test-routines.md`
+    - `docs/webcam-status.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+- Result:
+  - `07` now exists as the repeatable normal-usage compatibility checkpoint on
+    top of the known-good `06` pipeline setup
+  - raw `v4l2-ctl` sanity capture still succeeded from the configured state
+  - the first recorded higher-level client results are negative, but
+    high-signal:
+    - `ffmpeg` failed at `VIDIOC_STREAMON` with `Broken pipe`
+    - `mpv` failed on the same `Broken pipe` path through FFmpeg's V4L2
+      demuxer
+    - GStreamer `v4l2src` failed buffer-pool activation and then
+      `reason not-negotiated (-4)`
+  - local tool availability is now explicit:
+    - installed: `ffmpeg`, `gst-launch-1.0`, `mpv`, `cheese`
+    - missing: `libcamera-hello`, `libcamera-still`, `libcamera-vid`, `cam`
+  - current repo-level conclusion is now sharper:
+    - manual raw capture works
+    - normal client usage still does not
+
 ### Fresh-boot `06` rerun proves the real pre/post media-graph delta
 
 - Plan: validate whether the first successful `06` capture inherited an

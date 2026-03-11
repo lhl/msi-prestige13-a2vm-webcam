@@ -157,12 +157,26 @@ with strong evidence.
   - **Answer: the boot default is `Intel IPU7 CSI2 0` at `4096x3072` with
     `CSI2:1 -> Capture 0` disabled; steps 2-5 create the working
     `2592x1944` + `[ENABLED]` state.**
+- [x] Stage and run a repeatable normal-usage client check on top of the
+  known-good manual pipeline setup.
+  - **Answer: `scripts/07-normal-usage-check.sh` now exists and the first live
+    run is recorded under
+    `runs/2026-03-12/20260312T021942-snapshot-07-normal-usage-check/`.**
 - [ ] Investigate the `csi2-0 error: Received packet is too long` warnings.
   - current hard clue: `bytesused = 10,077,696`,
     `Size Image = 10,082,880`, `Bytes per Line = 5,184`
   - the `5,184`-byte delta is exactly one extra scanline in the capture
     buffer
-- [ ] Test with higher-level capture tools (`libcamera`, `cheese`, `mpv`).
+- [x] Determine whether currently installed higher-level headless clients can
+  stream after the known-good manual pipeline setup.
+  - **Answer: no.**
+  - `ffmpeg`: `ioctl(VIDIOC_STREAMON): Broken pipe`
+  - `mpv`: same `Broken pipe` path through FFmpeg's V4L2 demuxer
+  - GStreamer `v4l2src`: buffer-pool activation failed, then
+    `reason not-negotiated (-4)`
+- [ ] Test remaining higher-level tools that were not covered headlessly.
+  - install and try `libcamera-*` / `cam`
+  - manually exercise `cheese` in a GUI session
 - [ ] Consider automated pipeline setup (udev rule, libcamera handler, etc.).
 
 ### 2. Post-boot PMIC visibility
@@ -209,14 +223,17 @@ with strong evidence.
 1. Use `exp18` as the current kernel branch.
 2. Use fresh-boot `scripts/06-media-pipeline-setup.sh` reruns as the capture
    truth source for userspace-path changes.
-3. Investigate the `csi2-0 error: Received packet is too long` warnings and
+3. Use `scripts/07-normal-usage-check.sh` as the higher-level client
+   compatibility truth source.
+4. Investigate the `csi2-0 error: Received packet is too long` warnings and
    the one-scanline `Size Image` vs `bytesused` mismatch.
-4. Test with higher-level capture tools (`libcamera`, `cheese`, `mpv`).
-5. Clean up the patch stack for upstream submission:
+5. Investigate why `ffmpeg` / `mpv` still hit `VIDIOC_STREAMON` `Broken pipe`
+   and why GStreamer `v4l2src` fails allocation / negotiation.
+6. Clean up the patch stack for upstream submission:
    - remove experiment instrumentation logging
    - separate minimal board-data from diagnostic scaffolding
-6. Fix or replace the post-boot PMIC dump path.
-7. Keep the broader Windows config-path questions open for upstreamability
+7. Fix or replace the post-boot PMIC dump path.
+8. Keep the broader Windows config-path questions open for upstreamability
    context, but they are no longer blocking basic bring-up.
 
 ## Open Questions
@@ -224,11 +241,15 @@ with strong evidence.
 - Why does `csi2-0 error: Received packet is too long` appear during capture?
   Is it a CSI2 blanking/format configuration detail, given that
   `Size Image - bytesused = 5,184` bytes (one scanline), or something more?
+- Why do `ffmpeg` and `mpv` fail at `VIDIOC_STREAMON` with `Broken pipe` from
+  the same configured state where `v4l2-ctl` streams successfully?
+- Why does GStreamer `v4l2src` fail allocation / `not-negotiated` from that
+  same state?
 - Why does userspace PMIC register dumping fail completely after boot when the
   kernel can still log `TPS68470 REVID: 0x21`?
 - What is the minimum clean patch set needed for upstream submission?
-- Will `libcamera` or other higher-level tools work with this pipeline, or do
-  they need an IPU7-specific pipeline handler?
+- Will `libcamera` or other higher-level tools work with this pipeline once
+  installed, or do they need an IPU7-specific pipeline handler?
 
 ## Deliverables
 

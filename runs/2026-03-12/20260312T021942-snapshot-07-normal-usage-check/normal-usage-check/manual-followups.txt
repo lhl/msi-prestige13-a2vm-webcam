@@ -1,0 +1,3 @@
+GUI/manual follow-ups:
+cheese: present; not auto-run because it requires an interactive desktop session
+libcamera-family tools: missing on this machine

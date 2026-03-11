@@ -1,0 +1,9 @@
+CMD: timeout 20s mpv --no-config --vo=null --ao=null --frames=4 --untimed --no-cache --profile=sw-fast --msg-level=all=info av://v4l2:/dev/video0
+[ffmpeg/demuxer] video4linux2,v4l2: ioctl(VIDIOC_G_PARM): Inappropriate ioctl for device
+[ffmpeg/demuxer] video4linux2,v4l2: Time per frame unknown
+[ffmpeg/demuxer] video4linux2,v4l2: ioctl(VIDIOC_STREAMON): Broken pipe
+[lavf] avformat_open_input() failed
+Failed to recognize file format.
+Exiting... (Errors when loading file)
+
+EXIT_STATUS: 2

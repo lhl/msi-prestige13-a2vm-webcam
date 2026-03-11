@@ -244,6 +244,60 @@ Interpretation note:
   `10,082,880`, a `5,184`-byte delta equal to one scanline at the current
   `Bytes per Line`
 
+## `scripts/07-normal-usage-check.sh`
+
+Use this after `scripts/06-media-pipeline-setup.sh` proves the raw manual path
+works and you want a repeatable answer about whether normal userspace clients
+can consume frames from the same configured state.
+
+What it does:
+
+- captures a standard snapshot run
+- records higher-level tool presence for:
+  - `ffmpeg`
+  - `gst-launch-1.0`
+  - `mpv`
+  - `cheese`
+  - `libcamera-*` / `cam`
+- applies the known-good `06` media-pipeline setup
+- verifies the raw base path again with one `v4l2-ctl` sanity capture
+- re-applies the working node/link/format state before each client probe
+- runs headless higher-level probes for installed CLI tools:
+  - `ffmpeg`
+  - `gst-launch-1.0`
+  - `mpv`
+- records GUI/manual-only follow-up notes for tools not suitable for headless
+  automation
+- writes one focused summary with the overall normal-usage verdict
+
+Default targets:
+
+- `/dev/video0`
+- sensor format `SGRBG10_1X10/2592x1944`
+- pixel format `BA10`
+
+Example:
+
+```bash
+scripts/07-normal-usage-check.sh
+```
+
+Interpretation note:
+
+- this is the current higher-level client compatibility truth source
+- the first recorded run:
+  - `runs/2026-03-12/20260312T021942-snapshot-07-normal-usage-check/`
+  - still showed raw `v4l2-ctl` success after manual setup
+  - but it proved the normal-usage gap remains:
+    - `ffmpeg`: `ioctl(VIDIOC_STREAMON): Broken pipe`
+    - `mpv`: same `Broken pipe` path via FFmpeg's V4L2 demuxer
+    - `gst-launch-1.0`: buffer-pool activation failed, then
+      `reason not-negotiated (-4)`
+    - `libcamera-*` / `cam`: missing on this machine
+    - `cheese`: present, but not auto-run because it needs an interactive GUI
+- use this script when you change client-facing behavior, not when you are only
+  narrowing raw pipeline state
+
 ## Current interpretation rule
 
 For this project, `01-clean-boot-check.sh` is the primary truth source for
@@ -255,6 +309,10 @@ capture-phase truth source becomes `04-userspace-capture-check.sh`.
 If `04-userspace-capture-check.sh` then fails at `VIDIOC_STREAMON` while the
 media graph still looks healthy, the next no-reboot discriminator becomes
 `05-userspace-format-sweep.sh`.
+
+Once `06-media-pipeline-setup.sh` proves the raw manual path works, the next
+truth source for "can normal clients use it?" becomes
+`07-normal-usage-check.sh`.
 
 If a clean boot already wedged the PMIC / I2C path, later reload-only checks
 may show secondary fallout such as GPIO acquisition failures. Those reload

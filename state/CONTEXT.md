@@ -57,6 +57,14 @@ with strong evidence.
     `Size Image = 10,082,880`, `Bytes per Line = 5,184`
   - the `5,184`-byte delta is exactly one extra scanline in the allocated
     capture buffer
+  - higher-level client compatibility still fails after the known-good manual
+    setup:
+    - `ffmpeg`: `ioctl(VIDIOC_STREAMON): Broken pipe`
+    - `mpv`: same `Broken pipe` path through FFmpeg's V4L2 demuxer
+    - GStreamer `v4l2src`: buffer-pool activation failed, then
+      `reason not-negotiated (-4)`
+    - `libcamera-*` / `cam`: missing locally
+    - `cheese`: present, but not yet exercised in a GUI session
   - post-boot PMIC dumping still returns `ERROR` for every register
 
 ## What March 9 Added
@@ -141,6 +149,25 @@ with strong evidence.
     - capture-node `Size Image = 10,082,880`
     - `Bytes per Line = 5,184`
     - delta `5,184` bytes = exactly one scanline
+- staged and ran `scripts/07-normal-usage-check.sh` as the first repeatable
+  higher-level client compatibility probe:
+  - run:
+    - `runs/2026-03-12/20260312T021942-snapshot-07-normal-usage-check/`
+  - result:
+    - raw `v4l2-ctl` sanity capture still succeeded after the known-good
+      manual setup
+    - installed headless higher-level clients still failed:
+      - `ffmpeg`: `ioctl(VIDIOC_STREAMON): Broken pipe`
+      - `mpv`: same `Broken pipe` path via FFmpeg's V4L2 demuxer
+      - GStreamer `v4l2src`: buffer-pool activation failed, then
+        `reason not-negotiated (-4)`
+    - local tool availability matters:
+      - `ffmpeg`, `gst-launch-1.0`, `mpv`, and `cheese` are installed
+      - `libcamera-hello`, `libcamera-still`, `libcamera-vid`, and `cam` are
+        missing
+    - so the repo now has a direct measured answer:
+      - manual raw capture works
+      - normal client usage still does not
 
 ## What March 11 Added
 
@@ -318,6 +345,10 @@ with strong evidence.
   firmware gap.
 - The `media-ctl -R` route command returns `ENOTSUP` on the IPU7 CSI2 entity,
   but that is not needed -- link enable + format alignment is sufficient.
+- `scripts/07-normal-usage-check.sh` now proves the remaining gap is at the
+  higher-level client layer, not at the raw `v4l2-ctl` layer:
+  - `ffmpeg` / `mpv` fail at `VIDIOC_STREAMON` with `Broken pipe`
+  - GStreamer `v4l2src` fails allocation / `not-negotiated`
 - 5x `csi2-0 error: Received packet is too long` warnings appear during
   capture; the current hard clue is a one-scanline mismatch between
   `bytesused` and `Size Image`, so this still looks like a CSI2
@@ -330,12 +361,16 @@ with strong evidence.
 1. Use `exp18` as the current kernel branch.
 2. Use fresh-boot `scripts/06-media-pipeline-setup.sh` reruns as the capture
    truth source for userspace-path changes.
-3. Investigate the `Received packet is too long` CSI2 warnings and the
+3. Use `scripts/07-normal-usage-check.sh` as the current higher-level client
+   compatibility truth source.
+4. Investigate the `Received packet is too long` CSI2 warnings and the
    one-scanline `Size Image` vs `bytesused` mismatch.
-4. Test with higher-level capture tools (`libcamera`, `cheese`, `mpv`).
-5. Clean up the patch stack for upstream submission.
-6. Fix or replace the post-boot PMIC dump path.
-7. Do not rerun the broad `exp7` snapshot patch as a default path.
+5. Investigate why `ffmpeg` / `mpv` still hit `VIDIOC_STREAMON` `Broken pipe`
+   and why GStreamer `v4l2src` fails allocation / negotiation.
+6. Install and try `libcamera-*` / `cam`, then manually exercise `cheese`.
+7. Clean up the patch stack for upstream submission.
+8. Fix or replace the post-boot PMIC dump path.
+9. Do not rerun the broad `exp7` snapshot patch as a default path.
 
 ## Key Paths
 

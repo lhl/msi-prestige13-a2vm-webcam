@@ -1,0 +1,7 @@
+CMD: git_safe status --short
+ M README.md
+?? runs/2026-03-12/20260312T021856-snapshot-07-normal-usage-check/
+?? runs/2026-03-12/20260312T021942-snapshot-07-normal-usage-check/
+?? scripts/07-normal-usage-check.sh
+
+EXIT_STATUS: 0

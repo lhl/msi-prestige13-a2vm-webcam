@@ -6,6 +6,8 @@ Updated: 2026-03-12
 
 The webcam is now streaming raw frames on Linux on this laptop.
 
+Normal plug-and-play webcam usage is still **not** working yet.
+
 On the `exp18` kernel branch with explicit userspace `media-ctl` pipeline
 setup, `/dev/video0` delivers real Bayer sensor data:
 
@@ -56,6 +58,14 @@ Known remaining issues:
   is sufficient
 - no automated pipeline setup yet; the `media-ctl` commands above must be run
   manually or scripted before each capture session
+- higher-level userspace clients still fail even after the known-good manual
+  pipeline setup:
+  - `ffmpeg`: `ioctl(VIDIOC_STREAMON): Broken pipe`
+  - `mpv`: same `Broken pipe` failure via FFmpeg's V4L2 demuxer
+  - GStreamer `v4l2src`: buffer-pool activation failed, then
+    `reason not-negotiated (-4)`
+  - `libcamera-*` / `cam`: missing on this machine, so not yet tested
+  - `cheese`: present, but not yet exercised in a manual GUI session
 
 For the full March 9 review, see `docs/20260309-status-report.md`.
 
@@ -85,6 +95,11 @@ For the full March 9 review, see `docs/20260309-status-report.md`.
   - plausible 10-bit Bayer pixel values
   - steps 2-5 of `scripts/06-media-pipeline-setup.sh` are causally sufficient
     to move the graph into the working state
+- the higher-level gap is now directly measured:
+  - `scripts/07-normal-usage-check.sh` proves raw `v4l2-ctl` still works from
+    that state, but installed headless clients do not
+  - `ffmpeg` / `mpv` fail at `VIDIOC_STREAMON` with `Broken pipe`
+  - GStreamer `v4l2src` fails allocation / negotiation before frame delivery
 
 ## What Is Still Incomplete
 
@@ -93,6 +108,11 @@ For the full March 9 review, see `docs/20260309-status-report.md`.
 - `csi2-0 error: Received packet is too long` warnings appear during capture
   (5 instances observed); the current leading clue is a one-scanline mismatch
   between `bytesused` and `Size Image`
+- higher-level client compatibility is still broken:
+  - `ffmpeg` / `mpv` fail at `VIDIOC_STREAMON` with `Broken pipe`
+  - GStreamer `v4l2src` fails buffer-pool activation and `not-negotiated`
+  - `libcamera-*` / `cam` are not installed locally
+  - `cheese` still needs a manual GUI follow-up
 - post-boot PMIC register dumping still returns `ERROR` for every register
 - upstreamability: the current patch stack includes local experiment
   instrumentation that would need cleanup before submission
@@ -499,12 +519,18 @@ What has been proven through the full experiment chain:
    - current hard clue: `Size Image - bytesused = 5,184`, exactly one
      scanline at the current `Bytes per Line`
    - frames still arrive, so this may be cosmetic
-2. Fix or replace the post-boot PMIC dump path.
+2. Investigate why higher-level userspace clients still fail from the
+   otherwise working manual setup state.
+   - `ffmpeg` / `mpv`: `VIDIOC_STREAMON` `Broken pipe`
+   - GStreamer `v4l2src`: buffer-pool activation failed, then
+     `reason not-negotiated (-4)`
+3. Fix or replace the post-boot PMIC dump path.
    - `scripts/pmic-reg-dump.sh` still returns `ERROR` for every register
-3. Clean up the patch stack for upstream submission.
+4. Clean up the patch stack for upstream submission.
    - remove experiment instrumentation logging
    - separate the minimal board-data changes from the diagnostic scaffolding
-4. Test with higher-level capture tools (e.g. `libcamera`, `cheese`, `mpv`)
-   to confirm the pipeline works end to end for normal applications.
-5. Consider whether automated pipeline setup should be handled by a udev rule,
+5. Continue higher-level tool testing:
+   - install and try `libcamera-*` / `cam`
+   - manually exercise `cheese` in a GUI session
+6. Consider whether automated pipeline setup should be handled by a udev rule,
    a `libcamera` pipeline handler, or similar.

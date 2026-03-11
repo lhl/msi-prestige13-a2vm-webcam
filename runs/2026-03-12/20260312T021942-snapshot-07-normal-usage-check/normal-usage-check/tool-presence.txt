@@ -1,0 +1,8 @@
+ffmpeg: present at /usr/bin/ffmpeg
+gst-launch-1.0: present at /usr/bin/gst-launch-1.0
+mpv: present at /usr/bin/mpv
+cheese: present at /usr/bin/cheese
+libcamera-hello: missing
+libcamera-still: missing
+libcamera-vid: missing
+cam: missing
