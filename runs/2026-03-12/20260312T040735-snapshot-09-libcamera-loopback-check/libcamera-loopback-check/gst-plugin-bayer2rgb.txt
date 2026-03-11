@@ -1,0 +1,74 @@
+CMD: gst-inspect-1.0 bayer2rgb
+Factory Details:
+  Rank                     none (0)
+  Long-name                Bayer to RGB decoder for cameras
+  Klass                    Filter/Converter/Video
+  Description              Converts video/x-bayer to video/x-raw
+  Author                   William Brack <wbrack@mmm.com.hk>
+  Documentation            https://gstreamer.freedesktop.org/documentation/bayer/bayer2rgb.html
+
+Plugin Details:
+  Name                     bayer
+  Description              Elements to convert Bayer images
+  Filename                 /usr/lib/gstreamer-1.0/libgstbayer.so
+  Version                  1.28.1
+  License                  LGPL
+  Source module            gst-plugins-bad
+  Documentation            https://gstreamer.freedesktop.org/documentation/bayer/
+  Source release date      2026-02-26
+  Binary package           Arch Linux GStreamer 1.28.1-1
+  Origin URL               https://www.archlinux.org/
+
+GObject
+ +----GInitiallyUnowned
+       +----GstObject
+             +----GstElement
+                   +----GstBaseTransform
+                         +----GstBayer2RGB
+
+Element Flags:
+
+Pad Templates:
+  SINK template: 'sink'
+    Availability: Always
+    Capabilities:
+      video/x-bayer
+                 format: { (string)bggr, (string)rggb, (string)grbg, (string)gbrg, (string)bggr10le, (string)rggb10le, (string)grbg10le, (string)gbrg10le, (string)bggr10be, (string)rggb10be, (string)grbg10be, (string)gbrg10be, (string)bggr12le, (string)rggb12le, (string)grbg12le, (string)gbrg12le, (string)bggr12be, (string)rggb12be, (string)grbg12be, (string)gbrg12be, (string)bggr14le, (string)rggb14le, (string)grbg14le, (string)gbrg14le, (string)bggr14be, (string)rggb14be, (string)grbg14be, (string)gbrg14be, (string)bggr16le, (string)rggb16le, (string)grbg16le, (string)gbrg16le, (string)bggr16be, (string)rggb16be, (string)grbg16be, (string)gbrg16be } (GstValueList)
+                  width: [ 1, 2147483647 ] (GstIntRange)
+                 height: [ 1, 2147483647 ] (GstIntRange)
+              framerate: [ 0/1, 2147483647/1 ] (GstFractionRange)
+  
+  SRC template: 'src'
+    Availability: Always
+    Capabilities:
+      video/x-raw
+                 format: { (string)RGBx, (string)xRGB, (string)BGRx, (string)xBGR, (string)RGBA, (string)ARGB, (string)BGRA, (string)ABGR, (string)RGBA64_LE, (string)ARGB64_LE, (string)BGRA64_LE, (string)ABGR64_LE, (string)RGBA64_BE, (string)ARGB64_BE, (string)BGRA64_BE, (string)ABGR64_BE } (GstValueList)
+                  width: [ 1, 2147483647 ] (GstIntRange)
+                 height: [ 1, 2147483647 ] (GstIntRange)
+              framerate: [ 0/1, 2147483647/1 ] (GstFractionRange)
+
+Element has no clocking capabilities.
+Element has no URI handling capabilities.
+
+Pads:
+  SINK: 'sink'
+    Pad Template: 'sink'
+  SRC: 'src'
+    Pad Template: 'src'
+
+Element Properties:
+
+  name                : The name of the object
+                        flags: readable, writable
+                        String. Default: "bayer2rgb0"
+  
+  parent              : The parent of the object
+                        flags: readable, writable
+                        Object of type "GstObject"
+  
+  qos                 : Handle Quality-of-Service events
+                        flags: readable, writable
+                        Boolean. Default: false
+  
+
+EXIT_STATUS: 0

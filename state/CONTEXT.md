@@ -75,11 +75,13 @@ with strong evidence.
   - the two next integration routes are now codified in `09`:
     - `libcamera`
     - `v4l2loopback`
-  - the first local `09` result is prerequisite-negative for both:
-    - `cam`, `libcamera-hello`, `libcamera-still`, and `libcamera-vid` are
-      missing locally
-    - `v4l2loopback` is not installed / loaded locally
-    - no loopback device exists
+  - `09` has now split the app-facing state cleanly:
+    - `libcamera`: still blocked locally because `cam`,
+      `libcamera-hello`, `libcamera-still`, and `libcamera-vid` are missing
+    - `v4l2loopback`: now works as a consumer-facing bridge when
+      `/dev/video42` exists
+      - `ffmpeg` consumed the bridged `YUY2` stream successfully
+      - GStreamer `v4l2src device=/dev/video42 ! fakesink` also succeeded
   - `cheese`: present, but not yet exercised in a GUI session
   - post-boot PMIC dumping still returns `ERROR` for every register
 
@@ -221,6 +223,18 @@ with strong evidence.
     - the run now records the exact rerun prerequisites:
       - install libcamera tools and rerun
       - create a loopback device with `modprobe v4l2loopback ...` and rerun
+- reran `scripts/09-libcamera-loopback-check.sh` after installing/loading
+  `v4l2loopback` and creating `/dev/video42`:
+  - run:
+    - `runs/2026-03-12/20260312T040735-snapshot-09-libcamera-loopback-check/`
+  - result:
+    - raw `BA10` capture still succeeded from the known-good configured state
+    - the `v4l2loopback` path is now consumer-facing:
+      - `ffmpeg` consumed `/dev/video42` successfully as `yuyv422`
+      - GStreamer `v4l2src device=/dev/video42 ! fakesink` also succeeded
+    - `libcamera` remains untested locally because its tools are still missing
+    - the remaining gap is now packaging/automation for the bridge rather than
+      whether the bridge concept works at all
 
 ## What March 11 Added
 
@@ -434,9 +448,10 @@ with strong evidence.
 5. Use `scripts/09-libcamera-loopback-check.sh` as the current next-step
    integration truth source for both `libcamera` and `v4l2loopback`.
 6. Install libcamera tools and rerun `09`.
-7. Install/load `v4l2loopback`, create a loopback device, and rerun `09`.
-8. Test whether the working GStreamer Bayer bridge can be exposed to normal
-   apps, or whether the real answer is `libcamera` / an IPU7 pipeline handler.
+7. Package the now-working `v4l2loopback` bridge into a repeatable user-facing
+   path, then test apps against `/dev/video42`.
+8. Decide whether the long-term answer should still be `libcamera` / an
+   IPU7 pipeline handler rather than only a repo-local bridge.
 9. Determine why the advertised direct standard-pixel formats (`YUYV`,
    `UYVY`, `BGR3`, etc.) are not actually streamable.
 10. Investigate the `Received packet is too long` CSI2 warnings and the

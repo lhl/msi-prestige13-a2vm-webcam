@@ -45,9 +45,10 @@ with strong evidence.
   - the next app-facing routes are now explicit:
     - `libcamera`
     - `v4l2loopback`
-  - current local `09` result is still prerequisite-negative for both:
-    - `libcamera` tools missing
-    - `v4l2loopback` module/device missing
+  - current local `09` result is now split:
+    - `libcamera` tools still missing
+    - `v4l2loopback` bridge is consumer-facing through `/dev/video42` once
+      the module/device is present
   - the post-boot PMIC dump path still returns `ERROR` for every register
 - completed negative branches:
   - `GPIO1` / `GPIO2` role swap
@@ -205,18 +206,24 @@ with strong evidence.
   - `scripts/09-libcamera-loopback-check.sh` now exists and the first live run
     is recorded under
     `runs/2026-03-12/20260312T033726-snapshot-09-libcamera-loopback-check/`
-  - current local result is prerequisite-negative, not capability-positive:
+  - latest positive rerun is recorded under
+    `runs/2026-03-12/20260312T040735-snapshot-09-libcamera-loopback-check/`
+  - current local result is split:
     - `cam`, `libcamera-hello`, `libcamera-still`, and `libcamera-vid` are
-      missing
-    - `modinfo v4l2loopback` reports `Module v4l2loopback not found`
-    - no loopback device exists
+      still missing
+    - the `v4l2loopback` bridge now feeds a normal consumer-facing
+      `/dev/video42` node
 - [ ] Test remaining higher-level tools that were not covered headlessly.
   - install and try `libcamera-*` / `cam`
   - manually exercise `cheese` in a GUI session
-- [ ] Determine whether the working explicit GStreamer bridge can be exposed as
+- [x] Determine whether the working explicit GStreamer bridge can be exposed as
   a more normal webcam path.
-  - likely candidates: `v4l2loopback`, libcamera pipeline handling, or a small
-    repo-local bridge wrapper
+  - **Answer: yes, through `v4l2loopback`.**
+  - `scripts/09-libcamera-loopback-check.sh --loopback-device /dev/video42`
+    proved a consumer-facing node with both `ffmpeg` and GStreamer consumers.
+- [ ] Package the working bridge as a more normal webcam path.
+  - likely candidates: a small repo-local wrapper, a user service, or a manual
+    launch recipe for `/dev/video42`
 - [ ] Determine why the advertised direct standard-pixel formats (`YUYV`,
   `UYVY`, `BGR3`, etc.) are not actually streamable from the configured state.
 - [ ] Consider automated pipeline setup (udev rule, libcamera handler, etc.).
@@ -272,10 +279,12 @@ with strong evidence.
 5. Use `scripts/09-libcamera-loopback-check.sh` as the next-step integration
    truth source for both `libcamera` and `v4l2loopback`.
 6. Install `libcamera` tools and rerun `09`.
-7. Install/load `v4l2loopback`, create a loopback node, and rerun `09`.
-8. Test whether the working GStreamer Bayer bridge can be exposed to normal
-   apps, or whether the real answer is `libcamera` / an IPU7-specific pipeline
-   handler.
+7. Turn the working `v4l2loopback` bridge into a repeatable user-facing path:
+   - preserve the exact producer command
+   - decide whether the right packaging is a small wrapper or a user service
+   - then test real apps against `/dev/video42`
+8. Determine whether the real long-term answer should still be `libcamera` /
+   an IPU7-specific pipeline handler rather than only a repo-local bridge.
 9. Determine why the advertised direct standard-pixel formats (`YUYV`,
    `UYVY`, `BGR3`, etc.) are not actually streamable.
 10. Investigate the `csi2-0 error: Received packet is too long` warnings and
@@ -301,8 +310,8 @@ with strong evidence.
   succeed?
 - Will `libcamera` discovery or capture work once the tools are installed on
   this machine?
-- Will a `v4l2loopback` bridge produce a normal consumer-facing webcam node
-  once the module is installed and a device is created?
+- What is the best packaging for the now-working `v4l2loopback` bridge:
+  one-shot wrapper, persistent user service, or something else?
 - Why does userspace PMIC register dumping fail completely after boot when the
   kernel can still log `TPS68470 REVID: 0x21`?
 - What is the minimum clean patch set needed for upstream submission?

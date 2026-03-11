@@ -1,0 +1,4 @@
+CMD: bash -lc lsmod\ \|\ grep\ -E\ \'\^v4l2loopback\'
+v4l2loopback           73728  0
+
+EXIT_STATUS: 0

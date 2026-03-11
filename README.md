@@ -20,12 +20,14 @@ the MSI Prestige 13 AI+ Evo A2VMG / A2VM family.
   and `cheese` remains a manual GUI follow-up. The new `08` run narrows that
   gap: direct app-friendly `YUYV` still fails, but an explicit GStreamer
   `video/x-bayer` path plus `bayer2rgb` can convert frames and emit a normal
-  `2592x1944` JPEG. The new `09` run packages the two next integration paths
-  into one checkpoint and records the current local prerequisite state:
-  `libcamera` tools are not installed here, and `v4l2loopback` is neither
-  installed nor configured. The other main unresolved issues are the
-  `Received packet is too long` warnings with a one-scanline buffer delta,
-  broken post-boot PMIC visibility, and patch cleanup for upstreaming.
+  `2592x1944` JPEG. The latest `09` run now proves the first consumer-facing
+  bridge path: with `v4l2loopback` loaded and `/dev/video42` present, the
+  repo-local GStreamer Bayer-to-YUY2 bridge feeds a normal webcam node that
+  both `ffmpeg` and GStreamer can consume successfully. `libcamera` tools are
+  still not installed locally, direct `/dev/video0` plug-and-play use is still
+  broken, and the other main unresolved issues are the `Received packet is too
+  long` warnings with a one-scanline buffer delta, broken post-boot PMIC
+  visibility, and patch cleanup for upstreaming.
 - Current leading interpretation: basic bring-up is complete; remaining work is
   client-compatibility cleanup, warning cleanup, automation, and upstreamability
   rather than first sensor wake-up.
@@ -223,9 +225,13 @@ msi-prestige13-a2vm-webcam/
 10. Use `scripts/09-libcamera-loopback-check.sh` as the next-step integration
     truth source for both `libcamera` and `v4l2loopback`.
    - latest local result:
-     - `libcamera` tools are missing
-     - `v4l2loopback` is not installed or loaded
-     - the script records exact rerun prerequisites for both paths
+     - `libcamera` tools are still missing
+     - the `v4l2loopback` bridge is consumer-facing when `/dev/video42` is
+       present
+     - `ffmpeg` and GStreamer both consumed the bridged `YUY2` stream from
+       `/dev/video42`
+     - the remaining work is packaging that bridge for normal apps and fixing
+       the underlying warning/direct-format issues
 11. Investigate the remaining `Received packet is too long` warnings as a
    geometry-alignment issue.
    - current hard clue: `bytesused = 10,077,696` while

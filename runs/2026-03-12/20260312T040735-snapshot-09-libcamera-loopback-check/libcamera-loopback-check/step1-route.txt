@@ -1,0 +1,4 @@
+CMD: media-ctl -d /dev/media0 -R \"Intel\ IPU7\ CSI2\ 0\"\ \[0/0\ -\>\ 1/0\ \[1\]\]
+Unable to setup routes: Operation not supported (95)
+
+EXIT_STATUS: 1

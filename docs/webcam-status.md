@@ -6,11 +6,15 @@ Updated: 2026-03-12
 
 The webcam is now streaming raw frames on Linux on this laptop.
 
-Normal plug-and-play webcam usage is still **not** working yet.
+Direct plug-and-play usage from `/dev/video0` is still **not** working yet.
 
 An explicit userspace bridge now works: GStreamer can consume the raw Bayer
 stream with forced `video/x-bayer` caps, convert it through `bayer2rgb`, and
 emit a normal `2592x1944` JPEG artifact.
+
+That bridge can now also be repackaged as a normal webcam node through
+`v4l2loopback`: the latest `09` run fed `/dev/video42`, and both `ffmpeg` and
+GStreamer consumed the bridged `YUY2` stream successfully.
 
 The two next integration paths are now codified in one repeatable check:
 `scripts/09-libcamera-loopback-check.sh`.
@@ -83,9 +87,10 @@ Known remaining issues:
   - the next two integration routes are now explicit:
     - `libcamera`
     - `v4l2loopback`
-  - current local `09` result is still prerequisite-negative for both:
-    - `libcamera-*` / `cam`: missing on this machine
-    - `v4l2loopback`: module not installed/loaded; no loopback device exists
+  - the current local `09` result is now split:
+    - `libcamera-*` / `cam`: still missing on this machine
+    - `v4l2loopback`: consumer-facing success once the module is loaded and a
+      loopback node exists
   - `cheese`: present, but not yet exercised in a manual GUI session
 
 For the full March 9 review, see `docs/20260309-status-report.md`.
@@ -131,7 +136,9 @@ For the full March 9 review, see `docs/20260309-status-report.md`.
     place:
     - `libcamera`
     - `v4l2loopback`
-  - the first local run is still prerequisite-negative, not capability-positive
+  - the first local run (`033726`) was prerequisite-negative for both
+  - the later local run (`040735`) proved the `v4l2loopback` path is
+    consumer-facing through `/dev/video42`
 
 ## What Is Still Incomplete
 
@@ -148,8 +155,11 @@ For the full March 9 review, see `docs/20260309-status-report.md`.
     answer
   - GStreamer only works when explicit Bayer caps and conversion are supplied
   - `libcamera-*` / `cam` are not installed locally
-  - `v4l2loopback` is not installed / loaded locally, so the bridge-to-normal
-    `/dev/video*` path is not yet exercised here
+  - the `v4l2loopback` route now works locally, but only when the module is
+    loaded, `/dev/video42` exists, and the Bayer-to-YUY2 bridge producer is
+    started explicitly
+  - no automated bridge startup exists yet for apps to discover this as a
+    normal camera path after login or reboot
   - `cheese` still needs a manual GUI follow-up
 - post-boot PMIC register dumping still returns `ERROR` for every register
 - upstreamability: the current patch stack includes local experiment

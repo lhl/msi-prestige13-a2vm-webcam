@@ -1,0 +1,167 @@
+Source: scripts/09-libcamera-loopback-check.sh
+Purpose: document and probe both next normal-usage paths: libcamera and v4l2loopback
+
+Check start time:
+2026-03-12 04:07:36
+
+Configuration:
+media_device=/dev/media0
+video_device=/dev/video0
+loopback_device_effective=/dev/video42
+sensor_format=SGRBG10_1X10/2592x1944
+working_pixel_format=BA10
+gst_bayer_format=grbg10le
+bridge_output_format=YUY2
+bridge_output_ffmpeg_format=yuyv422
+
+Overall result:
+v4l2loopback bridge path is runnable and consumer-facing
+
+Known-good raw setup status:
+optional_route=ENOTSUP on IPU7 CSI2 (expected; route step not required)
+raw_refresh=ok
+raw_result=ok (40310784 bytes)
+geometry=bytesused=10077696; size_image=10082880; delta=5184 bytes; bytes_per_line=5184; extra_scanlines=1
+
+Libcamera path:
+status=not ready locally
+cam_list=failed (exit=127)
+libcamera_hello_list=failed (exit=127)
+libcamera_still_list=failed (exit=127)
+libcamera_vid_list=failed (exit=127)
+libcamera_still_capture=failed (exit=127)
+
+v4l2loopback path:
+status=bridge consumer succeeded
+modinfo=ok
+lsmod=ok
+loopback_device_exists=yes
+bridge_refresh=ok
+bridge_producer=ok (producer runtime window elapsed)
+loopback_v4l2=ok (20155392 bytes)
+loopback_ffmpeg=ok
+loopback_gstreamer=ok
+
+Manual follow-ups:
+libcamera next step:
+install libcamera tools (`cam`, `libcamera-hello`, `libcamera-still`, `libcamera-vid`) and rerun this script
+
+v4l2loopback next step:
+if v4l2loopback is installed for the running kernel, create a loopback node before rerunning:
+sudo modprobe v4l2loopback video_nr=42 card_label="MSI Webcam Bridge" exclusive_caps=1
+then rerun:
+scripts/09-libcamera-loopback-check.sh --loopback-device /dev/video42
+
+Higher-level tool presence:
+cam: missing
+libcamera-hello: missing
+libcamera-still: missing
+libcamera-vid: missing
+gst-launch-1.0: present at /usr/bin/gst-launch-1.0
+gst-inspect-1.0: present at /usr/bin/gst-inspect-1.0
+ffmpeg: present at /usr/bin/ffmpeg
+v4l2-ctl: present at /usr/bin/v4l2-ctl
+modprobe: present at /usr/bin/modprobe
+modinfo: present at /usr/bin/modinfo
+lsmod: present at /usr/bin/lsmod
+
+Current v4l-subdev nodes:
+/dev/v4l-subdev0
+/dev/v4l-subdev1
+/dev/v4l-subdev2
+/dev/v4l-subdev3
+/dev/v4l-subdev4
+
+Raw BA10 stream tail:
+		VIDIOC_REQBUFS returned 0 (Success)
+		VIDIOC_CREATE_BUFS returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_G_FMT returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_STREAMON returned 0 (Success)
+cap dqbuf: 0 seq:      0 bytesused: 10077696 ts: 7576.670418 field: None (ts-monotonic, ts-src-eof)
+cap dqbuf: 1 seq:      1 bytesused: 10077696 ts: 7576.703807 delta: 33.389 ms field: None (ts-monotonic, ts-src-eof)
+cap dqbuf: 2 seq:      2 bytesused: 10077696 ts: 7576.737196 delta: 33.389 ms field: None (ts-monotonic, ts-src-eof)
+cap dqbuf: 3 seq:      3 bytesused: 10077696 ts: 7576.770585 delta: 33.389 ms field: None (ts-monotonic, ts-src-eof)
+
+VIDIOC_QUERYCAP: ok
+
+EXIT_STATUS: 0
+
+cam -l tail:
+cam not installed
+EXIT_STATUS: 127
+
+libcamera-hello --list-cameras tail:
+libcamera-hello not installed
+EXIT_STATUS: 127
+
+libcamera-still capture tail:
+libcamera-still not installed
+EXIT_STATUS: 127
+
+v4l2loopback producer tail:
+CMD: timeout 8s gst-launch-1.0 -q v4l2src device=/dev/video0 io-mode=mmap \! video/x-bayer\,format=grbg10le\,width=2592\,height=1944\,framerate=30/1 \! bayer2rgb \! videoconvert \! video/x-raw\,format=YUY2\,width=2592\,height=1944\,framerate=30/1 \! v4l2sink device=/dev/video42 sync=false
+
+EXIT_STATUS: 124
+
+v4l2loopback ffmpeg tail:
+CMD: timeout 20s ffmpeg -hide_banner -nostdin -loglevel info -f v4l2 -input_format yuyv422 -framerate 30 -video_size 2592x1944 -i /dev/video42 -frames:v 2 -f null -
+Input #0, video4linux2,v4l2, from '/dev/video42':
+  Duration: N/A, start: 1.978073, bitrate: 2418647 kb/s
+  Stream #0:0: Video: rawvideo (YUY2 / 0x32595559), yuyv422, 2592x1944, 2418647 kb/s, 30 fps, 30 tbr, 1000k tbn, start 1.978073
+Stream mapping:
+  Stream #0:0 -> #0:0 (rawvideo (native) -> wrapped_avframe (native))
+Output #0, null, to 'pipe:':
+  Metadata:
+    encoder         : Lavf62.3.100
+  Stream #0:0: Video: wrapped_avframe, yuyv422(progressive), 2592x1944, q=2-31, 200 kb/s, 30 fps, 30 tbn
+    Metadata:
+      encoder         : Lavc62.11.100 wrapped_avframe
+[out#0/null @ 0x55be7a7b2000] video:1KiB audio:0KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: unknown
+frame=    2 fps=0.0 q=-0.0 Lsize=N/A time=00:00:00.10 bitrate=N/A speed=1.55x elapsed=0:00:00.06    
+
+EXIT_STATUS: 0
+
+v4l2loopback gstreamer tail:
+CMD: timeout 20s gst-launch-1.0 -q v4l2src device=/dev/video42 num-buffers=2 \! fakesink sync=false
+
+EXIT_STATUS: 0
+
+Kernel journal lines since check start:
+Mar 12 04:07:36 p13 kernel: ipu7_isys_csi2_error: 90 callbacks suppressed
+Mar 12 04:07:36 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:36 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:36 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:36 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:36 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:37 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:37 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:37 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:37 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:37 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:41 p13 kernel: ipu7_isys_csi2_error: 131 callbacks suppressed
+Mar 12 04:07:41 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:41 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:41 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:41 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:41 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:41 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:41 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:41 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:41 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:41 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+
+Artifacts:
+check_dir=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T040735-snapshot-09-libcamera-loopback-check/libcamera-loopback-check
+raw_stream_log=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T040735-snapshot-09-libcamera-loopback-check/libcamera-loopback-check/video0-ba10-stream.txt
+libcamera_still_capture_log=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T040735-snapshot-09-libcamera-loopback-check/libcamera-loopback-check/libcamera-still-capture.txt
+loopback_bridge_log=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T040735-snapshot-09-libcamera-loopback-check/libcamera-loopback-check/loopback-bridge-producer.txt
+loopback_ffmpeg_log=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T040735-snapshot-09-libcamera-loopback-check/libcamera-loopback-check/loopback-ffmpeg.txt
+loopback_gstreamer_log=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T040735-snapshot-09-libcamera-loopback-check/libcamera-loopback-check/loopback-gstreamer.txt

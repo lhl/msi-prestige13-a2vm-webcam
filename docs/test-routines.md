@@ -421,6 +421,13 @@ Interpretation note:
     - create a loopback node, for example:
       - `sudo modprobe v4l2loopback video_nr=42 card_label="MSI Webcam Bridge" exclusive_caps=1`
       - then rerun `scripts/09-libcamera-loopback-check.sh --loopback-device /dev/video42`
+- the current best positive run:
+  - `runs/2026-03-12/20260312T040735-snapshot-09-libcamera-loopback-check/`
+  - kept the same raw `BA10` base-path success
+  - proved the `v4l2loopback` route is now consumer-facing when `/dev/video42`
+    exists
+  - `ffmpeg` consumed `/dev/video42` successfully as `yuyv422`
+  - GStreamer `v4l2src device=/dev/video42 ! fakesink` also succeeded
 - use this script when you change the environment around `libcamera` or
   `v4l2loopback`, not when you are only narrowing the raw `isys` path
 

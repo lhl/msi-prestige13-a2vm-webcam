@@ -2,6 +2,42 @@
 
 ## 2026-03-12
 
+### Record the first consumer-facing `v4l2loopback` bridge result from `09`
+
+- Plan: preserve the first positive `/dev/video42` bridge run, remove the
+  scratch reruns around it, and update the repo docs so they stop describing
+  `v4l2loopback` as only a missing prerequisite.
+- Commands:
+  - user-ran:
+    - `sudo pacman -S dkms v4l2loopback-dkms`
+    - `sudo modprobe v4l2loopback video_nr=42 card_label="MSI Webcam Bridge" exclusive_caps=1`
+  - ran:
+    - `scripts/09-libcamera-loopback-check.sh --loopback-device /dev/video42`
+    - `bash -n scripts/09-libcamera-loopback-check.sh`
+    - `scripts/09-libcamera-loopback-check.sh --dry-run`
+  - kept run directory:
+    - `runs/2026-03-12/20260312T040735-snapshot-09-libcamera-loopback-check/`
+  - refreshed:
+    - `README.md`
+    - `docs/README.md`
+    - `docs/normal-usage-bridge-paths.md`
+    - `docs/test-routines.md`
+    - `docs/webcam-status.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+- Result:
+  - raw `BA10` capture still succeeded from the configured state
+  - the `v4l2loopback` route is now proven locally:
+    - `ffmpeg` consumed `/dev/video42` successfully as `yuyv422`
+    - GStreamer `v4l2src device=/dev/video42 ! fakesink` also succeeded
+  - the remaining gap moved from "can loopback work at all?" to
+    "how should this bridge be packaged and launched for normal apps?"
+  - `libcamera` remains untested locally because its tools are still missing
+  - `09` also got a small robustness fix so its producer status no longer
+    under-reports a successful bridge run when consumer probes already proved
+    success
+
 ### Stage and run `09` as the first unified `libcamera` / `v4l2loopback` check
 
 - Plan: turn the two next app-facing routes after `08` into one repeatable

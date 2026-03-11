@@ -1,0 +1,3 @@
+CMD: timeout 20s gst-launch-1.0 -q v4l2src device=/dev/video42 num-buffers=2 \! fakesink sync=false
+
+EXIT_STATUS: 0

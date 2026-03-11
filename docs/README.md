@@ -14,7 +14,8 @@ Current focus:
   Antti Laakso MSI Prestige 14 patch thread and what its daisy-chain model
   means for this A2VMG
 - `docs/normal-usage-bridge-paths.md` — comparison of the two next
-  app-facing routes: `libcamera` and `v4l2loopback`
+  app-facing routes: `libcamera` and `v4l2loopback`; `v4l2loopback` now has a
+  positive local `/dev/video42` result
 - `docs/20260309-status-report.md` — complete March 9 reverse-engineering and
   experiment report
 - `docs/webcam-status.md` — short current Linux webcam support assessment for

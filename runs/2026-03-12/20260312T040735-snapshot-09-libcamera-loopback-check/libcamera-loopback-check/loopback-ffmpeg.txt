@@ -1,0 +1,16 @@
+CMD: timeout 20s ffmpeg -hide_banner -nostdin -loglevel info -f v4l2 -input_format yuyv422 -framerate 30 -video_size 2592x1944 -i /dev/video42 -frames:v 2 -f null -
+Input #0, video4linux2,v4l2, from '/dev/video42':
+  Duration: N/A, start: 1.978073, bitrate: 2418647 kb/s
+  Stream #0:0: Video: rawvideo (YUY2 / 0x32595559), yuyv422, 2592x1944, 2418647 kb/s, 30 fps, 30 tbr, 1000k tbn, start 1.978073
+Stream mapping:
+  Stream #0:0 -> #0:0 (rawvideo (native) -> wrapped_avframe (native))
+Output #0, null, to 'pipe:':
+  Metadata:
+    encoder         : Lavf62.3.100
+  Stream #0:0: Video: wrapped_avframe, yuyv422(progressive), 2592x1944, q=2-31, 200 kb/s, 30 fps, 30 tbn
+    Metadata:
+      encoder         : Lavc62.11.100 wrapped_avframe
+[out#0/null @ 0x55be7a7b2000] video:1KiB audio:0KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: unknown
+frame=    2 fps=0.0 q=-0.0 Lsize=N/A time=00:00:00.10 bitrate=N/A speed=1.55x elapsed=0:00:00.06    
+
+EXIT_STATUS: 0

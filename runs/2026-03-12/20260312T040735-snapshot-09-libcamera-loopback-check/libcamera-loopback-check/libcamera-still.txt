@@ -1,0 +1,2 @@
+libcamera still artifact not created
+EXIT_STATUS: 1

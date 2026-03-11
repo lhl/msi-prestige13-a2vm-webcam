@@ -360,7 +360,22 @@ start_background_capture_command() {
     printf '\nEXIT_STATUS: %d\n' "${status}"
   ) >> "${output_path}" 2>&1 &
 
-  printf '%s\n' "$!"
+  BACKGROUND_CAPTURE_PID="$!"
+}
+
+wait_for_exit_status_in_log() {
+  local log_path="$1"
+  local attempts="${2:-20}"
+
+  while (( attempts > 0 )); do
+    if [[ -f "${log_path}" ]] && rg -q '^EXIT_STATUS: ' "${log_path}"; then
+      return 0
+    fi
+    sleep 0.1
+    attempts=$(( attempts - 1 ))
+  done
+
+  return 1
 }
 
 while (($# > 0)); do
@@ -740,7 +755,7 @@ if [[ -e "${loopback_device_effective}" ]]; then
 
   if (( GSTREAMER_AVAILABLE )) && rg -q '^EXIT_STATUS: 0$' "${gst_plugin_bayer_path}" && rg -q '^EXIT_STATUS: 0$' "${gst_plugin_sink_path}"; then
     refresh_pipeline "${loopback_bridge_refresh_path}" "${PIXEL_FORMAT}"
-    loopback_producer_pid=$(start_background_capture_command \
+    start_background_capture_command \
       "${loopback_bridge_log_path}" \
       timeout "${LOOPBACK_BRIDGE_TIMEOUT_S}s" \
       gst-launch-1.0 \
@@ -759,7 +774,8 @@ if [[ -e "${loopback_device_effective}" ]]; then
         ! \
         v4l2sink \
         device="${loopback_device_effective}" \
-        sync=false)
+        sync=false
+    loopback_producer_pid="${BACKGROUND_CAPTURE_PID:-}"
     loopback_producer_started=1
 
     sleep "${LOOPBACK_WAIT_S}"
@@ -815,6 +831,7 @@ if [[ -e "${loopback_device_effective}" ]]; then
       set +e
       wait "${loopback_producer_pid}"
       set -e
+      wait_for_exit_status_in_log "${loopback_bridge_log_path}" || true
     fi
   else
     printf 'loopback bridge prerequisites missing (gst-launch-1.0, bayer2rgb, or v4l2sink unavailable)\nEXIT_STATUS: 127\n' > "${loopback_bridge_log_path}"
@@ -848,6 +865,10 @@ loopback_stream_result=$(stream_result_from_log "${loopback_stream_log_path}" "$
 loopback_ffmpeg_result=$(tool_status_from_log "${loopback_ffmpeg_path}")
 loopback_gst_result=$(tool_status_from_log "${loopback_gst_path}")
 loopback_bridge_result=$(producer_status_from_log "${loopback_bridge_log_path}")
+if [[ "${loopback_bridge_result}" == "unknown (no exit status found)" ]] && \
+  [[ "${loopback_stream_result}" == ok* || "${loopback_ffmpeg_result}" == "ok" || "${loopback_gst_result}" == "ok" ]]; then
+  loopback_bridge_result="ok (consumer success confirms producer)"
+fi
 
 libcamera_still_size=$(file_size_bytes "${libcamera_still_artifact}")
 loopback_still_info=$(tail -n 5 "${libcamera_still_artifact_info_path}" 2>/dev/null || true)
@@ -885,7 +906,7 @@ if [[ -e "${loopback_device_effective}" ]]; then
   loopback_status="device present"
   if [[ "${loopback_stream_result}" == ok* || "${loopback_ffmpeg_result}" == "ok" || "${loopback_gst_result}" == "ok" ]]; then
     loopback_status="bridge consumer succeeded"
-  elif [[ "${loopback_bridge_result}" == "ok" ]]; then
+  elif [[ "${loopback_bridge_result}" == ok* ]]; then
     loopback_status="producer ran, but consumer probe failed"
   else
     loopback_status="device present but bridge failed"

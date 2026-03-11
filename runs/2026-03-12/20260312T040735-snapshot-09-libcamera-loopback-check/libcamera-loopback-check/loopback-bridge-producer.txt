@@ -1,0 +1,3 @@
+CMD: timeout 8s gst-launch-1.0 -q v4l2src device=/dev/video0 io-mode=mmap \! video/x-bayer\,format=grbg10le\,width=2592\,height=1944\,framerate=30/1 \! bayer2rgb \! videoconvert \! video/x-raw\,format=YUY2\,width=2592\,height=1944\,framerate=30/1 \! v4l2sink device=/dev/video42 sync=false
+
+EXIT_STATUS: 124

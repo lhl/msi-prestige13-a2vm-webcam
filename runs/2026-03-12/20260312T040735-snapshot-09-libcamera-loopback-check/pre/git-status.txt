@@ -1,0 +1,15 @@
+CMD: git_safe status --short
+ M PLAN.md
+ M README.md
+ M WORKLOG.md
+ M docs/README.md
+ M docs/normal-usage-bridge-paths.md
+ M docs/test-routines.md
+ M docs/webcam-status.md
+ M scripts/09-libcamera-loopback-check.sh
+ M state/CONTEXT.md
+?? runs/2026-03-12/20260312T040125-snapshot-09-libcamera-loopback-check/
+?? runs/2026-03-12/20260312T040503-snapshot-09-libcamera-loopback-check/
+?? runs/2026-03-12/20260312T040735-snapshot-09-libcamera-loopback-check/
+
+EXIT_STATUS: 0

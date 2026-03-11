@@ -1,0 +1,11 @@
+cam: missing
+libcamera-hello: missing
+libcamera-still: missing
+libcamera-vid: missing
+gst-launch-1.0: present at /usr/bin/gst-launch-1.0
+gst-inspect-1.0: present at /usr/bin/gst-inspect-1.0
+ffmpeg: present at /usr/bin/ffmpeg
+v4l2-ctl: present at /usr/bin/v4l2-ctl
+modprobe: present at /usr/bin/modprobe
+modinfo: present at /usr/bin/modinfo
+lsmod: present at /usr/bin/lsmod

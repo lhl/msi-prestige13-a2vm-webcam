@@ -96,8 +96,14 @@ What success would mean:
 
 Current local status:
 
-- `v4l2loopback` is not currently installed or loaded on this machine
-- no loopback `/dev/video*` device is present
+- `v4l2loopback` is now installed for the running kernel and `/dev/video42`
+  was created successfully
+- `scripts/09-libcamera-loopback-check.sh --loopback-device /dev/video42`
+  proved the bridge is consumer-facing:
+  - `ffmpeg` consumed `/dev/video42` as `yuyv422`
+  - GStreamer `v4l2src device=/dev/video42 ! fakesink` also succeeded
+- the remaining work on this route is packaging and automation, not first
+  proof of viability
 
 ## Repo Entry Point
 

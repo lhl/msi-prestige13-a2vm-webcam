@@ -1,0 +1,43 @@
+CMD: v4l2-ctl --all -d /dev/video42
+Driver Info:
+	Driver name      : v4l2 loopback
+	Card type        : MSI Webcam Bridge
+	Bus info         : platform:v4l2loopback-042
+	Driver version   : 7.0.0
+	Capabilities     : 0x85200002
+		Video Output
+		Read/Write
+		Streaming
+		Extended Pix Format
+		Device Capabilities
+	Device Caps      : 0x05200002
+		Video Output
+		Read/Write
+		Streaming
+		Extended Pix Format
+Priority: 2
+Video output: 0 (loopback in)
+Format Video Output:
+	Width/Height      : 2592/1944
+	Pixel Format      : 'YUYV' (YUYV 4:2:2)
+	Field             : None
+	Bytes per Line    : 5184
+	Size Image        : 10077696
+	Colorspace        : Rec. 709
+	Transfer Function : sRGB
+	YCbCr/HSV Encoding: ITU-R 601
+	Quantization      : Limited Range
+	Flags             : 
+Streaming Parameters Video Output:
+	Capabilities     : timeperframe
+	Frames per second: 30.000 (30/1)
+	Write buffers    : 2
+
+User Controls
+
+                    keep_format 0x0098f900 (bool)   : default=0 value=0 flags=has-min-max
+              sustain_framerate 0x0098f901 (bool)   : default=0 value=0 flags=has-min-max
+                        timeout 0x0098f902 (int)    : min=0 max=100000 step=1 default=0 value=0 flags=has-min-max
+               timeout_image_io 0x0098f903 (button) : value=0 flags=write-only, execute-on-write
+
+EXIT_STATUS: 0

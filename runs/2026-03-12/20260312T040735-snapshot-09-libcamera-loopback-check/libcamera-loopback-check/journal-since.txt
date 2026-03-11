@@ -1,0 +1,22 @@
+Mar 12 04:07:36 p13 kernel: ipu7_isys_csi2_error: 90 callbacks suppressed
+Mar 12 04:07:36 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:36 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:36 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:36 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:36 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:37 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:37 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:37 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:37 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:37 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:41 p13 kernel: ipu7_isys_csi2_error: 131 callbacks suppressed
+Mar 12 04:07:41 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:41 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:41 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:41 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:41 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:41 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:41 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:41 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:41 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 04:07:41 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
