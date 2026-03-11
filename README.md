@@ -94,6 +94,7 @@ msi-prestige13-a2vm-webcam/
 │   ├── 02-ov5675-reload-check.sh
 │   ├── 03-ov5675-identify-debug-check.sh
 │   ├── 04-userspace-capture-check.sh
+│   ├── 05-userspace-format-sweep.sh
 │   ├── exp*-*-update.sh
 │   ├── exp*-*-verify.sh
 │   └── webcam-run.sh
@@ -185,6 +186,8 @@ msi-prestige13-a2vm-webcam/
    - reuse the positive `exp18` patch unchanged
    - the first `/dev/video0` stream attempt now reaches `VIDIOC_STREAMON`
      and fails there with `Link has been severed`
+   - use `scripts/05-userspace-format-sweep.sh` to repeat the no-reboot
+     multi-node format sweep
    - forcing `/dev/video0` through `/dev/video7` to `4096x3072 BA10` is
      accepted at `VIDIOC_S_FMT`, but all eight nodes still fail
      `VIDIOC_STREAMON` with `Link has been severed`

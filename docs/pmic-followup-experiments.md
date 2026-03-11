@@ -877,6 +877,7 @@ Extra module rebuild/install:
 
 Scripts:
 - `scripts/04-userspace-capture-check.sh`
+- `scripts/05-userspace-format-sweep.sh`
 - `scripts/exp19-ms13q3-userspace-capture-validation-update.sh`
 - `scripts/exp19-ms13q3-userspace-capture-validation-verify.sh`
 
@@ -885,6 +886,9 @@ Implemented workflow shape:
 - capture a normal post-boot snapshot first
 - inspect the current media graph and selected `/dev/video*` node
 - attempt a raw `v4l2-ctl` streaming capture on `/dev/video0` by default
+- if that first stream fails later at `VIDIOC_STREAMON`, use
+  `scripts/05-userspace-format-sweep.sh` as the repeatable no-reboot
+  multi-node format-alignment follow-up
 - record:
   - stream exit status
   - raw-output file size

@@ -147,6 +147,49 @@ Interpretation note:
   pipeline configuration, permissions, or userspace behavior rather than first
   sensor wake-up
 
+## `scripts/05-userspace-format-sweep.sh`
+
+Use this after `scripts/04-userspace-capture-check.sh` shows a
+`VIDIOC_STREAMON` severed-link failure and you want one repeatable no-reboot
+check for whether explicit capture-node format alignment changes the result.
+
+What it does:
+
+- captures a standard snapshot run
+- records the current media graph once for the whole sweep
+- sweeps selected `/dev/video*` nodes
+- for each selected node:
+  - records before/after `v4l2-ctl --all`
+  - records `--list-formats-ext`
+  - attempts one explicit `--set-fmt-video` plus raw stream capture
+- writes one focused summary with:
+  - the requested format for the whole sweep
+  - per-node raw-output sizes
+  - per-node `VIDIOC_S_FMT` / `VIDIOC_STREAMON` result lines
+  - the relevant kernel journal lines since the sweep started
+
+Default targets:
+
+- `/dev/video0` through `/dev/video7`
+- width `4096`
+- height `3072`
+- pixel format `BA10`
+
+Example:
+
+```bash
+scripts/05-userspace-format-sweep.sh
+```
+
+Interpretation note:
+
+- this is the first repeatable no-reboot follow-up after `exp19`
+- if all tested nodes accept `VIDIOC_S_FMT` to `4096x3072 BA10` but still fail
+  `VIDIOC_STREAMON`, the simple default `/dev/video0` format mismatch is ruled
+  out as the main explanation
+- when that happens, the next remaining userspace question is explicit
+  media-pad programming versus a deeper `isys` capture-path gap
+
 ## Current interpretation rule
 
 For this project, `01-clean-boot-check.sh` is the primary truth source for
@@ -154,6 +197,10 @@ boot-time bring-up failures.
 
 Once the sensor already binds into the media graph on `exp18`, the first
 capture-phase truth source becomes `04-userspace-capture-check.sh`.
+
+If `04-userspace-capture-check.sh` then fails at `VIDIOC_STREAMON` while the
+media graph still looks healthy, the next no-reboot discriminator becomes
+`05-userspace-format-sweep.sh`.
 
 If a clean boot already wedged the PMIC / I2C path, later reload-only checks
 may show secondary fallout such as GPIO acquisition failures. Those reload
@@ -186,3 +233,8 @@ Interpretation rule stays the same:
   - it reuses the positive `exp18` patch
   - its verify wrapper uses `scripts/04-userspace-capture-check.sh`
   - its goal is capture/userspace validation, not another PMIC state question
+- the later no-reboot format follow-up is intentionally outside the
+  update/reboot experiment wrappers:
+  - use `scripts/05-userspace-format-sweep.sh`
+  - it is meant to run on the already-booted positive branch without another
+    kernel change

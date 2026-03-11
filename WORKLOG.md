@@ -2,6 +2,42 @@
 
 ## 2026-03-11
 
+### Add a repeatable script for the no-reboot userspace format sweep
+
+- Plan: turn the manual post-`exp19` no-reboot format sweep into a stable
+  numbered checkpoint so the same multi-node capture-path discriminator can be
+  rerun without retyping the `v4l2-ctl` loop, and point the docs at that
+  script.
+- Commands:
+  - reviewed:
+    - `scripts/04-userspace-capture-check.sh`
+    - `docs/test-routines.md`
+    - `docs/README.md`
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+  - refreshed:
+    - `scripts/05-userspace-format-sweep.sh`
+    - `docs/test-routines.md`
+    - `docs/README.md`
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+  - validated:
+    - `bash -n scripts/05-userspace-format-sweep.sh`
+    - `scripts/05-userspace-format-sweep.sh --dry-run`
+- Result:
+  - the no-reboot multi-node format sweep is now a repeatable numbered test
+    routine instead of a one-off shell loop
+  - the docs now point to `scripts/05-userspace-format-sweep.sh` as the next
+    userland follow-up after `exp19` shows a severed-link `STREAMON` failure
+  - the existing recorded manual sweep remains the first evidence batch, but
+    future reruns now have a stable repo-local entrypoint
+
 ### Run no-reboot userspace format sweep after `exp19`
 
 - Plan: test whether the visible `/dev/video0` node-format mismatch from

@@ -370,6 +370,7 @@ with strong evidence.
   - `docs/pmic-followup-experiments.md`
   - `scripts/lib-experiment-workflow.sh`
   - `scripts/04-userspace-capture-check.sh`
+  - `scripts/05-userspace-format-sweep.sh`
   - `scripts/exp19-ms13q3-userspace-capture-validation-update.sh`
   - `scripts/exp19-ms13q3-userspace-capture-validation-verify.sh`
 - Complete March 9 report:

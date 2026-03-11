@@ -243,6 +243,8 @@ with strong evidence.
    - `scripts/exp*-*-update.sh`
    - `scripts/exp*-*-verify.sh`
    - `scripts/01-clean-boot-check.sh`
+   - `scripts/04-userspace-capture-check.sh`
+   - `scripts/05-userspace-format-sweep.sh`
    to keep evidence reproducible
 15. Keep the broader Windows config-path and any remaining Antti-parity cleanup
     questions open, but do not let them delay capture validation on the now
