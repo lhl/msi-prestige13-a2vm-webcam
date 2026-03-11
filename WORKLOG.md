@@ -2,6 +2,104 @@
 
 ## 2026-03-11
 
+### Stage runnable `exp13` through `exp17` artifacts and validate them
+
+- Plan: turn the planned Antti-model follow-up sequence into actual patch
+  artifacts plus update/verify wrappers, then confirm each experiment patch
+  applies cleanly on top of the current candidate baseline.
+- Commands:
+  - reviewed:
+    - `state/CONTEXT.md`
+    - `PLAN.md`
+    - `WORKLOG.md`
+    - `docs/webcam-status.md`
+    - `docs/pmic-followup-experiments.md`
+    - `README.md`
+    - `docs/README.md`
+    - `scripts/lib-experiment-workflow.sh`
+    - `scripts/exp10-s-i2c-ctl-bit1-only-update.sh`
+    - `scripts/exp11-s-i2c-ctl-late-gpio-bit0-update.sh`
+    - `scripts/exp12-ms13q3-daisy-chain-crosscheck-update.sh`
+    - `reference/patches/pmic-si2c-ctl-bit1-only-v1.patch`
+    - `reference/patches/pmic-si2c-ctl-late-gpio-bit0-v1.patch`
+    - `reference/patches/ms13q3-daisy-chain-crosscheck-v1.patch`
+    - `reference/antti-prestige14-thread-review.md`
+    - `reference/antti-patch/t.mbox`
+    - `~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/gpio/gpio-tps68470.c`
+    - `~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472/tps68470.c`
+    - `~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472/tps68470.h`
+    - `~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/platform/x86/intel/int3472/tps68470_board_data.c`
+    - `~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/regulator/tps68470-regulator.c`
+    - `~/.cache/paru/clone/linux-mainline/src/linux-mainline/include/linux/platform_data/tps68470.h`
+    - `~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/i2c/ov5675.c`
+  - refreshed:
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/README.md`
+    - `docs/pmic-followup-experiments.md`
+    - `docs/webcam-status.md`
+    - `scripts/lib-experiment-workflow.sh`
+    - `reference/patches/ms13q3-daisy-chain-isolation-v1.patch`
+    - `reference/patches/ms13q3-daisy-chain-gpio9-reset-v1.patch`
+    - `reference/patches/ms13q3-daisy-chain-gpio7-reset-v1.patch`
+    - `reference/patches/ms13q3-daisy-chain-gpio7-gpio9-approx-v1.patch`
+    - `reference/patches/ms13q3-daisy-chain-bit0-retest-v1.patch`
+    - `scripts/exp13-ms13q3-daisy-chain-isolation-update.sh`
+    - `scripts/exp13-ms13q3-daisy-chain-isolation-verify.sh`
+    - `scripts/exp14-ms13q3-daisy-chain-gpio9-reset-update.sh`
+    - `scripts/exp14-ms13q3-daisy-chain-gpio9-reset-verify.sh`
+    - `scripts/exp15-ms13q3-daisy-chain-gpio7-reset-update.sh`
+    - `scripts/exp15-ms13q3-daisy-chain-gpio7-reset-verify.sh`
+    - `scripts/exp16-ms13q3-daisy-chain-gpio7-gpio9-approx-update.sh`
+    - `scripts/exp16-ms13q3-daisy-chain-gpio7-gpio9-approx-verify.sh`
+    - `scripts/exp17-ms13q3-daisy-chain-bit0-retest-update.sh`
+    - `scripts/exp17-ms13q3-daisy-chain-bit0-retest-verify.sh`
+    - `WORKLOG.md`
+  - validated:
+    - `bash -n scripts/lib-experiment-workflow.sh scripts/exp13-ms13q3-daisy-chain-isolation-update.sh scripts/exp13-ms13q3-daisy-chain-isolation-verify.sh scripts/exp14-ms13q3-daisy-chain-gpio9-reset-update.sh scripts/exp14-ms13q3-daisy-chain-gpio9-reset-verify.sh scripts/exp15-ms13q3-daisy-chain-gpio7-reset-update.sh scripts/exp15-ms13q3-daisy-chain-gpio7-reset-verify.sh scripts/exp16-ms13q3-daisy-chain-gpio7-gpio9-approx-update.sh scripts/exp16-ms13q3-daisy-chain-gpio7-gpio9-approx-verify.sh scripts/exp17-ms13q3-daisy-chain-bit0-retest-update.sh scripts/exp17-ms13q3-daisy-chain-bit0-retest-verify.sh`
+    - `bash scripts/exp13-ms13q3-daisy-chain-isolation-update.sh --dry-run`
+    - `bash scripts/exp13-ms13q3-daisy-chain-isolation-verify.sh --dry-run`
+    - `bash scripts/exp14-ms13q3-daisy-chain-gpio9-reset-update.sh --dry-run`
+    - `bash scripts/exp14-ms13q3-daisy-chain-gpio9-reset-verify.sh --dry-run`
+    - `bash scripts/exp15-ms13q3-daisy-chain-gpio7-reset-update.sh --dry-run`
+    - `bash scripts/exp15-ms13q3-daisy-chain-gpio7-reset-verify.sh --dry-run`
+    - `bash scripts/exp16-ms13q3-daisy-chain-gpio7-gpio9-approx-update.sh --dry-run`
+    - `bash scripts/exp16-ms13q3-daisy-chain-gpio7-gpio9-approx-verify.sh --dry-run`
+    - `bash scripts/exp17-ms13q3-daisy-chain-bit0-retest-update.sh --dry-run`
+    - `bash scripts/exp17-ms13q3-daisy-chain-bit0-retest-verify.sh --dry-run`
+    - `scripts/patch-kernel.sh --kernel-tree /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/exp13-17-applycheck.Yi7h7w/tree --profile candidate`
+    - `git -C /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/exp13-17-applycheck.Yi7h7w/tree apply --check /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ms13q3-daisy-chain-isolation-v1.patch`
+    - `git -C /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/exp13-17-applycheck.Yi7h7w/tree apply --check /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ms13q3-daisy-chain-gpio9-reset-v1.patch`
+    - `git -C /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/exp13-17-applycheck.Yi7h7w/tree apply --check /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ms13q3-daisy-chain-gpio7-reset-v1.patch`
+    - `git -C /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/exp13-17-applycheck.Yi7h7w/tree apply --check /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ms13q3-daisy-chain-gpio7-gpio9-approx-v1.patch`
+    - `git -C /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/.tmp/exp13-17-applycheck.Yi7h7w/tree apply --check /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ms13q3-daisy-chain-bit0-retest-v1.patch`
+- Result:
+  - `exp13` through `exp17` now exist as runnable experiment bundles:
+    - each has a committed patch artifact under `reference/patches/`
+    - each has matching `update` / `verify` wrappers under `scripts/`
+  - experiment intent is now encoded directly in the staged branches:
+    - `exp13` isolates the daisy-chain path, removes the MSI
+      `OVTI5675:00` `GPIO1` / `GPIO2` lookup ownership, and adds a one-shot
+      reclaim stack dump plus GPIO watch logging
+    - `exp14` tests `GPIO9` as the only remote reset line
+    - `exp15` tests `GPIO7` as the only remote reset line
+    - `exp16` tests the current-driver approximation
+      `GPIO9=reset` plus `GPIO7=powerdown`
+    - `exp17` extends `exp16` with a remote-phase `S_I2C_CTL BIT(0)` re-test
+  - the first hand-written `exp13` / `exp16` / `exp17` patch files were not
+    valid unified diffs; they were regenerated from temporary kernel source
+    trees before final validation
+  - the control docs now describe `exp13` through `exp17` as staged artifacts
+    ready to run rather than only planned ideas
+  - validation outcome:
+    - all ten wrappers pass shell syntax checks
+    - all ten wrappers complete `--dry-run`
+    - all five experiment patches apply cleanly on top of the current
+      `candidate` kernel baseline
+    - the new wrappers now carry executable mode like the earlier experiment
+      scripts
+
 ### Add the `exp13` self-diagnosing guard and define `exp17`
 
 - Plan: review the follow-up feedback on the planned Antti-model branch set,

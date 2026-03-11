@@ -120,23 +120,23 @@ with strong evidence.
 
 - [x] Stage a separate Antti-inspired daisy-chain cross-check as `exp12`
   without replacing `exp10` as the verified baseline.
-- [ ] Stage `exp13`: keep `exp10`, enable daisy-chain, and remove
+- [x] Stage `exp13`: keep `exp10`, enable daisy-chain, and remove
   `OVTI5675:00` use of `GPIO1` / `GPIO2`.
-- [ ] Stage `exp14`: carry `exp13` forward and test `GPIO9` as the first
+- [x] Stage `exp14`: carry `exp13` forward and test `GPIO9` as the first
   remote control-line candidate.
-- [ ] Stage `exp15`: carry `exp13` forward and test `GPIO7` as the alternate
+- [x] Stage `exp15`: carry `exp13` forward and test `GPIO7` as the alternate
   remote control-line candidate.
-- [ ] Stage `exp16`: carry the clean daisy-chain branch forward and test the
+- [x] Stage `exp16`: carry the clean daisy-chain branch forward and test the
   best two-line `GPIO7` / `GPIO9` approximation.
-- [ ] Make `exp13` self-diagnosing.
+- [x] Make `exp13` self-diagnosing.
   - add a one-shot `dump_stack()` for any daisy-chain-enabled attempt to drive
     `GPIO1` or `GPIO2` as outputs
-- [ ] Stage `exp17`: re-test `S_I2C_CTL BIT(0)` only on top of a clean
+- [x] Stage `exp17`: re-test `S_I2C_CTL BIT(0)` only on top of a clean
   daisy-chain-isolated branch.
 
 ## Near-Term Priority
 
-1. Keep `exp10` as the verified PMIC baseline while staging the next branch
+1. Keep `exp10` as the verified PMIC baseline while running the staged branch
    set.
 2. Treat `exp12` as completed collision evidence, not as a direct test of
    Antti's working model.
@@ -148,12 +148,12 @@ with strong evidence.
      credible remote control-line candidate
 5. Use `exp16` as the closest current-driver approximation of Antti's remote
    mapping only after the single-line branches have been isolated first.
-6. Add one self-diagnosing guard to `exp13`.
-   - if `GPIO1` / `GPIO2` still get reclaimed, a one-shot stack dump should
+6. Use the self-diagnosing guard already staged in `exp13`.
+   - if `GPIO1` / `GPIO2` still get reclaimed, the one-shot stack dump should
      identify the call path immediately
 7. Use `exp17` as the explicit PMIC-side follow-up after the wiring-model
    collision is removed.
-   - only stage it after `exp13` proves no reclaim
+   - only run it after `exp13` proves no reclaim
    - carry forward the cleanest daisy-chain-isolated branch from `exp13`
      through `exp16`
 8. Keep using:
@@ -197,4 +197,4 @@ with strong evidence.
 - a full March 9 status report under `docs/`
 - reference-backed Windows PMIC notes under `reference/windows-driver-analysis/`
 - current support summary under `docs/webcam-status.md`
-- patch-ready notes for `exp13` through `exp17`
+- staged `exp13` through `exp17` patches and wrapper scripts

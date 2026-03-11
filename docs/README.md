@@ -25,9 +25,9 @@ Current focus:
   Windows `iactrllogic64.sys` analysis
 - `docs/linux-board-data-candidate.md` — original MSI
   `tps68470_board_data` hypothesis and first patched-test plan
-- `docs/pmic-followup-experiments.md` — ordered PMIC experiment matrix, the
-  scripted update/reboot/verify workflow for experiments 1-12, and the planned
-  `exp13`-`exp17` Antti-model branch set
+- `docs/pmic-followup-experiments.md` — ordered PMIC experiment matrix and the
+  scripted update/reboot/verify workflow for experiments 1-17; `exp13` through
+  `exp17` are now staged locally but not yet run
 - `docs/wf-vs-uf-gpio-analysis.md` — Windows helper-family analysis for
   deciding whether this laptop still matches the `WF` / `LNK0` GPIO model
 - `docs/patch-kernel-workflow.md` — idempotent patch-stack workflow for the

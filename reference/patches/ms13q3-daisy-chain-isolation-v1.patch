@@ -1,0 +1,419 @@
+diff --git a/drivers/gpio/gpio-tps68470.c b/drivers/gpio/gpio-tps68470.c
+index d4fbdf90e190..12ea22b91c0f 100644
+--- a/drivers/gpio/gpio-tps68470.c
++++ b/drivers/gpio/gpio-tps68470.c
+@@ -12,8 +12,10 @@
+  */
+ 
+ #include <linux/gpio/driver.h>
++#include <linux/kernel.h>
+ #include <linux/mfd/tps68470.h>
+ #include <linux/module.h>
++#include <linux/platform_data/tps68470.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ 
+@@ -24,8 +26,59 @@
+ struct tps68470_gpio_data {
+ 	struct regmap *tps68470_regmap;
+ 	struct gpio_chip gc;
++	bool daisy_chain_enabled;
++	bool reclaim_stack_dumped;
+ };
+ 
++static bool tps68470_gpio_is_daisy_chain_line(unsigned int offset)
++{
++	return offset == 1 || offset == 2;
++}
++
++static bool tps68470_gpio_is_watched_line(unsigned int offset)
++{
++	return tps68470_gpio_is_daisy_chain_line(offset) || offset == 7 || offset == 9;
++}
++
++static void tps68470_gpio_log_watch_state(struct tps68470_gpio_data *tps68470_gpio,
++					  unsigned int offset,
++					  const char *tag)
++{
++	struct regmap *regmap = tps68470_gpio->tps68470_regmap;
++	unsigned int ctl = 0xff, gpdo = 0, sgpo = 0;
++	int ctl_ret = -EINVAL, gpdo_ret, sgpo_ret;
++
++	if (!tps68470_gpio->daisy_chain_enabled ||
++	    !tps68470_gpio_is_watched_line(offset))
++		return;
++
++	if (offset < TPS68470_N_REGULAR_GPIO)
++		ctl_ret = regmap_read(regmap, TPS68470_GPIO_CTL_REG_A(offset), &ctl);
++
++	gpdo_ret = regmap_read(regmap, TPS68470_REG_GPDO, &gpdo);
++	sgpo_ret = regmap_read(regmap, TPS68470_REG_SGPO, &sgpo);
++
++	dev_info(tps68470_gpio->gc.parent,
++		 "exp13_daisy: %s gpio.%u ctl_ret=%d ctl=0x%02x gpdo_ret=%d gpdo=0x%02x sgpo_ret=%d sgpo=0x%02x\n",
++		 tag, offset, ctl_ret, ctl, gpdo_ret, gpdo, sgpo_ret, sgpo);
++}
++
++static void tps68470_gpio_warn_daisy_reclaim(struct tps68470_gpio_data *tps68470_gpio,
++					     unsigned int offset, int value)
++{
++	if (!tps68470_gpio->daisy_chain_enabled ||
++	    !tps68470_gpio_is_daisy_chain_line(offset))
++		return;
++
++	dev_warn(tps68470_gpio->gc.parent,
++		 "exp13_daisy: reclaim-attempt gpio.%u value=%d while daisy-chain is enabled\n",
++		 offset, value);
++	if (!tps68470_gpio->reclaim_stack_dumped) {
++		tps68470_gpio->reclaim_stack_dumped = true;
++		dump_stack();
++	}
++}
++
+ static int tps68470_gpio_get(struct gpio_chip *gc, unsigned int offset)
+ {
+ 	struct tps68470_gpio_data *tps68470_gpio = gpiochip_get_data(gc);
+@@ -75,15 +128,22 @@ static int tps68470_gpio_set(struct gpio_chip *gc, unsigned int offset,
+ {
+ 	struct tps68470_gpio_data *tps68470_gpio = gpiochip_get_data(gc);
+ 	struct regmap *regmap = tps68470_gpio->tps68470_regmap;
++	unsigned int line_offset = offset;
+ 	unsigned int reg = TPS68470_REG_GPDO;
++	unsigned int reg_offset = offset;
++	int ret;
+ 
+ 	if (offset >= TPS68470_N_REGULAR_GPIO) {
+ 		reg = TPS68470_REG_SGPO;
+-		offset -= TPS68470_N_REGULAR_GPIO;
++		reg_offset -= TPS68470_N_REGULAR_GPIO;
+ 	}
+ 
+-	return regmap_update_bits(regmap, reg, BIT(offset),
+-				  value ? BIT(offset) : 0);
++	ret = regmap_update_bits(regmap, reg, BIT(reg_offset),
++				 value ? BIT(reg_offset) : 0);
++	if (!ret)
++		tps68470_gpio_log_watch_state(tps68470_gpio, line_offset, "set-after");
++
++	return ret;
+ }
+ 
+ static int tps68470_gpio_output(struct gpio_chip *gc, unsigned int offset,
+@@ -93,18 +153,30 @@ static int tps68470_gpio_output(struct gpio_chip *gc, unsigned int offset,
+ 	struct regmap *regmap = tps68470_gpio->tps68470_regmap;
+ 	int ret;
+ 
++	tps68470_gpio_log_watch_state(tps68470_gpio, offset,
++				      "direction-output-before");
++	tps68470_gpio_warn_daisy_reclaim(tps68470_gpio, offset, value);
++
+ 	/* Set the initial value */
+ 	ret = tps68470_gpio_set(gc, offset, value);
+ 	if (ret)
+ 		return ret;
+ 
+ 	/* rest are always outputs */
+-	if (offset >= TPS68470_N_REGULAR_GPIO)
++	if (offset >= TPS68470_N_REGULAR_GPIO) {
++		tps68470_gpio_log_watch_state(tps68470_gpio, offset,
++					      "direction-output-after");
+ 		return 0;
++	}
+ 
+-	return regmap_update_bits(regmap, TPS68470_GPIO_CTL_REG_A(offset),
++	ret = regmap_update_bits(regmap, TPS68470_GPIO_CTL_REG_A(offset),
+ 				 TPS68470_GPIO_MODE_MASK,
+ 				 TPS68470_GPIO_MODE_OUT_CMOS);
++	if (!ret)
++		tps68470_gpio_log_watch_state(tps68470_gpio, offset,
++					      "direction-output-after");
++
++	return ret;
+ }
+ 
+ static int tps68470_gpio_input(struct gpio_chip *gc, unsigned int offset)
+@@ -120,6 +192,34 @@ static int tps68470_gpio_input(struct gpio_chip *gc, unsigned int offset)
+ 				   TPS68470_GPIO_MODE_MASK, 0x00);
+ }
+ 
++static int tps68470_enable_i2c_daisy_chain(struct tps68470_gpio_data *tps68470_gpio)
++{
++	struct gpio_chip *gc = &tps68470_gpio->gc;
++	int ret;
++
++	dev_info(gc->parent,
++		 "exp13_daisy: enabling daisy-chain isolation on gpio.1/gpio.2 and watching gpio.7/gpio.9\n");
++	tps68470_gpio_log_watch_state(tps68470_gpio, 1, "probe-before");
++	tps68470_gpio_log_watch_state(tps68470_gpio, 2, "probe-before");
++	tps68470_gpio_log_watch_state(tps68470_gpio, 7, "probe-before");
++	tps68470_gpio_log_watch_state(tps68470_gpio, 9, "probe-before");
++
++	ret = tps68470_gpio_input(gc, 1);
++	if (ret)
++		return ret;
++
++	ret = tps68470_gpio_input(gc, 2);
++	if (ret)
++		return ret;
++
++	tps68470_gpio_log_watch_state(tps68470_gpio, 1, "probe-after");
++	tps68470_gpio_log_watch_state(tps68470_gpio, 2, "probe-after");
++	tps68470_gpio_log_watch_state(tps68470_gpio, 7, "probe-after");
++	tps68470_gpio_log_watch_state(tps68470_gpio, 9, "probe-after");
++
++	return 0;
++}
++
+ static const char *tps68470_names[TPS68470_N_GPIO] = {
+ 	"gpio.0", "gpio.1", "gpio.2", "gpio.3",
+ 	"gpio.4", "gpio.5", "gpio.6",
+@@ -129,6 +229,8 @@ static const char *tps68470_names[TPS68470_N_GPIO] = {
+ static int tps68470_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct tps68470_gpio_data *tps68470_gpio;
++	const struct tps68470_gpio_platform_data *pdata = dev_get_platdata(&pdev->dev);
++	int ret;
+ 
+ 	tps68470_gpio = devm_kzalloc(&pdev->dev, sizeof(*tps68470_gpio),
+ 				     GFP_KERNEL);
+@@ -148,8 +250,16 @@ static int tps68470_gpio_probe(struct platform_device *pdev)
+ 	tps68470_gpio->gc.ngpio = TPS68470_N_GPIO;
+ 	tps68470_gpio->gc.base = -1;
+ 	tps68470_gpio->gc.parent = &pdev->dev;
++	tps68470_gpio->daisy_chain_enabled = pdata && pdata->daisy_chain_enable;
++
++	ret = devm_gpiochip_add_data(&pdev->dev, &tps68470_gpio->gc, tps68470_gpio);
++	if (ret)
++		return ret;
++
++	if (tps68470_gpio->daisy_chain_enabled)
++		return tps68470_enable_i2c_daisy_chain(tps68470_gpio);
+ 
+-	return devm_gpiochip_add_data(&pdev->dev, &tps68470_gpio->gc, tps68470_gpio);
++	return 0;
+ }
+ 
+ static struct platform_driver tps68470_gpio_driver = {
+diff --git a/drivers/platform/x86/intel/int3472/tps68470.c b/drivers/platform/x86/intel/int3472/tps68470.c
+index a496075c0d2a..9513b79902a7 100644
+--- a/drivers/platform/x86/intel/int3472/tps68470.c
++++ b/drivers/platform/x86/intel/int3472/tps68470.c
+@@ -197,6 +197,10 @@ static int skl_int3472_tps68470_probe(struct i2c_client *client)
+ 		cells[1].platform_data = (void *)board_data->tps68470_regulator_pdata;
+ 		cells[1].pdata_size = sizeof(struct tps68470_regulator_platform_data);
+ 		cells[2].name = "tps68470-gpio";
++		if (board_data->tps68470_gpio_pdata) {
++			cells[2].platform_data = (void *)board_data->tps68470_gpio_pdata;
++			cells[2].pdata_size = sizeof(*board_data->tps68470_gpio_pdata);
++		}
+ 
+ 		for (i = 0; i < board_data->n_gpiod_lookups; i++)
+ 			gpiod_add_lookup_table(board_data->tps68470_gpio_lookup_tables[i]);
+diff --git a/drivers/platform/x86/intel/int3472/tps68470.h b/drivers/platform/x86/intel/int3472/tps68470.h
+index 35915e701593..6a8027754668 100644
+--- a/drivers/platform/x86/intel/int3472/tps68470.h
++++ b/drivers/platform/x86/intel/int3472/tps68470.h
+@@ -12,11 +12,13 @@
+ #define _INTEL_SKL_INT3472_TPS68470_H
+ 
+ struct gpiod_lookup_table;
++struct tps68470_gpio_platform_data;
+ struct tps68470_regulator_platform_data;
+ 
+ struct int3472_tps68470_board_data {
+ 	const char *dev_name;
+ 	const struct tps68470_regulator_platform_data *tps68470_regulator_pdata;
++	const struct tps68470_gpio_platform_data *tps68470_gpio_pdata;
+ 	unsigned int n_gpiod_lookups;
+ 	struct gpiod_lookup_table *tps68470_gpio_lookup_tables[];
+ };
+diff --git a/drivers/platform/x86/intel/int3472/tps68470_board_data.c b/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+index 393fc4e9f578..037ef757c89d 100644
+--- a/drivers/platform/x86/intel/int3472/tps68470_board_data.c
++++ b/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+@@ -354,13 +354,8 @@ static struct gpiod_lookup_table dell_7212_int3479_gpios = {
+ 	}
+ };
+ 
+-static struct gpiod_lookup_table msi_ms13q3_ov5675_gpios = {
+-	.dev_id = "i2c-OVTI5675:00",
+-	.table = {
+-		GPIO_LOOKUP("tps68470-gpio", 1, "reset", GPIO_ACTIVE_LOW),
+-		GPIO_LOOKUP("tps68470-gpio", 2, "powerdown", GPIO_ACTIVE_LOW),
+-		{ }
+-	}
++static const struct tps68470_gpio_platform_data msi_ms13q3_tps68470_gpio_pdata = {
++	.daisy_chain_enable = true,
+ };
+ 
+ static const struct int3472_tps68470_board_data surface_go_tps68470_board_data = {
+@@ -395,10 +390,8 @@ static const struct int3472_tps68470_board_data dell_7212_tps68470_board_data =
+ static const struct int3472_tps68470_board_data msi_ms13q3_tps68470_board_data = {
+ 	.dev_name = "i2c-INT3472:06",
+ 	.tps68470_regulator_pdata = &msi_ms13q3_tps68470_pdata,
+-	.n_gpiod_lookups = 1,
+-	.tps68470_gpio_lookup_tables = {
+-		&msi_ms13q3_ov5675_gpios,
+-	},
++	.tps68470_gpio_pdata = &msi_ms13q3_tps68470_gpio_pdata,
++	.n_gpiod_lookups = 0,
+ };
+ 
+ static const struct dmi_system_id int3472_tps68470_board_data_table[] = {
+diff --git a/drivers/regulator/tps68470-regulator.c b/drivers/regulator/tps68470-regulator.c
+index de7db7690f6b..f5487fed32be 100644
+--- a/drivers/regulator/tps68470-regulator.c
++++ b/drivers/regulator/tps68470-regulator.c
+@@ -20,6 +20,7 @@
+ #include <linux/kernel.h>
+ #include <linux/mfd/tps68470.h>
+ #include <linux/module.h>
++#include <linux/regmap.h>
+ #include <linux/platform_data/tps68470.h>
+ #include <linux/platform_device.h>
+ #include <linux/regulator/driver.h>
+@@ -54,9 +55,65 @@ static const struct linear_range tps68470_core_ranges[] = {
+ 	REGULATOR_LINEAR_RANGE(900000, 0, 42, 25000),
+ };
+ 
++static const char *tps68470_regulator_reg_name(unsigned int reg)
++{
++	switch (reg) {
++	case TPS68470_REG_S_I2C_CTL:
++		return "S_I2C_CTL";
++	case TPS68470_REG_VACTL:
++		return "VACTL";
++	case TPS68470_REG_VDCTL:
++		return "VDCTL";
++	default:
++		return "UNKNOWN";
++	}
++}
++
++static int tps68470_regulator_update_bits_focus(struct regulator_dev *rdev,
++						unsigned int reg,
++						unsigned int mask,
++						unsigned int value,
++						const char *tag)
++{
++	unsigned int before = 0;
++	unsigned int after = 0;
++	int before_ret;
++	int ret;
++	int after_ret;
++
++	before_ret = regmap_read(rdev->regmap, reg, &before);
++	ret = regmap_update_bits(rdev->regmap, reg, mask, value);
++	after_ret = regmap_read(rdev->regmap, reg, &after);
++
++	dev_info(&rdev->dev,
++		 "pmic_focus: %s %s reg=%s(0x%02x) mask=0x%02x value=0x%02x before_ret=%d before=0x%02x update_ret=%d after_ret=%d after=0x%02x\n",
++		 tag, rdev->desc->name,
++		 tps68470_regulator_reg_name(reg), reg, mask, value,
++		 before_ret, before, ret, after_ret, after);
++
++	return ret;
++}
++
++static int tps68470_regulator_enable_vsio_bit1_only(struct regulator_dev *rdev)
++{
++	return tps68470_regulator_update_bits_focus(rdev,
++						    TPS68470_REG_S_I2C_CTL,
++						    BIT(1), BIT(1),
++						    "enable-bit1-only");
++}
++
++static int tps68470_regulator_disable_vsio_bit1_only(struct regulator_dev *rdev)
++{
++	return tps68470_regulator_update_bits_focus(rdev,
++						    TPS68470_REG_S_I2C_CTL,
++						    BIT(1), 0,
++						    "disable-bit1-only");
++}
++
+ static int tps68470_regulator_enable(struct regulator_dev *rdev)
+ {
+ 	struct tps68470_regulator_data *data = rdev->reg_data;
++	unsigned int value;
+ 	int ret;
+ 
+ 	/* The Core buck regulator needs the PMIC's PLL to be enabled */
+@@ -68,16 +125,54 @@ static int tps68470_regulator_enable(struct regulator_dev *rdev)
+ 		}
+ 	}
+ 
++	if (rdev->desc->id == TPS68470_ANA ||
++	    rdev->desc->id == TPS68470_CORE) {
++		if (rdev->desc->enable_is_inverted) {
++			value = rdev->desc->disable_val;
++		} else {
++			value = rdev->desc->enable_val;
++			if (!value)
++				value = rdev->desc->enable_mask;
++		}
++
++		return tps68470_regulator_update_bits_focus(rdev,
++							    rdev->desc->enable_reg,
++							    rdev->desc->enable_mask,
++							    value, "enable");
++	}
++
++	if (rdev->desc->id == TPS68470_VSIO)
++		return tps68470_regulator_enable_vsio_bit1_only(rdev);
++
+ 	return regulator_enable_regmap(rdev);
+ }
+ 
+ static int tps68470_regulator_disable(struct regulator_dev *rdev)
+ {
+ 	struct tps68470_regulator_data *data = rdev->reg_data;
++	unsigned int value;
+ 
+ 	if (rdev->desc->id == TPS68470_CORE)
+ 		clk_disable_unprepare(data->clk);
+ 
++	if (rdev->desc->id == TPS68470_VSIO)
++		return tps68470_regulator_disable_vsio_bit1_only(rdev);
++
++	if (rdev->desc->id == TPS68470_ANA) {
++		if (rdev->desc->enable_is_inverted) {
++			value = rdev->desc->enable_val;
++			if (!value)
++				value = rdev->desc->enable_mask;
++		} else {
++			value = rdev->desc->disable_val;
++		}
++
++		return tps68470_regulator_update_bits_focus(rdev,
++							    rdev->desc->enable_reg,
++							    rdev->desc->enable_mask,
++							    value, "disable");
++	}
++
+ 	return regulator_disable_regmap(rdev);
+ }
+ 
+diff --git a/include/linux/platform_data/tps68470.h b/include/linux/platform_data/tps68470.h
+index e605a2cab07f..06b669e38d9a 100644
+--- a/include/linux/platform_data/tps68470.h
++++ b/include/linux/platform_data/tps68470.h
+@@ -10,6 +10,8 @@
+ #ifndef __PDATA_TPS68470_H
+ #define __PDATA_TPS68470_H
+ 
++#include <linux/types.h>
++
+ enum tps68470_regulators {
+ 	TPS68470_CORE,
+ 	TPS68470_ANA,
+@@ -27,6 +29,10 @@ struct tps68470_regulator_platform_data {
+ 	const struct regulator_init_data *reg_init_data[TPS68470_NUM_REGULATORS];
+ };
+ 
++struct tps68470_gpio_platform_data {
++	bool daisy_chain_enable;
++};
++
+ struct tps68470_clk_consumer {
+ 	const char *consumer_dev_name;
+ 	const char *consumer_con_id;

@@ -149,7 +149,8 @@ msi-prestige13-a2vm-webcam/
    - three staged `ov5675` GPIO-release variants
    - `exp5` `WF` GPIO mode follow-up
    - `exp6` `UF` / `gpio.4` last resort
-4. Use `exp13` through `exp17` as the next ordered experiment branch set:
+4. Use the staged `exp13` through `exp17` entrypoints as the next ordered
+   experiment branch set:
    - `exp13`: keep `exp10`, enable daisy-chain, and stop exposing `GPIO1` /
      `GPIO2` to `OVTI5675:00`
    - `exp14`: carry that branch forward and test `GPIO9` as the first remote
@@ -160,7 +161,7 @@ msi-prestige13-a2vm-webcam/
      current-driver `GPIO7` / `GPIO9` approximation
    - `exp17`: re-test `S_I2C_CTL BIT(0)` only after a clean daisy-chain branch
      exists
-5. Keep `exp10` as the PMIC baseline while staging that branch set.
+5. Keep `exp10` as the PMIC baseline while running that branch set.
    - `exp11` showed that one modeled late `BIT(0)` hook still re-wedges PMIC
      access
    - `exp12` showed that the low-effort Antti-inspired daisy-chain setup is
@@ -213,6 +214,16 @@ msi-prestige13-a2vm-webcam/
   — later GPIO-phase `BIT(0)` experiment patch for `exp11`
 - [`reference/patches/ms13q3-daisy-chain-crosscheck-v1.patch`](./reference/patches/ms13q3-daisy-chain-crosscheck-v1.patch)
   — Antti-inspired daisy-chain cross-check patch for `exp12`
+- [`reference/patches/ms13q3-daisy-chain-isolation-v1.patch`](./reference/patches/ms13q3-daisy-chain-isolation-v1.patch)
+  — daisy-chain isolation patch for `exp13`
+- [`reference/patches/ms13q3-daisy-chain-gpio9-reset-v1.patch`](./reference/patches/ms13q3-daisy-chain-gpio9-reset-v1.patch)
+  — `GPIO9` remote reset candidate patch for `exp14`
+- [`reference/patches/ms13q3-daisy-chain-gpio7-reset-v1.patch`](./reference/patches/ms13q3-daisy-chain-gpio7-reset-v1.patch)
+  — `GPIO7` remote reset candidate patch for `exp15`
+- [`reference/patches/ms13q3-daisy-chain-gpio7-gpio9-approx-v1.patch`](./reference/patches/ms13q3-daisy-chain-gpio7-gpio9-approx-v1.patch)
+  — current two-line `GPIO7` / `GPIO9` approximation patch for `exp16`
+- [`reference/patches/ms13q3-daisy-chain-bit0-retest-v1.patch`](./reference/patches/ms13q3-daisy-chain-bit0-retest-v1.patch)
+  — clean-daisy-chain `BIT(0)` re-test patch for `exp17`
 - [`reference/patches/ms13q3-vd-1050mv-v1.patch`](./reference/patches/ms13q3-vd-1050mv-v1.patch)
   — `VD = 1050 mV` experiment patch
 - [`reference/patches/ms13q3-wf-init-value-programming-v1.patch`](./reference/patches/ms13q3-wf-init-value-programming-v1.patch)

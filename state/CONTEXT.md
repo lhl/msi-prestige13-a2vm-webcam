@@ -116,20 +116,43 @@ with strong evidence.
     - the `exp12` wrappers now reinstall `tps68470-regulator.ko` too so
       reruns restore the baseline regulator module explicitly
     - do not replace `exp10` as the best verified PMIC baseline
-- planned the next ordered Antti-model branch set:
-  - `exp13`: keep `exp10`, enable daisy-chain, and stop exposing `GPIO1` /
-    `GPIO2` to `OVTI5675:00`
-  - `exp14`: carry `exp13` forward and test `GPIO9` as the first remote
-    control-line candidate
-  - `exp15`: carry `exp13` forward and test `GPIO7` as the alternate remote
-    control-line candidate
-  - `exp16`: carry the clean daisy-chain branch forward and test the best
-    current-driver `GPIO7` / `GPIO9` approximation
-- added two planning refinements from follow-up review:
-  - `exp13` should be self-diagnosing with a one-shot `dump_stack()` if
-    `GPIO1` / `GPIO2` still get re-driven as outputs
-  - `exp17` should exist as an explicit clean-daisy-chain `BIT(0)` re-test
-    after `exp13` proves no reclaim
+- staged the next ordered Antti-model branch set with repo-local patch and
+  wrapper pairs:
+  - `exp13`:
+    - patch:
+      - `reference/patches/ms13q3-daisy-chain-isolation-v1.patch`
+    - scripts:
+      - `scripts/exp13-ms13q3-daisy-chain-isolation-update.sh`
+      - `scripts/exp13-ms13q3-daisy-chain-isolation-verify.sh`
+  - `exp14`:
+    - patch:
+      - `reference/patches/ms13q3-daisy-chain-gpio9-reset-v1.patch`
+    - scripts:
+      - `scripts/exp14-ms13q3-daisy-chain-gpio9-reset-update.sh`
+      - `scripts/exp14-ms13q3-daisy-chain-gpio9-reset-verify.sh`
+  - `exp15`:
+    - patch:
+      - `reference/patches/ms13q3-daisy-chain-gpio7-reset-v1.patch`
+    - scripts:
+      - `scripts/exp15-ms13q3-daisy-chain-gpio7-reset-update.sh`
+      - `scripts/exp15-ms13q3-daisy-chain-gpio7-reset-verify.sh`
+  - `exp16`:
+    - patch:
+      - `reference/patches/ms13q3-daisy-chain-gpio7-gpio9-approx-v1.patch`
+    - scripts:
+      - `scripts/exp16-ms13q3-daisy-chain-gpio7-gpio9-approx-update.sh`
+      - `scripts/exp16-ms13q3-daisy-chain-gpio7-gpio9-approx-verify.sh`
+  - `exp17`:
+    - patch:
+      - `reference/patches/ms13q3-daisy-chain-bit0-retest-v1.patch`
+    - scripts:
+      - `scripts/exp17-ms13q3-daisy-chain-bit0-retest-update.sh`
+      - `scripts/exp17-ms13q3-daisy-chain-bit0-retest-verify.sh`
+- preserved the two key branch-shape refinements from follow-up review:
+  - `exp13` is self-diagnosing with a one-shot `dump_stack()` if `GPIO1` /
+    `GPIO2` still get re-driven as outputs
+  - `exp17` exists as an explicit clean-daisy-chain `BIT(0)` re-test after
+    `exp13` proves no reclaim
 - recorded one important design constraint for those branches:
   - current `ov5675` only consumes `reset` index `0` plus optional
     `powerdown` index `0`
@@ -168,20 +191,23 @@ with strong evidence.
    test.
    - it proved the current `GPIO1` / `GPIO2` lookup immediately overrides
      daisy-chain setup
-3. Stage `exp13` next.
+3. Run `exp13` next.
    - keep daisy-chain on `GPIO1` / `GPIO2`
    - remove `OVTI5675:00` use of those lines entirely
    - prove whether Linux can leave them in input mode for the full probe
-4. Stage `exp14` and `exp15` after `exp13`.
+   - use:
+     - `scripts/exp13-ms13q3-daisy-chain-isolation-update.sh`
+     - `scripts/exp13-ms13q3-daisy-chain-isolation-verify.sh`
+4. Run `exp14` and `exp15` after `exp13`.
    - test `GPIO9` and `GPIO7` separately as the first remote control-line
      candidates under current `ov5675` driver constraints
-5. Stage `exp16` only after the single-line branches.
+5. Run `exp16` only after the single-line branches.
    - use the clean daisy-chain branch plus the best two-line `GPIO7` / `GPIO9`
      approximation
 6. Keep `exp13` self-diagnosing.
    - if reclaim still happens, the one-shot stack dump should identify the
      output-driving call path immediately
-7. Stage `exp17` after `exp13` proves no reclaim.
+7. Run `exp17` after `exp13` proves no reclaim.
    - re-test `S_I2C_CTL BIT(0)` only on top of the cleanest daisy-chain
      branch from `exp13` through `exp16`
 8. Fix or replace the post-boot PMIC dump path so we can observe real register

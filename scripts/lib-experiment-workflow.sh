@@ -22,6 +22,11 @@ KNOWN_EXPERIMENT_PATCHES=(
   "reference/patches/pmic-si2c-ctl-bit1-only-v1.patch"
   "reference/patches/pmic-si2c-ctl-late-gpio-bit0-v1.patch"
   "reference/patches/ms13q3-daisy-chain-crosscheck-v1.patch"
+  "reference/patches/ms13q3-daisy-chain-isolation-v1.patch"
+  "reference/patches/ms13q3-daisy-chain-gpio9-reset-v1.patch"
+  "reference/patches/ms13q3-daisy-chain-gpio7-reset-v1.patch"
+  "reference/patches/ms13q3-daisy-chain-gpio7-gpio9-approx-v1.patch"
+  "reference/patches/ms13q3-daisy-chain-bit0-retest-v1.patch"
 )
 BASE_BUILD_DIRS=(
   "drivers/platform/x86/intel/int3472"

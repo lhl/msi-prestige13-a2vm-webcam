@@ -20,6 +20,8 @@ the remaining blocker is now much narrower:
 - but every chip-ID read still fails, now with `-121`
 - the `exp12` daisy-chain cross-check proved that the current Linux
   `GPIO1` / `GPIO2` lookup immediately overrides Antti-style daisy-chain setup
+- the repo now has staged `exp13` through `exp17` patch plus wrapper pairs for
+  the next Antti-model run set
 
 That means the webcam is now blocked at sensor wake-up / later-stage PMIC
 behavior, not at basic discovery or graph construction.
