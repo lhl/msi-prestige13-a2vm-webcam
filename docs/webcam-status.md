@@ -33,6 +33,9 @@ the remaining blocker is now much narrower:
 - `exp17` then proved that a later `S_I2C_CTL BIT(0)` on the clean remote-line
   branch can read back safely as `0x03`, but it still does not move the sensor
   off repeated `-121`
+- the repo now has a staged `exp18` patch plus wrapper pair for the next
+  narrow Antti-parity PMIC comparison:
+  - restore standard `VSIO` enable on top of the clean daisy-chain branch
 
 That means the webcam is now blocked at sensor wake-up / later-stage PMIC
 behavior, not at basic discovery or graph construction.
@@ -520,9 +523,11 @@ What now looks most likely:
    - do not treat the current `exp11` GPIO hook as a likely fix
    - use `exp17` only as evidence that one later `BIT(0)` placement is safe,
      not as a fix
-2. Scope the `ov5675` consumer-model gap more directly.
-3. Design any next PMIC follow-up around phase/timing, not another blind
-   remote-line remap.
+2. Run staged `exp18` next.
+   - restore standard `VSIO` enable on top of the clean daisy-chain branch
+   - do not bundle endpoint-wait or broader regulator-set changes yet
+3. Scope the `ov5675` consumer-model gap more directly if `exp18` is also
+   negative.
 4. Fix or replace the post-boot PMIC dump path so we can see real register
    state after a failed clean boot.
 5. Extract the higher-level Windows config path that feeds `WF::SetConf` and

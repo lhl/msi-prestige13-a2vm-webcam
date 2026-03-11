@@ -245,6 +245,19 @@ with strong evidence.
 - `exp17` proved that one late `S_I2C_CTL BIT(0)` assertion on the clean
   remote-line branch is safe and reads back as `0x03`, but is still
   insufficient
+- `exp18` is now staged as the next narrow Antti-parity PMIC comparison:
+  - patch:
+    - `reference/patches/ms13q3-daisy-chain-standard-vsio-v1.patch`
+  - scripts:
+    - `scripts/exp18-ms13q3-daisy-chain-standard-vsio-update.sh`
+    - `scripts/exp18-ms13q3-daisy-chain-standard-vsio-verify.sh`
+  - validation:
+    - patch applies cleanly on a fresh candidate-baseline temp tree
+    - both wrappers passed `--dry-run`
+  - goal:
+    - keep the clean daisy-chain branch
+    - restore standard `VSIO` enable
+    - do not bundle endpoint-wait or broad regulator-set changes yet
 - The strongest remaining gap is PMIC-side behavior Linux still does not model
   correctly, especially around:
   - whether the old early full `VSIO` enable only becomes safe once the clean
@@ -285,7 +298,7 @@ with strong evidence.
      remote-line branch
    - the observed PMIC write moved `S_I2C_CTL` from `0x02` to `0x03`
    - the sensor still stayed flat at `-121`
-8. Run one narrow Antti-parity PMIC comparison next.
+8. Run staged `exp18` next.
    - restore standard `VSIO` enable on top of the clean daisy-chain branch
    - do not bundle in endpoint-wait or broad regulator-set changes yet
 9. Scope the `ov5675` consumer-model or timing gap directly if that still

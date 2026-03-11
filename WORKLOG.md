@@ -2,6 +2,57 @@
 
 ## 2026-03-11
 
+### Stage `exp18` as the narrow standard-`VSIO` daisy-chain comparison
+
+- Plan: turn the next Antti-parity PMIC discriminator into a real experiment
+  bundle by defining a clean-daisy-chain branch that restores standard `VSIO`
+  enable behavior without bundling in the lower-signal endpoint-wait or broad
+  regulator-set changes.
+- Commands:
+  - reviewed:
+    - `reference/patches/pmic-si2c-ctl-bit1-only-v1.patch`
+    - `reference/patches/ms13q3-daisy-chain-gpio7-gpio9-approx-v1.patch`
+    - `reference/patches/ms13q3-daisy-chain-bit0-retest-v1.patch`
+    - `scripts/lib-experiment-workflow.sh`
+    - `scripts/exp17-ms13q3-daisy-chain-bit0-retest-update.sh`
+    - `scripts/exp17-ms13q3-daisy-chain-bit0-retest-verify.sh`
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/README.md`
+    - `docs/webcam-status.md`
+    - `docs/pmic-followup-experiments.md`
+    - `docs/antti-prestige14-thread-review.md`
+    - `WORKLOG.md`
+  - refreshed:
+    - `scripts/lib-experiment-workflow.sh`
+    - `reference/patches/ms13q3-daisy-chain-standard-vsio-v1.patch`
+    - `scripts/exp18-ms13q3-daisy-chain-standard-vsio-update.sh`
+    - `scripts/exp18-ms13q3-daisy-chain-standard-vsio-verify.sh`
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/README.md`
+    - `docs/webcam-status.md`
+    - `docs/pmic-followup-experiments.md`
+    - `docs/antti-prestige14-thread-review.md`
+    - `WORKLOG.md`
+- Result:
+  - `exp18` now exists as a staged experiment bundle
+  - it keeps the clean daisy-chain and `GPIO9` / `GPIO7` mapping from the
+    best local Antti-style branch
+  - it restores standard regulator-side `VSIO` enable behavior while keeping
+    focused `pmic_focus:` readback logs
+  - it intentionally removes the `exp17` late GPIO-phase `BIT(0)` hook so the
+    result isolates the stock-`VSIO` question
+  - the repo now encodes `exp18` as the next run, not just a note in the plan
+  - validation now passes:
+    - `reference/patches/ms13q3-daisy-chain-standard-vsio-v1.patch` applies
+      cleanly with `git apply --check` on a fresh candidate-baseline temp tree
+    - both `scripts/exp18-ms13q3-daisy-chain-standard-vsio-update.sh --dry-run`
+      and `scripts/exp18-ms13q3-daisy-chain-standard-vsio-verify.sh --dry-run`
+      completed successfully
+
 ### Compare Antti's Prestige 14 thread directly against local experiments
 
 - Plan: tighten the Antti thread review so it says explicitly which parts of

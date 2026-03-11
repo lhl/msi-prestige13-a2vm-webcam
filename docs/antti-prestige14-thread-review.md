@@ -365,6 +365,14 @@ It is:
 
 - standard `VSIO` enable plus clean daisy-chain isolation
 
+The repo now stages that exact narrow comparison as `exp18`:
+
+- patch:
+  - `reference/patches/ms13q3-daisy-chain-standard-vsio-v1.patch`
+- scripts:
+  - `scripts/exp18-ms13q3-daisy-chain-standard-vsio-update.sh`
+  - `scripts/exp18-ms13q3-daisy-chain-standard-vsio-verify.sh`
+
 If that still wedges immediately, the local `BIT(1)`-only workaround remains a
 real board-specific requirement candidate. If it becomes safe or changes the
 sensor failure shape, then the next branch can compare exact GPIO consumer

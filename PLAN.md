@@ -175,6 +175,9 @@ with strong evidence.
     `GPIO1` or `GPIO2` as outputs
 - [x] Stage `exp17`: re-test `S_I2C_CTL BIT(0)` only on top of a clean
   daisy-chain-isolated branch.
+- [x] Stage `exp18`: restore standard `VSIO` enable on top of the clean
+  daisy-chain-isolated branch without reintroducing the local late-`BIT(0)`
+  hook.
 
 ## Near-Term Priority
 
@@ -202,7 +205,7 @@ with strong evidence.
    - the observed late write read back cleanly as `0x03`
    - the sensor still stayed flat at repeated `-121`
    - the old timeout storm did not return
-8. Run one narrow Antti-parity PMIC test next:
+8. Run staged `exp18` next.
    - restore standard `VSIO` enable on top of the clean daisy-chain branch
    - do not bundle that with endpoint-wait or broad regulator-set changes yet
 9. Scope the `ov5675` consumer-model or timing gap directly if that still
@@ -246,4 +249,5 @@ with strong evidence.
 - a full March 9 status report under `docs/`
 - reference-backed Windows PMIC notes under `reference/windows-driver-analysis/`
 - current support summary under `docs/webcam-status.md`
-- recorded `exp13` / `exp14` / `exp15` / `exp16` / `exp17` run evidence
+- recorded `exp13` / `exp14` / `exp15` / `exp16` / `exp17` run evidence plus
+  the staged `exp18` patch and wrapper scripts

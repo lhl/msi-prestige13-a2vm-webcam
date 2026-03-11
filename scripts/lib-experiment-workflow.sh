@@ -27,6 +27,7 @@ KNOWN_EXPERIMENT_PATCHES=(
   "reference/patches/ms13q3-daisy-chain-gpio7-reset-v1.patch"
   "reference/patches/ms13q3-daisy-chain-gpio7-gpio9-approx-v1.patch"
   "reference/patches/ms13q3-daisy-chain-bit0-retest-v1.patch"
+  "reference/patches/ms13q3-daisy-chain-standard-vsio-v1.patch"
 )
 BASE_BUILD_DIRS=(
   "drivers/platform/x86/intel/int3472"

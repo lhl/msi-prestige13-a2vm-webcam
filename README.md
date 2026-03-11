@@ -168,8 +168,11 @@ msi-prestige13-a2vm-webcam/
    - `exp13` through `exp17` then showed the clean daisy-chain branch is real,
      both remote lines are active individually and together, and one late
      `BIT(0)` placement is safe but still insufficient
-6. Shift the next work to `ov5675` consumer/timing and PMIC-visibility gaps,
-   not more blind remote-line mapping.
+6. Use staged `exp18` as the next ordered Antti-parity PMIC follow-up.
+   - restore standard `VSIO` enable on top of the clean daisy-chain branch
+   - keep endpoint-wait and broader regulator-set changes out of this run
+7. Shift the next work to `ov5675` consumer/timing and PMIC-visibility gaps if
+   `exp18` is also negative.
 
 ## Related Docs
 
@@ -226,6 +229,8 @@ msi-prestige13-a2vm-webcam/
   — current two-line `GPIO7` / `GPIO9` approximation patch for `exp16`
 - [`reference/patches/ms13q3-daisy-chain-bit0-retest-v1.patch`](./reference/patches/ms13q3-daisy-chain-bit0-retest-v1.patch)
   — clean-daisy-chain `BIT(0)` re-test patch for `exp17`
+- [`reference/patches/ms13q3-daisy-chain-standard-vsio-v1.patch`](./reference/patches/ms13q3-daisy-chain-standard-vsio-v1.patch)
+  — clean-daisy-chain standard-`VSIO` comparison patch for `exp18`
 - [`reference/patches/ms13q3-vd-1050mv-v1.patch`](./reference/patches/ms13q3-vd-1050mv-v1.patch)
   — `VD = 1050 mV` experiment patch
 - [`reference/patches/ms13q3-wf-init-value-programming-v1.patch`](./reference/patches/ms13q3-wf-init-value-programming-v1.patch)

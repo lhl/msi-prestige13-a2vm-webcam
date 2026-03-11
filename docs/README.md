@@ -26,9 +26,9 @@ Current focus:
 - `docs/linux-board-data-candidate.md` — original MSI
   `tps68470_board_data` hypothesis and first patched-test plan
 - `docs/pmic-followup-experiments.md` — ordered PMIC experiment matrix and the
-  scripted update/reboot/verify workflow for experiments 1-17; `exp13` through
-  `exp17` are now completed evidence, with `exp17` proving late `BIT(0)` is
-  safe but insufficient
+  scripted update/reboot/verify workflow for experiments 1-18; `exp13` through
+  `exp17` are now completed evidence, and `exp18` is the staged standard-`VSIO`
+  clean-daisy-chain comparison
 - `docs/wf-vs-uf-gpio-analysis.md` — Windows helper-family analysis for
   deciding whether this laptop still matches the `WF` / `LNK0` GPIO model
 - `docs/patch-kernel-workflow.md` — idempotent patch-stack workflow for the

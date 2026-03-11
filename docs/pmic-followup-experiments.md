@@ -5,9 +5,13 @@ Updated: 2026-03-11
 This note turns the current ordered PMIC follow-up list into repeatable
 update-and-verify workflows.
 
-As of the completed `2026-03-11` `exp17` follow-up:
+As of the completed `2026-03-11` `exp17` follow-up and the staged `exp18`
+comparison:
 
 - `exp1` through `exp17` are completed historical experiments
+- `exp18` is now the staged repo-local experiment:
+  - patch files exist under `reference/patches/`
+  - matching `update` / `verify` wrappers exist under `scripts/`
 - `exp10` remains the best current PMIC state
 - `exp11` was the first late-phase `BIT(0)` experiment and came back negative
 - `exp12` was the first Antti-inspired daisy-chain cross-check and came back
@@ -49,6 +53,10 @@ As of the completed `2026-03-11` `exp17` follow-up:
   - yes, one later `BIT(0)` write on `sensor-gpio.9` is safe and reads back
     as `0x03`
   - no, that still does not move the sensor off repeated `-121`
+- `exp18` is the next narrow comparison:
+  - keep the clean daisy-chain branch
+  - restore standard `VSIO` enable
+  - do not mix in endpoint-wait or broad regulator-set simplification yet
 
 ## Goal
 
@@ -457,7 +465,8 @@ questions.
 They were deliberately ordered so the remaining question would not stay at
 "does Linux still reclaim the daisy-chain lines?" or "which lone remote line
 is right?" The result after `exp17` is that the named branch set is exhausted
-without a fix, and the next question is now the deeper consumer/timing gap.
+without a fix, and the next direct discriminator is now staged as `exp18`:
+restore standard `VSIO` enable on top of the clean daisy-chain branch.
 
 ### 13. Daisy-chain isolation without OVTI5675 use of `GPIO1` / `GPIO2`
 
@@ -769,8 +778,49 @@ Interpretation:
 - it also proves that one safe later `BIT(0)` placement is still not enough to
   wake the sensor
 - the named Antti-model branch set is now exhausted without a fix
-- the next work should move to `ov5675` consumer/timing behavior and PMIC
-  visibility, not another blind remote-line guess
+- the next direct comparison should be `exp18`, restoring standard `VSIO`
+  enable on top of the same clean branch
+
+### 18. Clean daisy-chain plus standard `VSIO` enable
+
+Purpose:
+- test the cleanest remaining Antti-vs-local PMIC delta
+- keep the clean daisy-chain-isolated `GPIO9` / `GPIO7` branch
+- remove the local `BIT(1)`-only `VSIO` workaround
+- restore standard `VSIO` enable behavior while keeping focused PMIC logging
+
+Default patch:
+- `reference/patches/ms13q3-daisy-chain-standard-vsio-v1.patch`
+
+Extra module rebuild/install:
+- `gpio-tps68470.ko`
+- `tps68470-regulator.ko`
+
+Scripts:
+- `scripts/exp18-ms13q3-daisy-chain-standard-vsio-update.sh`
+- `scripts/exp18-ms13q3-daisy-chain-standard-vsio-verify.sh`
+
+Implemented patch shape:
+- carry forward the clean daisy-chain isolation and `GPIO9` / `GPIO7` mapping
+- keep the one-shot reclaim `dump_stack()` guard in place
+- remove the `exp17` late GPIO-phase `BIT(0)` hook
+- restore standard regulator-side `VSIO` enable / disable behavior
+- keep focused PMIC readback logging around `S_I2C_CTL`, `VACTL`, and `VDCTL`
+
+Current status:
+- staged only
+- not yet run
+
+Minimum useful success:
+- standard `VSIO` enable now reads back cleanly on the clean daisy-chain
+  branch
+- the sensor failure shape changes materially or binds
+
+Useful negative:
+- the old early `S_I2C_CTL` wedge returns immediately even on top of the clean
+  daisy-chain branch
+- that would strengthen the case that the local `BIT(1)`-only workaround is a
+  real board-specific requirement candidate
 
 ## Typical usage
 
@@ -836,8 +886,8 @@ replace the boot log and it does not make claims it cannot support.
 
 ## Current interpretation
 
-Use the implemented wrappers and the completed `exp13` through `exp17`
-evidence according to the current evidence:
+Use the implemented wrappers, the completed `exp13` through `exp17` evidence,
+and the staged `exp18` follow-up according to the current evidence:
 
 1. Keep `exp10` as the best verified PMIC state when you need the cleanest
    current branch.
@@ -862,10 +912,13 @@ evidence according to the current evidence:
    - it proved one later `sensor-gpio.9` `BIT(0)` write is safe and reads back
      as `0x03`
    - it also proved that this later PMIC transition is still insufficient
-9. Use `exp1` through `exp9` as the historical evidence chain that narrowed
+9. Run `exp18` next as the narrow Antti-parity PMIC comparison.
+   - restore standard `VSIO` enable on top of the clean daisy-chain branch
+   - do not bundle in endpoint-wait or broad regulator simplification yet
+10. Use `exp1` through `exp9` as the historical evidence chain that narrowed
    the problem to `S_I2C_CTL` behavior and competing GPIO interpretations.
-10. Shift the next direct work to `ov5675` consumer/timing behavior and PMIC
-    dump visibility, not another blind remote-line mapping guess.
+11. Shift the next direct work to `ov5675` consumer/timing behavior and PMIC
+    dump visibility if `exp18` is also negative.
 
 That ordering still matches the current source-backed assessment in:
 
