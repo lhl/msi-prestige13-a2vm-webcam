@@ -2,6 +2,48 @@
 
 ## 2026-03-12
 
+### Stage and run `09` as the first unified `libcamera` / `v4l2loopback` check
+
+- Plan: turn the two next app-facing routes after `08` into one repeatable
+  checkpoint so the repo can answer both questions cleanly:
+  - is `libcamera` usable here yet?
+  - is a `v4l2loopback` bridge ready here yet?
+- Commands:
+  - created:
+    - `docs/normal-usage-bridge-paths.md`
+    - `scripts/09-libcamera-loopback-check.sh`
+  - ran:
+    - `bash -n scripts/09-libcamera-loopback-check.sh`
+    - `scripts/09-libcamera-loopback-check.sh --dry-run`
+    - `scripts/09-libcamera-loopback-check.sh`
+  - run directory:
+    - `runs/2026-03-12/20260312T033726-snapshot-09-libcamera-loopback-check/`
+  - refreshed:
+    - `README.md`
+    - `docs/README.md`
+    - `docs/test-routines.md`
+    - `docs/webcam-status.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+- Result:
+  - `09` now exists as the repeatable next-step integration checkpoint on top
+    of the known-good `06` pipeline setup and the explicit `08` bridge result
+  - raw `BA10` capture still succeeded from the configured state
+  - the current machine is still prerequisite-negative for both next routes:
+    - `cam`, `libcamera-hello`, `libcamera-still`, and `libcamera-vid` are
+      missing
+    - `modinfo v4l2loopback` reports `Module v4l2loopback not found`
+    - no loopback `/dev/video42` exists
+  - the script now records the exact rerun prerequisites in one place:
+    - install libcamera tools and rerun
+    - create a loopback device with `modprobe v4l2loopback ...` and rerun
+  - the repo-level conclusion is now sharper:
+    - the next missing pieces are environment prerequisites, not raw camera
+      uncertainty
+    - once those are installed, `09` is the direct truth source for both
+      app-facing routes
+
 ### Stage and run `08` as the first explicit userspace-bridge check
 
 - Plan: answer the next narrower question after `07`: even if normal

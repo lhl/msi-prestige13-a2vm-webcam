@@ -359,6 +359,71 @@ Interpretation note:
   - a framework-level Bayer bridge exists
   - normal plug-and-play client integration still does not
 
+## `scripts/09-libcamera-loopback-check.sh`
+
+Use this after `scripts/08-userspace-bridge-check.sh` proves the explicit
+GStreamer Bayer bridge works and you want one repeatable checkpoint for the
+two next app-facing integration routes:
+
+- `libcamera`
+- `v4l2loopback`
+
+What it does:
+
+- captures a standard snapshot run
+- re-validates the known-good raw `BA10` path from script `06`
+- records tool and module presence for:
+  - `cam`
+  - `libcamera-hello`
+  - `libcamera-still`
+  - `libcamera-vid`
+  - `modinfo`
+  - `lsmod`
+  - GStreamer bridge prerequisites
+- probes the `libcamera` path if tools are present:
+  - discovery commands
+  - one minimal still-capture path
+- probes the `v4l2loopback` path if a loopback device exists:
+  - loopback node inspection
+  - explicit GStreamer Bayer-to-loopback producer
+  - consumer probes against the loopback node
+- writes one focused summary that separates:
+  - raw base-path status
+  - `libcamera` readiness
+  - `v4l2loopback` readiness
+
+Default targets:
+
+- raw source node `/dev/video0`
+- recommended loopback node `/dev/video42`
+- bridge output format `YUY2`
+
+Example:
+
+```bash
+scripts/09-libcamera-loopback-check.sh
+```
+
+Interpretation note:
+
+- this is the current next-step integration truth source
+- the first recorded run:
+  - `runs/2026-03-12/20260312T033726-snapshot-09-libcamera-loopback-check/`
+  - kept the same raw `BA10` success from `06`
+  - proved the current machine is still prerequisite-negative for both next
+    integration paths:
+    - `cam`, `libcamera-hello`, `libcamera-still`, and `libcamera-vid` are
+      missing
+    - `modinfo v4l2loopback` returns `Module v4l2loopback not found`
+    - no loopback `/dev/video*` node exists
+  - records exact rerun prerequisites:
+    - install `libcamera` tools, then rerun
+    - create a loopback node, for example:
+      - `sudo modprobe v4l2loopback video_nr=42 card_label="MSI Webcam Bridge" exclusive_caps=1`
+      - then rerun `scripts/09-libcamera-loopback-check.sh --loopback-device /dev/video42`
+- use this script when you change the environment around `libcamera` or
+  `v4l2loopback`, not when you are only narrowing the raw `isys` path
+
 ## Current interpretation rule
 
 For this project, `01-clean-boot-check.sh` is the primary truth source for
@@ -378,6 +443,10 @@ truth source for "can normal clients use it automatically?" becomes
 Once `07-normal-usage-check.sh` proves auto-negotiated clients still fail, the
 next truth source for "is there at least an explicit higher-level bridge?"
 becomes `08-userspace-bridge-check.sh`.
+
+Once `08-userspace-bridge-check.sh` proves the explicit Bayer bridge works, the
+next truth source for "which app-facing integration path is actually ready?"
+becomes `09-libcamera-loopback-check.sh`.
 
 If a clean boot already wedged the PMIC / I2C path, later reload-only checks
 may show secondary fallout such as GPIO acquisition failures. Those reload

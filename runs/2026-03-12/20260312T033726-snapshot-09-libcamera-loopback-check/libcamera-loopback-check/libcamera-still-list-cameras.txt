@@ -1,0 +1,2 @@
+libcamera-still not installed
+EXIT_STATUS: 127

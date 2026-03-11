@@ -13,6 +13,8 @@ Current focus:
 - `docs/antti-prestige14-thread-review.md` — review of the March 10, 2026
   Antti Laakso MSI Prestige 14 patch thread and what its daisy-chain model
   means for this A2VMG
+- `docs/normal-usage-bridge-paths.md` — comparison of the two next
+  app-facing routes: `libcamera` and `v4l2loopback`
 - `docs/20260309-status-report.md` — complete March 9 reverse-engineering and
   experiment report
 - `docs/webcam-status.md` — short current Linux webcam support assessment for
@@ -38,7 +40,8 @@ Current focus:
   camera-path changes
 - `docs/test-routines.md` — numbered test wrappers for clean-boot, reload,
   userspace-capture, no-reboot format-sweep, pipeline-setup, higher-level
-  client compatibility, and explicit userspace-bridge checkpoints
+  client compatibility, explicit userspace-bridge, and next-step integration
+  checkpoints
 - `docs/ov5675-diagnostic-patch.md` — first `ov5675` probe-logging patch and
   exact module-only test steps
 - `docs/ipu-bridge-ovti5675-candidate.md` — `ipu-bridge` follow-up patch note

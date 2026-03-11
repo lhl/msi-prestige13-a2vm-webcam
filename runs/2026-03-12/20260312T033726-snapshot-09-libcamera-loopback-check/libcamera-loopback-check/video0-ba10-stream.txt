@@ -1,0 +1,21 @@
+CMD: timeout 20s v4l2-ctl -d /dev/video0 --stream-mmap=4 --stream-count=4 --stream-poll --stream-to=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T033726-snapshot-09-libcamera-loopback-check/libcamera-loopback-check/video0-ba10.raw --verbose
+		VIDIOC_REQBUFS returned 0 (Success)
+		VIDIOC_CREATE_BUFS returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_G_FMT returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_STREAMON returned 0 (Success)
+cap dqbuf: 0 seq:      0 bytesused: 10077696 ts: 5767.386138 field: None (ts-monotonic, ts-src-eof)
+cap dqbuf: 1 seq:      1 bytesused: 10077696 ts: 5767.419528 delta: 33.390 ms field: None (ts-monotonic, ts-src-eof)
+cap dqbuf: 2 seq:      2 bytesused: 10077696 ts: 5767.452918 delta: 33.390 ms field: None (ts-monotonic, ts-src-eof)
+cap dqbuf: 3 seq:      3 bytesused: 10077696 ts: 5767.486307 delta: 33.389 ms field: None (ts-monotonic, ts-src-eof)
+
+VIDIOC_QUERYCAP: ok
+
+EXIT_STATUS: 0

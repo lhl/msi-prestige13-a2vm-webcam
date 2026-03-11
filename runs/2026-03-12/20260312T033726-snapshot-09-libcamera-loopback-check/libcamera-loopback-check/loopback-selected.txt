@@ -1,0 +1,3 @@
+requested_loopback_device=(auto)
+effective_loopback_device=/dev/video42
+effective_loopback_device_exists=no

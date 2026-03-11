@@ -1,0 +1,8 @@
+libcamera next step:
+install libcamera tools (`cam`, `libcamera-hello`, `libcamera-still`, `libcamera-vid`) and rerun this script
+
+v4l2loopback next step:
+if v4l2loopback is installed for the running kernel, create a loopback node before rerunning:
+sudo modprobe v4l2loopback video_nr=42 card_label="MSI Webcam Bridge" exclusive_caps=1
+then rerun:
+scripts/09-libcamera-loopback-check.sh --loopback-device /dev/video42

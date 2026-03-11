@@ -1,0 +1,1418 @@
+CMD: journalctl -k --since '2026-03-11T17:01:19Z' --no-pager | grep -En 'tps68470|INT3472|OVTI5675|ov5675|intel-ipu7|board-data|subdev|ipu7' || true
+1028:Mar 12 02:01:25 p13 kernel: intel_ipu7: module is from the staging directory, the quality is unknown, you have been warned.
+1032:Mar 12 02:01:25 p13 kernel: intel-ipu7 0000:00:05.0: enabling device (0000 -> 0002)
+1033:Mar 12 02:01:25 p13 kernel: intel-ipu7 0000:00:05.0: Device 0x645d (rev: 0x4)
+1034:Mar 12 02:01:25 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 PCI BAR0 base 0x0000003014000000 BAR2 base 0x0000003016336000
+1035:Mar 12 02:01:25 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 PCI BAR0 mapped at 00000000b5817642
+1040:Mar 12 02:01:25 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 SKU 0 in secure mode mask 0x0
+1043:Mar 12 02:01:25 p13 kernel: intel-ipu7 0000:00:05.0: firmware cpd file: intel/ipu/ipu7_fw.bin
+1044:Mar 12 02:01:25 p13 kernel: intel-ipu7 0000:00:05.0: FW binary0 info:
+1045:Mar 12 02:01:25 p13 kernel: intel-ipu7 0000:00:05.0: Name:  psys
+1046:Mar 12 02:01:25 p13 kernel: intel-ipu7 0000:00:05.0: Version:  1.1.9.240627135220
+1047:Mar 12 02:01:25 p13 kernel: intel-ipu7 0000:00:05.0: Timestamp:  build_id:331942702
+1048:Mar 12 02:01:25 p13 kernel: intel-ipu7 0000:00:05.0: Commit:  commit_id:d84f5c35
+1049:Mar 12 02:01:25 p13 kernel: intel-ipu7 0000:00:05.0: FW binary1 info:
+1050:Mar 12 02:01:25 p13 kernel: intel-ipu7 0000:00:05.0: Name:  isys
+1051:Mar 12 02:01:25 p13 kernel: intel-ipu7 0000:00:05.0: Version:  1.1.9.240627135318
+1052:Mar 12 02:01:25 p13 kernel: intel-ipu7 0000:00:05.0: Timestamp:  build_id:3823931988
+1053:Mar 12 02:01:25 p13 kernel: intel-ipu7 0000:00:05.0: Commit:  commit_id:d84f5c35
+1054:Mar 12 02:01:25 p13 kernel: intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00
+1055:Mar 12 02:01:25 p13 kernel: intel-ipu7 0000:00:05.0: Connected 1 cameras
+1056:Mar 12 02:01:25 p13 kernel: intel-ipu7 0000:00:05.0: Sending BOOT_LOAD to CSE
+1066:Mar 12 02:01:25 p13 kernel: intel-ipu7 0000:00:05.0: Sending AUTHENTICATE_RUN to CSE
+1067:Mar 12 02:01:25 p13 kernel: int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21
+1068:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=POSTDIV2(0x06) ret=0 val=0x00
+1069:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=BOOSTDIV(0x07) ret=0 val=0x00
+1070:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=BUCKDIV(0x08) ret=0 val=0x00
+1071:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=PLLSWR(0x09) ret=0 val=0x00
+1072:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=XTALDIV(0x0a) ret=0 val=0x00
+1073:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=PLLDIV(0x0b) ret=0 val=0x00
+1074:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=POSTDIV(0x0c) ret=0 val=0x00
+1075:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=PLLCTL(0x0d) ret=0 val=0x80
+1082:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+1084:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=CLKCFG2(0x10) ret=0 val=0x00
+1086:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=VSIOVAL(0x40) ret=0 val=0x34
+1087:Mar 12 02:01:25 p13 kernel: intel-ipu7 0000:00:05.0: CSE authenticate_run done
+1088:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=VAVAL(0x41) ret=0 val=0x00
+1090:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=VDVAL(0x42) ret=0 val=0x00
+1091:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+1092:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=VACTL(0x47) ret=0 val=0x00
+1093:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_probe(initial) read reg=VDCTL(0x48) ret=0 val=0x04
+1094:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=POSTDIV2(0x06) ret=0 val=0x00
+1095:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x00
+1096:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=BUCKDIV(0x08) ret=0 val=0x00
+1098:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=PLLSWR(0x09) ret=0 val=0x00
+1099:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=XTALDIV(0x0a) ret=0 val=0x00
+1101:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=PLLDIV(0x0b) ret=0 val=0x00
+1104:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=POSTDIV(0x0c) ret=0 val=0x00
+1108:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=PLLCTL(0x0d) ret=0 val=0x80
+1109:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+1110:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=CLKCFG2(0x10) ret=0 val=0x00
+1112:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+1113:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=VAVAL(0x41) ret=0 val=0x00
+1115:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=VDVAL(0x42) ret=0 val=0x00
+1116:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+1117:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=VACTL(0x47) ret=0 val=0x00
+1118:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(pre) read reg=VDCTL(0x48) ret=0 val=0x04
+1119:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(BOOSTDIV) write reg=BOOSTDIV(0x07) value=0x03 before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x03
+1120:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(BUCKDIV) write reg=BUCKDIV(0x08) value=0x02 before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x02
+1121:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(PLLSWR) write reg=PLLSWR(0x09) value=0x03 before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x03
+1122:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(XTALDIV) write reg=XTALDIV(0x0a) value=0xaa before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0xaa
+1123:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(PLLDIV) write reg=PLLDIV(0x0b) value=0x20 before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x20
+1124:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(POSTDIV) write reg=POSTDIV(0x0c) value=0x01 before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x01
+1125:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(POSTDIV2) write reg=POSTDIV2(0x06) value=0x01 before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x01
+1127:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(CLKCFG2) write reg=CLKCFG2(0x10) value=0x05 before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x05
+1129:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(PLLCTL) write reg=PLLCTL(0x0d) value=0xd0 before_ret=0 before=0x80 write_ret=0 after_ret=0 after=0xd0
+1130:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+1131:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+1132:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+1133:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+1134:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+1135:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+1136:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+1138:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+1140:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+1142:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+1144:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+1146:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=VAVAL(0x41) ret=0 val=0x00
+1148:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=VDVAL(0x42) ret=0 val=0x00
+1149:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+1150:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=VACTL(0x47) ret=0 val=0x00
+1151:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_set_rate(post) read reg=VDCTL(0x48) ret=0 val=0x04
+1178:Mar 12 02:01:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: enabling daisy-chain isolation on gpio.1/gpio.2 and restoring standard VSIO with gpio.9 reset plus gpio.7 powerdown
+1179:Mar 12 02:01:25 p13 kernel: ov5675 i2c-OVTI5675:00: resolved xvclk provider via common clock framework at 19200000 Hz
+1180:Mar 12 02:01:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: probe-before gpio.1 ctl_ret=0 ctl=0x01 gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+1181:Mar 12 02:01:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: direction-output-before gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+1182:Mar 12 02:01:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: probe-before gpio.2 ctl_ret=0 ctl=0x01 gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+1183:Mar 12 02:01:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+1184:Mar 12 02:01:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: probe-before gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+1185:Mar 12 02:01:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: direction-output-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+1186:Mar 12 02:01:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: probe-before gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+1187:Mar 12 02:01:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: direction-output-before gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+1188:Mar 12 02:01:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: probe-after gpio.1 ctl_ret=0 ctl=0x00 gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+1189:Mar 12 02:01:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+1190:Mar 12 02:01:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: probe-after gpio.2 ctl_ret=0 ctl=0x00 gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+1191:Mar 12 02:01:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: probe-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+1192:Mar 12 02:01:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: direction-output-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+1193:Mar 12 02:01:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: probe-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+1194:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+1195:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+1196:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+1197:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+1198:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+1199:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+1200:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+1201:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+1202:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+1203:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+1204:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+1205:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+1206:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+1207:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+1208:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VACTL(0x47) ret=0 val=0x00
+1209:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDCTL(0x48) ret=0 val=0x04
+1210:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x0a before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x0a
+1211:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pll_enable) update reg=PLLCTL(0x0d) mask=0x01 value=0x01 before_ret=0 before=0xd0 update_ret=0 after_ret=0 after=0xd5
+1213:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+1214:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+1215:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+1216:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+1218:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+1220:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+1221:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+1222:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+1223:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+1224:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+1225:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+1226:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+1227:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+1228:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+1229:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VACTL(0x47) ret=0 val=0x00
+1230:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDCTL(0x48) ret=0 val=0x04
+1231:Mar 12 02:01:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+1232:Mar 12 02:01:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+1236:Mar 12 02:01:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+1237:Mar 12 02:01:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x05
+1238:Mar 12 02:01:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+1239:Mar 12 02:01:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+1241:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+1242:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+1243:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+1244:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+1245:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+1246:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+1247:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+1248:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+1249:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+1250:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+1251:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+1252:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+1253:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+1254:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+1255:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VACTL(0x47) ret=0 val=0x01
+1256:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDCTL(0x48) ret=0 val=0x05
+1257:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pll_disable) update reg=PLLCTL(0x0d) mask=0x01 value=0x00 before_ret=0 before=0xd7 update_ret=0 after_ret=0 after=0xd0
+1258:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x00 before_ret=0 before=0x0a write_ret=0 after_ret=0 after=0x00
+1259:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+1260:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+1261:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+1262:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+1263:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+1264:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+1265:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+1266:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+1267:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+1268:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+1269:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+1270:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+1271:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+1272:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+1273:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VACTL(0x47) ret=0 val=0x01
+1274:Mar 12 02:01:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDCTL(0x48) ret=0 val=0x05
+1276:Mar 12 02:01:25 p13 kernel: intel_ipu7_isys: module is from the staging directory, the quality is unknown, you have been warned.
+1284:Mar 12 02:01:25 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: bind ov5675 1-0036 nlanes is 2 port is 0
+1286:Mar 12 02:01:25 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: All sensor registration completed.
+1390:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+1391:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+1392:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+1393:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+1394:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+1395:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+1396:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+1397:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+1398:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+1399:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+1400:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+1401:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+1402:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+1403:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+1404:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VACTL(0x47) ret=0 val=0x00
+1405:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDCTL(0x48) ret=0 val=0x04
+1406:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x0a before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x0a
+1407:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pll_enable) update reg=PLLCTL(0x0d) mask=0x01 value=0x01 before_ret=0 before=0xd0 update_ret=0 after_ret=0 after=0xd5
+1408:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+1409:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+1410:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+1411:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+1412:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+1413:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+1414:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+1415:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+1416:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+1417:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+1418:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+1419:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+1420:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+1421:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+1422:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VACTL(0x47) ret=0 val=0x00
+1423:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDCTL(0x48) ret=0 val=0x04
+1424:Mar 12 02:01:50 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+1425:Mar 12 02:01:50 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+1429:Mar 12 02:01:50 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+1430:Mar 12 02:01:50 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x05
+1431:Mar 12 02:01:50 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+1432:Mar 12 02:01:50 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+1433:Mar 12 02:01:50 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+1434:Mar 12 02:01:50 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+1435:Mar 12 02:01:50 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+1436:Mar 12 02:01:50 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+1437:Mar 12 02:01:50 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+1439:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+1440:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+1441:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+1442:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+1443:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+1444:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+1445:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+1446:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+1447:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+1448:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+1449:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+1450:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+1451:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+1452:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+1453:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VACTL(0x47) ret=0 val=0x01
+1454:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDCTL(0x48) ret=0 val=0x05
+1455:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pll_disable) update reg=PLLCTL(0x0d) mask=0x01 value=0x00 before_ret=0 before=0xd7 update_ret=0 after_ret=0 after=0xd0
+1456:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x00 before_ret=0 before=0x0a write_ret=0 after_ret=0 after=0x00
+1457:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+1458:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+1459:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+1460:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+1461:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+1462:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+1463:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+1464:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+1465:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+1466:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+1467:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+1468:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+1469:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+1470:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+1471:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VACTL(0x47) ret=0 val=0x01
+1472:Mar 12 02:01:50 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDCTL(0x48) ret=0 val=0x05
+2285:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+2286:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+2287:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+2288:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+2289:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+2290:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+2291:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+2292:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+2293:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+2294:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+2295:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+2296:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+2297:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+2298:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+2299:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VACTL(0x47) ret=0 val=0x00
+2300:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDCTL(0x48) ret=0 val=0x04
+2301:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x0a before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x0a
+2302:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pll_enable) update reg=PLLCTL(0x0d) mask=0x01 value=0x01 before_ret=0 before=0xd0 update_ret=0 after_ret=0 after=0xd5
+2303:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+2304:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+2305:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+2306:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+2307:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+2308:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+2309:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+2310:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+2311:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+2312:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+2313:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+2314:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+2315:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+2316:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+2317:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VACTL(0x47) ret=0 val=0x00
+2318:Mar 12 02:18:57 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDCTL(0x48) ret=0 val=0x04
+2319:Mar 12 02:18:57 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+2320:Mar 12 02:18:57 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+2324:Mar 12 02:18:57 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+2325:Mar 12 02:18:57 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x05
+2326:Mar 12 02:18:57 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+2327:Mar 12 02:18:57 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+2328:Mar 12 02:18:57 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+2329:Mar 12 02:18:58 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+2330:Mar 12 02:18:58 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+2331:Mar 12 02:18:58 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+2332:Mar 12 02:18:58 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+2334:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+2335:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+2336:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+2337:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+2338:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+2339:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+2340:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+2341:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+2342:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+2343:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+2344:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+2345:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+2346:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+2347:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+2348:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VACTL(0x47) ret=0 val=0x01
+2349:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDCTL(0x48) ret=0 val=0x05
+2350:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pll_disable) update reg=PLLCTL(0x0d) mask=0x01 value=0x00 before_ret=0 before=0xd7 update_ret=0 after_ret=0 after=0xd0
+2351:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x00 before_ret=0 before=0x0a write_ret=0 after_ret=0 after=0x00
+2352:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+2353:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+2354:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+2355:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+2356:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+2357:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+2358:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+2359:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+2360:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+2361:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+2362:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+2363:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+2364:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+2365:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+2366:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VACTL(0x47) ret=0 val=0x01
+2367:Mar 12 02:18:58 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDCTL(0x48) ret=0 val=0x05
+2411:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+2412:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+2413:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+2414:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+2415:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+2416:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+2417:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+2418:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+2419:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+2420:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+2421:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+2422:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+2423:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+2424:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+2425:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VACTL(0x47) ret=0 val=0x00
+2426:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDCTL(0x48) ret=0 val=0x04
+2427:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x0a before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x0a
+2428:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pll_enable) update reg=PLLCTL(0x0d) mask=0x01 value=0x01 before_ret=0 before=0xd0 update_ret=0 after_ret=0 after=0xd5
+2429:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+2430:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+2431:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+2432:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+2433:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+2434:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+2435:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+2436:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+2437:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+2438:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+2439:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+2440:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+2441:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+2442:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+2443:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VACTL(0x47) ret=0 val=0x00
+2444:Mar 12 02:19:42 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDCTL(0x48) ret=0 val=0x04
+2445:Mar 12 02:19:42 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+2446:Mar 12 02:19:42 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+2450:Mar 12 02:19:42 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+2451:Mar 12 02:19:42 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x05
+2452:Mar 12 02:19:42 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+2453:Mar 12 02:19:43 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+2454:Mar 12 02:19:43 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+2455:Mar 12 02:19:43 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+2456:Mar 12 02:19:43 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+2457:Mar 12 02:19:43 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+2458:Mar 12 02:19:43 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+2460:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+2461:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+2462:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+2463:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+2464:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+2465:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+2466:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+2467:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+2468:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+2469:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+2470:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+2471:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+2472:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+2473:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+2474:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VACTL(0x47) ret=0 val=0x01
+2475:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDCTL(0x48) ret=0 val=0x05
+2476:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pll_disable) update reg=PLLCTL(0x0d) mask=0x01 value=0x00 before_ret=0 before=0xd7 update_ret=0 after_ret=0 after=0xd0
+2477:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x00 before_ret=0 before=0x0a write_ret=0 after_ret=0 after=0x00
+2478:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+2479:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+2480:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+2481:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+2482:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+2483:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+2484:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+2485:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+2486:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+2487:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+2488:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+2489:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+2490:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+2491:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+2492:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VACTL(0x47) ret=0 val=0x01
+2493:Mar 12 02:19:43 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDCTL(0x48) ret=0 val=0x05
+4176:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+4177:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+4178:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+4179:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+4180:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+4181:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+4182:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+4183:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+4184:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+4185:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+4186:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+4187:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+4188:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+4189:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+4190:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VACTL(0x47) ret=0 val=0x00
+4191:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDCTL(0x48) ret=0 val=0x04
+4192:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x0a before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x0a
+4193:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pll_enable) update reg=PLLCTL(0x0d) mask=0x01 value=0x01 before_ret=0 before=0xd0 update_ret=0 after_ret=0 after=0xd5
+4194:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+4195:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+4196:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+4197:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+4198:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+4199:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+4200:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+4201:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+4202:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+4203:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+4204:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+4205:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+4206:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+4207:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+4208:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VACTL(0x47) ret=0 val=0x00
+4209:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDCTL(0x48) ret=0 val=0x04
+4210:Mar 12 02:50:15 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+4211:Mar 12 02:50:15 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+4215:Mar 12 02:50:15 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+4216:Mar 12 02:50:15 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x05
+4217:Mar 12 02:50:15 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+4218:Mar 12 02:50:15 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+4219:Mar 12 02:50:15 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+4220:Mar 12 02:50:15 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+4221:Mar 12 02:50:15 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+4222:Mar 12 02:50:15 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+4223:Mar 12 02:50:15 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+4225:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+4226:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+4227:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+4228:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+4229:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+4230:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+4231:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+4232:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+4233:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+4234:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+4235:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+4236:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+4237:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+4238:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+4239:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VACTL(0x47) ret=0 val=0x01
+4240:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDCTL(0x48) ret=0 val=0x05
+4241:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pll_disable) update reg=PLLCTL(0x0d) mask=0x01 value=0x00 before_ret=0 before=0xd7 update_ret=0 after_ret=0 after=0xd0
+4242:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x00 before_ret=0 before=0x0a write_ret=0 after_ret=0 after=0x00
+4243:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+4244:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+4245:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+4246:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+4247:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+4248:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+4249:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+4250:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+4251:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+4252:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+4253:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+4254:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+4255:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+4256:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+4257:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VACTL(0x47) ret=0 val=0x01
+4258:Mar 12 02:50:15 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDCTL(0x48) ret=0 val=0x05
+5809:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+5810:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+5811:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+5812:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+5813:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+5814:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+5815:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+5816:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+5817:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+5818:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+5819:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+5820:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+5821:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+5822:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+5823:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VACTL(0x47) ret=0 val=0x00
+5824:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDCTL(0x48) ret=0 val=0x04
+5825:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x0a before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x0a
+5826:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pll_enable) update reg=PLLCTL(0x0d) mask=0x01 value=0x01 before_ret=0 before=0xd0 update_ret=0 after_ret=0 after=0xd5
+5827:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+5828:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+5829:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+5830:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+5831:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+5832:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+5833:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+5834:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+5835:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+5836:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+5837:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+5838:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+5839:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+5840:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+5841:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VACTL(0x47) ret=0 val=0x00
+5842:Mar 12 03:17:37 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDCTL(0x48) ret=0 val=0x04
+5843:Mar 12 03:17:37 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+5844:Mar 12 03:17:37 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+5848:Mar 12 03:17:37 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+5849:Mar 12 03:17:37 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x05
+5850:Mar 12 03:17:37 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+5851:Mar 12 03:17:37 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+5852:Mar 12 03:17:38 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+5853:Mar 12 03:17:38 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+5854:Mar 12 03:17:38 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+5855:Mar 12 03:17:38 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+5856:Mar 12 03:17:38 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+5858:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+5859:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+5860:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+5861:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+5862:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+5863:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+5864:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+5865:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+5866:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+5867:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+5868:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+5869:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+5870:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+5871:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+5872:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VACTL(0x47) ret=0 val=0x01
+5873:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDCTL(0x48) ret=0 val=0x05
+5874:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pll_disable) update reg=PLLCTL(0x0d) mask=0x01 value=0x00 before_ret=0 before=0xd7 update_ret=0 after_ret=0 after=0xd0
+5875:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x00 before_ret=0 before=0x0a write_ret=0 after_ret=0 after=0x00
+5876:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+5877:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+5878:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+5879:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+5880:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+5881:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+5882:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+5883:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+5884:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+5885:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+5886:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+5887:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+5888:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+5889:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+5890:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VACTL(0x47) ret=0 val=0x01
+5891:Mar 12 03:17:38 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDCTL(0x48) ret=0 val=0x05
+5893:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+5894:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+5895:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+5896:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+5897:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+5898:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+5899:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+5900:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+5901:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+5902:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+5903:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+5904:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+5905:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+5906:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+5907:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VACTL(0x47) ret=0 val=0x00
+5908:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDCTL(0x48) ret=0 val=0x04
+5909:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x0a before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x0a
+5910:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pll_enable) update reg=PLLCTL(0x0d) mask=0x01 value=0x01 before_ret=0 before=0xd0 update_ret=0 after_ret=0 after=0xd5
+5911:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+5912:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+5913:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+5914:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+5915:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+5916:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+5917:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+5918:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+5919:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+5920:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+5921:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+5922:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+5923:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+5924:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+5925:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VACTL(0x47) ret=0 val=0x00
+5926:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDCTL(0x48) ret=0 val=0x04
+5927:Mar 12 03:17:53 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+5928:Mar 12 03:17:53 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+5932:Mar 12 03:17:53 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+5933:Mar 12 03:17:53 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x05
+5934:Mar 12 03:17:53 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+5935:Mar 12 03:17:53 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+5936:Mar 12 03:17:53 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+5937:Mar 12 03:17:53 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+5938:Mar 12 03:17:53 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+5940:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+5941:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+5942:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+5943:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+5944:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+5945:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+5946:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+5947:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+5948:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+5949:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+5950:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+5951:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+5952:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+5953:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+5954:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VACTL(0x47) ret=0 val=0x01
+5955:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDCTL(0x48) ret=0 val=0x05
+5956:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pll_disable) update reg=PLLCTL(0x0d) mask=0x01 value=0x00 before_ret=0 before=0xd7 update_ret=0 after_ret=0 after=0xd0
+5957:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x00 before_ret=0 before=0x0a write_ret=0 after_ret=0 after=0x00
+5958:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+5959:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+5960:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+5961:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+5962:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+5963:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+5964:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+5965:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+5966:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+5967:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+5968:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+5969:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+5970:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+5971:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+5972:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VACTL(0x47) ret=0 val=0x01
+5973:Mar 12 03:17:53 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDCTL(0x48) ret=0 val=0x05
+5975:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+5976:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+5977:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+5978:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+5979:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+5980:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+5981:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+5982:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+5983:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+5984:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+5985:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+5986:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+5987:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+5988:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+5989:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VACTL(0x47) ret=0 val=0x00
+5990:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDCTL(0x48) ret=0 val=0x04
+5991:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x0a before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x0a
+5992:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pll_enable) update reg=PLLCTL(0x0d) mask=0x01 value=0x01 before_ret=0 before=0xd0 update_ret=0 after_ret=0 after=0xd5
+5993:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+5994:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+5995:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+5996:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+5997:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+5998:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+5999:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6000:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+6001:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+6002:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6003:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6004:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+6005:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+6006:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6007:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VACTL(0x47) ret=0 val=0x00
+6008:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDCTL(0x48) ret=0 val=0x04
+6009:Mar 12 03:18:24 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6010:Mar 12 03:18:24 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6014:Mar 12 03:18:24 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+6015:Mar 12 03:18:24 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x05
+6016:Mar 12 03:18:24 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+6017:Mar 12 03:18:24 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+6018:Mar 12 03:18:24 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+6019:Mar 12 03:18:24 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+6020:Mar 12 03:18:24 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6022:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6023:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6024:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6025:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+6026:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6027:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6028:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6029:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+6030:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+6031:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6032:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6033:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+6034:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+6035:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6036:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VACTL(0x47) ret=0 val=0x01
+6037:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDCTL(0x48) ret=0 val=0x05
+6038:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pll_disable) update reg=PLLCTL(0x0d) mask=0x01 value=0x00 before_ret=0 before=0xd7 update_ret=0 after_ret=0 after=0xd0
+6039:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x00 before_ret=0 before=0x0a write_ret=0 after_ret=0 after=0x00
+6040:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6041:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6042:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6043:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+6044:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6045:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6046:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6047:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+6048:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+6049:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6050:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6051:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+6052:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+6053:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6054:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VACTL(0x47) ret=0 val=0x01
+6055:Mar 12 03:18:24 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDCTL(0x48) ret=0 val=0x05
+6069:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6070:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6071:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6072:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+6073:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6074:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6075:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6076:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+6077:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+6078:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6079:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6080:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+6081:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+6082:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6083:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VACTL(0x47) ret=0 val=0x00
+6084:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDCTL(0x48) ret=0 val=0x04
+6085:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x0a before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x0a
+6086:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pll_enable) update reg=PLLCTL(0x0d) mask=0x01 value=0x01 before_ret=0 before=0xd0 update_ret=0 after_ret=0 after=0xd5
+6087:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6088:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6089:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6090:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+6091:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6092:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6093:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6094:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+6095:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+6096:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6097:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6098:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+6099:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+6100:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6101:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VACTL(0x47) ret=0 val=0x00
+6102:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDCTL(0x48) ret=0 val=0x04
+6103:Mar 12 03:18:45 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6104:Mar 12 03:18:45 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6108:Mar 12 03:18:45 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+6109:Mar 12 03:18:45 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x05
+6110:Mar 12 03:18:45 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+6111:Mar 12 03:18:45 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+6112:Mar 12 03:18:45 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+6113:Mar 12 03:18:45 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+6114:Mar 12 03:18:45 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6116:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6117:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6118:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6119:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+6120:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6121:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6122:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6123:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+6124:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+6125:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6126:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6127:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+6128:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+6129:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6130:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VACTL(0x47) ret=0 val=0x01
+6131:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDCTL(0x48) ret=0 val=0x05
+6132:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pll_disable) update reg=PLLCTL(0x0d) mask=0x01 value=0x00 before_ret=0 before=0xd7 update_ret=0 after_ret=0 after=0xd0
+6133:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x00 before_ret=0 before=0x0a write_ret=0 after_ret=0 after=0x00
+6134:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6135:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6136:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6137:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+6138:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6139:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6140:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6141:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+6142:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+6143:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6144:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6145:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+6146:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+6147:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6148:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VACTL(0x47) ret=0 val=0x01
+6149:Mar 12 03:18:45 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDCTL(0x48) ret=0 val=0x05
+6151:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6152:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6153:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6154:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+6155:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6156:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6157:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6158:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+6159:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+6160:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6161:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6162:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+6163:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+6164:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6165:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VACTL(0x47) ret=0 val=0x00
+6166:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDCTL(0x48) ret=0 val=0x04
+6167:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x0a before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x0a
+6168:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pll_enable) update reg=PLLCTL(0x0d) mask=0x01 value=0x01 before_ret=0 before=0xd0 update_ret=0 after_ret=0 after=0xd5
+6169:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6170:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6171:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6172:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+6173:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6174:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6175:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6176:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+6177:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+6178:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6179:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6180:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+6181:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+6182:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6183:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VACTL(0x47) ret=0 val=0x00
+6184:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDCTL(0x48) ret=0 val=0x04
+6185:Mar 12 03:19:08 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6186:Mar 12 03:19:08 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6190:Mar 12 03:19:08 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+6191:Mar 12 03:19:08 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x05
+6192:Mar 12 03:19:08 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+6193:Mar 12 03:19:08 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+6194:Mar 12 03:19:08 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+6195:Mar 12 03:19:08 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+6196:Mar 12 03:19:08 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6198:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6199:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6200:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6201:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+6202:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6203:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6204:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6205:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+6206:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+6207:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6208:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6209:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+6210:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+6211:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6212:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VACTL(0x47) ret=0 val=0x01
+6213:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDCTL(0x48) ret=0 val=0x05
+6214:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pll_disable) update reg=PLLCTL(0x0d) mask=0x01 value=0x00 before_ret=0 before=0xd7 update_ret=0 after_ret=0 after=0xd0
+6215:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x00 before_ret=0 before=0x0a write_ret=0 after_ret=0 after=0x00
+6216:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6217:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6218:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6219:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+6220:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6221:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6222:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6223:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+6224:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+6225:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6226:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6227:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+6228:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+6229:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6230:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VACTL(0x47) ret=0 val=0x01
+6231:Mar 12 03:19:08 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDCTL(0x48) ret=0 val=0x05
+6233:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6234:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6235:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6236:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+6237:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6238:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6239:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6240:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+6241:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+6242:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6243:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6244:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+6245:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+6246:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6247:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VACTL(0x47) ret=0 val=0x00
+6248:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDCTL(0x48) ret=0 val=0x04
+6249:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x0a before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x0a
+6250:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pll_enable) update reg=PLLCTL(0x0d) mask=0x01 value=0x01 before_ret=0 before=0xd0 update_ret=0 after_ret=0 after=0xd5
+6251:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6252:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6253:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6254:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+6255:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6256:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6257:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6258:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+6259:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+6260:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6261:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6262:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+6263:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+6264:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6265:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VACTL(0x47) ret=0 val=0x00
+6266:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDCTL(0x48) ret=0 val=0x04
+6267:Mar 12 03:19:14 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6268:Mar 12 03:19:14 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6272:Mar 12 03:19:14 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+6273:Mar 12 03:19:14 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x05
+6274:Mar 12 03:19:14 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+6275:Mar 12 03:19:14 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+6276:Mar 12 03:19:14 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+6277:Mar 12 03:19:14 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+6278:Mar 12 03:19:14 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6280:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6281:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6282:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6283:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+6284:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6285:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6286:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6287:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+6288:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+6289:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6290:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6291:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+6292:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+6293:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6294:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VACTL(0x47) ret=0 val=0x01
+6295:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDCTL(0x48) ret=0 val=0x05
+6296:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pll_disable) update reg=PLLCTL(0x0d) mask=0x01 value=0x00 before_ret=0 before=0xd7 update_ret=0 after_ret=0 after=0xd0
+6297:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x00 before_ret=0 before=0x0a write_ret=0 after_ret=0 after=0x00
+6298:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6299:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6300:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6301:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+6302:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6303:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6304:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6305:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+6306:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+6307:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6308:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6309:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+6310:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+6311:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6312:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VACTL(0x47) ret=0 val=0x01
+6313:Mar 12 03:19:14 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDCTL(0x48) ret=0 val=0x05
+6315:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6316:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6317:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6318:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+6319:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6320:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6321:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6322:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+6323:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+6324:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6325:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6326:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+6327:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+6328:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6329:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VACTL(0x47) ret=0 val=0x00
+6330:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDCTL(0x48) ret=0 val=0x04
+6331:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x0a before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x0a
+6332:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pll_enable) update reg=PLLCTL(0x0d) mask=0x01 value=0x01 before_ret=0 before=0xd0 update_ret=0 after_ret=0 after=0xd5
+6333:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6334:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6335:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6336:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+6337:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6338:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6339:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6340:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+6341:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+6342:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6343:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6344:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+6345:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+6346:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6347:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VACTL(0x47) ret=0 val=0x00
+6348:Mar 12 03:19:25 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDCTL(0x48) ret=0 val=0x04
+6349:Mar 12 03:19:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6350:Mar 12 03:19:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6354:Mar 12 03:19:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+6355:Mar 12 03:19:25 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x05
+6356:Mar 12 03:19:25 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+6357:Mar 12 03:19:26 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+6358:Mar 12 03:19:26 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+6359:Mar 12 03:19:26 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6361:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6362:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6363:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6364:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+6365:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6366:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6367:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6368:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+6369:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+6370:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6371:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6372:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+6373:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+6374:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6375:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VACTL(0x47) ret=0 val=0x01
+6376:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDCTL(0x48) ret=0 val=0x05
+6377:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pll_disable) update reg=PLLCTL(0x0d) mask=0x01 value=0x00 before_ret=0 before=0xd7 update_ret=0 after_ret=0 after=0xd0
+6378:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x00 before_ret=0 before=0x0a write_ret=0 after_ret=0 after=0x00
+6379:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6380:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6381:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6382:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+6383:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6384:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6385:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6386:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+6387:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+6388:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6389:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6390:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+6391:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+6392:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6393:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VACTL(0x47) ret=0 val=0x01
+6394:Mar 12 03:19:26 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDCTL(0x48) ret=0 val=0x05
+6504:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6505:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6506:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6507:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+6508:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6509:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6510:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6511:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+6512:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+6513:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6514:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6515:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+6516:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+6517:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6518:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VACTL(0x47) ret=0 val=0x00
+6519:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDCTL(0x48) ret=0 val=0x04
+6520:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x0a before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x0a
+6521:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pll_enable) update reg=PLLCTL(0x0d) mask=0x01 value=0x01 before_ret=0 before=0xd0 update_ret=0 after_ret=0 after=0xd5
+6522:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6523:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6524:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6525:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+6526:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6527:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6528:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6529:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+6530:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+6531:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6532:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6533:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+6534:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+6535:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6536:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VACTL(0x47) ret=0 val=0x00
+6537:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDCTL(0x48) ret=0 val=0x04
+6538:Mar 12 03:23:18 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6539:Mar 12 03:23:18 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6543:Mar 12 03:23:18 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+6544:Mar 12 03:23:18 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x05
+6545:Mar 12 03:23:18 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+6546:Mar 12 03:23:18 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+6547:Mar 12 03:23:18 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+6548:Mar 12 03:23:18 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+6549:Mar 12 03:23:18 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+6550:Mar 12 03:23:18 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+6551:Mar 12 03:23:18 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6553:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6554:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6555:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6556:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+6557:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6558:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6559:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6560:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+6561:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+6562:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6563:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6564:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+6565:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+6566:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6567:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VACTL(0x47) ret=0 val=0x01
+6568:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDCTL(0x48) ret=0 val=0x05
+6569:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pll_disable) update reg=PLLCTL(0x0d) mask=0x01 value=0x00 before_ret=0 before=0xd7 update_ret=0 after_ret=0 after=0xd0
+6570:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x00 before_ret=0 before=0x0a write_ret=0 after_ret=0 after=0x00
+6571:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6572:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6573:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6574:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+6575:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6576:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6577:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6578:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+6579:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+6580:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6581:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6582:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+6583:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+6584:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6585:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VACTL(0x47) ret=0 val=0x01
+6586:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDCTL(0x48) ret=0 val=0x05
+6588:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6589:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6590:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6591:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+6592:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6593:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6594:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6595:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+6596:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+6597:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6598:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6599:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+6600:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+6601:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6602:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VACTL(0x47) ret=0 val=0x00
+6603:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDCTL(0x48) ret=0 val=0x04
+6604:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x0a before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x0a
+6605:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pll_enable) update reg=PLLCTL(0x0d) mask=0x01 value=0x01 before_ret=0 before=0xd0 update_ret=0 after_ret=0 after=0xd5
+6606:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6607:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6608:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6609:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+6610:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6611:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6612:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6613:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+6614:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+6615:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6616:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6617:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+6618:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+6619:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6620:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VACTL(0x47) ret=0 val=0x00
+6621:Mar 12 03:23:18 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDCTL(0x48) ret=0 val=0x04
+6622:Mar 12 03:23:18 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6623:Mar 12 03:23:18 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6627:Mar 12 03:23:18 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+6628:Mar 12 03:23:18 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x05
+6629:Mar 12 03:23:18 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+6630:Mar 12 03:23:18 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+6631:Mar 12 03:23:18 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+6632:Mar 12 03:23:19 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+6633:Mar 12 03:23:19 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6635:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6636:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6637:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6638:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+6639:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6640:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6641:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6642:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+6643:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+6644:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6645:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6646:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+6647:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+6648:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6649:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VACTL(0x47) ret=0 val=0x01
+6650:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDCTL(0x48) ret=0 val=0x05
+6651:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pll_disable) update reg=PLLCTL(0x0d) mask=0x01 value=0x00 before_ret=0 before=0xd7 update_ret=0 after_ret=0 after=0xd0
+6652:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x00 before_ret=0 before=0x0a write_ret=0 after_ret=0 after=0x00
+6653:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6654:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6655:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6656:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+6657:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6658:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6659:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6660:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+6661:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+6662:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6663:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6664:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+6665:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+6666:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6667:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VACTL(0x47) ret=0 val=0x01
+6668:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDCTL(0x48) ret=0 val=0x05
+6670:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6671:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6672:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6673:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+6674:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6675:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6676:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6677:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+6678:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+6679:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6680:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6681:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+6682:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+6683:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6684:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VACTL(0x47) ret=0 val=0x00
+6685:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDCTL(0x48) ret=0 val=0x04
+6686:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x0a before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x0a
+6687:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pll_enable) update reg=PLLCTL(0x0d) mask=0x01 value=0x01 before_ret=0 before=0xd0 update_ret=0 after_ret=0 after=0xd5
+6688:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6689:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6690:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6691:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+6692:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6693:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6694:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6695:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+6696:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+6697:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6698:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6699:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+6700:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+6701:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6702:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VACTL(0x47) ret=0 val=0x00
+6703:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDCTL(0x48) ret=0 val=0x04
+6704:Mar 12 03:23:19 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6705:Mar 12 03:23:19 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6709:Mar 12 03:23:19 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+6710:Mar 12 03:23:19 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x05
+6711:Mar 12 03:23:19 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+6712:Mar 12 03:23:19 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+6713:Mar 12 03:23:19 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+6714:Mar 12 03:23:19 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6716:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6717:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6718:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6719:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+6720:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6721:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6722:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6723:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+6724:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+6725:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6726:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6727:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+6728:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+6729:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6730:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VACTL(0x47) ret=0 val=0x01
+6731:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDCTL(0x48) ret=0 val=0x05
+6732:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pll_disable) update reg=PLLCTL(0x0d) mask=0x01 value=0x00 before_ret=0 before=0xd7 update_ret=0 after_ret=0 after=0xd0
+6733:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x00 before_ret=0 before=0x0a write_ret=0 after_ret=0 after=0x00
+6734:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6735:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6736:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6737:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+6738:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6739:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6740:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6741:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+6742:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+6743:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6744:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6745:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+6746:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+6747:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6748:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VACTL(0x47) ret=0 val=0x01
+6749:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDCTL(0x48) ret=0 val=0x05
+6751:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6752:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6753:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6754:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+6755:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6756:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6757:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6758:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+6759:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+6760:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6761:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6762:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+6763:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+6764:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6765:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VACTL(0x47) ret=0 val=0x00
+6766:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDCTL(0x48) ret=0 val=0x04
+6767:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x0a before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x0a
+6768:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pll_enable) update reg=PLLCTL(0x0d) mask=0x01 value=0x01 before_ret=0 before=0xd0 update_ret=0 after_ret=0 after=0xd5
+6769:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6770:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6771:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6772:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+6773:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6774:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6775:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6776:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+6777:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+6778:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6779:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6780:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+6781:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+6782:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6783:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VACTL(0x47) ret=0 val=0x00
+6784:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDCTL(0x48) ret=0 val=0x04
+6785:Mar 12 03:23:19 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6786:Mar 12 03:23:19 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6790:Mar 12 03:23:19 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+6791:Mar 12 03:23:19 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x05
+6792:Mar 12 03:23:19 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+6793:Mar 12 03:23:19 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+6795:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6796:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6797:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6798:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+6799:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6800:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6801:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6802:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+6803:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+6804:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6805:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6806:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+6807:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+6808:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6809:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VACTL(0x47) ret=0 val=0x01
+6810:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDCTL(0x48) ret=0 val=0x05
+6811:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pll_disable) update reg=PLLCTL(0x0d) mask=0x01 value=0x00 before_ret=0 before=0xd7 update_ret=0 after_ret=0 after=0xd0
+6812:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x00 before_ret=0 before=0x0a write_ret=0 after_ret=0 after=0x00
+6813:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+6814:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+6815:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+6816:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+6817:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+6818:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+6819:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+6820:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+6821:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+6822:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+6823:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+6824:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+6825:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+6826:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+6827:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VACTL(0x47) ret=0 val=0x01
+6828:Mar 12 03:23:19 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDCTL(0x48) ret=0 val=0x05
+7143:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+7144:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+7145:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+7146:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+7147:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+7148:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+7149:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+7150:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+7151:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+7152:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+7153:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+7154:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+7155:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+7156:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+7157:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VACTL(0x47) ret=0 val=0x00
+7158:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pre) read reg=VDCTL(0x48) ret=0 val=0x04
+7159:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x0a before_ret=0 before=0x00 write_ret=0 after_ret=0 after=0x0a
+7160:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(pll_enable) update reg=PLLCTL(0x0d) mask=0x01 value=0x01 before_ret=0 before=0xd0 update_ret=0 after_ret=0 after=0xd5
+7161:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+7162:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+7163:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+7164:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+7165:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+7166:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+7167:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+7168:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+7169:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+7170:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+7171:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+7172:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+7173:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+7174:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+7175:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VACTL(0x47) ret=0 val=0x00
+7176:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_prepare(post) read reg=VDCTL(0x48) ret=0 val=0x04
+7177:Mar 12 03:36:46 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+7178:Mar 12 03:36:46 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+7182:Mar 12 03:36:46 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+7183:Mar 12 03:36:46 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x05
+7184:Mar 12 03:36:46 p13 kernel: ipu7_isys_csi2_error: 3 callbacks suppressed
+7185:Mar 12 03:36:46 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+7186:Mar 12 03:36:46 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+7187:Mar 12 03:36:46 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+7188:Mar 12 03:36:46 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+7189:Mar 12 03:36:46 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+7190:Mar 12 03:36:46 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x01
+7191:Mar 12 03:36:46 p13 kernel: tps68470-gpio tps68470-gpio: exp18_daisy: set-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+7193:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV2(0x06) ret=0 val=0x01
+7194:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+7195:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=BUCKDIV(0x08) ret=0 val=0x02
+7196:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLSWR(0x09) ret=0 val=0x03
+7197:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+7198:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLDIV(0x0b) ret=0 val=0x20
+7199:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=POSTDIV(0x0c) ret=0 val=0x01
+7200:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=PLLCTL(0x0d) ret=0 val=0xd7
+7201:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG1(0x0f) ret=0 val=0x0a
+7202:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=CLKCFG2(0x10) ret=0 val=0x05
+7203:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VSIOVAL(0x40) ret=0 val=0x34
+7204:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VAVAL(0x41) ret=0 val=0x6d
+7205:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDVAL(0x42) ret=0 val=0x0c
+7206:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+7207:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VACTL(0x47) ret=0 val=0x01
+7208:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pre) read reg=VDCTL(0x48) ret=0 val=0x05
+7209:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(pll_disable) update reg=PLLCTL(0x0d) mask=0x01 value=0x00 before_ret=0 before=0xd7 update_ret=0 after_ret=0 after=0xd0
+7210:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(clock_outputs) write reg=CLKCFG1(0x0f) value=0x00 before_ret=0 before=0x0a write_ret=0 after_ret=0 after=0x00
+7211:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV2(0x06) ret=0 val=0x01
+7212:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BOOSTDIV(0x07) ret=0 val=0x03
+7213:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=BUCKDIV(0x08) ret=0 val=0x02
+7214:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLSWR(0x09) ret=0 val=0x03
+7215:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=XTALDIV(0x0a) ret=0 val=0xaa
+7216:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLDIV(0x0b) ret=0 val=0x20
+7217:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=POSTDIV(0x0c) ret=0 val=0x01
+7218:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=PLLCTL(0x0d) ret=0 val=0xd0
+7219:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG1(0x0f) ret=0 val=0x00
+7220:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=CLKCFG2(0x10) ret=0 val=0x05
+7221:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VSIOVAL(0x40) ret=0 val=0x34
+7222:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VAVAL(0x41) ret=0 val=0x6d
+7223:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDVAL(0x42) ret=0 val=0x0c
+7224:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=S_I2C_CTL(0x43) ret=0 val=0x00
+7225:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VACTL(0x47) ret=0 val=0x01
+7226:Mar 12 03:36:46 p13 kernel: tps68470-clk tps68470-clk: pmic_raw: clk_unprepare(post) read reg=VDCTL(0x48) ret=0 val=0x05
+
+EXIT_STATUS: 0

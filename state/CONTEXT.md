@@ -72,8 +72,15 @@ with strong evidence.
     - `bayer2rgb` + `videoconvert` succeeds
     - `jpegenc` emitted a normal `2592x1944` JPEG artifact under the first
       `08` run
-    - `libcamera-*` / `cam`: missing locally
-    - `cheese`: present, but not yet exercised in a GUI session
+  - the two next integration routes are now codified in `09`:
+    - `libcamera`
+    - `v4l2loopback`
+  - the first local `09` result is prerequisite-negative for both:
+    - `cam`, `libcamera-hello`, `libcamera-still`, and `libcamera-vid` are
+      missing locally
+    - `v4l2loopback` is not installed / loaded locally
+    - no loopback device exists
+  - `cheese`: present, but not yet exercised in a GUI session
   - post-boot PMIC dumping still returns `ERROR` for every register
 
 ## What March 9 Added
@@ -199,6 +206,21 @@ with strong evidence.
       - raw delivery works
       - framework-level Bayer bridging works
       - auto-negotiated / plug-and-play client integration still does not
+- staged and ran `scripts/09-libcamera-loopback-check.sh` as the first unified
+  next-step integration probe for `libcamera` and `v4l2loopback`:
+  - run:
+    - `runs/2026-03-12/20260312T033726-snapshot-09-libcamera-loopback-check/`
+  - result:
+    - raw `BA10` capture still succeeded from the known-good configured state
+    - the script now records both next integration paths in one place
+    - current local result is still prerequisite-negative:
+      - `cam`, `libcamera-hello`, `libcamera-still`, and `libcamera-vid` are
+        missing
+      - `modinfo v4l2loopback` returns `Module v4l2loopback not found`
+      - no loopback `/dev/video42` exists
+    - the run now records the exact rerun prerequisites:
+      - install libcamera tools and rerun
+      - create a loopback device with `modprobe v4l2loopback ...` and rerun
 
 ## What March 11 Added
 
@@ -387,6 +409,12 @@ with strong evidence.
   - explicit GStreamer `video/x-bayer` succeeds
   - `bayer2rgb` + `videoconvert` succeeds
   - JPEG export succeeds
+- `scripts/09-libcamera-loopback-check.sh` now packages the two next app-facing
+  routes into one repeatable probe:
+  - `libcamera`
+  - `v4l2loopback`
+  - the current local answer is still "missing prerequisites", not "path
+    disproven"
 - 5x `csi2-0 error: Received packet is too long` warnings appear during
   capture; the current hard clue is a one-scanline mismatch between
   `bytesused` and `Size Image`, so this still looks like a CSI2
@@ -403,16 +431,20 @@ with strong evidence.
    higher-level client truth source.
 4. Use `scripts/08-userspace-bridge-check.sh` as the current explicit
    userspace-bridge truth source.
-5. Test whether the working GStreamer Bayer bridge can be exposed to normal
+5. Use `scripts/09-libcamera-loopback-check.sh` as the current next-step
+   integration truth source for both `libcamera` and `v4l2loopback`.
+6. Install libcamera tools and rerun `09`.
+7. Install/load `v4l2loopback`, create a loopback device, and rerun `09`.
+8. Test whether the working GStreamer Bayer bridge can be exposed to normal
    apps, or whether the real answer is `libcamera` / an IPU7 pipeline handler.
-6. Determine why the advertised direct standard-pixel formats (`YUYV`,
+9. Determine why the advertised direct standard-pixel formats (`YUYV`,
    `UYVY`, `BGR3`, etc.) are not actually streamable.
-7. Investigate the `Received packet is too long` CSI2 warnings and the
+10. Investigate the `Received packet is too long` CSI2 warnings and the
    one-scanline `Size Image` vs `bytesused` mismatch.
-8. Install and try `libcamera-*` / `cam`, then manually exercise `cheese`.
-9. Clean up the patch stack for upstream submission.
-10. Fix or replace the post-boot PMIC dump path.
-11. Do not rerun the broad `exp7` snapshot patch as a default path.
+11. Manually exercise `cheese` after one of the app-facing routes is ready.
+12. Clean up the patch stack for upstream submission.
+13. Fix or replace the post-boot PMIC dump path.
+14. Do not rerun the broad `exp7` snapshot patch as a default path.
 
 ## Key Paths
 

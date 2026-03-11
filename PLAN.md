@@ -30,13 +30,24 @@ with strong evidence.
   - the media graph gained `ov5675 10-0036`
   - `/dev/v4l-subdev0` now exists
 - the remaining blocker is no longer first sensor bind:
-  - the first raw `/dev/video0` stream now fails at `VIDIOC_STREAMON` with
-    `Link has been severed`
-  - the raw output file stays at `0` bytes
-  - a later no-reboot sweep forced `/dev/video0` through `/dev/video7` to
-    `4096x3072 BA10`
-  - all eight nodes accepted `VIDIOC_S_FMT`
-  - all eight still failed `VIDIOC_STREAMON` with `Link has been severed`
+  - raw Bayer capture from `/dev/video0` now works after explicit userspace
+    `media-ctl` setup
+  - fresh-boot `06` reruns proved the working `2592x1944` + enabled-link
+    state is script-established, not inherited
+  - normal auto-negotiated client use still fails:
+    - `ffmpeg` / `mpv`: `VIDIOC_STREAMON` `Broken pipe`
+    - GStreamer `v4l2src`: allocation / `not-negotiated`
+    - direct advertised `YUYV`: still fails
+  - an explicit framework-level bridge does work:
+    - GStreamer `video/x-bayer,format=grbg10le`: success
+    - `bayer2rgb` + `videoconvert`: success
+    - JPEG export: success
+  - the next app-facing routes are now explicit:
+    - `libcamera`
+    - `v4l2loopback`
+  - current local `09` result is still prerequisite-negative for both:
+    - `libcamera` tools missing
+    - `v4l2loopback` module/device missing
   - the post-boot PMIC dump path still returns `ERROR` for every register
 - completed negative branches:
   - `GPIO1` / `GPIO2` role swap
@@ -188,6 +199,17 @@ with strong evidence.
     - `video/x-bayer,format=grbg10le`: success
     - `bayer2rgb` + `videoconvert`: success
     - `jpegenc`: emitted a normal `2592x1944` JPEG artifact
+- [x] Stage and run one repeatable checkpoint for the two next integration
+  routes: `libcamera` and `v4l2loopback`.
+  - **Answer: yes.**
+  - `scripts/09-libcamera-loopback-check.sh` now exists and the first live run
+    is recorded under
+    `runs/2026-03-12/20260312T033726-snapshot-09-libcamera-loopback-check/`
+  - current local result is prerequisite-negative, not capability-positive:
+    - `cam`, `libcamera-hello`, `libcamera-still`, and `libcamera-vid` are
+      missing
+    - `modinfo v4l2loopback` reports `Module v4l2loopback not found`
+    - no loopback device exists
 - [ ] Test remaining higher-level tools that were not covered headlessly.
   - install and try `libcamera-*` / `cam`
   - manually exercise `cheese` in a GUI session
@@ -247,18 +269,22 @@ with strong evidence.
    client compatibility truth source.
 4. Use `scripts/08-userspace-bridge-check.sh` as the explicit userspace-bridge
    truth source.
-5. Test whether the working GStreamer Bayer bridge can be exposed to normal
+5. Use `scripts/09-libcamera-loopback-check.sh` as the next-step integration
+   truth source for both `libcamera` and `v4l2loopback`.
+6. Install `libcamera` tools and rerun `09`.
+7. Install/load `v4l2loopback`, create a loopback node, and rerun `09`.
+8. Test whether the working GStreamer Bayer bridge can be exposed to normal
    apps, or whether the real answer is `libcamera` / an IPU7-specific pipeline
    handler.
-6. Determine why the advertised direct standard-pixel formats (`YUYV`,
+9. Determine why the advertised direct standard-pixel formats (`YUYV`,
    `UYVY`, `BGR3`, etc.) are not actually streamable.
-7. Investigate the `csi2-0 error: Received packet is too long` warnings and
+10. Investigate the `csi2-0 error: Received packet is too long` warnings and
    the one-scanline `Size Image` vs `bytesused` mismatch.
-8. Clean up the patch stack for upstream submission:
+11. Clean up the patch stack for upstream submission:
    - remove experiment instrumentation logging
    - separate minimal board-data from diagnostic scaffolding
-9. Fix or replace the post-boot PMIC dump path.
-10. Keep the broader Windows config-path questions open for upstreamability
+12. Fix or replace the post-boot PMIC dump path.
+13. Keep the broader Windows config-path questions open for upstreamability
    context, but they are no longer blocking basic bring-up.
 
 ## Open Questions
@@ -273,6 +299,10 @@ with strong evidence.
 - Why does GStreamer `v4l2src` auto-negotiation fail allocation /
   `not-negotiated` from that same state while explicit `video/x-bayer` caps
   succeed?
+- Will `libcamera` discovery or capture work once the tools are installed on
+  this machine?
+- Will a `v4l2loopback` bridge produce a normal consumer-facing webcam node
+  once the module is installed and a device is created?
 - Why does userspace PMIC register dumping fail completely after boot when the
   kernel can still log `TPS68470 REVID: 0x21`?
 - What is the minimum clean patch set needed for upstream submission?

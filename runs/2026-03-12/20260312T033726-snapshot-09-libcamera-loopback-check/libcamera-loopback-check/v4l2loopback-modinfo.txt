@@ -1,0 +1,4 @@
+CMD: modinfo v4l2loopback
+modinfo: ERROR: Module v4l2loopback not found.
+
+EXIT_STATUS: 1

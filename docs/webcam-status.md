@@ -12,6 +12,9 @@ An explicit userspace bridge now works: GStreamer can consume the raw Bayer
 stream with forced `video/x-bayer` caps, convert it through `bayer2rgb`, and
 emit a normal `2592x1944` JPEG artifact.
 
+The two next integration paths are now codified in one repeatable check:
+`scripts/09-libcamera-loopback-check.sh`.
+
 On the `exp18` kernel branch with explicit userspace `media-ctl` pipeline
 setup, `/dev/video0` delivers real Bayer sensor data:
 
@@ -77,7 +80,12 @@ Known remaining issues:
       succeeds
     - `bayer2rgb ! videoconvert` succeeds from the same input
     - `jpegenc` can write a normal `2592x1944` JPEG artifact
-  - `libcamera-*` / `cam`: missing on this machine, so not yet tested
+  - the next two integration routes are now explicit:
+    - `libcamera`
+    - `v4l2loopback`
+  - current local `09` result is still prerequisite-negative for both:
+    - `libcamera-*` / `cam`: missing on this machine
+    - `v4l2loopback`: module not installed/loaded; no loopback device exists
   - `cheese`: present, but not yet exercised in a manual GUI session
 
 For the full March 9 review, see `docs/20260309-status-report.md`.
@@ -118,6 +126,12 @@ For the full March 9 review, see `docs/20260309-status-report.md`.
     fails even though the node advertises it
   - the same run proves GStreamer can consume explicit `video/x-bayer`
     `grbg10le` caps, convert through `bayer2rgb`, and emit a normal JPEG
+- the next integration checkpoint now exists:
+  - `scripts/09-libcamera-loopback-check.sh` records both next routes in one
+    place:
+    - `libcamera`
+    - `v4l2loopback`
+  - the first local run is still prerequisite-negative, not capability-positive
 
 ## What Is Still Incomplete
 
@@ -134,6 +148,8 @@ For the full March 9 review, see `docs/20260309-status-report.md`.
     answer
   - GStreamer only works when explicit Bayer caps and conversion are supplied
   - `libcamera-*` / `cam` are not installed locally
+  - `v4l2loopback` is not installed / loaded locally, so the bridge-to-normal
+    `/dev/video*` path is not yet exercised here
   - `cheese` still needs a manual GUI follow-up
 - post-boot PMIC register dumping still returns `ERROR` for every register
 - upstreamability: the current patch stack includes local experiment

@@ -1,0 +1,2 @@
+loopback device /dev/video42 does not exist
+EXIT_STATUS: 1

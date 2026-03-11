@@ -1,0 +1,6 @@
+CMD: git_safe status --short
+?? docs/normal-usage-bridge-paths.md
+?? runs/2026-03-12/20260312T033726-snapshot-09-libcamera-loopback-check/
+?? scripts/09-libcamera-loopback-check.sh
+
+EXIT_STATUS: 0

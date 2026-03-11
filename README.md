@@ -20,9 +20,12 @@ the MSI Prestige 13 AI+ Evo A2VMG / A2VM family.
   and `cheese` remains a manual GUI follow-up. The new `08` run narrows that
   gap: direct app-friendly `YUYV` still fails, but an explicit GStreamer
   `video/x-bayer` path plus `bayer2rgb` can convert frames and emit a normal
-  `2592x1944` JPEG. The other main unresolved issues are the `Received packet
-  is too long` warnings with a one-scanline buffer delta, broken post-boot
-  PMIC visibility, and patch cleanup for upstreaming.
+  `2592x1944` JPEG. The new `09` run packages the two next integration paths
+  into one checkpoint and records the current local prerequisite state:
+  `libcamera` tools are not installed here, and `v4l2loopback` is neither
+  installed nor configured. The other main unresolved issues are the
+  `Received packet is too long` warnings with a one-scanline buffer delta,
+  broken post-boot PMIC visibility, and patch cleanup for upstreaming.
 - Current leading interpretation: basic bring-up is complete; remaining work is
   client-compatibility cleanup, warning cleanup, automation, and upstreamability
   rather than first sensor wake-up.
@@ -42,6 +45,9 @@ Machine under test:
 - [`docs/antti-prestige14-thread-review.md`](./docs/antti-prestige14-thread-review.md)
   — review of the March 10, 2026 Antti Laakso Prestige 14 patch thread and
   what its daisy-chain model means for this A2VMG
+- [`docs/normal-usage-bridge-paths.md`](./docs/normal-usage-bridge-paths.md)
+  — the two next normal-usage integration routes: `libcamera` and
+  `v4l2loopback`
 - [`state/CONTEXT.md`](./state/CONTEXT.md) — restart capsule with current
   objective and next actions
 - [`PLAN.md`](./PLAN.md) — active investigation plan and task queue
@@ -106,6 +112,7 @@ msi-prestige13-a2vm-webcam/
 │   ├── 06-media-pipeline-setup.sh
 │   ├── 07-normal-usage-check.sh
 │   ├── 08-userspace-bridge-check.sh
+│   ├── 09-libcamera-loopback-check.sh
 │   ├── exp*-*-update.sh
 │   ├── exp*-*-verify.sh
 │   └── webcam-run.sh
@@ -213,13 +220,19 @@ msi-prestige13-a2vm-webcam/
      - GStreamer with explicit `video/x-bayer,format=grbg10le` succeeds
      - `bayer2rgb` + `videoconvert` succeeds
      - a normal `2592x1944` JPEG artifact can be emitted from that path
-10. Investigate the remaining `Received packet is too long` warnings as a
+10. Use `scripts/09-libcamera-loopback-check.sh` as the next-step integration
+    truth source for both `libcamera` and `v4l2loopback`.
+   - latest local result:
+     - `libcamera` tools are missing
+     - `v4l2loopback` is not installed or loaded
+     - the script records exact rerun prerequisites for both paths
+11. Investigate the remaining `Received packet is too long` warnings as a
    geometry-alignment issue.
    - current hard clue: `bytesused = 10,077,696` while
      `Size Image = 10,082,880`
    - the `5,184`-byte delta is exactly one scanline at the current
      `Bytes per Line = 5,184`
-11. Treat post-boot PMIC visibility as secondary to capture/client cleanup now
+12. Treat post-boot PMIC visibility as secondary to capture/client cleanup now
     that raw streaming works.
 
 ## Related Docs
@@ -231,6 +244,9 @@ msi-prestige13-a2vm-webcam/
 - [`docs/antti-prestige14-thread-review.md`](./docs/antti-prestige14-thread-review.md)
   — preserved review of Antti Laakso's March 10, 2026 Prestige 14 patch
   thread and its relevance to `MS-13Q3`
+- [`docs/normal-usage-bridge-paths.md`](./docs/normal-usage-bridge-paths.md)
+  — current comparison of the `libcamera` and `v4l2loopback` routes for
+  getting from the working raw Bayer path to something apps can use
 - [`docs/kernel-tree-status.md`](./docs/kernel-tree-status.md) — exact local
   kernel-source path and original `INT3472` / `TPS68470` status
 - [`docs/reprobe-harness.md`](./docs/reprobe-harness.md) — safe module
