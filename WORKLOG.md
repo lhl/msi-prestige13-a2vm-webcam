@@ -2,6 +2,33 @@
 
 ## 2026-03-12
 
+### Create upstream-ready patch series
+
+- Plan: distill the working exp18 POC (4 patches, 651 lines, heavy debug
+  instrumentation) into a clean 5-patch upstream-ready series.
+- Created: `upstream-patch/` directory with:
+  - `0001-media-ipu-bridge-Add-OV5675-sensor-support.patch` (2-line addition)
+  - `0002-platform-int3472-Add-gpio-platform-data-for-TPS68470.patch` (3-file
+    plumbing for daisy-chain flag)
+  - `0003-gpio-tps68470-Add-I2C-daisy-chain-support.patch` (GPIO 1/2 as inputs)
+  - `0004-media-i2c-ov5675-Reorder-supply-names-for-correct-power-sequencing.patch`
+    (2-line array swap replacing 65-line serial power-on functions)
+  - `0005-platform-int3472-Add-MSI-Prestige-13-AI-Evo-A2VMG-board-data.patch`
+    (regulators + GPIO 9/7 + daisy chain + DMI match)
+  - `README.md` with series overview, relation to Antti's Prestige 14 series,
+    and submission checklist
+- Key cleanup vs POC:
+  - stripped all `exp18_daisy:` / `pmic_focus:` / `dump_stack()` debug logging
+  - dropped all `tps68470-regulator.c` changes (purely diagnostic)
+  - replaced complex `ov5675_enable_supplies_serial()` with a 2-line supply
+    array reorder (`regulator_bulk_enable` already enables serially in array
+    order)
+  - simplified regulators from 7 to 4 (dropped unused VCM/AUX1/AUX2)
+  - corrected DMI match to use `DMI_SYS_VENDOR` for consistency with existing
+    entries
+- Result: 354 lines total (down from 651), no debug code, structurally aligned
+  with Antti Laakso's upstream Prestige 14 series
+
 ### Record the first consumer-facing `v4l2loopback` bridge result from `09`
 
 - Plan: preserve the first positive `/dev/video42` bridge run, remove the

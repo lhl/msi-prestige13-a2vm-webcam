@@ -289,9 +289,10 @@ with strong evidence.
    `UYVY`, `BGR3`, etc.) are not actually streamable.
 10. Investigate the `csi2-0 error: Received packet is too long` warnings and
    the one-scanline `Size Image` vs `bytesused` mismatch.
-11. Clean up the patch stack for upstream submission:
-   - remove experiment instrumentation logging
-   - separate minimal board-data from diagnostic scaffolding
+11. ~~Clean up the patch stack for upstream submission~~ **done**:
+   - `upstream-patch/` contains a 5-patch series (354 lines, no debug code)
+   - still needs: replace FIXME author placeholders, verify against mainline
+     HEAD, get tested-by for ov5675 supply reorder on non-TPS68470 boards
 12. Fix or replace the post-boot PMIC dump path.
 13. Keep the broader Windows config-path questions open for upstreamability
    context, but they are no longer blocking basic bring-up.
