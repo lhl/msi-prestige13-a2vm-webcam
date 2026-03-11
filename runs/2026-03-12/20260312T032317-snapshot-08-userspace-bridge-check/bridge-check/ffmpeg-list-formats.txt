@@ -1,0 +1,28 @@
+CMD: ffmpeg -hide_banner -f v4l2 -list_formats all -i /dev/video0
+[video4linux2,v4l2 @ 0x55953b661c80] Raw       : Unsupported : 12-bit Bayer BGBG/GRGR : {2-8160, 2}x{2-8190, 2}
+[video4linux2,v4l2 @ 0x55953b661c80] Raw       : Unsupported : 12-bit Bayer GBGB/RGRG : {2-8160, 2}x{2-8190, 2}
+[video4linux2,v4l2 @ 0x55953b661c80] Raw       : Unsupported : 12-bit Bayer GRGR/BGBG : {2-8160, 2}x{2-8190, 2}
+[video4linux2,v4l2 @ 0x55953b661c80] Raw       : Unsupported : 12-bit Bayer RGRG/GBGB : {2-8160, 2}x{2-8190, 2}
+[video4linux2,v4l2 @ 0x55953b661c80] Raw       : Unsupported : 10-bit Bayer BGBG/GRGR : {2-8160, 2}x{2-8190, 2}
+[video4linux2,v4l2 @ 0x55953b661c80] Raw       : Unsupported : 10-bit Bayer GBGB/RGRG : {2-8160, 2}x{2-8190, 2}
+[video4linux2,v4l2 @ 0x55953b661c80] Raw       : Unsupported : 10-bit Bayer GRGR/BGBG : {2-8160, 2}x{2-8190, 2}
+[video4linux2,v4l2 @ 0x55953b661c80] Raw       : Unsupported : 10-bit Bayer RGRG/GBGB : {2-8160, 2}x{2-8190, 2}
+[video4linux2,v4l2 @ 0x55953b661c80] Raw       : bayer_bggr8 : 8-bit Bayer BGBG/GRGR : {2-8160, 2}x{2-8190, 2}
+[video4linux2,v4l2 @ 0x55953b661c80] Raw       : bayer_gbrg8 : 8-bit Bayer GBGB/RGRG : {2-8160, 2}x{2-8190, 2}
+[video4linux2,v4l2 @ 0x55953b661c80] Raw       : bayer_grbg8 : 8-bit Bayer GRGR/BGBG : {2-8160, 2}x{2-8190, 2}
+[video4linux2,v4l2 @ 0x55953b661c80] Raw       : bayer_rggb8 : 8-bit Bayer RGRG/GBGB : {2-8160, 2}x{2-8190, 2}
+[video4linux2,v4l2 @ 0x55953b661c80] Raw       : Unsupported : 12-bit Bayer BGBG/GRGR Packed : {2-8160, 2}x{2-8190, 2}
+[video4linux2,v4l2 @ 0x55953b661c80] Raw       : Unsupported : 12-bit Bayer GBGB/RGRG Packed : {2-8160, 2}x{2-8190, 2}
+[video4linux2,v4l2 @ 0x55953b661c80] Raw       : Unsupported : 12-bit Bayer GRGR/BGBG Packed : {2-8160, 2}x{2-8190, 2}
+[video4linux2,v4l2 @ 0x55953b661c80] Raw       : Unsupported : 12-bit Bayer RGRG/GBGB Packed : {2-8160, 2}x{2-8190, 2}
+[video4linux2,v4l2 @ 0x55953b661c80] Raw       : Unsupported : 10-bit Bayer BGBG/GRGR Packed : {2-8160, 2}x{2-8190, 2}
+[video4linux2,v4l2 @ 0x55953b661c80] Raw       : Unsupported : 10-bit Bayer GBGB/RGRG Packed : {2-8160, 2}x{2-8190, 2}
+[video4linux2,v4l2 @ 0x55953b661c80] Raw       : Unsupported : 10-bit Bayer GRGR/BGBG Packed : {2-8160, 2}x{2-8190, 2}
+[video4linux2,v4l2 @ 0x55953b661c80] Raw       : Unsupported : 10-bit Bayer RGRG/GBGB Packed : {2-8160, 2}x{2-8190, 2}
+[video4linux2,v4l2 @ 0x55953b661c80] Raw       :     uyvy422 :           UYVY 4:2:2 : {2-8160, 2}x{2-8190, 2}
+[video4linux2,v4l2 @ 0x55953b661c80] Raw       :     yuyv422 :           YUYV 4:2:2 : {2-8160, 2}x{2-8190, 2}
+[video4linux2,v4l2 @ 0x55953b661c80] Raw       :    rgb565le :     16-bit RGB 5-6-5 : {2-8160, 2}x{2-8190, 2}
+[video4linux2,v4l2 @ 0x55953b661c80] Raw       :       bgr24 :     24-bit BGR 8-8-8 : {2-8160, 2}x{2-8190, 2}
+Error opening input file /dev/video0.
+
+EXIT_STATUS: 0

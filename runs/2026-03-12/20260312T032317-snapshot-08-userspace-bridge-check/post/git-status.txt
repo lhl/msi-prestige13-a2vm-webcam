@@ -1,0 +1,7 @@
+CMD: git_safe status --short
+?? runs/2026-03-12/20260312T025014-snapshot-07-normal-usage-check/
+?? runs/2026-03-12/20260312T031737-snapshot-08-preprobe-pipeline-refresh/
+?? runs/2026-03-12/20260312T032317-snapshot-08-userspace-bridge-check/
+?? scripts/08-userspace-bridge-check.sh
+
+EXIT_STATUS: 0

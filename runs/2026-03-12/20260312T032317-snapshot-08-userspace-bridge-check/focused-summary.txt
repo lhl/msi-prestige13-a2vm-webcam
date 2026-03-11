@@ -1,0 +1,239 @@
+Source: scripts/08-userspace-bridge-check.sh
+Purpose: separate raw-manual success, direct standard-pixel failure, and explicit userspace bridge success
+
+Check start time:
+2026-03-12 03:23:18
+
+Configuration:
+media_device=/dev/media0
+video_device=/dev/video0
+sensor_format=SGRBG10_1X10/2592x1944
+working_pixel_format=BA10
+gst_bayer_format=grbg10le
+tested_standard_pixel_format=YUYV
+tested_standard_pixel_ffmpeg_format=yuyv422
+stream_count=4
+stream_buffers=4
+stream_timeout_s=20
+client_frame_count=2
+client_timeout_s=20
+
+Overall result:
+partial userspace bridge exists: explicit GStreamer Bayer caps work, but auto-negotiated and direct standard-pixel client paths still fail
+
+Interpretation:
+GStreamer can consume raw Bayer, convert it to ordinary RGB pixels, and emit a normal JPEG artifact; the remaining gap is automatic negotiation / standardized client integration, not basic frame delivery; the advertised YUYV capture-node path is not currently streamable; auto-negotiated v4l2src still fails
+
+Known-good setup status:
+optional_route=ENOTSUP on IPU7 CSI2 (expected; route step not required)
+raw_refresh=ok
+yuyv_refresh=ok
+gst_auto_refresh=ok
+gst_yuyv_refresh=ok
+gst_bayer_refresh=ok
+gst_bayer_rgb_refresh=ok
+gst_bayer_jpeg_refresh=ok
+
+Raw BA10 baseline:
+ok (40310784 bytes)
+
+Geometry cross-check:
+bytesused=10077696; size_image=10082880; delta=5184 bytes; bytes_per_line=5184; extra_scanlines=1
+
+Format inventory notes:
+ffmpeg: ffmpeg marks the advertised 10-bit Bayer formats unsupported on this V4L2 path; supported standard formats include uyvy422 yuyv422 rgb565le bgr24
+
+GStreamer plugin availability:
+bayer2rgb: present
+jpegenc: present
+
+Probe results:
+ffmpeg default BA10 path: failed (exit=224)
+direct YUYV v4l2 path: failed (exit=0 but output empty)
+ffmpeg explicit YUYV path: failed (exit=224)
+gstreamer auto path: failed (exit=1)
+gstreamer explicit YUYV path: failed (exit=1)
+gstreamer explicit Bayer path: ok
+gstreamer Bayer->RGB path: ok
+gstreamer Bayer->RGB->JPEG path: ok
+
+JPEG artifact:
+path=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T032317-snapshot-08-userspace-bridge-check/bridge-check/video0-gst-bayer-frame-00.jpg
+size_bytes=178286
+CMD: file /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T032317-snapshot-08-userspace-bridge-check/bridge-check/video0-gst-bayer-frame-00.jpg
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T032317-snapshot-08-userspace-bridge-check/bridge-check/video0-gst-bayer-frame-00.jpg: JPEG image data, baseline, precision 8, 2592x1944, components 3
+
+EXIT_STATUS: 0
+
+Higher-level tool presence:
+ffmpeg: present at /usr/bin/ffmpeg
+gst-launch-1.0: present at /usr/bin/gst-launch-1.0
+gst-inspect-1.0: present at /usr/bin/gst-inspect-1.0
+file: present at /usr/bin/file
+
+Current v4l-subdev nodes:
+/dev/v4l-subdev0
+/dev/v4l-subdev1
+/dev/v4l-subdev2
+/dev/v4l-subdev3
+/dev/v4l-subdev4
+
+Raw BA10 stream tail:
+		VIDIOC_REQBUFS returned 0 (Success)
+		VIDIOC_CREATE_BUFS returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_G_FMT returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_STREAMON returned 0 (Success)
+cap dqbuf: 0 seq:      0 bytesused: 10077696 ts: 4918.360997 field: None (ts-monotonic, ts-src-eof)
+cap dqbuf: 1 seq:      1 bytesused: 10077696 ts: 4918.394386 delta: 33.389 ms field: None (ts-monotonic, ts-src-eof)
+cap dqbuf: 2 seq:      2 bytesused: 10077696 ts: 4918.427776 delta: 33.390 ms field: None (ts-monotonic, ts-src-eof)
+cap dqbuf: 3 seq:      3 bytesused: 10077696 ts: 4918.461165 delta: 33.389 ms field: None (ts-monotonic, ts-src-eof)
+
+VIDIOC_QUERYCAP: ok
+
+EXIT_STATUS: 0
+
+Direct YUYV stream tail:
+CMD: timeout 20s v4l2-ctl -d /dev/video0 --stream-mmap=4 --stream-count=2 --stream-poll --stream-to=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T032317-snapshot-08-userspace-bridge-check/bridge-check/video0-yuyv.raw --verbose
+		VIDIOC_REQBUFS returned 0 (Success)
+		VIDIOC_CREATE_BUFS returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_G_FMT returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_STREAMON returned -1 (Broken pipe)
+VIDIOC_QUERYCAP: ok
+
+EXIT_STATUS: 0
+
+ffmpeg default BA10 tail:
+CMD: timeout 20s ffmpeg -hide_banner -nostdin -loglevel info -f v4l2 -framerate 30 -video_size 2592x1944 -i /dev/video0 -frames:v 2 -f null -
+[video4linux2,v4l2 @ 0x55b688307d40] ioctl(VIDIOC_G_PARM): Inappropriate ioctl for device
+[video4linux2,v4l2 @ 0x55b688307d40] Time per frame unknown
+[video4linux2,v4l2 @ 0x55b688307d40] ioctl(VIDIOC_STREAMON): Broken pipe
+[in#0 @ 0x55b688307a80] Error opening input: Broken pipe
+Error opening input file /dev/video0.
+Error opening input files: Broken pipe
+
+EXIT_STATUS: 224
+
+ffmpeg explicit YUYV tail:
+CMD: timeout 20s ffmpeg -hide_banner -nostdin -loglevel info -f v4l2 -input_format yuyv422 -framerate 30 -video_size 2592x1944 -i /dev/video0 -frames:v 2 -f null -
+[video4linux2,v4l2 @ 0x5635bb0c0d80] ioctl(VIDIOC_G_PARM): Inappropriate ioctl for device
+[video4linux2,v4l2 @ 0x5635bb0c0d80] Time per frame unknown
+[video4linux2,v4l2 @ 0x5635bb0c0d80] ioctl(VIDIOC_STREAMON): Broken pipe
+[in#0 @ 0x5635bb0c0ac0] Error opening input: Broken pipe
+Error opening input file /dev/video0.
+Error opening input files: Broken pipe
+
+EXIT_STATUS: 224
+
+gstreamer auto tail:
+CMD: timeout 20s gst-launch-1.0 -q v4l2src device=/dev/video0 num-buffers=2 \! fakesink sync=false
+ERROR: from element /GstPipeline:pipeline0/GstV4l2Src:v4l2src0: Failed to allocate required memory.
+Additional debug info:
+../gstreamer/subprojects/gst-plugins-good/sys/v4l2/gstv4l2src.c(957): gst_v4l2src_decide_allocation (): /GstPipeline:pipeline0/GstV4l2Src:v4l2src0:
+Buffer pool activation failed
+ERROR: from element /GstPipeline:pipeline0/GstV4l2Src:v4l2src0: Internal data stream error.
+Additional debug info:
+../gstreamer/subprojects/gstreamer/libs/gst/base/gstbasesrc.c(3187): gst_base_src_loop (): /GstPipeline:pipeline0/GstV4l2Src:v4l2src0:
+streaming stopped, reason not-negotiated (-4)
+Details:
+details, flow-return=(int)-4;
+
+EXIT_STATUS: 1
+
+gstreamer explicit YUYV tail:
+CMD: timeout 20s gst-launch-1.0 -q v4l2src device=/dev/video0 io-mode=mmap num-buffers=2 \! video/x-raw\,format=YUY2\,width=2592\,height=1944\,framerate=30/1 \! fakesink sync=false
+ERROR: from element /GstPipeline:pipeline0/GstV4l2Src:v4l2src0: Device '/dev/video0' does not support 2:0:0:0 colorimetry
+Additional debug info:
+../gstreamer/subprojects/gst-plugins-good/sys/v4l2/gstv4l2object.c(4775): gst_v4l2_object_set_format_full (): /GstPipeline:pipeline0/GstV4l2Src:v4l2src0:
+Device wants 2:0:0:0 colorimetry
+ERROR: from element /GstPipeline:pipeline0/GstV4l2Src:v4l2src0: Internal data stream error.
+Additional debug info:
+../gstreamer/subprojects/gstreamer/libs/gst/base/gstbasesrc.c(3187): gst_base_src_loop (): /GstPipeline:pipeline0/GstV4l2Src:v4l2src0:
+streaming stopped, reason not-negotiated (-4)
+Details:
+details, flow-return=(int)-4;
+
+EXIT_STATUS: 1
+
+gstreamer explicit Bayer tail:
+CMD: timeout 20s gst-launch-1.0 -v v4l2src device=/dev/video0 io-mode=mmap num-buffers=2 \! video/x-bayer\,format=grbg10le\,width=2592\,height=1944\,framerate=30/1 \! fakesink sync=false
+Setting pipeline to PAUSED ...
+Pipeline is live and does not need PREROLL ...
+Pipeline is PREROLLED ...
+Setting pipeline to PLAYING ...
+New clock: GstSystemClock
+/GstPipeline:pipeline0/GstV4l2Src:v4l2src0.GstPad:src: caps = video/x-bayer, format=(string)grbg10le, width=(int)2592, height=(int)1944, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, interlace-mode=(string)progressive, colorimetry=(string)1:1:0:0
+/GstPipeline:pipeline0/GstCapsFilter:capsfilter0.GstPad:src: caps = video/x-bayer, format=(string)grbg10le, width=(int)2592, height=(int)1944, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, interlace-mode=(string)progressive, colorimetry=(string)1:1:0:0
+/GstPipeline:pipeline0/GstFakeSink:fakesink0.GstPad:sink: caps = video/x-bayer, format=(string)grbg10le, width=(int)2592, height=(int)1944, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, interlace-mode=(string)progressive, colorimetry=(string)1:1:0:0
+/GstPipeline:pipeline0/GstCapsFilter:capsfilter0.GstPad:sink: caps = video/x-bayer, format=(string)grbg10le, width=(int)2592, height=(int)1944, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, interlace-mode=(string)progressive, colorimetry=(string)1:1:0:0
+Redistribute latency...
+Got EOS from element "pipeline0".
+Execution ended after 0:00:00.171105346
+Setting pipeline to NULL ...
+Freeing pipeline ...
+
+EXIT_STATUS: 0
+
+gstreamer Bayer->RGB tail:
+Pipeline is PREROLLED ...
+Setting pipeline to PLAYING ...
+New clock: GstSystemClock
+/GstPipeline:pipeline0/GstV4l2Src:v4l2src0.GstPad:src: caps = video/x-bayer, format=(string)grbg10le, width=(int)2592, height=(int)1944, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, interlace-mode=(string)progressive, colorimetry=(string)1:1:0:0
+/GstPipeline:pipeline0/GstCapsFilter:capsfilter0.GstPad:src: caps = video/x-bayer, format=(string)grbg10le, width=(int)2592, height=(int)1944, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, interlace-mode=(string)progressive, colorimetry=(string)1:1:0:0
+/GstPipeline:pipeline0/GstBayer2RGB:bayer2rgb0.GstPad:src: caps = video/x-raw, width=(int)2592, height=(int)1944, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, interlace-mode=(string)progressive, format=(string)BGRx, colorimetry=(string)1:1:0:0
+/GstPipeline:pipeline0/GstVideoConvert:videoconvert0.GstPad:src: caps = video/x-raw, width=(int)2592, height=(int)1944, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, interlace-mode=(string)progressive, format=(string)BGRx, colorimetry=(string)1:1:0:0
+/GstPipeline:pipeline0/GstCapsFilter:capsfilter1.GstPad:src: caps = video/x-raw, width=(int)2592, height=(int)1944, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, interlace-mode=(string)progressive, format=(string)BGRx, colorimetry=(string)1:1:0:0
+/GstPipeline:pipeline0/GstFakeSink:fakesink0.GstPad:sink: caps = video/x-raw, width=(int)2592, height=(int)1944, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, interlace-mode=(string)progressive, format=(string)BGRx, colorimetry=(string)1:1:0:0
+/GstPipeline:pipeline0/GstCapsFilter:capsfilter1.GstPad:sink: caps = video/x-raw, width=(int)2592, height=(int)1944, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, interlace-mode=(string)progressive, format=(string)BGRx, colorimetry=(string)1:1:0:0
+/GstPipeline:pipeline0/GstVideoConvert:videoconvert0.GstPad:sink: caps = video/x-raw, width=(int)2592, height=(int)1944, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, interlace-mode=(string)progressive, format=(string)BGRx, colorimetry=(string)1:1:0:0
+/GstPipeline:pipeline0/GstBayer2RGB:bayer2rgb0.GstPad:sink: caps = video/x-bayer, format=(string)grbg10le, width=(int)2592, height=(int)1944, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, interlace-mode=(string)progressive, colorimetry=(string)1:1:0:0
+/GstPipeline:pipeline0/GstCapsFilter:capsfilter0.GstPad:sink: caps = video/x-bayer, format=(string)grbg10le, width=(int)2592, height=(int)1944, framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1, interlace-mode=(string)progressive, colorimetry=(string)1:1:0:0
+Redistribute latency...
+Got EOS from element "pipeline0".
+Execution ended after 0:00:00.173961721
+Setting pipeline to NULL ...
+Freeing pipeline ...
+
+EXIT_STATUS: 0
+
+gstreamer Bayer->RGB->JPEG tail:
+CMD: timeout 20s gst-launch-1.0 -q v4l2src device=/dev/video0 io-mode=mmap num-buffers=1 \! video/x-bayer\,format=grbg10le\,width=2592\,height=1944\,framerate=30/1 \! bayer2rgb \! videoconvert \! jpegenc \! multifilesink location=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T032317-snapshot-08-userspace-bridge-check/bridge-check/video0-gst-bayer-frame-%02d.jpg
+
+EXIT_STATUS: 0
+
+Kernel journal lines since check start:
+Mar 12 03:23:18 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 03:23:18 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 03:23:18 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 03:23:18 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 03:23:18 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 03:23:18 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 03:23:18 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 03:23:18 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 03:23:19 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 03:23:19 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+
+Artifacts:
+check_dir=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T032317-snapshot-08-userspace-bridge-check/bridge-check
+formats=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T032317-snapshot-08-userspace-bridge-check/bridge-check/video0-formats.txt
+ffmpeg_formats=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T032317-snapshot-08-userspace-bridge-check/bridge-check/ffmpeg-list-formats.txt
+raw_stream_log=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T032317-snapshot-08-userspace-bridge-check/bridge-check/video0-ba10-stream.txt
+yuyv_stream_log=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T032317-snapshot-08-userspace-bridge-check/bridge-check/video0-yuyv-stream.txt
+gst_bayer_log=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T032317-snapshot-08-userspace-bridge-check/bridge-check/gst-bayer.txt
+gst_bayer_rgb_log=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T032317-snapshot-08-userspace-bridge-check/bridge-check/gst-bayer-rgb.txt
+gst_bayer_jpeg_log=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T032317-snapshot-08-userspace-bridge-check/bridge-check/gst-bayer-jpeg.txt

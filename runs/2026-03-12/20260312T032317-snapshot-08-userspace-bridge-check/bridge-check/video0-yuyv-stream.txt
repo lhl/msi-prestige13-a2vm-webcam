@@ -1,0 +1,16 @@
+CMD: timeout 20s v4l2-ctl -d /dev/video0 --stream-mmap=4 --stream-count=2 --stream-poll --stream-to=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T032317-snapshot-08-userspace-bridge-check/bridge-check/video0-yuyv.raw --verbose
+		VIDIOC_REQBUFS returned 0 (Success)
+		VIDIOC_CREATE_BUFS returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_G_FMT returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_STREAMON returned -1 (Broken pipe)
+VIDIOC_QUERYCAP: ok
+
+EXIT_STATUS: 0

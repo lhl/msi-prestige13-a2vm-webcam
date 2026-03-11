@@ -57,12 +57,21 @@ with strong evidence.
     `Size Image = 10,082,880`, `Bytes per Line = 5,184`
   - the `5,184`-byte delta is exactly one extra scanline in the allocated
     capture buffer
-  - higher-level client compatibility still fails after the known-good manual
-    setup:
+  - normal plug-and-play client compatibility still fails after the known-good
+    manual setup:
     - `ffmpeg`: `ioctl(VIDIOC_STREAMON): Broken pipe`
     - `mpv`: same `Broken pipe` path through FFmpeg's V4L2 demuxer
     - GStreamer `v4l2src`: buffer-pool activation failed, then
       `reason not-negotiated (-4)`
+    - advertised direct standard-pixel `YUYV` also fails:
+      - `v4l2-ctl`: `VIDIOC_STREAMON returned -1 (Broken pipe)`
+      - `ffmpeg -input_format yuyv422`: `Broken pipe`
+      - GStreamer explicit `video/x-raw,format=YUY2`: `not-negotiated`
+  - an explicit userspace bridge now exists:
+    - GStreamer explicit `video/x-bayer,format=grbg10le` succeeds
+    - `bayer2rgb` + `videoconvert` succeeds
+    - `jpegenc` emitted a normal `2592x1944` JPEG artifact under the first
+      `08` run
     - `libcamera-*` / `cam`: missing locally
     - `cheese`: present, but not yet exercised in a GUI session
   - post-boot PMIC dumping still returns `ERROR` for every register
@@ -168,6 +177,28 @@ with strong evidence.
     - so the repo now has a direct measured answer:
       - manual raw capture works
       - normal client usage still does not
+- staged and ran `scripts/08-userspace-bridge-check.sh` as the first explicit
+  userspace-bridge probe:
+  - run:
+    - `runs/2026-03-12/20260312T032317-snapshot-08-userspace-bridge-check/`
+  - result:
+    - raw `BA10` capture still succeeded from the known-good configured state
+    - the advertised direct `YUYV` path is still unusable:
+      - `v4l2-ctl`: `VIDIOC_STREAMON returned -1 (Broken pipe)`
+      - `ffmpeg -input_format yuyv422`: `Broken pipe`
+      - GStreamer explicit `video/x-raw,format=YUY2`: `not-negotiated`
+    - `ffmpeg`'s V4L2 inventory now adds one concrete explanation:
+      - it marks the advertised 10-bit Bayer formats unsupported on this path
+      - it only lists `uyvy422`, `yuyv422`, `rgb565le`, and `bgr24` as
+        supported
+    - an explicit framework bridge does work:
+      - GStreamer explicit `video/x-bayer,format=grbg10le` succeeds
+      - `bayer2rgb` + `videoconvert` succeeds
+      - `jpegenc` emitted a normal `2592x1944` JPEG artifact
+    - so the remaining gap is now narrower:
+      - raw delivery works
+      - framework-level Bayer bridging works
+      - auto-negotiated / plug-and-play client integration still does not
 
 ## What March 11 Added
 
@@ -349,6 +380,13 @@ with strong evidence.
   higher-level client layer, not at the raw `v4l2-ctl` layer:
   - `ffmpeg` / `mpv` fail at `VIDIOC_STREAMON` with `Broken pipe`
   - GStreamer `v4l2src` fails allocation / `not-negotiated`
+- `scripts/08-userspace-bridge-check.sh` now proves the remaining gap is not
+  "no higher-level framework can use the stream" but specifically
+  auto-negotiation / standardized-client integration:
+  - direct advertised `YUYV` still fails
+  - explicit GStreamer `video/x-bayer` succeeds
+  - `bayer2rgb` + `videoconvert` succeeds
+  - JPEG export succeeds
 - 5x `csi2-0 error: Received packet is too long` warnings appear during
   capture; the current hard clue is a one-scanline mismatch between
   `bytesused` and `Size Image`, so this still looks like a CSI2
@@ -361,16 +399,20 @@ with strong evidence.
 1. Use `exp18` as the current kernel branch.
 2. Use fresh-boot `scripts/06-media-pipeline-setup.sh` reruns as the capture
    truth source for userspace-path changes.
-3. Use `scripts/07-normal-usage-check.sh` as the current higher-level client
-   compatibility truth source.
-4. Investigate the `Received packet is too long` CSI2 warnings and the
+3. Use `scripts/07-normal-usage-check.sh` as the current auto-negotiated
+   higher-level client truth source.
+4. Use `scripts/08-userspace-bridge-check.sh` as the current explicit
+   userspace-bridge truth source.
+5. Test whether the working GStreamer Bayer bridge can be exposed to normal
+   apps, or whether the real answer is `libcamera` / an IPU7 pipeline handler.
+6. Determine why the advertised direct standard-pixel formats (`YUYV`,
+   `UYVY`, `BGR3`, etc.) are not actually streamable.
+7. Investigate the `Received packet is too long` CSI2 warnings and the
    one-scanline `Size Image` vs `bytesused` mismatch.
-5. Investigate why `ffmpeg` / `mpv` still hit `VIDIOC_STREAMON` `Broken pipe`
-   and why GStreamer `v4l2src` fails allocation / negotiation.
-6. Install and try `libcamera-*` / `cam`, then manually exercise `cheese`.
-7. Clean up the patch stack for upstream submission.
-8. Fix or replace the post-boot PMIC dump path.
-9. Do not rerun the broad `exp7` snapshot patch as a default path.
+8. Install and try `libcamera-*` / `cam`, then manually exercise `cheese`.
+9. Clean up the patch stack for upstream submission.
+10. Fix or replace the post-boot PMIC dump path.
+11. Do not rerun the broad `exp7` snapshot patch as a default path.
 
 ## Key Paths
 

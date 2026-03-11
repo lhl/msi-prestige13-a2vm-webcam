@@ -8,6 +8,10 @@ The webcam is now streaming raw frames on Linux on this laptop.
 
 Normal plug-and-play webcam usage is still **not** working yet.
 
+An explicit userspace bridge now works: GStreamer can consume the raw Bayer
+stream with forced `video/x-bayer` caps, convert it through `bayer2rgb`, and
+emit a normal `2592x1944` JPEG artifact.
+
 On the `exp18` kernel branch with explicit userspace `media-ctl` pipeline
 setup, `/dev/video0` delivers real Bayer sensor data:
 
@@ -64,6 +68,15 @@ Known remaining issues:
   - `mpv`: same `Broken pipe` failure via FFmpeg's V4L2 demuxer
   - GStreamer `v4l2src`: buffer-pool activation failed, then
     `reason not-negotiated (-4)`
+  - advertised direct standard-pixel output is not usable yet:
+    - `v4l2-ctl` with `YUYV`: `VIDIOC_STREAMON returned -1 (Broken pipe)`
+    - GStreamer explicit `video/x-raw,format=YUY2`: `not-negotiated`
+    - `ffmpeg -input_format yuyv422`: `Broken pipe`
+  - explicit framework bridge does work:
+    - GStreamer `video/x-bayer,format=grbg10le,width=2592,height=1944,framerate=30/1 ! fakesink`
+      succeeds
+    - `bayer2rgb ! videoconvert` succeeds from the same input
+    - `jpegenc` can write a normal `2592x1944` JPEG artifact
   - `libcamera-*` / `cam`: missing on this machine, so not yet tested
   - `cheese`: present, but not yet exercised in a manual GUI session
 
@@ -100,6 +113,11 @@ For the full March 9 review, see `docs/20260309-status-report.md`.
     that state, but installed headless clients do not
   - `ffmpeg` / `mpv` fail at `VIDIOC_STREAMON` with `Broken pipe`
   - GStreamer `v4l2src` fails allocation / negotiation before frame delivery
+- an explicit userspace bridge is now directly measured:
+  - `scripts/08-userspace-bridge-check.sh` proves the direct `YUYV` path still
+    fails even though the node advertises it
+  - the same run proves GStreamer can consume explicit `video/x-bayer`
+    `grbg10le` caps, convert through `bayer2rgb`, and emit a normal JPEG
 
 ## What Is Still Incomplete
 
@@ -111,6 +129,10 @@ For the full March 9 review, see `docs/20260309-status-report.md`.
 - higher-level client compatibility is still broken:
   - `ffmpeg` / `mpv` fail at `VIDIOC_STREAMON` with `Broken pipe`
   - GStreamer `v4l2src` fails buffer-pool activation and `not-negotiated`
+  - the advertised `YUYV` direct path still fails, so the node's
+    app-friendly format inventory is not yet trustworthy as a plug-and-play
+    answer
+  - GStreamer only works when explicit Bayer caps and conversion are supplied
   - `libcamera-*` / `cam` are not installed locally
   - `cheese` still needs a manual GUI follow-up
 - post-boot PMIC register dumping still returns `ERROR` for every register

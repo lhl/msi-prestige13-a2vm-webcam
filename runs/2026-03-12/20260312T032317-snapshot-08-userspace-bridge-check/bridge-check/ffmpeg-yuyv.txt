@@ -1,0 +1,9 @@
+CMD: timeout 20s ffmpeg -hide_banner -nostdin -loglevel info -f v4l2 -input_format yuyv422 -framerate 30 -video_size 2592x1944 -i /dev/video0 -frames:v 2 -f null -
+[video4linux2,v4l2 @ 0x5635bb0c0d80] ioctl(VIDIOC_G_PARM): Inappropriate ioctl for device
+[video4linux2,v4l2 @ 0x5635bb0c0d80] Time per frame unknown
+[video4linux2,v4l2 @ 0x5635bb0c0d80] ioctl(VIDIOC_STREAMON): Broken pipe
+[in#0 @ 0x5635bb0c0ac0] Error opening input: Broken pipe
+Error opening input file /dev/video0.
+Error opening input files: Broken pipe
+
+EXIT_STATUS: 224

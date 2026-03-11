@@ -1,0 +1,4 @@
+ffmpeg: present at /usr/bin/ffmpeg
+gst-launch-1.0: present at /usr/bin/gst-launch-1.0
+gst-inspect-1.0: present at /usr/bin/gst-inspect-1.0
+file: present at /usr/bin/file

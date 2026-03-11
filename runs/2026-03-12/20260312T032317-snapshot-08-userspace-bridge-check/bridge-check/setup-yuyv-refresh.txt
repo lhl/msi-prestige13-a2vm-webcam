@@ -1,0 +1,12 @@
+CMD: media-ctl -d /dev/media0 -V \"Intel\ IPU7\ CSI2\ 0\":0/0\ \[fmt:SGRBG10_1X10/2592x1944\]
+
+EXIT_STATUS: 0
+CMD: media-ctl -d /dev/media0 -V \"Intel\ IPU7\ CSI2\ 0\":1/0\ \[fmt:SGRBG10_1X10/2592x1944\]
+
+EXIT_STATUS: 0
+CMD: media-ctl -d /dev/media0 -l \"Intel\ IPU7\ CSI2\ 0\":1\ -\>\ \"Intel\ IPU7\ ISYS\ Capture\ 0\":0\ \[1\]
+
+EXIT_STATUS: 0
+CMD: v4l2-ctl -d /dev/video0 --set-fmt-video=width=2592\,height=1944\,pixelformat=YUYV
+
+EXIT_STATUS: 0

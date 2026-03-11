@@ -1,0 +1,96 @@
+CMD: gst-inspect-1.0 jpegenc
+Factory Details:
+  Rank                     primary (256)
+  Long-name                JPEG image encoder
+  Klass                    Codec/Encoder/Image
+  Description              Encode images in JPEG format
+  Author                   Wim Taymans <wim.taymans@tvd.be>
+  Documentation            https://gstreamer.freedesktop.org/documentation/jpeg/jpegenc.html
+
+Plugin Details:
+  Name                     jpeg
+  Description              JPeg plugin library
+  Filename                 /usr/lib/gstreamer-1.0/libgstjpeg.so
+  Version                  1.28.1
+  License                  LGPL
+  Source module            gst-plugins-good
+  Documentation            https://gstreamer.freedesktop.org/documentation/jpeg/
+  Source release date      2026-02-26
+  Binary package           Arch Linux GStreamer 1.28.1-1
+  Origin URL               https://www.archlinux.org/
+
+GObject
+ +----GInitiallyUnowned
+       +----GstObject
+             +----GstElement
+                   +----GstVideoEncoder
+                         +----GstJpegEnc
+
+Implemented Interfaces:
+  GstPreset
+
+Element Flags:
+
+Pad Templates:
+  SINK template: 'sink'
+    Availability: Always
+    Capabilities:
+      video/x-raw
+                 format: { (string)I420, (string)YV12, (string)YUY2, (string)UYVY, (string)Y41B, (string)Y42B, (string)YVYU, (string)Y444, (string)NV21, (string)NV12, (string)RGB, (string)BGR, (string)RGBx, (string)xRGB, (string)BGRx, (string)xBGR, (string)GRAY8 } (GstValueList)
+                  width: [ 1, 2147483647 ] (GstIntRange)
+                 height: [ 1, 2147483647 ] (GstIntRange)
+              framerate: [ 0/1, 2147483647/1 ] (GstFractionRange)
+  
+  SRC template: 'src'
+    Availability: Always
+    Capabilities:
+      image/jpeg
+                  width: [ 1, 65535 ] (GstIntRange)
+                 height: [ 1, 65535 ] (GstIntRange)
+              framerate: [ 0/1, 2147483647/1 ] (GstFractionRange)
+             sof-marker: { (int)0, (int)1, (int)2, (int)4, (int)9 } (GstValueList)
+
+Element has no clocking capabilities.
+Element has no URI handling capabilities.
+
+Pads:
+  SINK: 'sink'
+    Pad Template: 'sink'
+  SRC: 'src'
+    Pad Template: 'src'
+
+Element Properties:
+
+  idct-method         : The IDCT algorithm to use
+                        flags: readable, writable
+                        Enum "GstIDCTMethod" Default: 1, "ifast"
+                           (0): islow            - Slow but accurate integer algorithm
+                           (1): ifast            - Faster, less accurate integer method
+                           (2): float            - Floating-point: accurate, fast on fast HW
+  
+  min-force-key-unit-interval: Minimum interval between force-keyunit requests in nanoseconds
+                        flags: readable, writable
+                        Unsigned Integer64. Range: 0 - 18446744073709551615 Default: 0 
+  
+  name                : The name of the object
+                        flags: readable, writable
+                        String. Default: "jpegenc0"
+  
+  parent              : The parent of the object
+                        flags: readable, writable
+                        Object of type "GstObject"
+  
+  qos                 : Handle Quality-of-Service events from downstream
+                        flags: readable, writable
+                        Boolean. Default: false
+  
+  quality             : Quality of encoding
+                        flags: readable, writable, changeable in NULL, READY, PAUSED or PLAYING state
+                        Integer. Range: 0 - 100 Default: 85 
+  
+  snapshot            : Send EOS after encoding a frame, useful for snapshots
+                        flags: readable, writable
+                        Boolean. Default: false
+  
+
+EXIT_STATUS: 0

@@ -298,6 +298,67 @@ Interpretation note:
 - use this script when you change client-facing behavior, not when you are only
   narrowing raw pipeline state
 
+## `scripts/08-userspace-bridge-check.sh`
+
+Use this after `scripts/07-normal-usage-check.sh` proves that normal
+auto-negotiated clients still fail, and you want to distinguish between:
+
+- direct standard-pixel client failure
+- framework-level raw Bayer consumption
+- framework-level Bayer-to-RGB bridging
+
+What it does:
+
+- captures a standard snapshot run
+- records the current V4L2 and FFmpeg format inventory for the selected node
+- re-applies the known-good `06` setup before each probe cluster
+- verifies the raw `BA10` base path again with `v4l2-ctl`
+- tests an advertised app-friendly node format directly (`YUYV` by default)
+- tests the current auto-negotiated higher-level paths again:
+  - `ffmpeg` default V4L2 input
+  - GStreamer `v4l2src ! fakesink`
+- tests explicit format/caps bridge paths:
+  - `ffmpeg` explicit `yuyv422`
+  - GStreamer explicit `video/x-raw,format=YUY2`
+  - GStreamer explicit `video/x-bayer,format=grbg10le`
+  - GStreamer `video/x-bayer ! bayer2rgb ! videoconvert`
+  - GStreamer Bayer-to-JPEG export when `jpegenc` is available
+- writes one focused summary that says whether the remaining gap is:
+  - raw delivery
+  - direct standard-pixel streaming
+  - or only auto-negotiation / integration
+
+Default targets:
+
+- `/dev/video0`
+- working raw format `BA10`
+- tested standard-pixel format `YUYV`
+- GStreamer Bayer caps format `grbg10le`
+
+Example:
+
+```bash
+scripts/08-userspace-bridge-check.sh
+```
+
+Interpretation note:
+
+- this is the current explicit userspace-bridge truth source
+- the first recorded run:
+  - `runs/2026-03-12/20260312T032317-snapshot-08-userspace-bridge-check/`
+  - kept the same raw `BA10` success from `06`
+  - proved the advertised direct `YUYV` path still fails at `STREAMON`
+  - proved `ffmpeg` marks the 10-bit Bayer formats unsupported on this V4L2
+    path even though it lists `uyvy422`, `yuyv422`, `rgb565le`, and `bgr24`
+  - proved GStreamer can succeed when explicit Bayer caps are forced:
+    - `video/x-bayer,format=grbg10le,width=2592,height=1944,framerate=30/1`
+    - `bayer2rgb` + `videoconvert` also succeeds
+    - a normal `2592x1944` JPEG artifact can be emitted from the same path
+- the resulting boundary is now sharper:
+  - raw sensor delivery works
+  - a framework-level Bayer bridge exists
+  - normal plug-and-play client integration still does not
+
 ## Current interpretation rule
 
 For this project, `01-clean-boot-check.sh` is the primary truth source for
@@ -311,8 +372,12 @@ media graph still looks healthy, the next no-reboot discriminator becomes
 `05-userspace-format-sweep.sh`.
 
 Once `06-media-pipeline-setup.sh` proves the raw manual path works, the next
-truth source for "can normal clients use it?" becomes
+truth source for "can normal clients use it automatically?" becomes
 `07-normal-usage-check.sh`.
+
+Once `07-normal-usage-check.sh` proves auto-negotiated clients still fail, the
+next truth source for "is there at least an explicit higher-level bridge?"
+becomes `08-userspace-bridge-check.sh`.
 
 If a clean boot already wedged the PMIC / I2C path, later reload-only checks
 may show secondary fallout such as GPIO acquisition failures. Those reload

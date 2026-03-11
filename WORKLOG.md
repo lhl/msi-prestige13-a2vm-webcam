@@ -2,6 +2,49 @@
 
 ## 2026-03-12
 
+### Stage and run `08` as the first explicit userspace-bridge check
+
+- Plan: answer the next narrower question after `07`: even if normal
+  auto-negotiated clients still fail, is there already a viable higher-level
+  userspace bridge from the raw Bayer stream to ordinary pixels?
+- Commands:
+  - created:
+    - `scripts/08-userspace-bridge-check.sh`
+  - ran:
+    - `bash -n scripts/08-userspace-bridge-check.sh`
+    - `scripts/08-userspace-bridge-check.sh --dry-run`
+    - `scripts/08-userspace-bridge-check.sh`
+  - run directory:
+    - `runs/2026-03-12/20260312T032317-snapshot-08-userspace-bridge-check/`
+  - refreshed:
+    - `README.md`
+    - `docs/README.md`
+    - `docs/test-routines.md`
+    - `docs/webcam-status.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+- Result:
+  - `08` now exists as the repeatable bridge/integration checkpoint on top of
+    the known-good `06` pipeline setup
+  - raw `BA10` capture still succeeded from the configured state
+  - the advertised direct `YUYV` path is still unusable:
+    - `v4l2-ctl`: `VIDIOC_STREAMON returned -1 (Broken pipe)`
+    - `ffmpeg -input_format yuyv422`: `Broken pipe`
+    - GStreamer explicit `video/x-raw,format=YUY2`: `not-negotiated`
+  - `ffmpeg` adds one concrete format clue:
+    - it marks the advertised 10-bit Bayer formats unsupported on this V4L2
+      path
+    - it only lists `uyvy422`, `yuyv422`, `rgb565le`, and `bgr24` as supported
+  - a framework-level Bayer bridge now works:
+    - GStreamer explicit `video/x-bayer,format=grbg10le` succeeds
+    - `bayer2rgb` + `videoconvert` succeeds
+    - `jpegenc` emitted a normal `2592x1944` JPEG artifact
+  - the repo-level conclusion is now sharper:
+    - raw sensor delivery works
+    - explicit higher-level Bayer bridging works
+    - normal plug-and-play client integration still does not
+
 ### Stage and run `07` as the first normal-usage client compatibility check
 
 - Plan: turn the "manual raw capture works, but can normal tools use it?"

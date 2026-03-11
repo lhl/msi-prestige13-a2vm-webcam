@@ -1,0 +1,13 @@
+CMD: timeout 20s gst-launch-1.0 -q v4l2src device=/dev/video0 num-buffers=2 \! fakesink sync=false
+ERROR: from element /GstPipeline:pipeline0/GstV4l2Src:v4l2src0: Failed to allocate required memory.
+Additional debug info:
+../gstreamer/subprojects/gst-plugins-good/sys/v4l2/gstv4l2src.c(957): gst_v4l2src_decide_allocation (): /GstPipeline:pipeline0/GstV4l2Src:v4l2src0:
+Buffer pool activation failed
+ERROR: from element /GstPipeline:pipeline0/GstV4l2Src:v4l2src0: Internal data stream error.
+Additional debug info:
+../gstreamer/subprojects/gstreamer/libs/gst/base/gstbasesrc.c(3187): gst_base_src_loop (): /GstPipeline:pipeline0/GstV4l2Src:v4l2src0:
+streaming stopped, reason not-negotiated (-4)
+Details:
+details, flow-return=(int)-4;
+
+EXIT_STATUS: 1

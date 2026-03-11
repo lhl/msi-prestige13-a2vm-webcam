@@ -174,9 +174,29 @@ with strong evidence.
   - `mpv`: same `Broken pipe` path through FFmpeg's V4L2 demuxer
   - GStreamer `v4l2src`: buffer-pool activation failed, then
     `reason not-negotiated (-4)`
+- [x] Determine whether any explicit userspace bridge works even though normal
+  auto-negotiated clients still fail.
+  - **Answer: yes.**
+  - `scripts/08-userspace-bridge-check.sh` recorded the first positive
+    framework-level bridge under
+    `runs/2026-03-12/20260312T032317-snapshot-08-userspace-bridge-check/`
+  - direct `YUYV` still fails:
+    - `v4l2-ctl`: `VIDIOC_STREAMON returned -1 (Broken pipe)`
+    - `ffmpeg -input_format yuyv422`: `Broken pipe`
+    - GStreamer explicit `video/x-raw,format=YUY2`: `not-negotiated`
+  - explicit GStreamer Bayer handling works:
+    - `video/x-bayer,format=grbg10le`: success
+    - `bayer2rgb` + `videoconvert`: success
+    - `jpegenc`: emitted a normal `2592x1944` JPEG artifact
 - [ ] Test remaining higher-level tools that were not covered headlessly.
   - install and try `libcamera-*` / `cam`
   - manually exercise `cheese` in a GUI session
+- [ ] Determine whether the working explicit GStreamer bridge can be exposed as
+  a more normal webcam path.
+  - likely candidates: `v4l2loopback`, libcamera pipeline handling, or a small
+    repo-local bridge wrapper
+- [ ] Determine why the advertised direct standard-pixel formats (`YUYV`,
+  `UYVY`, `BGR3`, etc.) are not actually streamable from the configured state.
 - [ ] Consider automated pipeline setup (udev rule, libcamera handler, etc.).
 
 ### 2. Post-boot PMIC visibility
@@ -223,17 +243,22 @@ with strong evidence.
 1. Use `exp18` as the current kernel branch.
 2. Use fresh-boot `scripts/06-media-pipeline-setup.sh` reruns as the capture
    truth source for userspace-path changes.
-3. Use `scripts/07-normal-usage-check.sh` as the higher-level client
-   compatibility truth source.
-4. Investigate the `csi2-0 error: Received packet is too long` warnings and
+3. Use `scripts/07-normal-usage-check.sh` as the auto-negotiated higher-level
+   client compatibility truth source.
+4. Use `scripts/08-userspace-bridge-check.sh` as the explicit userspace-bridge
+   truth source.
+5. Test whether the working GStreamer Bayer bridge can be exposed to normal
+   apps, or whether the real answer is `libcamera` / an IPU7-specific pipeline
+   handler.
+6. Determine why the advertised direct standard-pixel formats (`YUYV`,
+   `UYVY`, `BGR3`, etc.) are not actually streamable.
+7. Investigate the `csi2-0 error: Received packet is too long` warnings and
    the one-scanline `Size Image` vs `bytesused` mismatch.
-5. Investigate why `ffmpeg` / `mpv` still hit `VIDIOC_STREAMON` `Broken pipe`
-   and why GStreamer `v4l2src` fails allocation / negotiation.
-6. Clean up the patch stack for upstream submission:
+8. Clean up the patch stack for upstream submission:
    - remove experiment instrumentation logging
    - separate minimal board-data from diagnostic scaffolding
-7. Fix or replace the post-boot PMIC dump path.
-8. Keep the broader Windows config-path questions open for upstreamability
+9. Fix or replace the post-boot PMIC dump path.
+10. Keep the broader Windows config-path questions open for upstreamability
    context, but they are no longer blocking basic bring-up.
 
 ## Open Questions
@@ -243,13 +268,17 @@ with strong evidence.
   `Size Image - bytesused = 5,184` bytes (one scanline), or something more?
 - Why do `ffmpeg` and `mpv` fail at `VIDIOC_STREAMON` with `Broken pipe` from
   the same configured state where `v4l2-ctl` streams successfully?
-- Why does GStreamer `v4l2src` fail allocation / `not-negotiated` from that
-  same state?
+- Why do the advertised direct standard-pixel formats (`YUYV`, `UYVY`,
+  `BGR3`, etc.) still fail from that same state?
+- Why does GStreamer `v4l2src` auto-negotiation fail allocation /
+  `not-negotiated` from that same state while explicit `video/x-bayer` caps
+  succeed?
 - Why does userspace PMIC register dumping fail completely after boot when the
   kernel can still log `TPS68470 REVID: 0x21`?
 - What is the minimum clean patch set needed for upstream submission?
 - Will `libcamera` or other higher-level tools work with this pipeline once
-  installed, or do they need an IPU7-specific pipeline handler?
+  installed, or do they need an IPU7-specific pipeline handler or a Bayer
+  bridge layer?
 
 ## Deliverables
 
