@@ -1,0 +1,3 @@
+CMD: media-ctl -d /dev/media0 -l \"Intel\ IPU7\ CSI2\ 0\":1\ -\>\ \"Intel\ IPU7\ ISYS\ Capture\ 0\":0\ \[1\]
+
+EXIT_STATUS: 0

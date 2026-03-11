@@ -152,7 +152,16 @@ with strong evidence.
   needs explicit media-pad programming or reflects a deeper capture-path gap.
   - **Answer: explicit `media-ctl` link enable + pad format setup is
     sufficient. Raw Bayer capture now works.**
+- [x] Re-run `scripts/06-media-pipeline-setup.sh` immediately after a fresh
+  boot to establish the true pre/post media-graph delta.
+  - **Answer: the boot default is `Intel IPU7 CSI2 0` at `4096x3072` with
+    `CSI2:1 -> Capture 0` disabled; steps 2-5 create the working
+    `2592x1944` + `[ENABLED]` state.**
 - [ ] Investigate the `csi2-0 error: Received packet is too long` warnings.
+  - current hard clue: `bytesused = 10,077,696`,
+    `Size Image = 10,082,880`, `Bytes per Line = 5,184`
+  - the `5,184`-byte delta is exactly one extra scanline in the capture
+    buffer
 - [ ] Test with higher-level capture tools (`libcamera`, `cheese`, `mpv`).
 - [ ] Consider automated pipeline setup (udev rule, libcamera handler, etc.).
 
@@ -198,8 +207,10 @@ with strong evidence.
 ## Near-Term Priority
 
 1. Use `exp18` as the current kernel branch.
-2. Use `scripts/06-media-pipeline-setup.sh` for repeatable capture validation.
-3. Investigate the `csi2-0 error: Received packet is too long` warnings.
+2. Use fresh-boot `scripts/06-media-pipeline-setup.sh` reruns as the capture
+   truth source for userspace-path changes.
+3. Investigate the `csi2-0 error: Received packet is too long` warnings and
+   the one-scanline `Size Image` vs `bytesused` mismatch.
 4. Test with higher-level capture tools (`libcamera`, `cheese`, `mpv`).
 5. Clean up the patch stack for upstream submission:
    - remove experiment instrumentation logging
@@ -211,7 +222,8 @@ with strong evidence.
 ## Open Questions
 
 - Why does `csi2-0 error: Received packet is too long` appear during capture?
-  Is it a CSI2 blanking/format configuration detail or something more?
+  Is it a CSI2 blanking/format configuration detail, given that
+  `Size Image - bytesused = 5,184` bytes (one scanline), or something more?
 - Why does userspace PMIC register dumping fail completely after boot when the
   kernel can still log `TPS68470 REVID: 0x21`?
 - What is the minimum clean patch set needed for upstream submission?

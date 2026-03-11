@@ -40,6 +40,11 @@ with strong evidence.
   - the missing piece was `media-ctl` link enable + pad format alignment
   - 4 frames captured at 30 fps, 10,077,696 bytes/frame
   - `VIDIOC_STREAMON returned 0 (Success)`
+  - the latest clean-boot rerun confirmed the setup is causal, not inherited:
+    - pre-state `Intel IPU7 CSI2 0` defaults to `SGRBG10_1X10/4096x3072`
+    - `CSI2:1 -> Capture 0` starts disabled
+    - steps 2-5 switch the graph to the working `2592x1944` + `[ENABLED]`
+      state
   - required userspace commands before streaming:
     - `media-ctl -l '"Intel IPU7 CSI2 0":1 -> "Intel IPU7 ISYS Capture 0":0 [1]'`
     - `media-ctl -V '"Intel IPU7 CSI2 0":0/0 [fmt:SGRBG10_1X10/2592x1944]'`
@@ -48,6 +53,10 @@ with strong evidence.
   - route setup (`media-ctl -R`) returns `ENOTSUP` -- not needed on IPU7
 - remaining minor issues:
   - 5x `csi2-0 error: Received packet is too long` warnings during capture
+  - current hard clue: `bytesused = 10,077,696`,
+    `Size Image = 10,082,880`, `Bytes per Line = 5,184`
+  - the `5,184`-byte delta is exactly one extra scanline in the allocated
+    capture buffer
   - post-boot PMIC dumping still returns `ERROR` for every register
 
 ## What March 9 Added
@@ -115,6 +124,23 @@ with strong evidence.
   - 40,310,784 bytes total raw Bayer data
   - 5x `csi2-0 error: Received packet is too long` warnings in dmesg
   - raw data starts with plausible 10-bit Bayer values
+- reran `scripts/06-media-pipeline-setup.sh` immediately after a clean reboot
+  and captured the real causal baseline:
+  - run:
+    - `runs/2026-03-12/20260312T020148-snapshot-06-media-pipeline-setup/`
+  - the fresh-boot pre-state is the true default graph:
+    - `Intel IPU7 CSI2 0` sink/source pads default to `SGRBG10_1X10/4096x3072`
+    - `Intel IPU7 CSI2 0`:1 -> `Intel IPU7 ISYS Capture 0`:0 starts as `[]`
+  - the script-established post-state is the actual working delta:
+    - CSI2 sink format `2592x1944`
+    - CSI2 source format `2592x1944`
+    - CSI2:1 -> Capture 0 link `[ENABLED]`
+    - `/dev/video0` format `2592x1944 BA10`
+  - the remaining warning now has a concrete geometry clue:
+    - dequeued frame `bytesused = 10,077,696`
+    - capture-node `Size Image = 10,082,880`
+    - `Bytes per Line = 5,184`
+    - delta `5,184` bytes = exactly one scanline
 
 ## What March 11 Added
 
@@ -293,15 +319,19 @@ with strong evidence.
 - The `media-ctl -R` route command returns `ENOTSUP` on the IPU7 CSI2 entity,
   but that is not needed -- link enable + format alignment is sufficient.
 - 5x `csi2-0 error: Received packet is too long` warnings appear during
-  capture; likely a CSI2 blanking/format detail, not a data-path blocker.
+  capture; the current hard clue is a one-scanline mismatch between
+  `bytesused` and `Size Image`, so this still looks like a CSI2
+  blanking/format detail rather than a data-path blocker.
 - The full experiment chain from `exp1` through `exp18` successfully narrowed
   the PMIC, GPIO, and wiring model until the sensor bound and streamed.
 
 ## Next Best Steps
 
 1. Use `exp18` as the current kernel branch.
-2. Use `scripts/06-media-pipeline-setup.sh` for repeatable capture validation.
-3. Investigate the `Received packet is too long` CSI2 warnings.
+2. Use fresh-boot `scripts/06-media-pipeline-setup.sh` reruns as the capture
+   truth source for userspace-path changes.
+3. Investigate the `Received packet is too long` CSI2 warnings and the
+   one-scanline `Size Image` vs `bytesused` mismatch.
 4. Test with higher-level capture tools (`libcamera`, `cheese`, `mpv`).
 5. Clean up the patch stack for upstream submission.
 6. Fix or replace the post-boot PMIC dump path.

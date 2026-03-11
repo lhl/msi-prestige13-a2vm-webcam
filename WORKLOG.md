@@ -2,6 +2,45 @@
 
 ## 2026-03-12
 
+### Fresh-boot `06` rerun proves the real pre/post media-graph delta
+
+- Plan: validate whether the first successful `06` capture inherited an
+  already-configured graph, and if so, record the true boot defaults plus the
+  remaining geometry mismatch clue.
+- Commands:
+  - reviewed:
+    - `runs/2026-03-12/20260312T020148-snapshot-06-media-pipeline-setup/focused-summary.txt`
+    - `runs/2026-03-12/20260312T020148-snapshot-06-media-pipeline-setup/pipeline-setup/media-ctl-pre.txt`
+    - `runs/2026-03-12/20260312T020148-snapshot-06-media-pipeline-setup/pipeline-setup/media-ctl-post.txt`
+    - `runs/2026-03-12/20260312T020148-snapshot-06-media-pipeline-setup/pipeline-setup/video0-before.txt`
+    - `runs/2026-03-12/20260312T020148-snapshot-06-media-pipeline-setup/pipeline-setup/video0-after.txt`
+    - `runs/2026-03-12/20260312T020148-snapshot-06-media-pipeline-setup/pipeline-setup/video0-stream.txt`
+  - refreshed:
+    - `scripts/06-media-pipeline-setup.sh`
+    - `README.md`
+    - `docs/webcam-status.md`
+    - `docs/test-routines.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+  - validated:
+    - `bash -n scripts/06-media-pipeline-setup.sh`
+- Result:
+  - the clean-boot rerun proves the earlier success was not just inherited
+    state from prior `media-ctl` commands
+  - fresh-boot pre-state showed `Intel IPU7 CSI2 0` at `4096x3072` with the
+    `CSI2:1 -> Capture 0` link disabled
+  - steps 2-5 of `scripts/06-media-pipeline-setup.sh` changed the working path
+    to `2592x1944`, enabled the capture link, and again streamed 4 real raw
+    frames from `/dev/video0`
+  - the remaining warning now has a concrete geometry clue:
+    - `bytesused = 10,077,696`
+    - `Size Image = 10,082,880`
+    - delta `5,184` bytes = exactly one scanline at `Bytes per Line = 5,184`
+  - `scripts/06-media-pipeline-setup.sh` now treats route `ENOTSUP` as the
+    expected IPU7 outcome in its focused summary and surfaces the pre/post CSI2
+    excerpts plus the geometry cross-check directly
+
 ### First successful raw Bayer capture
 
 - Plan: test whether explicit `media-ctl` route, link enable, and pad format

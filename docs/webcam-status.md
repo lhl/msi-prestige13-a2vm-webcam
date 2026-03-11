@@ -13,6 +13,12 @@ setup, `/dev/video0` delivers real Bayer sensor data:
 - 40,310,784 bytes total (4 x 10,077,696 = 2592 x 1944 x 2 bytes/pixel)
 - raw data starts with plausible 10-bit Bayer values
 - `VIDIOC_STREAMON returned 0 (Success)`
+- a fresh-boot rerun confirmed this is a real pre/post delta, not inherited
+  state:
+  - pre-setup `Intel IPU7 CSI2 0` defaults to `SGRBG10_1X10/4096x3072`
+  - the `CSI2:1 -> Capture 0` link starts disabled
+  - steps 2-5 of `scripts/06-media-pipeline-setup.sh` switch the graph to the
+    working `2592x1944` + `[ENABLED]` state
 
 The required userspace setup before streaming:
 
@@ -37,8 +43,13 @@ The kernel patch stack required:
 Known remaining issues:
 
 - 5x `csi2-0 error: Received packet is too long` warnings in dmesg during
-  capture — likely a CSI2 format/blanking configuration detail, not a
-  data-path blocker
+  capture
+  - current hard clue: `bytesused = 10,077,696`, `Size Image = 10,082,880`,
+    `Bytes per Line = 5,184`
+  - the `5,184`-byte delta is exactly one extra scanline in the allocated
+    capture buffer
+  - likely a CSI2 format/blanking configuration detail, not a data-path
+    blocker
 - post-boot PMIC register dump still returns `ERROR` for every register
 - the `media-ctl` route command (`-R`) returns `ENOTSUP` — the IPU7 CSI2
   entity does not support explicit routing, but link enable + format alignment
@@ -65,17 +76,23 @@ For the full March 9 review, see `docs/20260309-status-report.md`.
   - `tps68470_clk_prepare ... rate=19200000`
 - sensor binds into the media graph:
   - `ov5675 10-0036` linked into `Intel IPU7 CSI2 0` `[ENABLED,IMMUTABLE]`
+- fresh-boot defaults are now proven:
+  - `Intel IPU7 CSI2 0` pad0/pad1 start at `SGRBG10_1X10/4096x3072`
+  - `CSI2:1 -> Intel IPU7 ISYS Capture 0` starts as `[]`
 - raw Bayer capture from `/dev/video0` works with explicit pipeline setup:
   - 4 frames at 30 fps
   - 10,077,696 bytes per frame
   - plausible 10-bit Bayer pixel values
+  - steps 2-5 of `scripts/06-media-pipeline-setup.sh` are causally sufficient
+    to move the graph into the working state
 
 ## What Is Still Incomplete
 
 - automated pipeline setup: the `media-ctl` link enable and format commands
-  must be run manually before each capture session
+  must be run manually before each fresh capture session
 - `csi2-0 error: Received packet is too long` warnings appear during capture
-  (5 instances observed); likely a CSI2 format/blanking alignment detail
+  (5 instances observed); the current leading clue is a one-scanline mismatch
+  between `bytesused` and `Size Image`
 - post-boot PMIC register dumping still returns `ERROR` for every register
 - upstreamability: the current patch stack includes local experiment
   instrumentation that would need cleanup before submission
@@ -479,6 +496,8 @@ What has been proven through the full experiment chain:
 
 1. Investigate the `csi2-0 error: Received packet is too long` warnings.
    - likely a CSI2 pad format or blanking configuration issue
+   - current hard clue: `Size Image - bytesused = 5,184`, exactly one
+     scanline at the current `Bytes per Line`
    - frames still arrive, so this may be cosmetic
 2. Fix or replace the post-boot PMIC dump path.
    - `scripts/pmic-reg-dump.sh` still returns `ERROR` for every register

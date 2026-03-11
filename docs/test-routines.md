@@ -197,6 +197,9 @@ format alignment alone is insufficient, and you want to test whether explicit
 `media-ctl` route, link, and format setup removes the `VIDIOC_STREAMON`
 severed-link failure.
 
+For causal pre/post evidence, run it immediately after a fresh boot before any
+manual `media-ctl` or `v4l2-ctl` commands.
+
 What it does:
 
 - captures a standard snapshot run
@@ -228,12 +231,18 @@ Interpretation note:
 
 - this is the first no-reboot follow-up that actually achieved successful raw
   Bayer capture
+- the latest clean-boot rerun proved the true defaults are:
+  - `Intel IPU7 CSI2 0` at `SGRBG10_1X10/4096x3072`
+  - `CSI2:1 -> Intel IPU7 ISYS Capture 0` disabled
 - the route step (`media-ctl -R`) returns `ENOTSUP` on IPU7 CSI2 entities;
   this is expected and does not prevent streaming
 - the critical step is link enable (step 4); without it, `STREAMON` fails with
   `Link has been severed`
 - 5x `csi2-0 error: Received packet is too long` warnings may appear during
   capture; frames still arrive
+- current geometry clue: `bytesused` is `10,077,696` but `Size Image` is
+  `10,082,880`, a `5,184`-byte delta equal to one scanline at the current
+  `Bytes per Line`
 
 ## Current interpretation rule
 

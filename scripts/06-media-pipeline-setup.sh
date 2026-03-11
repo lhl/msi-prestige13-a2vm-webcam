@@ -140,6 +140,14 @@ file_size_bytes() {
   fi
 }
 
+extract_v4l2_field() {
+  local path="$1"
+  local label="$2"
+
+  sed -n "s/^[[:space:]]*${label}[[:space:]]*:[[:space:]]*//p" "${path}" | \
+    tail -n 1 | tr -d '[:space:]'
+}
+
 while (($# > 0)); do
   case "$1" in
     --label)
@@ -342,18 +350,41 @@ fi
 # -- derive results --
 raw_size=$(file_size_bytes "${raw_path}")
 
-setup_all_ok=1
-for s in "${route_status}" "${sink_fmt_status}" "${src_fmt_status}" "${link_status}" "${node_fmt_status}"; do
+route_effective_note="route setup failed"
+if [[ "${route_status}" == "0" ]]; then
+  route_effective_note="configured successfully"
+elif rg -q 'Operation not supported' "${route_path}"; then
+  route_effective_note="ENOTSUP on IPU7 CSI2 (expected; route step not required)"
+fi
+
+setup_required_ok=1
+for s in "${sink_fmt_status}" "${src_fmt_status}" "${link_status}" "${node_fmt_status}"; do
   if [[ "${s}" != "0" ]]; then
-    setup_all_ok=0
+    setup_required_ok=0
     break
   fi
 done
 
-# check post-setup media graph for route count and link state
-post_routes=$(rg -c 'routes' "${post_media_path}" || printf '0\n')
-post_csi2_excerpt=$(rg -A 5 "entity.*${CSI2_ENTITY}" "${post_media_path}" || true)
+# check pre/post media graph excerpts and link state
+pre_csi2_excerpt=$(rg -A 12 "entity.*${CSI2_ENTITY}" "${pre_media_path}" || true)
+post_csi2_excerpt=$(rg -A 12 "entity.*${CSI2_ENTITY}" "${post_media_path}" || true)
 post_link_enabled=$(rg -- "-> \"${CAPTURE_ENTITY}\".*ENABLED" "${post_media_path}" || true)
+
+bytes_per_line=$(extract_v4l2_field "${node_after_path}" 'Bytes per Line')
+size_image=$(extract_v4l2_field "${node_after_path}" 'Size Image')
+first_bytesused=$(sed -n 's/.*bytesused:[[:space:]]*\([0-9][0-9]*\).*/\1/p' "${stream_log_path}" | head -n 1)
+geometry_summary="(unable to derive from capture-node or stream logs)"
+if [[ "${first_bytesused}" =~ ^[0-9]+$ && "${size_image}" =~ ^[0-9]+$ ]]; then
+  geometry_delta=$(( size_image - first_bytesused ))
+  geometry_summary="bytesused=${first_bytesused}; size_image=${size_image}; delta=${geometry_delta} bytes"
+  if [[ "${bytes_per_line}" =~ ^[0-9]+$ && "${bytes_per_line}" -gt 0 ]]; then
+    if (( geometry_delta >= 0 && geometry_delta % bytes_per_line == 0 )); then
+      geometry_summary="${geometry_summary}; bytes_per_line=${bytes_per_line}; extra_scanlines=$(( geometry_delta / bytes_per_line ))"
+    else
+      geometry_summary="${geometry_summary}; bytes_per_line=${bytes_per_line}"
+    fi
+  fi
+fi
 
 capture_result="no confirmed userspace frames captured"
 if [[ "${stream_status}" =~ ^[0-9]+$ ]]; then
@@ -396,7 +427,23 @@ subdev_nodes=$(find /dev -maxdepth 1 -name 'v4l-subdev*' | sort || true)
   printf 'step5_node_fmt:       exit=%s  cmd: v4l2-ctl --set-fmt-video=width=%s,height=%s,pixelformat=%s\n' \
     "${node_fmt_status}" "${SENSOR_WIDTH}" "${SENSOR_HEIGHT}" "${PIXEL_FORMAT}"
   printf '\n'
-  printf 'All setup steps succeeded: %s\n' "$(if (( setup_all_ok )); then printf 'yes'; else printf 'NO'; fi)"
+  printf 'Optional route step status:\n%s\n' "${route_effective_note}"
+  printf '\n'
+  printf 'Required setup steps succeeded: %s\n' "$(if (( setup_required_ok )); then printf 'yes'; else printf 'NO'; fi)"
+  printf '\n'
+  printf 'Pre-setup CSI2 excerpt:\n'
+  if [[ -n "${pre_csi2_excerpt}" ]]; then
+    printf '%s\n' "${pre_csi2_excerpt}"
+  else
+    printf '(entity %s not found in pre-setup media graph)\n' "${CSI2_ENTITY}"
+  fi
+  printf '\n'
+  printf 'Post-setup CSI2 excerpt:\n'
+  if [[ -n "${post_csi2_excerpt}" ]]; then
+    printf '%s\n' "${post_csi2_excerpt}"
+  else
+    printf '(entity %s not found in post-setup media graph)\n' "${CSI2_ENTITY}"
+  fi
   printf '\n'
   printf 'Post-setup link state:\n'
   if [[ -n "${post_link_enabled}" ]]; then
@@ -410,6 +457,8 @@ subdev_nodes=$(find /dev -maxdepth 1 -name 'v4l-subdev*' | sort || true)
   printf 'Stream exit status:\n%s\n' "${stream_status:-unknown}"
   printf '\n'
   printf 'Raw capture size bytes:\n%s\n' "${raw_size}"
+  printf '\n'
+  printf 'Capture geometry cross-check:\n%s\n' "${geometry_summary}"
   printf '\n'
   printf 'Stream log tail:\n'
   if [[ -n "${stream_tail}" ]]; then

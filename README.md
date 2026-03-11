@@ -5,26 +5,27 @@ the MSI Prestige 13 AI+ Evo A2VMG / A2VM family.
 
 ## Current Status
 
-- Current verdict: the webcam is still not working end to end.
+- Current verdict: raw Bayer capture is working on Linux with the current patch
+  stack plus explicit userspace media-pipeline setup.
 - Best current summary: `docs/webcam-status.md`
 - Full March 9 status report: `docs/20260309-status-report.md`
-- Current leading blocker: `exp18` now binds `ov5675 10-0036` into the media
-  graph with stock regulator-side `VSIO = 0x03`, so the remaining gap is no
-  longer first sensor wake-up; `exp19` shows the first raw userspace stream on
-  `/dev/video0` now fails later at `VIDIOC_STREAMON` with `Link has been
-  severed`, and a later no-reboot `4096x3072 BA10` sweep across `/dev/video0`
-  through `/dev/video7` still fails the same way, plus broken post-boot PMIC
-  visibility.
-- Current leading interpretation: the clean daisy-chain branch plus standard
-  `VSIO` is the first positive local baseline, and any remaining Antti-thread
-  drift is now more likely to matter for cleanup/upstreamability than for basic
-  sensor bring-up.
+- Current remaining gaps: the latest fresh-boot `06` run shows the true boot
+  defaults are `Intel IPU7 CSI2 0` at `4096x3072` with the
+  `CSI2:1 -> Capture 0` link disabled; explicit setup of the CSI2 pad formats,
+  capture link, and `/dev/video0` format changes that to the working
+  `2592x1944` path and delivers raw frames. The main unresolved issues are the
+  5x `Received packet is too long` warnings with a one-scanline buffer delta,
+  broken post-boot PMIC visibility, higher-level application testing, and
+  patch cleanup for upstreaming.
+- Current leading interpretation: basic bring-up is complete; remaining work is
+  warning cleanup, automation, higher-level userspace validation, and
+  upstreamability rather than first sensor wake-up.
 
 Machine under test:
 
 - Model: `Prestige 13 AI+ Evo A2VMG`
 - Revision: `REV:1.0`
-- Latest recorded kernel: `7.0.0-rc2-1-mainline-dirty` on `2026-03-09`
+- Latest recorded kernel: `7.0.0-rc2-1-mainline-dirty` on `2026-03-12`
 
 ## Start Here
 
@@ -181,18 +182,20 @@ msi-prestige13-a2vm-webcam/
    - standard `VSIO` now reads back cleanly as `0x03`
    - the old timeout storm does not return
    - the media graph now contains `ov5675 10-0036`
-7. Use `exp19` plus the later no-reboot format sweep as the current capture
-   truth source.
-   - reuse the positive `exp18` patch unchanged
-   - the first `/dev/video0` stream attempt now reaches `VIDIOC_STREAMON`
-     and fails there with `Link has been severed`
-   - use `scripts/05-userspace-format-sweep.sh` to repeat the no-reboot
-     multi-node format sweep
-   - forcing `/dev/video0` through `/dev/video7` to `4096x3072 BA10` is
-     accepted at `VIDIOC_S_FMT`, but all eight nodes still fail
-     `VIDIOC_STREAMON` with `Link has been severed`
-8. Treat post-boot PMIC visibility as secondary to the new userspace
-   `STREAMON` failure until the capture-path result is understood.
+7. Use `scripts/06-media-pipeline-setup.sh` as the current capture truth
+   source.
+   - the latest fresh-boot rerun confirms the real boot default is
+     `Intel IPU7 CSI2 0` at `4096x3072` with `CSI2:1 -> Capture 0` disabled
+   - steps 2-5 of the script change the working path to `2592x1944`,
+     enable the capture link, and let `/dev/video0` stream raw Bayer frames
+8. Investigate the remaining `Received packet is too long` warnings as a
+   geometry-alignment issue.
+   - current hard clue: `bytesused = 10,077,696` while
+     `Size Image = 10,082,880`
+   - the `5,184`-byte delta is exactly one scanline at the current
+     `Bytes per Line = 5,184`
+9. Treat post-boot PMIC visibility as secondary to capture-path cleanup now
+   that raw streaming works.
 
 ## Related Docs
 
