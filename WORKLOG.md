@@ -52,6 +52,11 @@
     - both `scripts/exp18-ms13q3-daisy-chain-standard-vsio-update.sh --dry-run`
       and `scripts/exp18-ms13q3-daisy-chain-standard-vsio-verify.sh --dry-run`
       completed successfully
+  - documented that focused disable-side logging remains intentionally
+    asymmetric in `exp18`:
+    - `ANA` and `VSIO` disable paths are logged
+    - `CORE` disable still uses the plain helper because the experiment is
+      aimed at the `S_I2C_CTL` path, not PLL teardown
 
 ### Compare Antti's Prestige 14 thread directly against local experiments
 

@@ -806,6 +806,10 @@ Implemented patch shape:
 - remove the `exp17` late GPIO-phase `BIT(0)` hook
 - restore standard regulator-side `VSIO` enable / disable behavior
 - keep focused PMIC readback logging around `S_I2C_CTL`, `VACTL`, and `VDCTL`
+- keep the current focused logging asymmetry on disable:
+  - `ANA` and `VSIO` disable transitions are logged
+  - `CORE` disable still falls through the plain helper because exp18 is
+    targeting the PMIC path around `S_I2C_CTL`, not PLL teardown
 
 Current status:
 - staged only
