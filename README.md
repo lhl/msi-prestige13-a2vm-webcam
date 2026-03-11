@@ -149,7 +149,7 @@ msi-prestige13-a2vm-webcam/
    - three staged `ov5675` GPIO-release variants
    - `exp5` `WF` GPIO mode follow-up
    - `exp6` `UF` / `gpio.4` last resort
-4. Treat `exp13` through `exp16` as completed evidence.
+4. Treat `exp13` through `exp17` as completed evidence.
    - `exp13` proved Linux can leave `GPIO1` / `GPIO2` in daisy-chain input
      mode
    - `exp14` proved `GPIO9` is active, but insufficient as a lone reset line
@@ -157,18 +157,19 @@ msi-prestige13-a2vm-webcam/
      line
    - `exp16` proved the current-driver `GPIO7` / `GPIO9` approximation can
      drive both remote lines together, but is still insufficient
-5. Use the staged `exp17` entrypoint as the next ordered follow-up.
-   - `exp17`: re-test `S_I2C_CTL BIT(0)` only after the clean remote-line
-     branch still fails flat
-6. Keep `exp10` as the PMIC baseline while running that remaining branch set.
+   - `exp17` proved a later `S_I2C_CTL BIT(0)` on the clean remote-line branch
+     is safe and reads back as `0x03`, but still does not move the sensor off
+     repeated `-121`
+5. Keep `exp10` as the PMIC baseline for comparison work.
    - `exp11` showed that one modeled late `BIT(0)` hook still re-wedges PMIC
      access
    - `exp12` showed that the low-effort Antti-inspired daisy-chain setup is
      immediately overridden by the current Linux `GPIO1` / `GPIO2` lookup
-   - `exp13` through `exp16` then showed the clean daisy-chain branch is real
-     and both remote lines are active individually and together, so the next
-     question is whether `exp17`'s later `BIT(0)` re-test changes anything
-     before deeper consumer/timing work
+   - `exp13` through `exp17` then showed the clean daisy-chain branch is real,
+     both remote lines are active individually and together, and one late
+     `BIT(0)` placement is safe but still insufficient
+6. Shift the next work to `ov5675` consumer/timing and PMIC-visibility gaps,
+   not more blind remote-line mapping.
 
 ## Related Docs
 

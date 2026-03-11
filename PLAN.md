@@ -2,9 +2,9 @@
 
 Updated: 2026-03-11
 
-This is the active plan after the completed March 9 PMIC experiment batch, the
-completed `exp13` / `exp14` / `exp15` / `exp16` Antti-model runs, and the
-remaining `exp17` follow-up.
+This is the active plan after the completed March 9 PMIC experiment batch and
+the completed `exp13` / `exp14` / `exp15` / `exp16` / `exp17` Antti-model
+follow-up runs.
 
 ## Goal
 
@@ -97,6 +97,15 @@ with strong evidence.
   - `GPIO7` and `GPIO9` were both actively driven during the identify window
   - observed combined `SGPO` reached `0x05`
   - the sensor failure shape still ends at `-121`
+- `exp17` came back positive for a safe later `BIT(0)` assertion, but negative
+  as a direct fix:
+  - `GPIO1` / `GPIO2` remained isolated in daisy-chain input mode
+  - `GPIO7` and `GPIO9` were still active on the clean remote-line branch
+  - the late PMIC write on `sensor-gpio.9` read back cleanly:
+    - `before=0x02`
+    - `after=0x03`
+  - the old timeout storm did not return
+  - the sensor failure shape still ends at `-121`
 - the current `MS-13Q3` `GPIO1` / `GPIO2` board model is still only a
   candidate, not a validated wiring map:
   - the original board-data patch introduced it as a first-pass guess
@@ -113,8 +122,9 @@ with strong evidence.
     clean Antti-style branch
   - the current-driver two-line `GPIO9` / `GPIO7` approximation is active,
     but still insufficient
-  - the next high-value work is `exp17`, testing whether the later `BIT(0)`
-    phase matters only after the clean remote-line branch is in place
+  - the late clean-branch `BIT(0)` re-test is safe, but still insufficient
+  - the next high-value work is `ov5675` consumer/timing investigation, not
+    another blind remote-line guess
 
 ## Workstreams
 
@@ -123,8 +133,10 @@ with strong evidence.
 - [x] Run the `BIT(1)`-only follow-up in the regulator `VSIO` path.
 - [x] Determine whether keeping `BIT(1)` while omitting `BIT(0)` lets the bus
   stay alive long enough to return to the sensor identify stage.
-- [ ] Decide whether a later board-specific `BIT(0)` assertion belongs
-  anywhere in Linux at all, and if so on which signal/phase.
+- [x] Determine whether a later board-specific `BIT(0)` assertion can be safe
+  on the clean remote-line branch.
+- [ ] Decide whether any later board-specific `BIT(0)` assertion belongs
+  anywhere in Linux at all, and if so on which exact signal/phase.
 
 ### 2. Post-boot PMIC visibility
 
@@ -164,8 +176,8 @@ with strong evidence.
 
 ## Near-Term Priority
 
-1. Keep `exp10` as the verified PMIC baseline while running the staged branch
-   set.
+1. Keep `exp10` as the verified PMIC baseline while comparing post-branch-set
+   work.
 2. Treat `exp12` as completed collision evidence, not as a direct test of
    Antti's working model.
 3. Treat `exp13` as completed evidence, not as the next branch to run.
@@ -182,17 +194,21 @@ with strong evidence.
    - it proved the current two-line approximation drives both remote lines
    - it also proved that combined remote-line activity still stays flat at
      repeated `-121`
-7. Run `exp17` next as the explicit PMIC-side follow-up.
-   - `exp13` already proved the no-reclaim prerequisite
-   - carry forward the cleanest branch from `exp16`
-8. Keep using:
+7. Treat `exp17` as completed evidence, not as a future branch.
+   - it proved the clean remote-line branch can tolerate one later
+     `S_I2C_CTL BIT(0)` assertion
+   - the observed late write read back cleanly as `0x03`
+   - the sensor still stayed flat at repeated `-121`
+   - the old timeout storm did not return
+8. Scope the `ov5675` consumer-model or timing gap directly.
+9. Keep using:
    - `scripts/patch-kernel.sh`
    - `scripts/exp*-*-update.sh`
    - `scripts/exp*-*-verify.sh`
    - `scripts/01-clean-boot-check.sh`
    to keep evidence reproducible
-9. Keep the broader Windows config-path and PMIC dump questions open, but do
-   not let them delay the next clean Antti-model branch tests.
+10. Keep the broader Windows config-path and PMIC dump questions open, but do
+    not let them delay the next consumer/timing branch.
 
 ## Open Questions
 
@@ -201,16 +217,14 @@ with strong evidence.
 - With `exp13` proving no reclaim, why does the clean daisy-chain-isolated
   branch still end at flat repeated `-121` chip-ID failures?
 - With `exp16` proving the current two-line `GPIO9` / `GPIO7` approximation is
-  active but still flat at `-121`, is the next missing piece a later `BIT(0)`
-  phase, an `ov5675` consumer change, or more exact electrical timing?
-- If `exp17` is also negative, do we need an `ov5675` consumer change to model
-  Antti's dual-reset style more faithfully?
-- Once a clean daisy-chain branch exists, does `BIT(0)` become safe there or
-  does it still immediately re-wedge PMIC access?
+  active but still flat at `-121`, and `exp17` proving one later `BIT(0)` is
+  safe but still non-curative, is the next missing piece an `ov5675`
+  consumer change or more exact electrical timing?
 - Where, if anywhere, does this board actually want the later `BIT(0)`
-  transition once the regulator-phase PMIC/I2C path is already healthy?
-- Why did the current late hook only show up on `sensor-gpio.1`, not a cleaner
-  earlier GPIO-active phase?
+  transition once the regulator-phase PMIC/I2C path is already healthy and one
+  late `sensor-gpio.9` write can already read back as `0x03`?
+- Why did the earlier late hook only show up on `sensor-gpio.1`, while the
+  clean remote-line branch later shows a safe `sensor-gpio.9` `BIT(0)` event?
 - Why does userspace PMIC register dumping fail completely after boot when the
   kernel can still log `TPS68470 REVID: 0x21`?
 - What exact higher-level Windows configuration feeds `WF::SetConf` on this
@@ -225,5 +239,4 @@ with strong evidence.
 - a full March 9 status report under `docs/`
 - reference-backed Windows PMIC notes under `reference/windows-driver-analysis/`
 - current support summary under `docs/webcam-status.md`
-- recorded `exp13` / `exp14` / `exp15` / `exp16` run evidence plus the staged
-  `exp17` patch and wrapper scripts
+- recorded `exp13` / `exp14` / `exp15` / `exp16` / `exp17` run evidence

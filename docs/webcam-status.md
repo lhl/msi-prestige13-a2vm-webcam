@@ -30,8 +30,9 @@ the remaining blocker is now much narrower:
 - `exp16` then proved that the current `GPIO9` / `GPIO7` two-line
   approximation drives both remote lines together, but still does not move the
   sensor off repeated `-121`
-- the repo now has a staged `exp17` patch plus wrapper pair for the next
-  explicit PMIC-side follow-up
+- `exp17` then proved that a later `S_I2C_CTL BIT(0)` on the clean remote-line
+  branch can read back safely as `0x03`, but it still does not move the sensor
+  off repeated `-121`
 
 That means the webcam is now blocked at sensor wake-up / later-stage PMIC
 behavior, not at basic discovery or graph construction.
@@ -415,7 +416,42 @@ Interpretation:
   insufficient
 - the direct remote-line mapping question is now largely exhausted under
   current `ov5675` limits
-- the next direct branch is `exp17`, the clean-remote-branch `BIT(0)` re-test
+- `exp17` later showed that one clean-remote-branch `BIT(0)` re-test is safe
+  but still insufficient
+
+### `exp17` clean remote branch plus later `BIT(0)`
+
+What it proved:
+
+- one later `S_I2C_CTL BIT(0)` assertion on `sensor-gpio.9` can read back
+  cleanly once the clean remote-line branch is in place
+- `GPIO1` / `GPIO2` still stay isolated in daisy-chain input mode
+- `GPIO7` / `GPIO9` still become active during the identify window
+- the old timeout storm does not return
+- even with that later PMIC transition, the sensor still does not move off the
+  flat repeated `-121` identify failure
+
+Key lines:
+
+- `exp17_daisy: probe-after gpio.1 ... ctl=0x00`
+- `exp17_daisy: probe-after gpio.2 ... ctl=0x00`
+- `exp17_daisy: set-after gpio.7 ... sgpo_ret=0 sgpo=0x01`
+- `exp17_daisy: set-after gpio.9 ... sgpo_ret=0 sgpo=0x05`
+- `exp17_pmic_gpio: sensor-gpio.9 value=0 ... before=0x02 ... after=0x03`
+- `pmic_focus: disable-bit1-only VSIO reg=S_I2C_CTL(0x43) ... before=0x03 ... after=0x01`
+- `ov5675 ... chip id read attempt 5/5 failed: -121`
+
+Operational note:
+
+- the verify-side PMIC dump completed, but every register still came back as
+  `ERROR`
+
+Interpretation:
+
+- `exp17` kills the simple "any later `BIT(0)` is toxic" hypothesis
+- the remaining gap is now where that PMIC transition belongs, when it belongs
+  there, or whether the real missing piece is the `ov5675` consumer/timing
+  model rather than another remote-line guess
 
 ## Current Assessment
 
@@ -442,10 +478,12 @@ What now looks most likely:
   - the complete remote sensor-control arrangement or consumer semantics:
     - `GPIO9` and `GPIO7` are both active together in `exp16`, but the sensor
       still stays flat at `-121`
-    - if `exp17` is also flat, the remaining gap is likely beyond the current
-      `ov5675` GPIO-consumer model or exact electrical timing
+    - `exp17` later showed a safe `sensor-gpio.9` `BIT(0)` event
+      (`0x02 -> 0x03`), but the sensor still stays flat at `-121`
+    - the remaining gap is therefore likely beyond the current `ov5675`
+      GPIO-consumer model or exact electrical timing
   - or some board-specific later PMIC behavior that the Windows driver
-    performs
+    performs at a different phase
 - or Linux is still missing the exact electrical waveform and timing that the
   sensor needs to exit reset / powerdown and answer chip-ID reads
 
@@ -454,20 +492,22 @@ What now looks most likely:
 1. We still cannot read back PMIC registers from userspace after boot.
    - `scripts/pmic-reg-dump.sh` remains unreliable in representative runs:
      earlier captures returned `ERROR` for every register, the `exp15` verify
-     capture timed out at the sudo prompt, and `exp16` returned all `ERROR`
-     again.
-2. We now know the bad PMIC transition is specifically the later `BIT(0)` set
-   on `S_I2C_CTL` after `BIT(1)` has already read back cleanly as `0x02`.
-3. We also now know that omitting `BIT(0)` keeps the PMIC/I2C path alive, but
-   still leaves the sensor failing chip-ID reads with `-121`.
+     capture timed out at the sudo prompt, and both `exp16` and `exp17`
+     returned all `ERROR` again.
+2. We now know the bad PMIC transition is specifically the early
+   regulator-phase `BIT(0)` set on `S_I2C_CTL`; `exp17` later showed that one
+   later `sensor-gpio.9` `BIT(0)` write can read back cleanly as `0x03`.
+3. We also now know that omitting early `BIT(0)` keeps the PMIC/I2C path
+   alive, but still leaves the sensor failing chip-ID reads with `-121`.
 4. We now know that removing the current `GPIO1` / `GPIO2` lookup collision is
    not sufficient by itself; `exp13` still fails flat at `-121`.
 5. We now know `GPIO9` is active but insufficient as a lone reset line.
 6. We now know `GPIO7` is also active but insufficient as a lone reset line.
 7. We now know the current two-line `GPIO9` / `GPIO7` approximation is also
    insufficient under current driver limits.
-8. We now have one negative result for a late `BIT(0)` hook tied to the
-   current GPIO-active implementation: it reintroduces the PMIC wedge.
+8. We now have two different late-`BIT(0)` outcomes:
+   - the earlier `exp11` GPIO hook reintroduces the PMIC wedge
+   - the clean-remote-branch `exp17` hook is safe but still insufficient
 9. We still do not have the exact higher-level Windows configuration path that
    feeds `WF::SetConf` or chooses the `WF` versus `UF` branch for this board.
 10. We still do not have direct electrical truth for the PMIC GPIO and sensor
@@ -478,11 +518,11 @@ What now looks most likely:
 1. Keep `exp10` as the best functional PMIC state for now.
    - do not reintroduce `BIT(0)` in the early regulator path
    - do not treat the current `exp11` GPIO hook as a likely fix
-2. Run `exp17` next.
-   - test whether later `BIT(0)` becomes safe or useful only on top of the
-     clean remote-line branch
-3. If `exp17` is still negative, scope the `ov5675` consumer-model gap more
-   directly.
+   - use `exp17` only as evidence that one later `BIT(0)` placement is safe,
+     not as a fix
+2. Scope the `ov5675` consumer-model gap more directly.
+3. Design any next PMIC follow-up around phase/timing, not another blind
+   remote-line remap.
 4. Fix or replace the post-boot PMIC dump path so we can see real register
    state after a failed clean boot.
 5. Extract the higher-level Windows config path that feeds `WF::SetConf` and

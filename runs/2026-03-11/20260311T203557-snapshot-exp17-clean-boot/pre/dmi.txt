@@ -1,0 +1,5 @@
+CMD: bash -lc cat\ /sys/class/dmi/id/product_name\ /sys/class/dmi/id/product_version\ 2\>/dev/null
+Prestige 13 AI+ Evo A2VMG
+REV:1.0
+
+EXIT_STATUS: 0

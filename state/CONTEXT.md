@@ -117,7 +117,7 @@ with strong evidence.
       reruns restore the baseline regulator module explicitly
     - do not replace `exp10` as the best verified PMIC baseline
 - staged the next ordered Antti-model branch set with repo-local patch and
-  wrapper pairs:
+  wrapper pairs, then ran it through `exp17`:
   - `exp13`:
     - patch:
       - `reference/patches/ms13q3-daisy-chain-isolation-v1.patch`
@@ -209,6 +209,22 @@ with strong evidence.
     - `probe-after gpio.2 ... ctl=0x00`
     - sensor failure remained flat at repeated `-121`
     - verify-side PMIC dump returned `ERROR` for all registers again
+- ran `exp17` and recorded the clean daisy-chain late-`BIT(0)` re-test result:
+  - update run:
+    - `runs/2026-03-11/20260311T203041-ms13q3-daisy-chain-bit0-retest-update/`
+  - verify run:
+    - `runs/2026-03-11/20260311T203557-snapshot-exp17-clean-boot/`
+  - result:
+    - positive for safe later `BIT(0)`, negative as a direct fix
+    - `probe-after gpio.1 ... ctl=0x00`
+    - `probe-after gpio.2 ... ctl=0x00`
+    - `set-after gpio.7 ... sgpo=0x01`
+    - `set-after gpio.9 ... sgpo=0x05`
+    - `exp17_pmic_gpio ... before=0x02 ... after=0x03`
+    - no `controller timed out` return
+    - sensor failure remained flat at repeated `-121`
+    - `disable-bit1-only VSIO ... before=0x03 ... after=0x01`
+    - verify-side PMIC dump returned `ERROR` for all registers again
 
 ## Current Interpretation
 
@@ -226,13 +242,17 @@ with strong evidence.
 - `exp15` proved that `GPIO7` is an active remote line, but insufficient alone
 - `exp16` proved that the current two-line `GPIO9` / `GPIO7` approximation can
   drive both remote lines together, but is still insufficient
+- `exp17` proved that one late `S_I2C_CTL BIT(0)` assertion on the clean
+  remote-line branch is safe and reads back as `0x03`, but is still
+  insufficient
 - The strongest remaining gap is PMIC-side behavior Linux still does not model
   correctly, especially around:
-  - whether a later `S_I2C_CTL` `BIT(0)` phase only becomes useful after the
-    clean remote-line branch is already in place
-  - where the later `S_I2C_CTL` `BIT(0)` phase belongs, if anywhere, once the
-    daisy-chain wiring branch is isolated
-  - why the current late hook only showed up on `sensor-gpio.1`
+  - whether any earlier or differently placed late `S_I2C_CTL` `BIT(0)` phase
+    matters once the clean remote-line branch is already in place
+  - where the later `S_I2C_CTL` `BIT(0)` phase belongs, if anywhere, now that
+    one `sensor-gpio.9` write already reads back cleanly
+  - why the earlier late hook only showed up on `sensor-gpio.1` while `exp17`
+    later showed a safe `sensor-gpio.9` event
   - PMIC value/register state truth during the failing identify window
   - higher-level Windows config feeding `WF::SetConf` and selecting `WF`
     versus `UF`
@@ -258,15 +278,17 @@ with strong evidence.
 6. Treat `exp16` as completed evidence, not as the next branch to run.
    - it proved the current two-line approximation drives both remote lines
    - it also proved the clean remote-line branch still stays flat at `-121`
-7. Run `exp17` next.
-   - `exp13` already satisfied the no-reclaim prerequisite
-   - re-test `S_I2C_CTL BIT(0)` only on top of the cleanest branch from
-     `exp16`
-8. Fix or replace the post-boot PMIC dump path so we can observe real register
+7. Treat `exp17` as completed evidence, not as a future branch.
+   - it proved one late `S_I2C_CTL BIT(0)` write is safe on the clean
+     remote-line branch
+   - the observed PMIC write moved `S_I2C_CTL` from `0x02` to `0x03`
+   - the sensor still stayed flat at `-121`
+8. Scope the `ov5675` consumer-model or timing gap directly.
+9. Fix or replace the post-boot PMIC dump path so we can observe real register
    state after a failed clean boot.
-9. Extract more of the higher-level Windows config path above `WF::SetConf`.
-10. Do not rerun the broad `exp7` snapshot patch as a default path; it amplified
-   the timeout storm enough to interact badly with boot.
+10. Extract more of the higher-level Windows config path above `WF::SetConf`.
+11. Do not rerun the broad `exp7` snapshot patch as a default path; it amplified
+    the timeout storm enough to interact badly with boot.
 
 ## Key Paths
 

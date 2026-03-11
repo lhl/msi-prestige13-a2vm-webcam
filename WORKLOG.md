@@ -2,6 +2,57 @@
 
 ## 2026-03-11
 
+### Review `exp17` and confirm that late `BIT(0)` is safe but insufficient
+
+- Plan: inspect the first real `exp17` update and clean-boot verification
+  artifacts, determine whether a later `S_I2C_CTL BIT(0)` assertion stays safe
+  on top of the clean remote-line branch, and update the next-step docs if the
+  named Antti-model branch set is now exhausted without a fix.
+- Commands:
+  - reviewed:
+    - `runs/2026-03-11/20260311T203041-ms13q3-daisy-chain-bit0-retest-update/metadata.env`
+    - `runs/2026-03-11/20260311T203041-ms13q3-daisy-chain-bit0-retest-update/action.log`
+    - `runs/2026-03-11/20260311T203557-snapshot-exp17-clean-boot/focused-summary.txt`
+    - `runs/2026-03-11/20260311T203557-snapshot-exp17-clean-boot/experiment-journal.txt`
+    - `runs/2026-03-11/20260311T203557-snapshot-exp17-clean-boot/pmic-reg-dump.txt`
+    - `reference/patches/ms13q3-daisy-chain-bit0-retest-v1.patch`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `README.md`
+    - `docs/README.md`
+    - `docs/webcam-status.md`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+  - refreshed:
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/README.md`
+    - `docs/webcam-status.md`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+- Result:
+  - `exp17` is positive for a safe later `BIT(0)`, but negative as a direct
+    fix
+  - Linux kept the clean daisy-chain isolation from `exp13` intact:
+    - `exp17_daisy: probe-after gpio.1 ... ctl=0x00`
+    - `exp17_daisy: probe-after gpio.2 ... ctl=0x00`
+  - Linux still actively drove both remote lines during probe:
+    - `exp17_daisy: set-after gpio.7 ... sgpo=0x01`
+    - `exp17_daisy: set-after gpio.9 ... sgpo=0x05`
+  - the late PMIC write landed and read back cleanly:
+    - `exp17_pmic_gpio: sensor-gpio.9 value=0 ... before=0x02 ... after=0x03`
+  - the old timeout storm did not return
+  - the clean-boot sensor result still did not improve:
+    - `chip id read attempt 1/5 failed: -121`
+    - `...`
+    - `chip id read attempt 5/5 failed: -121`
+    - `failed to find sensor: -121`
+  - the verify-side PMIC dump returned `ERROR` for all registers again
+  - the next question is no longer whether any later `BIT(0)` is categorically
+    unsafe; it is whether the remaining gap is consumer semantics, phase, or
+    exact timing
+
 ### Review `exp16` and confirm the two-line approximation is active but insufficient
 
 - Plan: inspect the first real `exp16` update and clean-boot verification
