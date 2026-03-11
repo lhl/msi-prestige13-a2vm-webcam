@@ -1,0 +1,68 @@
+From a9b10f6b7225476fc619cab749a2d65a3f1b5b39 Mon Sep 17 00:00:00 2001
+From: lhl <lhl@randomfoo.net>
+Date: Thu, 12 Mar 2026 05:34:35 +0900
+Subject: [PATCH 4/6] media: i2c: ov5675: Support optional powerdown GPIO
+
+Some boards expose a separate powerdown control line for the OV5675 in
+addition to reset.
+
+Support an optional powerdown GPIO during the sensor power-on and
+power-off sequence so board data can describe both controls when they
+are available.
+
+Signed-off-by: lhl <lhl@randomfoo.net>
+---
+ drivers/media/i2c/ov5675.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/drivers/media/i2c/ov5675.c b/drivers/media/i2c/ov5675.c
+index ea26df328189..2b7c5abe6f73 100644
+--- a/drivers/media/i2c/ov5675.c
++++ b/drivers/media/i2c/ov5675.c
+@@ -501,6 +501,7 @@ struct ov5675 {
+ 	struct v4l2_ctrl_handler ctrl_handler;
+ 	struct clk *xvclk;
+ 	struct gpio_desc *reset_gpio;
++	struct gpio_desc *powerdown_gpio;
+ 	struct regulator_bulk_data supplies[OV5675_NUM_SUPPLIES];
+ 
+ 	/* V4L2 Controls */
+@@ -974,6 +975,7 @@ static int ov5675_power_off(struct device *dev)
+ 
+ 	clk_disable_unprepare(ov5675->xvclk);
+ 	gpiod_set_value_cansleep(ov5675->reset_gpio, 1);
++	gpiod_set_value_cansleep(ov5675->powerdown_gpio, 1);
+ 	regulator_bulk_disable(OV5675_NUM_SUPPLIES, ov5675->supplies);
+ 
+ 	return 0;
+@@ -992,6 +994,7 @@ static int ov5675_power_on(struct device *dev)
+ 	}
+ 
+ 	gpiod_set_value_cansleep(ov5675->reset_gpio, 1);
++	gpiod_set_value_cansleep(ov5675->powerdown_gpio, 1);
+ 
+ 	ret = regulator_bulk_enable(OV5675_NUM_SUPPLIES, ov5675->supplies);
+ 	if (ret) {
+@@ -1004,6 +1007,7 @@ static int ov5675_power_on(struct device *dev)
+ 	 */
+ 	usleep_range(2000, 2200);
+ 
++	gpiod_set_value_cansleep(ov5675->powerdown_gpio, 0);
+ 	gpiod_set_value_cansleep(ov5675->reset_gpio, 0);
+ 
+ 	/* Worst case quiesence gap is 1.365 milliseconds @ 6MHz XVCLK
+@@ -1202,6 +1206,14 @@ static int ov5675_get_hwcfg(struct ov5675 *ov5675)
+ 		return ret;
+ 	}
+ 
++	ov5675->powerdown_gpio = devm_gpiod_get_optional(dev, "powerdown",
++							 GPIOD_OUT_HIGH);
++	if (IS_ERR(ov5675->powerdown_gpio)) {
++		ret = PTR_ERR(ov5675->powerdown_gpio);
++		dev_err(dev, "failed to get powerdown-gpios: %d\n", ret);
++		return ret;
++	}
++
+ 	for (i = 0; i < OV5675_NUM_SUPPLIES; i++)
+ 		ov5675->supplies[i].supply = ov5675_supply_names[i];
+ 

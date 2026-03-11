@@ -55,6 +55,8 @@ Machine under test:
 - [`docs/normal-usage-bridge-paths.md`](./docs/normal-usage-bridge-paths.md)
   — the two next normal-usage integration routes: `libcamera` and
   `v4l2loopback`
+- [`upstream-patch/README.md`](./upstream-patch/README.md) — current
+  upstream mailbox series and exact Linux kernel patch-submission steps
 - [`state/CONTEXT.md`](./state/CONTEXT.md) — restart capsule with current
   objective and next actions
 - [`PLAN.md`](./PLAN.md) — active investigation plan and task queue
@@ -104,6 +106,7 @@ msi-prestige13-a2vm-webcam/
 ├── AGENTS.md
 ├── PLAN.md
 ├── WORKLOG.md
+├── upstream-patch/
 ├── .gitignore
 ├── scripts/
 │   ├── capture-acpi.sh

@@ -290,9 +290,18 @@ with strong evidence.
 10. Investigate the `csi2-0 error: Received packet is too long` warnings and
    the one-scanline `Size Image` vs `bytesused` mismatch.
 11. ~~Clean up the patch stack for upstream submission~~ **done**:
-   - `upstream-patch/` contains a 5-patch series (354 lines, no debug code)
-   - still needs: replace FIXME author placeholders, verify against mainline
-     HEAD, get tested-by for ov5675 supply reorder on non-TPS68470 boards
+   - `upstream-patch/` now contains a 6-patch `git format-patch` mailbox
+     series
+   - the daisy-chain plumbing now uses a software-node property instead of
+     new public TPS68470 platform data
+   - `ov5675` now consumes an optional `powerdown` GPIO, so the final board
+     data does not describe an unused line
+   - validated on `2026-03-12` with:
+     - `checkpatch.pl --strict`
+     - clean `git am` replay against `4ae12d8bd9a8`
+   - still needs:
+     - hardware retest of this exact 6-patch series
+     - actual mailing-list submission
 12. Fix or replace the post-boot PMIC dump path.
 13. Keep the broader Windows config-path questions open for upstreamability
    context, but they are no longer blocking basic bring-up.

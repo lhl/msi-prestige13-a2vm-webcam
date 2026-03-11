@@ -187,8 +187,15 @@ For the full March 9 review, see `docs/20260309-status-report.md`.
 - `csi2-0 error: Received packet is too long` warnings appear during capture
   (cosmetic; one-scanline mismatch between `bytesused` and `Size Image`)
 - post-boot PMIC register dumping still returns `ERROR` for every register
-- upstreamability: the current patch stack includes local experiment
-  instrumentation that would need cleanup before submission
+- upstreamability:
+  - `upstream-patch/` now contains a cleaned 6-patch mailbox series
+  - the daisy-chain plumbing now follows the software-node/property direction
+    suggested in Antti's review thread
+  - the series is `checkpatch.pl --strict` clean and `git am` clean against
+    `4ae12d8bd9a8` (`v7.0-rc2-467-g4ae12d8bd9a8`)
+  - still pending before mailing-list submission:
+    - retest this exact 6-patch series on the laptop
+    - send the first real `v1`
 
 ## What The PMIC Experiment Chain Added
 

@@ -71,6 +71,8 @@ Current focus:
   next actions
 - `../PLAN.md` — active investigation plan and task queue
 - `../WORKLOG.md` — reverse-chronological record of work performed
+- `../upstream-patch/README.md` — current upstream mailbox series plus
+  exact patch-submission workflow
 - `../AGENTS.md` — repo workflow guide
 - `../README.md` — repo entrypoint and layout
 

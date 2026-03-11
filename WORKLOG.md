@@ -2,6 +2,68 @@
 
 ## 2026-03-12
 
+### Tighten the upstream README with the exact recipient set
+
+- Plan: replace the remaining generic mailing-list wording in
+  `upstream-patch/README.md` with the actual current `get_maintainer.pl`
+  output so the first real submission command is concrete.
+- Commands:
+  - ran `get_maintainer.pl` from the temp kernel tree against
+    `upstream-patch/000*.patch`
+  - refreshed:
+    - `upstream-patch/README.md`
+    - `WORKLOG.md`
+- Result:
+  - the upstream submission README now names the exact current recipient set
+    for this series:
+    - `linux-media`
+    - `linux-gpio`
+    - `platform-driver-x86`
+    - `linux-kernel`
+    - the current maintainer addresses from `get_maintainer.pl`
+  - the example `git send-email` commands now match that recipient set
+  - the README also says explicitly to re-run `get_maintainer.pl` right before
+    sending, rather than treating the checked-in list as permanent
+
+### Regenerate the upstream bundle as a checked 6-patch mailbox series
+
+- Plan: review the first upstream draft as if it were going to the kernel
+  mailing lists, fix the weak spots Antti-thread review exposed, and replace
+  the checked-in diffs with real `format-patch` mailboxes plus an exact
+  submission walkthrough.
+- Commands:
+  - cloned a clean temp `torvalds/linux` tree from the local package-cache
+    bare repo
+  - rebuilt the series as real commits on top of current `origin/master`
+  - generated mailboxes with `git format-patch`
+  - validated with:
+    - `perl scripts/checkpatch.pl --strict ...`
+    - `git am ...` in a second fresh clone
+  - refreshed:
+    - `upstream-patch/*.patch`
+    - `upstream-patch/README.md`
+    - `README.md`
+    - `docs/README.md`
+    - `docs/webcam-status.md`
+    - `PLAN.md`
+    - `WORKLOG.md`
+    - `state/CONTEXT.md`
+- Result:
+  - the submission bundle is now a 6-patch mailbox series, not a hand-written
+    5-patch diff set
+  - the old public-TPS68470-`platform_data` draft was replaced with a
+    software-node/property-based daisy-chain flag, matching the direction
+    Bartosz suggested in Antti's review thread
+  - `ov5675` now has optional `powerdown` GPIO support, so the final MSI
+    board-data patch no longer describes a dead `GPIO7` line
+  - the regenerated series is mechanically clean against
+    `4ae12d8bd9a8` / `v7.0-rc2-467-g4ae12d8bd9a8`:
+    - `checkpatch.pl --strict`: clean
+    - `git am`: clean in a fresh clone
+  - `upstream-patch/README.md` now contains an exact first-time-safe kernel
+    submission flow using `git am`, `checkpatch.pl`, `get_maintainer.pl`,
+    `git format-patch`, and `git send-email`
+
 ### Create upstream-ready patch series
 
 - Plan: distill the working exp18 POC (4 patches, 651 lines, heavy debug

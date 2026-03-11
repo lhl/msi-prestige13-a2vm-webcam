@@ -435,6 +435,14 @@ with strong evidence.
   blanking/format detail rather than a data-path blocker.
 - The full experiment chain from `exp1` through `exp18` successfully narrowed
   the PMIC, GPIO, and wiring model until the sensor bound and streamed.
+- `upstream-patch/` now exists as a mechanically checked upstream bundle:
+  - 6 real `git format-patch` mailboxes
+  - software-node/property-based daisy-chain plumbing
+  - optional `ov5675` `powerdown` GPIO support so `GPIO7` is not dead board
+    data
+  - validated on `2026-03-12` with `checkpatch.pl --strict` and clean
+    `git am` replay against `4ae12d8bd9a8`
+  - still needs: retest this exact 6-patch series on hardware, then send `v1`
 
 ## Next Best Steps
 
@@ -457,7 +465,7 @@ with strong evidence.
 10. Investigate the `Received packet is too long` CSI2 warnings and the
    one-scanline `Size Image` vs `bytesused` mismatch.
 11. Manually exercise `cheese` after one of the app-facing routes is ready.
-12. Clean up the patch stack for upstream submission.
+12. Retest and submit the current `upstream-patch/` 6-patch mailbox series.
 13. Fix or replace the post-boot PMIC dump path.
 14. Do not rerun the broad `exp7` snapshot patch as a default path.
 
