@@ -2,6 +2,42 @@
 
 ## 2026-03-11
 
+### Compare Antti's Prestige 14 thread directly against local experiments
+
+- Plan: tighten the Antti thread review so it says explicitly which parts of
+  the posted Prestige 14 series are already covered by local experiments,
+  which parts are still materially different, and whether the next comparison
+  step should be a narrow stock-`VSIO` daisy-chain test rather than a broad
+  multi-variable Antti clone.
+- Commands:
+  - reviewed:
+    - `docs/antti-prestige14-thread-review.md`
+    - `reference/antti-patch/t.mbox`
+    - `reference/patches/ms13q3-daisy-chain-bit0-retest-v1.patch`
+    - `reference/patches/ms13q3-int3472-tps68470-v1.patch`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+  - refreshed:
+    - `docs/antti-prestige14-thread-review.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+- Result:
+  - the Antti review now explicitly compares each relevant patch area against
+    `exp12` through `exp17`
+  - the main remaining Antti-vs-local behavioral delta is now written down
+    clearly:
+    - local daisy-chain experiments still keep the `exp10` `BIT(1)`-only
+      `VSIO` workaround
+    - Antti's posted series does not
+  - the highest-signal next comparison step is therefore not a full five-patch
+    Antti clone
+  - it is one narrow PMIC test:
+    - restore standard `VSIO` enable on top of the clean daisy-chain branch
+    - keep endpoint-wait and broader regulator simplification out of that run
+      so the result stays interpretable
+
 ### Review `exp17` and confirm that late `BIT(0)` is safe but insufficient
 
 - Plan: inspect the first real `exp17` update and clean-boot verification

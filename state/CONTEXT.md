@@ -247,6 +247,8 @@ with strong evidence.
   insufficient
 - The strongest remaining gap is PMIC-side behavior Linux still does not model
   correctly, especially around:
+  - whether the old early full `VSIO` enable only becomes safe once the clean
+    daisy-chain branch is already in place
   - whether any earlier or differently placed late `S_I2C_CTL` `BIT(0)` phase
     matters once the clean remote-line branch is already in place
   - where the later `S_I2C_CTL` `BIT(0)` phase belongs, if anywhere, now that
@@ -283,11 +285,15 @@ with strong evidence.
      remote-line branch
    - the observed PMIC write moved `S_I2C_CTL` from `0x02` to `0x03`
    - the sensor still stayed flat at `-121`
-8. Scope the `ov5675` consumer-model or timing gap directly.
-9. Fix or replace the post-boot PMIC dump path so we can observe real register
+8. Run one narrow Antti-parity PMIC comparison next.
+   - restore standard `VSIO` enable on top of the clean daisy-chain branch
+   - do not bundle in endpoint-wait or broad regulator-set changes yet
+9. Scope the `ov5675` consumer-model or timing gap directly if that still
+   stays negative.
+10. Fix or replace the post-boot PMIC dump path so we can observe real register
    state after a failed clean boot.
-10. Extract more of the higher-level Windows config path above `WF::SetConf`.
-11. Do not rerun the broad `exp7` snapshot patch as a default path; it amplified
+11. Extract more of the higher-level Windows config path above `WF::SetConf`.
+12. Do not rerun the broad `exp7` snapshot patch as a default path; it amplified
     the timeout storm enough to interact badly with boot.
 
 ## Key Paths

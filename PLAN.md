@@ -123,8 +123,10 @@ with strong evidence.
   - the current-driver two-line `GPIO9` / `GPIO7` approximation is active,
     but still insufficient
   - the late clean-branch `BIT(0)` re-test is safe, but still insufficient
-  - the next high-value work is `ov5675` consumer/timing investigation, not
-    another blind remote-line guess
+  - the next high-value discriminator is whether standard `VSIO` enable
+    becomes safe only once the clean daisy-chain branch is in place
+  - after that, the next likely gap is still `ov5675` consumer/timing
+    behavior, not another blind remote-line guess
 
 ## Workstreams
 
@@ -200,15 +202,19 @@ with strong evidence.
    - the observed late write read back cleanly as `0x03`
    - the sensor still stayed flat at repeated `-121`
    - the old timeout storm did not return
-8. Scope the `ov5675` consumer-model or timing gap directly.
-9. Keep using:
+8. Run one narrow Antti-parity PMIC test next:
+   - restore standard `VSIO` enable on top of the clean daisy-chain branch
+   - do not bundle that with endpoint-wait or broad regulator-set changes yet
+9. Scope the `ov5675` consumer-model or timing gap directly if that still
+   stays negative.
+10. Keep using:
    - `scripts/patch-kernel.sh`
    - `scripts/exp*-*-update.sh`
    - `scripts/exp*-*-verify.sh`
    - `scripts/01-clean-boot-check.sh`
    to keep evidence reproducible
-10. Keep the broader Windows config-path and PMIC dump questions open, but do
-    not let them delay the next consumer/timing branch.
+11. Keep the broader Windows config-path and PMIC dump questions open, but do
+    not let them delay the next narrow PMIC comparison branch.
 
 ## Open Questions
 
@@ -219,7 +225,8 @@ with strong evidence.
 - With `exp16` proving the current two-line `GPIO9` / `GPIO7` approximation is
   active but still flat at `-121`, and `exp17` proving one later `BIT(0)` is
   safe but still non-curative, is the next missing piece an `ov5675`
-  consumer change or more exact electrical timing?
+  consumer change, more exact electrical timing, or simply restoring standard
+  `VSIO` enable now that the clean daisy-chain branch exists?
 - Where, if anywhere, does this board actually want the later `BIT(0)`
   transition once the regulator-phase PMIC/I2C path is already healthy and one
   late `sensor-gpio.9` write can already read back as `0x03`?

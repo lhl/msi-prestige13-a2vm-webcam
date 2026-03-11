@@ -231,6 +231,145 @@ Prestige 14 thread model:
 That does not prove the A2VMG hypothesis is wrong, but it does prove we should
 not assume all nearby MSI models share one universal PMIC wiring pattern.
 
+## Comparison With Local Experiments
+
+The thread now lines up with the local experiment history more clearly than it
+did before `exp13` through `exp17`.
+
+### What already has a local equivalent
+
+Patch `2/5` `ipu-bridge: Add ov5675`:
+
+- already covered by the repo-local tested baseline
+- local equivalent:
+  - `reference/patches/ipu-bridge-ovti5675-v1.patch`
+
+Patch `3/5` `platform: int3472: Add gpio platform data`:
+
+- already covered mechanically by the local daisy-chain experiment plumbing
+- local equivalents:
+  - `exp12` first proved the daisy-chain flag can be plumbed and exercised
+  - `exp13` then proved Linux can leave `GPIO1` / `GPIO2` isolated once the
+    sensor lookup stops exporting them
+
+Patch `4/5` `gpio: tps68470: Add i2c daisy chain support`:
+
+- already covered mechanically and behaviorally by the local daisy-chain
+  branch set
+- local equivalents:
+  - `exp12` showed the daisy-chain input-mode setup lands but immediately
+    collides with the old `GPIO1` / `GPIO2` sensor lookup
+  - `exp13` showed the same daisy-chain setup can stay intact on the clean
+    branch
+
+Patch `5/5` MSI board data:
+
+- partially covered, but not faithfully replicated
+- local equivalents:
+  - `exp14` proved `GPIO9` is active
+  - `exp15` proved `GPIO7` is active
+  - `exp16` proved `GPIO9` and `GPIO7` can both be active together
+  - `exp17` proved a later PMIC-side event on that clean remote-line branch
+    can be safe
+
+### What still differs from Antti's posted series
+
+Patch `1/5` `ov5675: Wait for endpoint`:
+
+- no direct local equivalent yet
+- probably low-signal for this repo because the current A2VMG branch is
+  already well past the missing-endpoint stage
+
+Patch `5/5` GPIO lookup shape:
+
+- Antti's posted `v1` uses:
+  - `GPIO_LOOKUP_IDX("tps68470-gpio", 9, "reset", 0, GPIO_ACTIVE_LOW)`
+  - `GPIO_LOOKUP_IDX("tps68470-gpio", 7, "reset", 1, GPIO_ACTIVE_LOW)`
+- the local daisy-chain branch uses:
+  - `GPIO9` as `reset`
+  - `GPIO7` as `powerdown`
+- this is not because the local branch proved Antti wrong
+- it is because current `ov5675` only consumes one useful `reset` descriptor,
+  and that exact dual-`reset` issue was also called out in review
+
+PMIC `VSIO` handling:
+
+- this is the biggest remaining behavioral gap
+- Antti's archived series does not carry the local `BIT(1)`-only `VSIO`
+  workaround
+- all local `exp13` through `exp17` runs intentionally kept the `exp10`
+  regulator behavior:
+  - keep `BIT(1)` in the early regulator path
+  - do not assert early `BIT(0)` there
+- `exp17` only re-tested a later GPIO-phase `BIT(0)` on top of that clean
+  branch
+- that means the cleanest untested Antti-parity discriminator is now:
+  - standard `VSIO` enable on top of daisy-chain isolation
+
+Regulator-set shape:
+
+- Antti's posted board data is simpler than the local MSI candidate:
+  - no `VCM`, `AUX1`, or `AUX2` regulator setup
+  - `VIO` is not modeled as local `always_on`
+- the local board-data patch still carries those extra supplies
+- this is real drift from Antti's series, but it is lower-signal than the
+  untested standard-`VSIO` difference because it changes several variables at
+  once
+
+## What `exp17` changed in this comparison
+
+Before `exp17`, the simplest reading was:
+
+- Antti's daisy-chain routing differs from the old local `GPIO1` / `GPIO2`
+  model
+- but the remaining PMIC behavior gap was still ambiguous
+
+After `exp17`, the narrower reading is:
+
+- the local branch now already matches Antti's broad GPIO routing shape much
+  more closely:
+  - `GPIO1` / `GPIO2` isolated for daisy-chain
+  - remote activity visible on `GPIO9` and `GPIO7`
+- the remaining important difference is no longer just the GPIO model
+- the remaining important difference is that the local branch still depends on
+  the `exp10` early `BIT(1)`-only `VSIO` workaround
+
+That is why `exp17` should be read as:
+
+- strong evidence that a later `BIT(0)` is not categorically toxic
+- but not a faithful reproduction of Antti's PMIC behavior
+
+## Recommended Next Comparison Step
+
+If the goal is to compare the local A2VMG branch against Antti's approach more
+faithfully, the next step should be narrow:
+
+1. keep the clean daisy-chain-isolated branch
+2. keep the currently observed remote-line branch on `GPIO9` / `GPIO7`
+3. remove the local `BIT(1)`-only `VSIO` workaround
+4. restore standard `VSIO` enable behavior
+
+Why this is the highest-signal next test:
+
+- it isolates the biggest remaining Antti-vs-local delta
+- it does not bundle in the lower-signal endpoint-wait patch, which the local
+  branch likely no longer needs
+- it does not bundle in the broader regulator-set simplification, which would
+  muddy interpretation
+- it directly answers whether daisy-chain isolation changes the meaning of the
+  old early `BIT(0)` wedge
+
+So the next best experiment is not "copy all five Antti patches at once."
+
+It is:
+
+- standard `VSIO` enable plus clean daisy-chain isolation
+
+If that still wedges immediately, the local `BIT(1)`-only workaround remains a
+real board-specific requirement candidate. If it becomes safe or changes the
+sensor failure shape, then the next branch can compare exact GPIO consumer
+shape or regulator simplification on top of that result.
+
 ## How Sure We Are About `GPIO1` / `GPIO2` On This A2VMG
 
 The confidence split is uneven:
