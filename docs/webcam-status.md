@@ -4,20 +4,36 @@ Updated: 2026-03-12
 
 ## Short Answer
 
-The webcam is now streaming raw frames on Linux on this laptop.
+The webcam **works** on Linux on this laptop.
 
-Direct plug-and-play usage from `/dev/video0` is still **not** working yet.
+Live preview, snapshot capture, and a normal-app-facing loopback device are all
+functional through a GStreamer userspace bridge that debayers the raw sensor
+output.
 
-An explicit userspace bridge now works: GStreamer can consume the raw Bayer
-stream with forced `video/x-bayer` caps, convert it through `bayer2rgb`, and
-emit a normal `2592x1944` JPEG artifact.
+See [`docs/webcam-usage.md`](./webcam-usage.md) for quick-start commands and
+exposure/gain tuning.
 
-That bridge can now also be repackaged as a normal webcam node through
-`v4l2loopback`: the latest `09` run fed `/dev/video42`, and both `ffmpeg` and
-GStreamer consumed the bridged `YUY2` stream successfully.
+### What works today
 
-The two next integration paths are now codified in one repeatable check:
-`scripts/09-libcamera-loopback-check.sh`.
+- **Live preview**: `./scripts/webcam-preview.sh` opens a window showing the
+  camera feed via GStreamer `bayer2rgb` + `autovideosink`
+- **v4l2loopback bridge**: `./scripts/webcam-preview.sh --loopback` feeds
+  `/dev/video42` as a standard YUYV webcam that `ffmpeg`, `mpv`, GStreamer,
+  and other V4L2 consumers can open
+- **Snapshot capture**: `./scripts/webcam-preview.sh --snapshot photo.jpg`
+- **Exposure/gain control**: analogue gain (128-2047) and digital gain
+  (1024-4095) on `/dev/v4l-subdev4`; the image is dark at defaults because
+  gain starts at minimum — see usage doc for tuning commands
+- **Raw Bayer capture**: `v4l2-ctl` streaming from `/dev/video0` at
+  2592x1944 BA10, 30 fps
+
+### What does not work yet
+
+- Direct plug-and-play usage from `/dev/video0` (apps like `ffmpeg`/`mpv`
+  cannot open it directly — they need the loopback bridge)
+- Auto-exposure / auto-white-balance (manual gain adjustment required)
+- `cheese` (tested, did not work with the loopback device)
+- `libcamera` tools (not installed locally; untested)
 
 On the `exp18` kernel branch with explicit userspace `media-ctl` pipeline
 setup, `/dev/video0` delivers real Bayer sensor data:
@@ -142,25 +158,20 @@ For the full March 9 review, see `docs/20260309-status-report.md`.
 
 ## What Is Still Incomplete
 
-- automated pipeline setup: the `media-ctl` link enable and format commands
-  must be run manually before each fresh capture session
+- **no auto-exposure / auto-white-balance**: gain defaults are minimum, so
+  indoor images are very dark without manual `v4l2-ctl -c analogue_gain=...`
+  adjustment (see `docs/webcam-usage.md`)
+- **bridge must be started manually**: `./scripts/webcam-preview.sh --loopback`
+  must be running for apps to see `/dev/video42`; no udev rule or systemd
+  service automates this yet
+- **`cheese` does not work**: tested against the loopback device, did not
+  produce video
+- **`libcamera` untested**: `libcamera-*` / `cam` are not installed locally
+- **direct `/dev/video0` plug-and-play is broken**: `ffmpeg` / `mpv` fail at
+  `VIDIOC_STREAMON` with `Broken pipe`; GStreamer `v4l2src` fails buffer-pool
+  activation / `not-negotiated`; the advertised `YUYV` direct path still fails
 - `csi2-0 error: Received packet is too long` warnings appear during capture
-  (5 instances observed); the current leading clue is a one-scanline mismatch
-  between `bytesused` and `Size Image`
-- higher-level client compatibility is still broken:
-  - `ffmpeg` / `mpv` fail at `VIDIOC_STREAMON` with `Broken pipe`
-  - GStreamer `v4l2src` fails buffer-pool activation and `not-negotiated`
-  - the advertised `YUYV` direct path still fails, so the node's
-    app-friendly format inventory is not yet trustworthy as a plug-and-play
-    answer
-  - GStreamer only works when explicit Bayer caps and conversion are supplied
-  - `libcamera-*` / `cam` are not installed locally
-  - the `v4l2loopback` route now works locally, but only when the module is
-    loaded, `/dev/video42` exists, and the Bayer-to-YUY2 bridge producer is
-    started explicitly
-  - no automated bridge startup exists yet for apps to discover this as a
-    normal camera path after login or reboot
-  - `cheese` still needs a manual GUI follow-up
+  (cosmetic; one-scanline mismatch between `bytesused` and `Size Image`)
 - post-boot PMIC register dumping still returns `ERROR` for every register
 - upstreamability: the current patch stack includes local experiment
   instrumentation that would need cleanup before submission
@@ -562,23 +573,18 @@ What has been proven through the full experiment chain:
 
 ## Remaining Work
 
-1. Investigate the `csi2-0 error: Received packet is too long` warnings.
-   - likely a CSI2 pad format or blanking configuration issue
-   - current hard clue: `Size Image - bytesused = 5,184`, exactly one
-     scanline at the current `Bytes per Line`
-   - frames still arrive, so this may be cosmetic
-2. Investigate why higher-level userspace clients still fail from the
-   otherwise working manual setup state.
-   - `ffmpeg` / `mpv`: `VIDIOC_STREAMON` `Broken pipe`
-   - GStreamer `v4l2src`: buffer-pool activation failed, then
-     `reason not-negotiated (-4)`
-3. Fix or replace the post-boot PMIC dump path.
-   - `scripts/pmic-reg-dump.sh` still returns `ERROR` for every register
-4. Clean up the patch stack for upstream submission.
+1. **Automate bridge startup** — udev rule, systemd service, or login hook to
+   start the GStreamer loopback bridge automatically so apps discover
+   `/dev/video42` without manual intervention.
+2. **Auto-exposure / AWB** — either a userspace daemon or `libcamera` pipeline
+   handler to adjust gain dynamically; currently requires manual `v4l2-ctl`.
+3. Install and test `libcamera` — may provide a cleaner long-term path with
+   proper 3A (auto-exposure, auto-focus, auto-white-balance).
+4. Investigate why `cheese` does not work with the loopback device.
+5. Clean up the patch stack for upstream submission.
    - remove experiment instrumentation logging
    - separate the minimal board-data changes from the diagnostic scaffolding
-5. Continue higher-level tool testing:
-   - install and try `libcamera-*` / `cam`
-   - manually exercise `cheese` in a GUI session
-6. Consider whether automated pipeline setup should be handled by a udev rule,
-   a `libcamera` pipeline handler, or similar.
+6. Investigate the `csi2-0 error: Received packet is too long` warnings.
+   - likely cosmetic: `Size Image - bytesused = 5,184` (one scanline)
+7. Investigate why direct `/dev/video0` plug-and-play still fails.
+8. Fix or replace the post-boot PMIC dump path.

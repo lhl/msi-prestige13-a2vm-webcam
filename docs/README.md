@@ -2,6 +2,7 @@
 
 Current focus:
 
+- **How to use the webcam**: `docs/webcam-usage.md`
 - Restart capsule: `../state/CONTEXT.md`
 - Active plan: `../PLAN.md`
 - Active work log: `../WORKLOG.md`
@@ -10,6 +11,9 @@ Current focus:
 
 ## Core Docs
 
+- `docs/webcam-usage.md` — **quick-start usage guide**: live preview,
+  v4l2loopback bridge, snapshot capture, exposure/gain tuning, architecture
+  diagram
 - `docs/antti-prestige14-thread-review.md` — review of the March 10, 2026
   Antti Laakso MSI Prestige 14 patch thread and what its daisy-chain model
   means for this A2VMG

@@ -5,32 +5,32 @@ the MSI Prestige 13 AI+ Evo A2VMG / A2VM family.
 
 ## Current Status
 
-- Current verdict: raw Bayer capture is working on Linux with the current patch
-  stack plus explicit userspace media-pipeline setup.
-- Best current summary: `docs/webcam-status.md`
-- Full March 9 status report: `docs/20260309-status-report.md`
-- Current remaining gaps: the latest fresh-boot `06` run shows the true boot
-  defaults are `Intel IPU7 CSI2 0` at `4096x3072` with the
-  `CSI2:1 -> Capture 0` link disabled; explicit setup of the CSI2 pad formats,
-  capture link, and `/dev/video0` format changes that to the working
-  `2592x1944` path and delivers raw frames. The latest `07` run still shows
-  that auto-negotiated normal usage is broken: `ffmpeg` and `mpv` fail at
-  `VIDIOC_STREAMON` with `Broken pipe`, GStreamer `v4l2src` fails buffer-pool
-  allocation / `not-negotiated`, `libcamera` tools are not installed locally,
-  and `cheese` remains a manual GUI follow-up. The new `08` run narrows that
-  gap: direct app-friendly `YUYV` still fails, but an explicit GStreamer
-  `video/x-bayer` path plus `bayer2rgb` can convert frames and emit a normal
-  `2592x1944` JPEG. The latest `09` run now proves the first consumer-facing
-  bridge path: with `v4l2loopback` loaded and `/dev/video42` present, the
-  repo-local GStreamer Bayer-to-YUY2 bridge feeds a normal webcam node that
-  both `ffmpeg` and GStreamer can consume successfully. `libcamera` tools are
-  still not installed locally, direct `/dev/video0` plug-and-play use is still
-  broken, and the other main unresolved issues are the `Received packet is too
-  long` warnings with a one-scanline buffer delta, broken post-boot PMIC
-  visibility, and patch cleanup for upstreaming.
-- Current leading interpretation: basic bring-up is complete; remaining work is
-  client-compatibility cleanup, warning cleanup, automation, and upstreamability
-  rather than first sensor wake-up.
+**The webcam works on Linux.** Live preview, JPEG snapshots, and a
+normal-app-facing v4l2loopback device are all functional.
+
+```bash
+# Live preview window
+./scripts/webcam-preview.sh
+
+# Feed a standard /dev/video42 webcam device for other apps
+./scripts/webcam-preview.sh --loopback
+
+# Boost brightness for indoor use (gain defaults are very low)
+v4l2-ctl -d /dev/v4l-subdev4 -c analogue_gain=800
+```
+
+See [`docs/webcam-usage.md`](./docs/webcam-usage.md) for the full usage guide
+including exposure/gain tuning and manual pipeline setup.
+
+- **Requires**: kernel branch `exp18` (7.0.0-rc2 + 4-patch stack),
+  `gstreamer` + `gst-plugins-bad`, `v4l-utils`, optionally `v4l2loopback-dkms`
+- **Working**: live preview, v4l2loopback bridge (`/dev/video42`), JPEG
+  capture, raw Bayer streaming at 2592x1944 30fps, manual exposure/gain control
+- **Not yet working**: direct `/dev/video0` plug-and-play with standard apps,
+  auto-exposure/AWB, `cheese`, `libcamera` (untested/uninstalled)
+- Technical details: [`docs/webcam-status.md`](./docs/webcam-status.md)
+- Full March 9 investigation report:
+  [`docs/20260309-status-report.md`](./docs/20260309-status-report.md)
 
 Machine under test:
 
@@ -40,10 +40,12 @@ Machine under test:
 
 ## Start Here
 
+- [`docs/webcam-usage.md`](./docs/webcam-usage.md) — **how to use the webcam**
+  (quick start, exposure/gain, v4l2loopback setup)
+- [`docs/webcam-status.md`](./docs/webcam-status.md) — technical status and
+  remaining issues
 - [`docs/20260309-status-report.md`](./docs/20260309-status-report.md) —
   complete March 9 reverse-engineering and experiment report
-- [`docs/webcam-status.md`](./docs/webcam-status.md) — shorter live technical
-  status
 - [`docs/antti-prestige14-thread-review.md`](./docs/antti-prestige14-thread-review.md)
   — review of the March 10, 2026 Antti Laakso Prestige 14 patch thread and
   what its daisy-chain model means for this A2VMG
@@ -115,6 +117,7 @@ msi-prestige13-a2vm-webcam/
 │   ├── 07-normal-usage-check.sh
 │   ├── 08-userspace-bridge-check.sh
 │   ├── 09-libcamera-loopback-check.sh
+│   ├── webcam-preview.sh
 │   ├── exp*-*-update.sh
 │   ├── exp*-*-verify.sh
 │   └── webcam-run.sh
@@ -124,8 +127,9 @@ msi-prestige13-a2vm-webcam/
 │   └── CONTEXT.md
 ├── docs/
 │   ├── README.md
-│   ├── 20260309-status-report.md
+│   ├── webcam-usage.md
 │   ├── webcam-status.md
+│   ├── 20260309-status-report.md
 │   ├── pmic-followup-experiments.md
 │   ├── tps68470-reverse-engineering.md
 │   └── ...
