@@ -114,23 +114,26 @@ case "$MODE" in
             echo "  sudo modprobe v4l2loopback video_nr=42 card_label='MSI Webcam Bridge' exclusive_caps=1"
             exit 1
         fi
-        SCALE_STEP=""
-        if [[ "$OUT_WIDTH" != "$WIDTH" || "$OUT_HEIGHT" != "$HEIGHT" ]]; then
-            SCALE_STEP="! videoscale ! video/x-raw,width=${OUT_WIDTH},height=${OUT_HEIGHT} "
-            echo "=== Feeding v4l2loopback at $LOOPBACK_DEV (${OUT_WIDTH}x${OUT_HEIGHT}, Ctrl+C to stop) ==="
-        else
-            echo "=== Feeding v4l2loopback at $LOOPBACK_DEV (${OUT_WIDTH}x${OUT_HEIGHT}, Ctrl+C to stop) ==="
-        fi
+        echo "=== Feeding v4l2loopback at $LOOPBACK_DEV (${OUT_WIDTH}x${OUT_HEIGHT}, Ctrl+C to stop) ==="
         echo "Other apps can now open $LOOPBACK_DEV as a webcam."
-        # shellcheck disable=SC2086
-        exec gst-launch-1.0 \
-            v4l2src device="$VIDEO_DEV" io-mode=mmap \
-            ! "$SRC_CAPS" \
-            ! bayer2rgb \
-            ! videoconvert \
-            $SCALE_STEP \
-            ! "video/x-raw,format=YUY2,width=${OUT_WIDTH},height=${OUT_HEIGHT},framerate=${FPS}/1" \
-            ! v4l2sink device="$LOOPBACK_DEV" sync=false
+        if [[ "$OUT_WIDTH" != "$WIDTH" || "$OUT_HEIGHT" != "$HEIGHT" ]]; then
+            exec gst-launch-1.0 \
+                v4l2src device="$VIDEO_DEV" io-mode=mmap \
+                ! "$SRC_CAPS" \
+                ! bayer2rgb \
+                ! videoconvert \
+                ! videoscale \
+                ! "video/x-raw,format=YUY2,width=${OUT_WIDTH},height=${OUT_HEIGHT},framerate=${FPS}/1" \
+                ! v4l2sink device="$LOOPBACK_DEV" sync=false
+        else
+            exec gst-launch-1.0 \
+                v4l2src device="$VIDEO_DEV" io-mode=mmap \
+                ! "$SRC_CAPS" \
+                ! bayer2rgb \
+                ! videoconvert \
+                ! "video/x-raw,format=YUY2,width=${OUT_WIDTH},height=${OUT_HEIGHT},framerate=${FPS}/1" \
+                ! v4l2sink device="$LOOPBACK_DEV" sync=false
+        fi
         ;;
 
     snapshot)
