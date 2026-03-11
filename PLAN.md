@@ -2,9 +2,9 @@
 
 Updated: 2026-03-11
 
-This is the active plan after the completed March 9 PMIC experiment batch and
-the completed `exp13` / `exp14` / `exp15` / `exp16` / `exp17` Antti-model
-follow-up runs.
+This is the active plan after the completed March 9 PMIC experiment batch, the
+completed `exp13` / `exp14` / `exp15` / `exp16` / `exp17` Antti-model
+follow-up runs, and the completed positive `exp18` branch.
 
 ## Goal
 
@@ -25,11 +25,14 @@ with strong evidence.
   - the old `No board-data found for this model` failure is gone
   - `ipu-bridge` now finds `OVTI5675:00`
   - the old clean-boot `Failed to enable dvdd: -ETIMEDOUT` line is gone
-- the current remaining clean-boot blocker is now split into two observed
-  phases:
-  - the older baseline path still ends in `-110` chip-ID timeouts
-  - the latest `exp10` path avoids the PMIC timeout storm but still ends in
-    `-121` chip-ID failures
+- the current best local branch is now `exp18`:
+  - standard regulator-side `VSIO` enable read back cleanly as `0x03`
+  - the old timeout storm did not return
+  - the media graph gained `ov5675 10-0036`
+  - `/dev/v4l-subdev0` now exists
+- the remaining blocker is no longer first sensor bind:
+  - there is still no recorded successful userspace capture from `/dev/video*`
+  - the post-boot PMIC dump path still returns `ERROR` for every register
 - completed negative branches:
   - `GPIO1` / `GPIO2` role swap
   - both one-line polarity variants
@@ -116,29 +119,26 @@ with strong evidence.
   - `GPIO1` / `GPIO2` reserved for daisy-chain
   - remote sensor-control lines moved elsewhere
 - current leading interpretation:
-  - the remaining gap is PMIC-side behavior, not basic platform support
+  - the remaining gap is now after sensor bind, not basic platform support
   - the early regulator-phase `BIT(0)` write was wrong
   - the old direct-use `GPIO1` / `GPIO2` Linux board model was wrong as a
     clean Antti-style branch
   - the current-driver two-line `GPIO9` / `GPIO7` approximation is active,
     but still insufficient
   - the late clean-branch `BIT(0)` re-test is safe, but still insufficient
-  - the next high-value discriminator is whether standard `VSIO` enable
-    becomes safe only once the clean daisy-chain branch is in place
-  - after that, the next likely gap is still `ov5675` consumer/timing
-    behavior, not another blind remote-line guess
+  - `exp18` proved standard `VSIO` is safe once the clean daisy-chain branch
+    is in place
+  - the next high-value discriminator is whether userspace can actually stream
+    from the positive `exp18` branch
 
 ## Workstreams
 
-### 1. PMIC state truth
+### 1. Capture and userspace validation
 
-- [x] Run the `BIT(1)`-only follow-up in the regulator `VSIO` path.
-- [x] Determine whether keeping `BIT(1)` while omitting `BIT(0)` lets the bus
-  stay alive long enough to return to the sensor identify stage.
-- [x] Determine whether a later board-specific `BIT(0)` assertion can be safe
-  on the clean remote-line branch.
-- [ ] Decide whether any later board-specific `BIT(0)` assertion belongs
-  anywhere in Linux at all, and if so on which exact signal/phase.
+- [ ] Stage and run `exp19` on top of the positive `exp18` patch.
+- [ ] Determine whether raw `v4l2-ctl` streaming on `/dev/video0` succeeds,
+  times out, or fails with a userspace-visible pipeline error.
+- [ ] If raw capture succeeds, record the smallest repeatable userspace path.
 
 ### 2. Post-boot PMIC visibility
 
@@ -181,45 +181,52 @@ with strong evidence.
 
 ## Near-Term Priority
 
-1. Keep `exp10` as the verified PMIC baseline while comparing post-branch-set
-   work.
-2. Treat `exp12` as completed collision evidence, not as a direct test of
+1. Use `exp18` as the current best local branch.
+   - standard `VSIO` now reads back cleanly as `0x03`
+   - the old timeout storm does not return
+   - the media graph now contains `ov5675 10-0036`
+2. Stage and run `exp19` as the first capture/userspace validation on top of
+   that branch.
+   - use `scripts/04-userspace-capture-check.sh`
+   - default to `/dev/video0`
+3. Treat `exp12` as completed collision evidence, not as a direct test of
    Antti's working model.
-3. Treat `exp13` as completed evidence, not as the next branch to run.
+4. Treat `exp13` as completed evidence, not as the next branch to run.
    - it proved Linux can leave `GPIO1` / `GPIO2` in Antti-style
      daisy-chain input mode for the observed probe window
    - it did not improve the flat repeated `-121` chip-ID failure
-4. Treat `exp14` as completed evidence, not as the next branch to run.
+5. Treat `exp14` as completed evidence, not as the next branch to run.
    - it proved `GPIO9` is active
    - it also proved `GPIO9` alone is insufficient
-5. Treat `exp15` as completed evidence, not as the next branch to run.
+6. Treat `exp15` as completed evidence, not as the next branch to run.
    - it proved `GPIO7` is active
    - it also proved `GPIO7` alone is insufficient
-6. Treat `exp16` as completed evidence, not as the next branch to run.
+7. Treat `exp16` as completed evidence, not as the next branch to run.
    - it proved the current two-line approximation drives both remote lines
    - it also proved that combined remote-line activity still stays flat at
      repeated `-121`
-7. Treat `exp17` as completed evidence, not as a future branch.
+8. Treat `exp17` as completed evidence, not as a future branch.
    - it proved the clean remote-line branch can tolerate one later
      `S_I2C_CTL BIT(0)` assertion
    - the observed late write read back cleanly as `0x03`
    - the sensor still stayed flat at repeated `-121`
    - the old timeout storm did not return
-8. Treat `exp18` as completed evidence, not as a future branch.
+9. Treat `exp18` as completed evidence, not as a future branch.
    - standard regulator-side `VSIO` enable read back cleanly as `0x03`
    - the old timeout storm did not return
    - the media graph gained `ov5675 10-0036` linked to `Intel IPU7 CSI2 0`
    - the verify-side PMIC dump still came back all `ERROR`
-9. Validate end-to-end capture or userspace behavior on the `exp18` branch.
-10. Fix or replace the post-boot PMIC dump path so PMIC state remains visible
+10. Treat post-boot PMIC visibility as secondary until the capture result is
+    known.
+11. Fix or replace the post-boot PMIC dump path so PMIC state remains visible
     after a successful sensor bind.
-11. Keep using:
+12. Keep using:
    - `scripts/patch-kernel.sh`
    - `scripts/exp*-*-update.sh`
    - `scripts/exp*-*-verify.sh`
    - `scripts/01-clean-boot-check.sh`
    to keep evidence reproducible
-12. Keep the broader Windows config-path and any remaining Antti-parity cleanup
+13. Keep the broader Windows config-path and any remaining Antti-parity cleanup
     questions open, but do not let them delay capture validation on the now
     positive `exp18` branch.
 
@@ -229,11 +236,9 @@ with strong evidence.
   PMIC readback collapses to `-110`?
 - With `exp13` proving no reclaim, why does the clean daisy-chain-isolated
   branch still end at flat repeated `-121` chip-ID failures?
-- With `exp16` proving the current two-line `GPIO9` / `GPIO7` approximation is
-  active but still flat at `-121`, and `exp17` proving one later `BIT(0)` is
-  safe but still non-curative, is the next missing piece an `ov5675`
-  consumer change, more exact electrical timing, or simply restoring standard
-  `VSIO` enable now that the clean daisy-chain branch exists?
+- Now that `exp18` binds `ov5675` into the media graph, does raw userspace
+  streaming on `/dev/video0` succeed, or does the remaining blocker sit in the
+  capture path, pipeline configuration, or userspace-facing driver behavior?
 - Where, if anywhere, does this board actually want the later `BIT(0)`
   transition once the regulator-phase PMIC/I2C path is already healthy and one
   late `sensor-gpio.9` write can already read back as `0x03`?
@@ -254,4 +259,4 @@ with strong evidence.
 - reference-backed Windows PMIC notes under `reference/windows-driver-analysis/`
 - current support summary under `docs/webcam-status.md`
 - recorded `exp13` / `exp14` / `exp15` / `exp16` / `exp17` / `exp18` run
-  evidence plus the staged experiment wrappers
+  evidence plus the staged `exp19` capture-validation wrappers

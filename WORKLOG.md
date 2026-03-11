@@ -2,6 +2,57 @@
 
 ## 2026-03-11
 
+### Stage `exp19` as the first userspace-capture validation
+
+- Plan: shift the next experiment away from PMIC dump visibility and toward
+  end-to-end capture validation on the positive `exp18` branch, while also
+  correcting the control docs that still described the older pre-`exp18`
+  unbound-sensor state.
+- Commands:
+  - reviewed:
+    - `scripts/lib-experiment-workflow.sh`
+    - `scripts/webcam-run.sh`
+    - `scripts/01-clean-boot-check.sh`
+    - `scripts/02-ov5675-reload-check.sh`
+    - `scripts/03-ov5675-identify-debug-check.sh`
+    - `docs/test-routines.md`
+    - `docs/pmic-followup-experiments.md`
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/README.md`
+    - `docs/webcam-status.md`
+    - `runs/2026-03-11/20260311T215853-snapshot-exp18-clean-boot/post/media-ctl-media0.txt`
+    - `runs/2026-03-11/20260311T215853-snapshot-exp18-clean-boot/post/v4l2-list-devices.txt`
+    - `runs/2026-03-11/20260311T215853-snapshot-exp18-clean-boot/post/v4l2-all/video0.txt`
+  - refreshed:
+    - `scripts/04-userspace-capture-check.sh`
+    - `scripts/exp19-ms13q3-userspace-capture-validation-update.sh`
+    - `scripts/exp19-ms13q3-userspace-capture-validation-verify.sh`
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/README.md`
+    - `docs/test-routines.md`
+    - `docs/pmic-followup-experiments.md`
+    - `docs/webcam-status.md`
+    - `WORKLOG.md`
+  - validated:
+    - `bash -n scripts/04-userspace-capture-check.sh scripts/exp19-ms13q3-userspace-capture-validation-update.sh scripts/exp19-ms13q3-userspace-capture-validation-verify.sh`
+    - `scripts/04-userspace-capture-check.sh --dry-run`
+    - `scripts/exp19-ms13q3-userspace-capture-validation-update.sh --dry-run`
+    - `scripts/exp19-ms13q3-userspace-capture-validation-verify.sh --dry-run`
+- Result:
+  - `exp19` now exists as the first capture-focused experiment bundle
+  - it reuses the positive `exp18` patch unchanged rather than introducing a
+    new kernel delta
+  - the new numbered checkpoint records raw `v4l2-ctl` streaming evidence on
+    `/dev/video0` by default, including stream status, output size, media
+    graph lines, and journal lines since capture start
+  - the control docs now say explicitly that `exp18` already binds
+    `ov5675 10-0036` into the media graph and that the next direct step is
+    userspace capture validation, not more PMIC-state guessing
+
 ### Record `exp18` standard-`VSIO` result
 
 - Plan: capture the actual `exp18` outcome, update the control docs to reflect

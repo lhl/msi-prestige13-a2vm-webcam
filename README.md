@@ -52,7 +52,7 @@ Machine under test:
 - [`docs/patch-kernel-workflow.md`](./docs/patch-kernel-workflow.md) —
   idempotent patch-stack workflow for the local `linux-mainline` tree
 - [`docs/test-routines.md`](./docs/test-routines.md) — numbered test wrappers
-  for clean-boot and reload checkpoints
+  for clean-boot, reload, and userspace-capture checkpoints
 - [`reference/README.md`](./reference/README.md) — captured upstream
   references
 
@@ -90,6 +90,7 @@ msi-prestige13-a2vm-webcam/
 │   ├── 01-clean-boot-check.sh
 │   ├── 02-ov5675-reload-check.sh
 │   ├── 03-ov5675-identify-debug-check.sh
+│   ├── 04-userspace-capture-check.sh
 │   ├── exp*-*-update.sh
 │   ├── exp*-*-verify.sh
 │   └── webcam-run.sh
@@ -176,8 +177,13 @@ msi-prestige13-a2vm-webcam/
    - standard `VSIO` now reads back cleanly as `0x03`
    - the old timeout storm does not return
    - the media graph now contains `ov5675 10-0036`
-7. Shift the next work to end-to-end capture validation and PMIC-visibility
-   gaps, not more blind PMIC remaps.
+7. Use `exp19` plus `scripts/04-userspace-capture-check.sh` as the next
+   reproducible step.
+   - reuse the positive `exp18` patch unchanged
+   - try raw userspace streaming on `/dev/video0` before returning to PMIC
+     visibility work
+8. Treat post-boot PMIC visibility as secondary until the userspace capture
+   result is known.
 
 ## Related Docs
 

@@ -31,14 +31,14 @@ with strong evidence.
   - the old `No board-data found for this model` failure is gone
   - `ipu-bridge` now finds `OVTI5675:00` and reports one connected camera
   - the old clean-boot `Failed to enable dvdd: -ETIMEDOUT` line is gone
-- the current best PMIC experiment clean-boot blocker is now:
-  - `chip id read attempt 1/5 failed: -121`
-  - `...`
-  - `chip id read attempt 5/5 failed: -121`
-  - `failed to find sensor: -121`
-  - `probe with driver ov5675 failed with error -121`
-  - `ov5675` remains unbound
-  - there are still no `/dev/v4l-subdev*` nodes
+- the current best local branch is now `exp18`:
+  - standard regulator-side `VSIO` enable read back cleanly as `0x03`
+  - the old timeout storm did not return
+  - the media graph gained `ov5675 10-0036` linked into `Intel IPU7 CSI2 0`
+  - `/dev/v4l-subdev0` now exists
+- the remaining blocker is now after sensor bind:
+  - there is still no recorded successful userspace capture from `/dev/video*`
+  - post-boot PMIC dumping still returns `ERROR` for every register
 
 ## What March 9 Added
 
@@ -158,6 +158,11 @@ with strong evidence.
     `powerdown` index `0`
   - Antti's dual-reset board data therefore cannot be copied literally without
     either single-line candidate runs first or an `ov5675` consumer change
+- staged the next follow-up as `exp19`:
+  - keep the positive `exp18` patch unchanged
+  - add `scripts/04-userspace-capture-check.sh`
+  - use a custom verify wrapper to record raw userspace streaming on
+    `/dev/video0`
 - ran `exp13` and recorded the first clean daisy-chain-isolation result:
   - update run:
     - `runs/2026-03-11/20260311T184340-ms13q3-daisy-chain-isolation-update/`
@@ -229,8 +234,8 @@ with strong evidence.
 ## Current Interpretation
 
 - We are past the broad platform-support and board-data stage.
-- We are at the hard last-mile stage where the sensor exists but never wakes
-  enough to answer chip-ID reads.
+- We are at the hard last-mile stage where the sensor binds into the media
+  graph, but userspace capture is still unproven.
 - Simple GPIO label / polarity / release-order guesses are mostly exhausted.
 - the current Linux `GPIO1` / `GPIO2` board model is still only a candidate,
   not a validated wiring map
@@ -262,39 +267,44 @@ with strong evidence.
 
 ## Next Best Steps
 
-1. Keep `exp10` as the best PMIC state when resuming.
-   - `BIT(1)` in the regulator path
-   - no early or currently-modeled late `BIT(0)` write
-2. Treat `exp12` as completed collision evidence, not as a clean Antti-model
+1. Use `exp18` as the best current local branch when resuming.
+   - standard `VSIO` now reads back cleanly as `0x03`
+   - the old timeout storm does not return
+   - the media graph now contains `ov5675 10-0036`
+2. Stage and run `exp19` as the first userspace-capture validation.
+   - use `scripts/04-userspace-capture-check.sh`
+   - default to `/dev/video0`
+3. Treat `exp12` as completed collision evidence, not as a clean Antti-model
    test.
    - it proved the current `GPIO1` / `GPIO2` lookup immediately overrides
      daisy-chain setup
-3. Treat `exp13` as completed evidence, not as the next branch to run.
+4. Treat `exp13` as completed evidence, not as the next branch to run.
    - it proved Linux can leave `GPIO1` / `GPIO2` in daisy-chain input mode
    - it did not improve the repeated `-121` chip-ID failure
-4. Treat `exp14` as completed evidence, not as the next branch to run.
+5. Treat `exp14` as completed evidence, not as the next branch to run.
    - it proved `GPIO9` is active
    - it also proved `GPIO9` alone is insufficient
-5. Treat `exp15` as completed evidence, not as the next branch to run.
+6. Treat `exp15` as completed evidence, not as the next branch to run.
    - it proved `GPIO7` is active
    - it also proved `GPIO7` alone is insufficient
-6. Treat `exp16` as completed evidence, not as the next branch to run.
+7. Treat `exp16` as completed evidence, not as the next branch to run.
    - it proved the current two-line approximation drives both remote lines
    - it also proved the clean remote-line branch still stays flat at `-121`
-7. Treat `exp17` as completed evidence, not as a future branch.
+8. Treat `exp17` as completed evidence, not as a future branch.
    - it proved one late `S_I2C_CTL BIT(0)` write is safe on the clean
      remote-line branch
    - the observed PMIC write moved `S_I2C_CTL` from `0x02` to `0x03`
    - the sensor still stayed flat at `-121`
-8. Treat `exp18` as completed positive evidence.
+9. Treat `exp18` as completed positive evidence.
    - standard `VSIO` enable read back cleanly as `0x03`
    - the old timeout storm did not return
    - the media graph now contains `ov5675 10-0036`
-9. Validate capture or userspace behavior on the `exp18` branch.
-10. Fix or replace the post-boot PMIC dump path so we can observe real register
+10. Treat the post-boot PMIC dump path as secondary until the capture result is
+    known.
+11. Fix or replace the post-boot PMIC dump path so we can observe real register
    state after a successful sensor bind.
-11. Extract more of the higher-level Windows config path above `WF::SetConf`.
-12. Do not rerun the broad `exp7` snapshot patch as a default path; it amplified
+12. Extract more of the higher-level Windows config path above `WF::SetConf`.
+13. Do not rerun the broad `exp7` snapshot patch as a default path; it amplified
     the timeout storm enough to interact badly with boot.
 
 ## Key Paths
@@ -309,6 +319,9 @@ with strong evidence.
 - PMIC experiment workflow:
   - `docs/pmic-followup-experiments.md`
   - `scripts/lib-experiment-workflow.sh`
+  - `scripts/04-userspace-capture-check.sh`
+  - `scripts/exp19-ms13q3-userspace-capture-validation-update.sh`
+  - `scripts/exp19-ms13q3-userspace-capture-validation-verify.sh`
 - Complete March 9 report:
   - `docs/20260309-status-report.md`
 - Short live status:

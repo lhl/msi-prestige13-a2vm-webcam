@@ -1,6 +1,6 @@
 # Numbered Test Routines
 
-Updated: 2026-03-08
+Updated: 2026-03-11
 
 These scripts sit on top of `scripts/webcam-run.sh` and provide stable,
 numbered checkpoints for the current MSI webcam bring-up workflow.
@@ -110,9 +110,50 @@ Interpretation note:
 - when that happens, the next trustworthy test is a clean boot with the debug
   module parameters applied on first load
 
+## `scripts/04-userspace-capture-check.sh`
+
+Use this on the positive `exp18` branch after a clean boot when the media graph
+already contains `ov5675 10-0036`.
+
+What it does:
+
+- captures a standard snapshot run
+- records the current media graph and one selected `/dev/video*` node
+- attempts a raw `v4l2-ctl` streaming capture on that node
+- writes a focused summary with:
+  - whether the stream command completed, timed out, or failed
+  - the raw-output file size
+  - the selected media-graph lines
+  - the relevant kernel journal lines since the capture attempt started
+
+Default target:
+
+- `/dev/video0`
+
+Example:
+
+```bash
+scripts/04-userspace-capture-check.sh --video-device /dev/video0
+```
+
+Interpretation note:
+
+- this is the first post-bind userspace checkpoint, not a replacement for the
+  clean-boot truth source
+- use it only after the kernel already reaches the `exp18` state where:
+  - the media graph contains `ov5675 10-0036`
+  - `/dev/v4l-subdev0` exists
+- if it fails, the failure now narrows the remaining gap to the capture path,
+  pipeline configuration, permissions, or userspace behavior rather than first
+  sensor wake-up
+
 ## Current interpretation rule
 
-For this project, `01-clean-boot-check.sh` is the primary truth source.
+For this project, `01-clean-boot-check.sh` is the primary truth source for
+boot-time bring-up failures.
+
+Once the sensor already binds into the media graph on `exp18`, the first
+capture-phase truth source becomes `04-userspace-capture-check.sh`.
 
 If a clean boot already wedged the PMIC / I2C path, later reload-only checks
 may show secondary fallout such as GPIO acquisition failures. Those reload
@@ -129,14 +170,19 @@ Current example from this repo:
 That later GPIO failure is still useful, but it is interpreted as fallout from
 the earlier timeout rather than as the primary blocker.
 
-## PMIC experiment wrappers
+## Experiment wrappers
 
-The six PMIC-side follow-ups now have matching update/reboot/verify wrappers
-documented in `docs/pmic-followup-experiments.md`.
+The PMIC-side follow-ups and the first post-bind capture validation experiment
+now have matching update/reboot/verify wrappers documented in
+`docs/pmic-followup-experiments.md`.
 
 Interpretation rule stays the same:
 
-- the `*-verify.sh` wrappers still use `scripts/01-clean-boot-check.sh` as the
-  first capture step
+- the PMIC-side `*-verify.sh` wrappers still use
+  `scripts/01-clean-boot-check.sh` as the first capture step
 - their extra journal grep and PMIC dump are appended as secondary evidence,
   not as a replacement for the boot-time result
+- `exp19` is the first exception:
+  - it reuses the positive `exp18` patch
+  - its verify wrapper uses `scripts/04-userspace-capture-check.sh`
+  - its goal is capture/userspace validation, not another PMIC state question

@@ -66,20 +66,20 @@ For the full March 9 review, see `docs/20260309-status-report.md`.
 
 ## What Is Still Broken
 
-The current best PMIC experiment clean-boot checkpoint ends this way:
+The current best local branch is now past the old sensor-bind failure:
 
-- `ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -121`
-- `...`
-- `ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -121`
-- `ov5675 i2c-OVTI5675:00: failed to find sensor: -121`
-- `ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -121`
+- `exp18` binds `ov5675 10-0036` into the media graph
+- `/dev/v4l-subdev0` now exists
+- `/dev/video0` through `/dev/video31` are present as `ipu7` capture nodes
+
+What is still missing is end-to-end proof that userspace can actually stream
+frames on that branch.
 
 Functional consequences:
 
-- `ov5675` remains unbound
-- there are still no `/dev/v4l-subdev*` nodes
-- the media graph still lacks a working sensor entity
-- the webcam is still not usable from normal Linux userspace
+- there is still no recorded successful raw capture from `/dev/video*`
+- the webcam is still not proven usable from normal Linux userspace
+- post-boot PMIC register dumping still returns `ERROR` for every register
 
 ## What The PMIC Experiment Chain Added
 
@@ -526,7 +526,8 @@ What now looks most likely:
    - standard `VSIO` now reads back cleanly as `0x03`
    - the old timeout storm does not return
    - the media graph now includes `ov5675 10-0036`
-2. Validate capture and userspace behavior on the `exp18` branch.
+2. Stage and run `exp19`, or run `scripts/04-userspace-capture-check.sh`
+   directly, to validate raw userspace streaming on `/dev/video0`.
 3. Fix or replace the post-boot PMIC dump path so we can see real register
    state after a successful sensor bind.
 4. Extract the higher-level Windows config path that feeds `WF::SetConf` and

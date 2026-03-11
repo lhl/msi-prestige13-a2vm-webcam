@@ -5,13 +5,16 @@ Updated: 2026-03-11
 This note turns the current ordered PMIC follow-up list into repeatable
 update-and-verify workflows.
 
-As of the completed `2026-03-11` `exp18` follow-up:
+As of the completed `2026-03-11` `exp18` follow-up and the staged `exp19`
+capture/userspace validation:
 
 - `exp1` through `exp18` are completed historical experiments
 - `exp18` is now the best current local branch:
   - stock regulator-side `VSIO` enable read back cleanly as `0x03`
   - the old timeout storm did not return
   - the media graph gained `ov5675 10-0036`
+- `exp19` reuses that exact `exp18` patch and shifts the next check to raw
+  userspace capture instead of more PMIC-state guessing
 - `exp10` remains the best older PMIC control baseline
 - `exp11` was the first late-phase `BIT(0)` experiment and came back negative
 - `exp12` was the first Antti-inspired daisy-chain cross-check and came back
@@ -69,8 +72,9 @@ Make each PMIC experiment runnable with the same high-safety pattern:
 4. install the resulting `.ko.zst` files into `/usr/lib/modules/<release>/...`
 5. run `depmod`
 6. reboot once
-7. run a clean-boot verification wrapper that reuses `scripts/01-clean-boot-check.sh`
-   and adds an experiment-specific journal grep plus a root PMIC dump
+7. run a clean-boot verification wrapper that reuses
+   `scripts/01-clean-boot-check.sh` and adds an experiment-specific journal
+   grep plus a root PMIC dump, or for `exp19`, a userspace capture check
 
 ## Important guardrails
 
@@ -132,7 +136,8 @@ All experiment `*-update.sh` wrappers do this:
 - run `sudo depmod -a <release>`
 - prompt for reboot
 
-All experiment `*-verify.sh` wrappers do this after reboot:
+The PMIC-side experiment `*-verify.sh` wrappers through `exp18` do this after
+reboot:
 
 - run `scripts/01-clean-boot-check.sh`
 - append an experiment-specific journal extract to the run directory
@@ -141,6 +146,12 @@ All experiment `*-verify.sh` wrappers do this after reboot:
 - capture `modinfo` for the baseline plus experiment-specific modules
 - normalize the run-directory ownership back to the invoking user if any
   root-assisted step left files owned by `root`
+
+`exp19` is the first capture-focused exception:
+
+- its update wrapper still uses the shared experiment workflow
+- its verify wrapper runs `scripts/04-userspace-capture-check.sh`
+- it records userspace streaming artifacts instead of a PMIC dump
 
 ## Experiment order
 
@@ -838,6 +849,53 @@ Interpretation:
 - the next work should move to capture validation, userspace behavior, and
   remaining post-boot PMIC visibility gaps
 
+### 19. Userspace capture validation on the positive `exp18` branch
+
+Purpose:
+- keep the positive `exp18` kernel branch unchanged
+- stop spending the next iteration on PMIC readback visibility first
+- determine whether normal Linux userspace can actually stream frames on the
+  first local branch that binds `ov5675`
+
+Default patch:
+- `reference/patches/ms13q3-daisy-chain-standard-vsio-v1.patch`
+
+Extra module rebuild/install:
+- `gpio-tps68470.ko`
+- `tps68470-regulator.ko`
+
+Scripts:
+- `scripts/04-userspace-capture-check.sh`
+- `scripts/exp19-ms13q3-userspace-capture-validation-update.sh`
+- `scripts/exp19-ms13q3-userspace-capture-validation-verify.sh`
+
+Implemented workflow shape:
+- reuse the `exp18` patch unchanged as the kernel baseline
+- capture a normal post-boot snapshot first
+- inspect the current media graph and selected `/dev/video*` node
+- attempt a raw `v4l2-ctl` streaming capture on `/dev/video0` by default
+- record:
+  - stream exit status
+  - raw-output file size
+  - selected media-graph lines
+  - selected V4L2 node lines
+  - relevant kernel log lines since the capture started
+
+Current status:
+- staged on `2026-03-11`
+- not run yet
+
+Minimum useful success:
+- `v4l2-ctl --stream-mmap` completes and writes a non-empty raw file
+- no new `ov5675`, `intel-ipu7`, or `isys` failure appears during the stream
+
+Useful negative:
+- userspace streaming times out or fails even though the media graph still
+  shows `ov5675 10-0036`
+- that would narrow the remaining blocker to capture-path configuration,
+  permissions, or userspace-facing driver behavior rather than first sensor
+  bind
+
 ## Typical usage
 
 Update, install modules, and reboot for experiment 2:
@@ -887,10 +945,11 @@ Current best PMIC experiment state:
 exp10 = BIT(1)-only regulator path
 ```
 
-## Why the verify wrappers always do a PMIC dump
+## Why the PMIC-side verify wrappers do a PMIC dump
 
 The clean-boot journal remains the primary truth source, but the PMIC dump is a
-useful secondary check for all PMIC-side follow-ups because it captures:
+useful secondary check for the PMIC-side follow-ups through `exp18` because it
+captures:
 
 - value-register state
 - `S_I2C_CTL`
@@ -899,6 +958,14 @@ useful secondary check for all PMIC-side follow-ups because it captures:
 
 The dump happens after the clean-boot checkpoint, not before it, so it does not
 replace the boot log and it does not make claims it cannot support.
+
+`exp19` is intentionally different:
+
+- it does not ask a new PMIC-state question
+- it asks whether the positive `exp18` branch can actually stream frames from
+  userspace
+- its verify wrapper therefore records userspace capture artifacts instead of
+  another PMIC dump
 
 ## Current interpretation
 
@@ -909,35 +976,39 @@ and the completed `exp18` follow-up according to the current evidence:
    - standard `VSIO` now reads back cleanly as `0x03`
    - the old timeout storm does not return
    - the media graph now contains `ov5675 10-0036`
-2. Treat `exp11` as a completed negative, not as a baseline.
-3. Treat `exp12` as a completed negative that proved the current `GPIO1` /
+2. Stage and run `exp19` as the first capture/userspace validation step on top
+   of that branch.
+   - use `scripts/04-userspace-capture-check.sh`
+   - default to `/dev/video0`
+3. Treat `exp11` as a completed negative, not as a baseline.
+4. Treat `exp12` as a completed negative that proved the current `GPIO1` /
    `GPIO2` lookup model immediately collides with Antti-style daisy-chain
    setup.
-4. Treat `exp13` as completed evidence, not as a future branch.
+5. Treat `exp13` as completed evidence, not as a future branch.
    - it proved that Linux can leave `GPIO1` / `GPIO2` alone
    - it did not improve the flat repeated `-121` chip-ID failure
-5. Treat `exp14` as completed evidence, not as a future branch.
+6. Treat `exp14` as completed evidence, not as a future branch.
    - it proved `GPIO9` is active
    - it also proved `GPIO9` alone is insufficient
-6. Treat `exp15` as completed evidence, not as a future branch.
+7. Treat `exp15` as completed evidence, not as a future branch.
    - it proved `GPIO7` is active
    - it also proved `GPIO7` alone is insufficient
-7. Treat `exp16` as completed evidence, not as a future branch.
+8. Treat `exp16` as completed evidence, not as a future branch.
    - it proved the current two-line approximation drives both remote lines
    - it also proved that combined remote-line activity still stays flat at
      `-121`
-8. Treat `exp17` as completed evidence, not as a future branch.
+9. Treat `exp17` as completed evidence, not as a future branch.
    - it proved one later `sensor-gpio.9` `BIT(0)` write is safe and reads back
      as `0x03`
    - it also proved that this later PMIC transition is still insufficient
-9. Treat `exp18` as completed positive evidence.
+10. Treat `exp18` as completed positive evidence.
    - standard regulator-side `VSIO` enable read back cleanly as `0x03`
    - the media graph gained `ov5675 10-0036`
    - the verify-side PMIC dump still came back all `ERROR`
-10. Use `exp1` through `exp9` as the historical evidence chain that narrowed
+11. Use `exp1` through `exp9` as the historical evidence chain that narrowed
    the problem to `S_I2C_CTL` behavior and competing GPIO interpretations.
-11. Shift the next direct work to capture validation, userspace behavior, and
-    PMIC dump visibility on the now-positive `exp18` branch.
+12. Treat PMIC dump visibility as secondary until the `exp19` capture result is
+    known.
 
 That ordering still matches the current source-backed assessment in:
 

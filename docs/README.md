@@ -26,17 +26,18 @@ Current focus:
 - `docs/linux-board-data-candidate.md` — original MSI
   `tps68470_board_data` hypothesis and first patched-test plan
 - `docs/pmic-followup-experiments.md` — ordered PMIC experiment matrix and the
-  scripted update/reboot/verify workflow for experiments 1-18; `exp13` through
-  `exp18` are now completed evidence, with `exp18` showing the first clean
-  standard-`VSIO` branch that binds `ov5675` into the media graph
+  scripted update/reboot/verify workflow for experiments 1-19; `exp13` through
+  `exp18` are now completed evidence, `exp18` is the first clean standard-`VSIO`
+  branch that binds `ov5675` into the media graph, and `exp19` stages the
+  first capture/userspace validation on top of that branch
 - `docs/wf-vs-uf-gpio-analysis.md` — Windows helper-family analysis for
   deciding whether this laptop still matches the `WF` / `LNK0` GPIO model
 - `docs/patch-kernel-workflow.md` — idempotent patch-stack workflow for the
   local `linux-mainline` tree
 - `docs/module-iteration.md` — faster module-only rebuild/install workflow for
   camera-path changes
-- `docs/test-routines.md` — numbered test wrappers for clean-boot and reload
-  checkpoints
+- `docs/test-routines.md` — numbered test wrappers for clean-boot, reload, and
+  userspace-capture checkpoints
 - `docs/ov5675-diagnostic-patch.md` — first `ov5675` probe-logging patch and
   exact module-only test steps
 - `docs/ipu-bridge-ovti5675-candidate.md` — `ipu-bridge` follow-up patch note
