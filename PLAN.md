@@ -3,8 +3,8 @@
 Updated: 2026-03-11
 
 This is the active plan after the completed March 9 PMIC experiment batch, the
-completed `exp13` / `exp14` Antti-model runs, and the remaining
-`exp15`-`exp17` branch set.
+completed `exp13` / `exp14` / `exp15` Antti-model runs, and the remaining
+`exp16`-`exp17` branch tail.
 
 ## Goal
 
@@ -85,6 +85,12 @@ with strong evidence.
   - `GPIO1` / `GPIO2` remained isolated in daisy-chain input mode
   - `GPIO9` reached observed `SGPO = 0x04` during probe
   - the sensor failure shape still ends at `-121`
+- `exp15` came back positive for remote-line activation, but negative as a
+  direct fix:
+  - `GPIO7` is now an observed Linux-visible remote control line
+  - `GPIO1` / `GPIO2` remained isolated in daisy-chain input mode
+  - `GPIO7` reached observed `SGPO = 0x01` during probe
+  - the sensor failure shape still ends at `-121`
 - the current `MS-13Q3` `GPIO1` / `GPIO2` board model is still only a
   candidate, not a validated wiring map:
   - the original board-data patch introduced it as a first-pass guess
@@ -99,9 +105,9 @@ with strong evidence.
   - the early regulator-phase `BIT(0)` write was wrong
   - the old direct-use `GPIO1` / `GPIO2` Linux board model was wrong as a
     clean Antti-style branch
-  - `GPIO9` is active, but insufficient alone
-  - the next high-value work is to test whether `GPIO7` is the missing
-    primary line or the missing companion line on top of the clean daisy-chain
+  - `GPIO9` and `GPIO7` are both active, but insufficient alone
+  - the next high-value work is `exp16`, testing whether the two-line
+    approximation changes the failure shape on top of the clean daisy-chain
     branch
 
 ## Workstreams
@@ -163,16 +169,17 @@ with strong evidence.
 4. Treat `exp14` as completed evidence, not as the next branch to run.
    - it proved `GPIO9` is active
    - it also proved `GPIO9` alone is insufficient
-5. Run `exp15` as the next constrained discriminator.
-   - under current `ov5675` driver limits, does `GPIO7` outperform or
-     complement the now-proven-active `GPIO9` line
-6. Use `exp16` as the closest current-driver approximation of Antti's remote
-   mapping after `exp15`, preserving `GPIO9` as the current default `reset`
-   side unless `exp15` clearly outperforms it.
-7. Use `exp17` as the explicit PMIC-side follow-up after the remote-line
-   question is better constrained.
+5. Treat `exp15` as completed evidence, not as the next branch to run.
+   - it proved `GPIO7` is active
+   - it also proved `GPIO7` alone is insufficient
+6. Run `exp16` next as the closest current-driver approximation of Antti's
+   remote mapping.
+   - keep the current default mapping `GPIO9=reset` and `GPIO7=powerdown`
+     because both lone-line runs are now known-active but individually
+     insufficient
+7. Use `exp17` as the explicit PMIC-side follow-up after `exp16`.
    - `exp13` already proved the no-reclaim prerequisite
-   - carry forward the cleanest branch from `exp15` through `exp16`
+   - carry forward the cleanest branch from `exp16`
 8. Keep using:
    - `scripts/patch-kernel.sh`
    - `scripts/exp*-*-update.sh`
@@ -188,8 +195,9 @@ with strong evidence.
   PMIC readback collapses to `-110`?
 - With `exp13` proving no reclaim, why does the clean daisy-chain-isolated
   branch still end at flat repeated `-121` chip-ID failures?
-- With `exp14` proving `GPIO9` is active but insufficient, is `GPIO7` the
-  missing primary line or the missing companion line?
+- With `exp14` and `exp15` proving `GPIO9` and `GPIO7` are both active but
+  individually insufficient, does the `exp16` two-line approximation finally
+  change the failure shape?
 - If `exp16` is still negative, do we need an `ov5675` consumer change to
   model Antti's dual-reset style more faithfully?
 - Once a clean daisy-chain branch exists, does `BIT(0)` become safe there or
@@ -212,5 +220,5 @@ with strong evidence.
 - a full March 9 status report under `docs/`
 - reference-backed Windows PMIC notes under `reference/windows-driver-analysis/`
 - current support summary under `docs/webcam-status.md`
-- recorded `exp13` / `exp14` run evidence plus staged `exp15` through `exp17`
-  patches and wrapper scripts
+- recorded `exp13` / `exp14` / `exp15` run evidence plus staged `exp16`
+  through `exp17` patches and wrapper scripts

@@ -1,0 +1,5 @@
+CMD: ls -l /sys/bus/acpi/devices/INT3472:06 2>/dev/null || true; find /sys/bus/acpi/devices/INT3472:06 -maxdepth 2 2>/dev/null | sort || true
+lrwxrwxrwx 1 root root 0 Mar 11 19:49 /sys/bus/acpi/devices/INT3472:06 -> ../../../devices/LNXSYSTM:00/LNXSYBUS:00/INT3472:06
+/sys/bus/acpi/devices/INT3472:06
+
+EXIT_STATUS: 0

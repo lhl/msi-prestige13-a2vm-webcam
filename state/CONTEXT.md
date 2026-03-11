@@ -182,6 +182,20 @@ with strong evidence.
     - `probe-after gpio.1 ... ctl=0x00`
     - `probe-after gpio.2 ... ctl=0x00`
     - sensor failure remained flat at repeated `-121`
+- ran `exp15` and recorded the second remote-line candidate result:
+  - update run:
+    - `runs/2026-03-11/20260311T194617-ms13q3-daisy-chain-gpio7-reset-update/`
+  - verify run:
+    - `runs/2026-03-11/20260311T195819-snapshot-exp15-clean-boot/`
+  - result:
+    - positive for remote-line activation, negative as a direct fix
+    - `direction-output-after gpio.7 ...`
+    - `set-after gpio.7 ... sgpo=0x01`
+    - `probe-after gpio.1 ... ctl=0x00`
+    - `probe-after gpio.2 ... ctl=0x00`
+    - sensor failure remained flat at repeated `-121`
+    - verify-side PMIC dump did not complete:
+      - `sudo: timed out reading password`
 
 ## Current Interpretation
 
@@ -196,10 +210,11 @@ with strong evidence.
 - `exp13` proved that once Linux stops exporting `GPIO1` / `GPIO2` to the
   sensor, it can leave those lines in daisy-chain input mode
 - `exp14` proved that `GPIO9` is an active remote line, but insufficient alone
+- `exp15` proved that `GPIO7` is an active remote line, but insufficient alone
 - The strongest remaining gap is PMIC-side behavior Linux still does not model
   correctly, especially around:
-  - whether `GPIO7` is the missing primary line or the missing companion line
-    now that `GPIO9` is known-active but insufficient
+  - whether the `exp16` two-line approximation is enough once both single-line
+    remote candidates are known-active but individually insufficient
   - where the later `S_I2C_CTL` `BIT(0)` phase belongs, if anywhere, once the
     daisy-chain wiring branch is isolated
   - why the current late hook only showed up on `sensor-gpio.1`
@@ -222,16 +237,17 @@ with strong evidence.
 4. Treat `exp14` as completed evidence, not as the next branch to run.
    - it proved `GPIO9` is active
    - it also proved `GPIO9` alone is insufficient
-5. Run `exp15` next.
-   - determine whether `GPIO7` is stronger by itself than the now-proven
-     `GPIO9` line
-6. Run `exp16` only after `exp15`.
-   - keep `GPIO9` as the current default `reset` side unless `exp15` clearly
-     outperforms it
+5. Treat `exp15` as completed evidence, not as the next branch to run.
+   - it proved `GPIO7` is active
+   - it also proved `GPIO7` alone is insufficient
+6. Run `exp16` next.
+   - keep the current default mapping `GPIO9=reset` and `GPIO7=powerdown`
+     because both lone-line runs are now known-active but individually
+     insufficient
 7. Run `exp17` only after carrying forward the cleanest remote-line branch.
    - `exp13` already satisfied the no-reclaim prerequisite
    - re-test `S_I2C_CTL BIT(0)` only on top of the cleanest branch from
-     `exp15` through `exp16`
+     `exp16`
 8. Fix or replace the post-boot PMIC dump path so we can observe real register
    state after a failed clean boot.
 9. Extract more of the higher-level Windows config path above `WF::SetConf`.

@@ -2,6 +2,55 @@
 
 ## 2026-03-11
 
+### Review `exp15` and confirm that `GPIO7` is active but insufficient
+
+- Plan: inspect the first real `exp15` update and clean-boot verification
+  artifacts, determine whether `GPIO7` becomes a second active remote line
+  under the clean daisy-chain branch, and update the next-step docs if the
+  single-line remote question is now settled.
+- Commands:
+  - reviewed:
+    - `runs/2026-03-11/20260311T194617-ms13q3-daisy-chain-gpio7-reset-update/metadata.env`
+    - `runs/2026-03-11/20260311T194617-ms13q3-daisy-chain-gpio7-reset-update/action.log`
+    - `runs/2026-03-11/20260311T195819-snapshot-exp15-clean-boot/focused-summary.txt`
+    - `runs/2026-03-11/20260311T195819-snapshot-exp15-clean-boot/experiment-journal.txt`
+    - `runs/2026-03-11/20260311T195819-snapshot-exp15-clean-boot/pmic-reg-dump.txt`
+    - `reference/patches/ms13q3-daisy-chain-gpio7-reset-v1.patch`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `README.md`
+    - `docs/README.md`
+    - `docs/webcam-status.md`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+  - refreshed:
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/README.md`
+    - `docs/webcam-status.md`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+- Result:
+  - `exp15` is positive for remote-line activation, but negative as a direct
+    fix
+  - Linux actively drove `GPIO7` under the clean daisy-chain branch:
+    - `exp15_daisy: direction-output-after gpio.7 ...`
+    - `exp15_daisy: set-after gpio.7 ... sgpo=0x01`
+  - the `GPIO1` / `GPIO2` daisy-chain isolation from `exp13` stayed intact:
+    - `exp15_daisy: probe-after gpio.1 ... ctl=0x00`
+    - `exp15_daisy: probe-after gpio.2 ... ctl=0x00`
+  - the clean-boot sensor result still did not improve:
+    - `chip id read attempt 1/5 failed: -121`
+    - `...`
+    - `chip id read attempt 5/5 failed: -121`
+    - `failed to find sensor: -121`
+  - the verify-side PMIC dump did not capture register state in this run:
+    - `sudo: timed out reading password`
+  - the next question is no longer whether `GPIO7` beats `GPIO9` by itself; it
+    is whether the two-line `GPIO9` / `GPIO7` approximation in `exp16`
+    changes the failure shape
+
 ### Review `exp14` and confirm that `GPIO9` is active but insufficient
 
 - Plan: inspect the first real `exp14` update and clean-boot verification
