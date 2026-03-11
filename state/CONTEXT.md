@@ -196,6 +196,19 @@ with strong evidence.
     - sensor failure remained flat at repeated `-121`
     - verify-side PMIC dump did not complete:
       - `sudo: timed out reading password`
+- ran `exp16` and recorded the first two-line remote approximation result:
+  - update run:
+    - `runs/2026-03-11/20260311T202133-ms13q3-daisy-chain-gpio7-gpio9-approx-update/`
+  - verify run:
+    - `runs/2026-03-11/20260311T202258-snapshot-exp16-clean-boot/`
+  - result:
+    - positive for combined remote-line activation, negative as a direct fix
+    - `set-after gpio.7 ... sgpo=0x01`
+    - `set-after gpio.9 ... sgpo=0x05`
+    - `probe-after gpio.1 ... ctl=0x00`
+    - `probe-after gpio.2 ... ctl=0x00`
+    - sensor failure remained flat at repeated `-121`
+    - verify-side PMIC dump returned `ERROR` for all registers again
 
 ## Current Interpretation
 
@@ -211,10 +224,12 @@ with strong evidence.
   sensor, it can leave those lines in daisy-chain input mode
 - `exp14` proved that `GPIO9` is an active remote line, but insufficient alone
 - `exp15` proved that `GPIO7` is an active remote line, but insufficient alone
+- `exp16` proved that the current two-line `GPIO9` / `GPIO7` approximation can
+  drive both remote lines together, but is still insufficient
 - The strongest remaining gap is PMIC-side behavior Linux still does not model
   correctly, especially around:
-  - whether the `exp16` two-line approximation is enough once both single-line
-    remote candidates are known-active but individually insufficient
+  - whether a later `S_I2C_CTL` `BIT(0)` phase only becomes useful after the
+    clean remote-line branch is already in place
   - where the later `S_I2C_CTL` `BIT(0)` phase belongs, if anywhere, once the
     daisy-chain wiring branch is isolated
   - why the current late hook only showed up on `sensor-gpio.1`
@@ -240,11 +255,10 @@ with strong evidence.
 5. Treat `exp15` as completed evidence, not as the next branch to run.
    - it proved `GPIO7` is active
    - it also proved `GPIO7` alone is insufficient
-6. Run `exp16` next.
-   - keep the current default mapping `GPIO9=reset` and `GPIO7=powerdown`
-     because both lone-line runs are now known-active but individually
-     insufficient
-7. Run `exp17` only after carrying forward the cleanest remote-line branch.
+6. Treat `exp16` as completed evidence, not as the next branch to run.
+   - it proved the current two-line approximation drives both remote lines
+   - it also proved the clean remote-line branch still stays flat at `-121`
+7. Run `exp17` next.
    - `exp13` already satisfied the no-reclaim prerequisite
    - re-test `S_I2C_CTL BIT(0)` only on top of the cleanest branch from
      `exp16`

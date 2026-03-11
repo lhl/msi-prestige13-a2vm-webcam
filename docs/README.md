@@ -27,8 +27,7 @@ Current focus:
   `tps68470_board_data` hypothesis and first patched-test plan
 - `docs/pmic-followup-experiments.md` — ordered PMIC experiment matrix and the
   scripted update/reboot/verify workflow for experiments 1-17; `exp13` through
-  `exp15` are now completed evidence and `exp16` through `exp17` remain staged
-  locally
+  `exp16` are now completed evidence and `exp17` remains staged locally
 - `docs/wf-vs-uf-gpio-analysis.md` — Windows helper-family analysis for
   deciding whether this laptop still matches the `WF` / `LNK0` GPIO model
 - `docs/patch-kernel-workflow.md` — idempotent patch-stack workflow for the

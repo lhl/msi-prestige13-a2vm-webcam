@@ -1,0 +1,9 @@
+filename:       /lib/modules/7.0.0-rc2-1-mainline-dirty/kernel/drivers/gpio/gpio-tps68470.ko.zst
+license:        GPL v2
+description:    GPIO driver for TPS68470 PMIC
+alias:          platform:tps68470-gpio
+srcversion:     33803A29EBC42291848B7B3
+depends:        
+name:           gpio_tps68470
+retpoline:      Y
+vermagic:       7.0.0-rc2-1-mainline-dirty SMP preempt mod_unload 

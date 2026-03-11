@@ -27,8 +27,11 @@ the remaining blocker is now much narrower:
   sufficient lone reset line
 - `exp15` then proved that `GPIO7` is also an active remote line, but not a
   sufficient lone reset line
-- the repo now has staged `exp16` through `exp17` patch plus wrapper pairs for
-  the next Antti-model run tail
+- `exp16` then proved that the current `GPIO9` / `GPIO7` two-line
+  approximation drives both remote lines together, but still does not move the
+  sensor off repeated `-121`
+- the repo now has a staged `exp17` patch plus wrapper pair for the next
+  explicit PMIC-side follow-up
 
 That means the webcam is now blocked at sensor wake-up / later-stage PMIC
 behavior, not at basic discovery or graph construction.
@@ -324,9 +327,9 @@ Interpretation:
 
 - `exp13` is positive for wiring isolation, but negative as a direct fix
 - the main question is no longer "does Linux still reclaim `GPIO1` / `GPIO2`?"
-- the next constrained question is whether the two-line `GPIO9` / `GPIO7`
-  approximation is required under current `ov5675` limits once both single-line
-  candidates are proven active
+- the remote-line branch set later showed that `GPIO9`, `GPIO7`, and the
+  current two-line approximation are all active but still insufficient under
+  current `ov5675` limits
 
 ### `exp14` daisy-chain plus `GPIO9` reset
 
@@ -381,8 +384,38 @@ Interpretation:
 - `GPIO7` alone is insufficient under current driver limits
 - `exp14` and `exp15` together now show that both single-line remote
   candidates are active but individually insufficient
-- the next direct branch is `exp16`, the two-line `GPIO9` / `GPIO7`
-  approximation
+- `exp16` later tested that two-line `GPIO9` / `GPIO7` approximation directly
+
+### `exp16` daisy-chain `GPIO7` / `GPIO9` approximation
+
+What it proved:
+
+- the current two-line remote approximation really drives both remote lines in
+  the same boot
+- `GPIO1` / `GPIO2` still stay isolated in daisy-chain input mode
+- even combined remote-line activity still does not move the sensor off the
+  flat repeated `-121` identify failure
+
+Key lines:
+
+- `exp16_daisy: set-after gpio.7 ... sgpo_ret=0 sgpo=0x01`
+- `exp16_daisy: set-after gpio.9 ... sgpo_ret=0 sgpo=0x05`
+- `exp16_daisy: probe-after gpio.1 ... ctl=0x00`
+- `exp16_daisy: probe-after gpio.2 ... ctl=0x00`
+- `ov5675 ... chip id read attempt 5/5 failed: -121`
+
+Operational note:
+
+- the verify-side PMIC dump completed in this run, but every register still
+  came back as `ERROR`
+
+Interpretation:
+
+- the best current-driver `GPIO9` / `GPIO7` approximation is active but still
+  insufficient
+- the direct remote-line mapping question is now largely exhausted under
+  current `ov5675` limits
+- the next direct branch is `exp17`, the clean-remote-branch `BIT(0)` re-test
 
 ## Current Assessment
 
@@ -406,10 +439,11 @@ What now looks unlikely:
 What now looks most likely:
 
 - Linux still does not model either:
-  - the complete remote sensor-control arrangement:
-    - `GPIO9` and `GPIO7` are both active, but insufficient alone
-    - `exp16` is now the direct test for whether the board needs both lines
-      together under current driver limits
+  - the complete remote sensor-control arrangement or consumer semantics:
+    - `GPIO9` and `GPIO7` are both active together in `exp16`, but the sensor
+      still stays flat at `-121`
+    - if `exp17` is also flat, the remaining gap is likely beyond the current
+      `ov5675` GPIO-consumer model or exact electrical timing
   - or some board-specific later PMIC behavior that the Windows driver
     performs
 - or Linux is still missing the exact electrical waveform and timing that the
@@ -419,8 +453,9 @@ What now looks most likely:
 
 1. We still cannot read back PMIC registers from userspace after boot.
    - `scripts/pmic-reg-dump.sh` remains unreliable in representative runs:
-     earlier captures returned `ERROR` for every register, and the `exp15`
-     verify capture timed out at the sudo prompt before producing data.
+     earlier captures returned `ERROR` for every register, the `exp15` verify
+     capture timed out at the sudo prompt, and `exp16` returned all `ERROR`
+     again.
 2. We now know the bad PMIC transition is specifically the later `BIT(0)` set
    on `S_I2C_CTL` after `BIT(1)` has already read back cleanly as `0x02`.
 3. We also now know that omitting `BIT(0)` keeps the PMIC/I2C path alive, but
@@ -429,26 +464,25 @@ What now looks most likely:
    not sufficient by itself; `exp13` still fails flat at `-121`.
 5. We now know `GPIO9` is active but insufficient as a lone reset line.
 6. We now know `GPIO7` is also active but insufficient as a lone reset line.
-7. We still do not know whether the two-line `GPIO9` / `GPIO7`
-   approximation is enough under current driver limits.
+7. We now know the current two-line `GPIO9` / `GPIO7` approximation is also
+   insufficient under current driver limits.
 8. We now have one negative result for a late `BIT(0)` hook tied to the
    current GPIO-active implementation: it reintroduces the PMIC wedge.
 9. We still do not have the exact higher-level Windows configuration path that
    feeds `WF::SetConf` or chooses the `WF` versus `UF` branch for this board.
 10. We still do not have direct electrical truth for the PMIC GPIO and sensor
-   reset / powerdown waveform.
+    reset / powerdown waveform.
 
 ## Next Steps
 
 1. Keep `exp10` as the best functional PMIC state for now.
    - do not reintroduce `BIT(0)` in the early regulator path
    - do not treat the current `exp11` GPIO hook as a likely fix
-2. Run `exp16` next.
-   - test whether combining the two now-proven-active remote lines changes the
-     failure shape
-3. Keep `exp17` gated behind the clean remote-line branch.
-   - `exp13` already answered the no-reclaim prerequisite
-   - carry forward the cleanest branch from `exp16`
+2. Run `exp17` next.
+   - test whether later `BIT(0)` becomes safe or useful only on top of the
+     clean remote-line branch
+3. If `exp17` is still negative, scope the `ov5675` consumer-model gap more
+   directly.
 4. Fix or replace the post-boot PMIC dump path so we can see real register
    state after a failed clean boot.
 5. Extract the higher-level Windows config path that feeds `WF::SetConf` and

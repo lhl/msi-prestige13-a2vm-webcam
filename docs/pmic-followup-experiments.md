@@ -5,14 +5,14 @@ Updated: 2026-03-11
 This note turns the current ordered PMIC follow-up list into repeatable
 update-and-verify workflows.
 
-As of the completed `2026-03-11` `exp15` follow-up and the staged
-`exp16`-`exp17` branch tail:
+As of the completed `2026-03-11` `exp16` follow-up and the staged
+`exp17` branch tail:
 
-- `exp1` through `exp15` are completed historical experiments
-- `exp16` through `exp17` are now staged repo-local experiments:
+- `exp1` through `exp16` are completed historical experiments
+- `exp17` is now the staged repo-local experiment:
   - patch files exist under `reference/patches/`
   - matching `update` / `verify` wrappers exist under `scripts/`
-  - none of those two staged branches has been run yet
+  - that staged branch has not been run yet
 - `exp10` remains the best current PMIC state
 - `exp11` was the first late-phase `BIT(0)` experiment and came back negative
 - `exp12` was the first Antti-inspired daisy-chain cross-check and came back
@@ -45,6 +45,10 @@ As of the completed `2026-03-11` `exp15` follow-up and the staged
 - `exp15` answered the second remote-line question:
   - yes, `GPIO7` becomes an active Linux-visible remote line
   - no, `GPIO7` alone is not sufficient; the failure shape still ends at
+    repeated `-121`
+- `exp16` answered the best current-driver two-line question:
+  - yes, `GPIO7` and `GPIO9` can both be active during the identify window
+  - no, the two-line approximation still does not move the sensor off
     repeated `-121`
 
 ## Goal
@@ -447,14 +451,14 @@ Interpretation:
 
 ## Antti-model branch set
 
-`exp13` through `exp15` already answered the clean daisy-chain-isolation and
-single-line remote questions. The remaining staged tail is the two-line
-approximation in `exp16` plus the explicit PMIC-side follow-up in `exp17`.
+`exp13` through `exp16` already answered the clean daisy-chain-isolation,
+single-line remote, and current two-line remote questions. The remaining
+staged tail is the explicit PMIC-side follow-up in `exp17`.
 
 They are deliberately ordered so the next remaining question is not "does
 Linux still reclaim the daisy-chain lines?" or "which lone remote line is
-right?" but "does the two-line approximation finally change the failure
-shape?"
+right?" but "does later `BIT(0)` or a deeper consumer/timing gap explain the
+remaining flat `-121` failure?"
 
 ### 13. Daisy-chain isolation without OVTI5675 use of `GPIO1` / `GPIO2`
 
@@ -515,9 +519,9 @@ Interpretation:
   once Linux stops exposing `GPIO1` / `GPIO2` to `OVTI5675:00`, it can leave
   them in daisy-chain input mode
 - the daisy-chain collision is no longer the leading blocker
-- the next constrained question is whether the two-line `GPIO9` / `GPIO7`
-  approximation changes the failure shape now that both lone-line candidates
-  are proven active
+- the remote-line branch set later showed that `GPIO9`, `GPIO7`, and the
+  current two-line approximation are all active but still insufficient under
+  current driver limits
 
 ### 14. Daisy-chain plus `GPIO9` as the first remote control-line candidate
 
@@ -628,8 +632,8 @@ Interpretation:
   limits
 - `exp14` and `exp15` together show that both single-line remote candidates
   are active but individually insufficient
-- `exp16` is now the next direct branch, using the current two-line
-  `GPIO9` / `GPIO7` approximation
+- `exp16` later tested that current two-line `GPIO9` / `GPIO7`
+  approximation directly
 
 ### 16. Daisy-chain plus the best two-line `GPIO7` / `GPIO9` approximation
 
@@ -665,29 +669,35 @@ Implemented patch shape:
 - keep the same four-line instrumentation
 
 Current status:
-- staged only
-- not yet run
+- completed on `2026-03-11`
+- update run:
+  - `runs/2026-03-11/20260311T202133-ms13q3-daisy-chain-gpio7-gpio9-approx-update/`
+- verify run:
+  - `runs/2026-03-11/20260311T202258-snapshot-exp16-clean-boot/`
 
-Why this is only `exp16`:
-- the current `MS-13Q3` `GPIO1` / `GPIO2` model was never validated strongly
-- the earlier swap/polarity results were low-signal because `ov5675` drives
-  both descriptors together
-- a two-line remote mapping is easier to interpret after the single-line
-  `GPIO9` and `GPIO7` branches have been run first
+Observed outcome:
+- positive for combined remote-line activation, negative as a direct fix
+- `GPIO1` / `GPIO2` stayed in daisy-chain input mode
+- `GPIO7` and `GPIO9` were both actively driven during the identify window
+- observed combined `SGPO` reached `0x05`
+- chip-ID behavior still stayed flat at repeated `-121`
+- verify-side PMIC dump returned `ERROR` for all registers again
 
-Minimum useful success:
-- `GPIO1` / `GPIO2` remain daisy-chain inputs
-- the remote two-line waveform reaches `ov5675`
-- probe behavior moves later, changes shape, or binds the sensor
-
-Useful negative:
-- the branch stays at `-121`, but with no `GPIO1` / `GPIO2` reclaim and clear
-  `GPIO7` / `GPIO9` activity
+Key lines:
+- `exp16_daisy: set-after gpio.7 ... sgpo_ret=0 sgpo=0x01`
+- `exp16_daisy: set-after gpio.9 ... sgpo_ret=0 sgpo=0x05`
+- `exp16_daisy: probe-after gpio.1 ... ctl=0x00`
+- `exp16_daisy: probe-after gpio.2 ... ctl=0x00`
+- `ov5675 ... chip id read attempt 5/5 failed: -121`
+- `0x43   = ERROR   # S_I2C_CTL`
 
 Interpretation:
-- if `exp16` is still flat, the next branch after it should revisit later
-  PMIC-side behavior only on top of the clean daisy-chain mapping, not on top
-  of the old `GPIO1` / `GPIO2` board data
+- the best current-driver `GPIO9` / `GPIO7` approximation is active but still
+  insufficient
+- under current `ov5675` limits, the direct remote-line mapping question is
+  now largely exhausted
+- `exp17` is now the next direct branch, re-testing later PMIC-side `BIT(0)`
+  behavior only on top of the clean remote-line mapping
 
 ### 17. Clean daisy-chain plus targeted `BIT(0)` re-test
 
@@ -808,8 +818,8 @@ replace the boot log and it does not make claims it cannot support.
 
 ## Current interpretation
 
-Use the implemented wrappers and the staged remaining branch tail according to
-the current evidence:
+Use the implemented wrappers and the staged remaining `exp17` follow-up
+according to the current evidence:
 
 1. Keep `exp10` as the best verified PMIC state when you need the cleanest
    current branch.
@@ -826,9 +836,12 @@ the current evidence:
 6. Treat `exp15` as completed evidence, not as a future branch.
    - it proved `GPIO7` is active
    - it also proved `GPIO7` alone is insufficient
-7. Run `exp16` next as the first two-line remote approximation.
-8. Run `exp17` as the explicit PMIC-side follow-up after carrying forward the
-   cleanest `exp16` branch.
+7. Treat `exp16` as completed evidence, not as a future branch.
+   - it proved the current two-line approximation drives both remote lines
+   - it also proved that combined remote-line activity still stays flat at
+     `-121`
+8. Run `exp17` next as the explicit PMIC-side follow-up after carrying
+   forward the cleanest `exp16` branch.
 9. Use `exp1` through `exp9` as the historical evidence chain that narrowed
    the problem to `S_I2C_CTL` behavior and competing GPIO interpretations.
 

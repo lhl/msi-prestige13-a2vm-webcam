@@ -2,6 +2,55 @@
 
 ## 2026-03-11
 
+### Review `exp16` and confirm the two-line approximation is active but insufficient
+
+- Plan: inspect the first real `exp16` update and clean-boot verification
+  artifacts, determine whether the best current-driver `GPIO9` / `GPIO7`
+  approximation changes the failure shape, and update the next-step docs if
+  the remote-line mapping question is now exhausted under current `ov5675`
+  limits.
+- Commands:
+  - reviewed:
+    - `runs/2026-03-11/20260311T202133-ms13q3-daisy-chain-gpio7-gpio9-approx-update/metadata.env`
+    - `runs/2026-03-11/20260311T202133-ms13q3-daisy-chain-gpio7-gpio9-approx-update/action.log`
+    - `runs/2026-03-11/20260311T202258-snapshot-exp16-clean-boot/focused-summary.txt`
+    - `runs/2026-03-11/20260311T202258-snapshot-exp16-clean-boot/experiment-journal.txt`
+    - `runs/2026-03-11/20260311T202258-snapshot-exp16-clean-boot/pmic-reg-dump.txt`
+    - `reference/patches/ms13q3-daisy-chain-gpio7-gpio9-approx-v1.patch`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `README.md`
+    - `docs/README.md`
+    - `docs/webcam-status.md`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+  - refreshed:
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/README.md`
+    - `docs/webcam-status.md`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+- Result:
+  - `exp16` is positive for combined remote-line activation, but negative as a
+    direct fix
+  - Linux actively drove both remote lines under the clean daisy-chain branch:
+    - `exp16_daisy: set-after gpio.7 ... sgpo=0x01`
+    - `exp16_daisy: set-after gpio.9 ... sgpo=0x05`
+  - the `GPIO1` / `GPIO2` daisy-chain isolation from `exp13` stayed intact:
+    - `exp16_daisy: probe-after gpio.1 ... ctl=0x00`
+    - `exp16_daisy: probe-after gpio.2 ... ctl=0x00`
+  - the clean-boot sensor result still did not improve:
+    - `chip id read attempt 1/5 failed: -121`
+    - `...`
+    - `chip id read attempt 5/5 failed: -121`
+    - `failed to find sensor: -121`
+  - the verify-side PMIC dump returned `ERROR` for all registers again
+  - the next question is no longer whether the current remote-line mapping is
+    missing one more GPIO under current driver limits; it is whether `exp17`
+    changes anything before deeper consumer-model or timing work
+
 ### Review `exp15` and confirm that `GPIO7` is active but insufficient
 
 - Plan: inspect the first real `exp15` update and clean-boot verification
