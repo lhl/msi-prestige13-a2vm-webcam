@@ -5,27 +5,27 @@ the MSI Prestige 13 AI+ Evo A2VMG / A2VM family.
 
 ## Current Status
 
-**The webcam works on Linux.** Live preview, JPEG snapshots, and a
-normal-app-facing v4l2loopback device are all functional.
+**The webcam works on Linux, including in Chrome/browsers.**
 
 ```bash
 # Live preview window
-./scripts/webcam-preview.sh
+./scripts/webcam-preview.sh --gain 800
 
-# Feed a standard /dev/video42 webcam device for other apps
+# Browser-ready webcam at 1280x720 (run this, then open Chrome)
+./scripts/webcam-preview.sh --browser --gain 800
+
+# Feed a standard /dev/video42 webcam device at full resolution
 ./scripts/webcam-preview.sh --loopback
-
-# Boost brightness for indoor use (gain defaults are very low)
-v4l2-ctl -d /dev/v4l-subdev4 -c analogue_gain=800
 ```
 
 See [`docs/webcam-usage.md`](./docs/webcam-usage.md) for the full usage guide
-including exposure/gain tuning and manual pipeline setup.
+including exposure/gain tuning, browser setup, and manual pipeline details.
 
 - **Requires**: kernel branch `exp18` (7.0.0-rc2 + 4-patch stack),
-  `gstreamer` + `gst-plugins-bad`, `v4l-utils`, optionally `v4l2loopback-dkms`
-- **Working**: live preview, v4l2loopback bridge (`/dev/video42`), JPEG
-  capture, raw Bayer streaming at 2592x1944 30fps, manual exposure/gain control
+  `gstreamer` + `gst-plugins-bad`, `v4l-utils`, `v4l2loopback-dkms`
+- **Working**: live preview, Chrome/browser WebRTC via `--browser` mode,
+  v4l2loopback bridge (`/dev/video42`), JPEG capture, raw Bayer streaming at
+  2592x1944 30fps, manual exposure/gain control
 - **Not yet working**: direct `/dev/video0` plug-and-play with standard apps,
   auto-exposure/AWB, `cheese`, `libcamera` (untested/uninstalled)
 - Technical details: [`docs/webcam-status.md`](./docs/webcam-status.md)

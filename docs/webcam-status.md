@@ -20,6 +20,9 @@ exposure/gain tuning.
 - **v4l2loopback bridge**: `./scripts/webcam-preview.sh --loopback` feeds
   `/dev/video42` as a standard YUYV webcam that `ffmpeg`, `mpv`, GStreamer,
   and other V4L2 consumers can open
+- **Browser / Chrome webcam**: `./scripts/webcam-preview.sh --browser` outputs
+  1280x720 YUYV to `/dev/video42`, which Chrome picks up via PipeWire as
+  "MSI Webcam Bridge" — confirmed working for WebRTC
 - **Snapshot capture**: `./scripts/webcam-preview.sh --snapshot photo.jpg`
 - **Exposure/gain control**: analogue gain (128-2047) and digital gain
   (1024-4095) on `/dev/v4l-subdev4`; the image is dark at defaults because
@@ -29,12 +32,6 @@ exposure/gain tuning.
 
 ### What does not work yet
 
-- **Browser / Chrome webcam**: not working. Chrome uses PipeWire via the XDG
-  Desktop Portal for camera access, not V4L2 directly. The default loopback
-  output (2592x1944) is also not a standard webcam resolution — browsers
-  expect 640x480, 1280x720, or 1920x1080. A `--browser` flag now exists on
-  `webcam-preview.sh` that outputs 1280x720, but this has not been confirmed
-  working with Chrome yet. See `docs/webcam-usage.md` for details.
 - Direct plug-and-play usage from `/dev/video0` (apps like `ffmpeg`/`mpv`
   cannot open it directly — they need the loopback bridge)
 - Auto-exposure / auto-white-balance (manual gain adjustment required)

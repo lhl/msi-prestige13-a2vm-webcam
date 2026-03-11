@@ -120,23 +120,20 @@ Portal, not V4L2 directly. The path is:
 Browser -> xdg-desktop-portal -> PipeWire -> camera source
 ```
 
-**Current status: not yet working.** Chrome does not currently see the webcam.
-The likely issues are:
+**Current status: working.** Chrome sees the webcam when the bridge is running
+in `--browser` mode.
 
-1. The default `--loopback` output is 2592x1944, which is not a standard webcam
-   resolution. Browsers expect modes like 640x480, 1280x720, or 1920x1080.
-2. PipeWire may not be picking up `/dev/video42` as a camera source.
-
-Use the `--browser` flag to output at 1280x720, which is the most
-browser-friendly resolution:
+The default `--loopback` output (2592x1944) is rejected by browsers — they
+expect standard resolutions like 640x480, 1280x720, or 1920x1080. The
+`--browser` flag outputs 1280x720, which Chrome accepts.
 
 ```bash
-./scripts/webcam-preview.sh --browser
+# Start the bridge at 1280x720 (keep running while using the browser)
+./scripts/webcam-preview.sh --browser --gain 800
 ```
 
-Then test whether Chrome sees the device. If PipeWire needs additional
-configuration, that is a separate step — see the "Remaining Work" section
-in `docs/webcam-status.md`.
+Then open Chrome and go to any WebRTC site or `chrome://settings/content/camera`
+to select "MSI Webcam Bridge".
 
 ### Future: libcamera
 
@@ -156,4 +153,3 @@ installed on this machine.
 - `ffmpeg` and `mpv` cannot open `/dev/video0` directly (Broken pipe at
   STREAMON); use the v4l2loopback bridge instead
 - `cheese` does not work (tested, did not produce video)
-- Chrome/browser webcam access is not yet working (see above)
