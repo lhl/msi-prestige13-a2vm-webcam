@@ -1,0 +1,54 @@
+CMD: v4l2-ctl --list-formats-ext -d /dev/video0
+ioctl: VIDIOC_ENUM_FMT
+	Type: Video Capture
+
+	[0]: 'BG12' (12-bit Bayer BGBG/GRGR)
+		Size: Stepwise 2x2 - 8160x8190 with step 2/2
+	[1]: 'GB12' (12-bit Bayer GBGB/RGRG)
+		Size: Stepwise 2x2 - 8160x8190 with step 2/2
+	[2]: 'BA12' (12-bit Bayer GRGR/BGBG)
+		Size: Stepwise 2x2 - 8160x8190 with step 2/2
+	[3]: 'RG12' (12-bit Bayer RGRG/GBGB)
+		Size: Stepwise 2x2 - 8160x8190 with step 2/2
+	[4]: 'BG10' (10-bit Bayer BGBG/GRGR)
+		Size: Stepwise 2x2 - 8160x8190 with step 2/2
+	[5]: 'GB10' (10-bit Bayer GBGB/RGRG)
+		Size: Stepwise 2x2 - 8160x8190 with step 2/2
+	[6]: 'BA10' (10-bit Bayer GRGR/BGBG)
+		Size: Stepwise 2x2 - 8160x8190 with step 2/2
+	[7]: 'RG10' (10-bit Bayer RGRG/GBGB)
+		Size: Stepwise 2x2 - 8160x8190 with step 2/2
+	[8]: 'BA81' (8-bit Bayer BGBG/GRGR)
+		Size: Stepwise 2x2 - 8160x8190 with step 2/2
+	[9]: 'GBRG' (8-bit Bayer GBGB/RGRG)
+		Size: Stepwise 2x2 - 8160x8190 with step 2/2
+	[10]: 'GRBG' (8-bit Bayer GRGR/BGBG)
+		Size: Stepwise 2x2 - 8160x8190 with step 2/2
+	[11]: 'RGGB' (8-bit Bayer RGRG/GBGB)
+		Size: Stepwise 2x2 - 8160x8190 with step 2/2
+	[12]: 'pBCC' (12-bit Bayer BGBG/GRGR Packed)
+		Size: Stepwise 2x2 - 8160x8190 with step 2/2
+	[13]: 'pGCC' (12-bit Bayer GBGB/RGRG Packed)
+		Size: Stepwise 2x2 - 8160x8190 with step 2/2
+	[14]: 'pgCC' (12-bit Bayer GRGR/BGBG Packed)
+		Size: Stepwise 2x2 - 8160x8190 with step 2/2
+	[15]: 'pRCC' (12-bit Bayer RGRG/GBGB Packed)
+		Size: Stepwise 2x2 - 8160x8190 with step 2/2
+	[16]: 'pBAA' (10-bit Bayer BGBG/GRGR Packed)
+		Size: Stepwise 2x2 - 8160x8190 with step 2/2
+	[17]: 'pGAA' (10-bit Bayer GBGB/RGRG Packed)
+		Size: Stepwise 2x2 - 8160x8190 with step 2/2
+	[18]: 'pgAA' (10-bit Bayer GRGR/BGBG Packed)
+		Size: Stepwise 2x2 - 8160x8190 with step 2/2
+	[19]: 'pRAA' (10-bit Bayer RGRG/GBGB Packed)
+		Size: Stepwise 2x2 - 8160x8190 with step 2/2
+	[20]: 'UYVY' (UYVY 4:2:2)
+		Size: Stepwise 2x2 - 8160x8190 with step 2/2
+	[21]: 'YUYV' (YUYV 4:2:2)
+		Size: Stepwise 2x2 - 8160x8190 with step 2/2
+	[22]: 'RGBP' (16-bit RGB 5-6-5)
+		Size: Stepwise 2x2 - 8160x8190 with step 2/2
+	[23]: 'BGR3' (24-bit BGR 8-8-8)
+		Size: Stepwise 2x2 - 8160x8190 with step 2/2
+
+EXIT_STATUS: 0

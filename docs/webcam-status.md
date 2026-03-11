@@ -39,9 +39,15 @@ the remaining blocker is now much narrower:
   - the old timeout storm did not return
   - the media graph gained `ov5675 10-0036` linked into `Intel IPU7 CSI2 0`
   - the verify-side PMIC dump still came back all `ERROR`
+- `exp19` then proved the first raw userspace stream gets past sensor bind but
+  still fails later in the capture path:
+  - `/dev/video0` opens cleanly
+  - buffer setup and queueing succeed
+  - `VIDIOC_STREAMON` fails with `Link has been severed`
+  - the raw output file stays at `0` bytes
 
 That means the webcam is no longer blocked at basic sensor wake-up. The next
-question is end-to-end capture and userspace behavior on the first positive
+question is why the first userspace `STREAMON` fails on the first positive
 standard-`VSIO` branch.
 
 For the full March 9 review, see `docs/20260309-status-report.md`.
@@ -73,7 +79,11 @@ The current best local branch is now past the old sensor-bind failure:
 - `/dev/video0` through `/dev/video31` are present as `ipu7` capture nodes
 
 What is still missing is end-to-end proof that userspace can actually stream
-frames on that branch.
+frames on that branch. The first direct attempt now fails this way:
+
+- `VIDIOC_STREAMON returned -1 (Link has been severed)`
+- raw output size: `0` bytes
+- no new matching kernel journal lines appeared during the capture attempt
 
 Functional consequences:
 
@@ -526,11 +536,15 @@ What now looks most likely:
    - standard `VSIO` now reads back cleanly as `0x03`
    - the old timeout storm does not return
    - the media graph now includes `ov5675 10-0036`
-2. Stage and run `exp19`, or run `scripts/04-userspace-capture-check.sh`
-   directly, to validate raw userspace streaming on `/dev/video0`.
-3. Fix or replace the post-boot PMIC dump path so we can see real register
+2. Treat `exp19` as completed evidence.
+   - the first raw `/dev/video0` stream reached `VIDIOC_STREAMON`
+   - `VIDIOC_STREAMON` failed with `Link has been severed`
+   - the raw output file stayed empty
+3. Investigate whether that severed-link failure is caused by missing media
+   routing or format setup, or by a deeper `isys` capture-path gap.
+4. Fix or replace the post-boot PMIC dump path so we can see real register
    state after a successful sensor bind.
-4. Extract the higher-level Windows config path that feeds `WF::SetConf` and
+5. Extract the higher-level Windows config path that feeds `WF::SetConf` and
    selects `WF` versus `UF`.
 5. Avoid spending more time on blind `GPIO1` / `GPIO2` permutations.
    - `exp13` retired the reclaim question

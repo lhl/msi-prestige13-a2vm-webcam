@@ -2,6 +2,48 @@
 
 ## 2026-03-11
 
+### Record `exp19` userspace-capture result
+
+- Plan: capture the first real `exp19` outcome, update the control docs to say
+  whether the now-positive `exp18` branch can actually stream from userspace,
+  and record the precise failure shape if the first `v4l2-ctl` attempt still
+  stops short of real frames.
+- Commands:
+  - reviewed:
+    - `runs/2026-03-11/20260311T223549-ms13q3-userspace-capture-validation-update/metadata.env`
+    - `runs/2026-03-11/20260311T223549-ms13q3-userspace-capture-validation-update/action.log`
+    - `runs/2026-03-11/20260311T223717-snapshot-exp19-userspace-capture/focused-summary.txt`
+    - `runs/2026-03-11/20260311T223717-snapshot-exp19-userspace-capture/experiment-journal.txt`
+    - `runs/2026-03-11/20260311T223717-snapshot-exp19-userspace-capture/post/media-ctl-media0.txt`
+    - `runs/2026-03-11/20260311T223717-snapshot-exp19-userspace-capture/post/journal-relevant.txt`
+    - `runs/2026-03-11/20260311T223717-snapshot-exp19-userspace-capture/userspace-capture/video0-stream.txt`
+    - `runs/2026-03-11/20260311T223717-snapshot-exp19-userspace-capture/userspace-capture/video0-all.txt`
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/webcam-status.md`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+  - refreshed:
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/webcam-status.md`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+- Result:
+  - `exp19` is negative, but high-signal
+  - the positive `exp18` branch really does survive into userspace:
+    - `ov5675 10-0036` remains linked into `Intel IPU7 CSI2 0`
+    - `/dev/video0` opens cleanly
+    - buffer allocation and queueing succeed
+  - the first raw stream still fails at the actual capture start:
+    - `VIDIOC_STREAMON returned -1 (Link has been severed)`
+    - the raw output file stayed at `0` bytes
+  - no matching kernel journal lines were emitted during the capture attempt
+  - the remaining blocker is now a `STREAMON`-time capture-path problem, not
+    first sensor bind or PMIC `VSIO` safety
+
 ### Stage `exp19` as the first userspace-capture validation
 
 - Plan: shift the next experiment away from PMIC dump visibility and toward

@@ -1,0 +1,23 @@
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: enabling device (0000 -> 0002)
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Device 0x645d (rev: 0x4)
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 PCI BAR0 base 0x0000003014000000 BAR2 base 0x0000003016336000
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 PCI BAR0 mapped at 00000000cc0e9568
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 SKU 0 in secure mode mask 0x0
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: firmware cpd file: intel/ipu/ipu7_fw.bin
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: FW binary0 info:
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Name:  psys
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Version:  1.1.9.240627135220
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Timestamp:  build_id:331942702
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Commit:  commit_id:d84f5c35
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: FW binary1 info:
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Name:  isys
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Version:  1.1.9.240627135318
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Timestamp:  build_id:3823931988
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Commit:  commit_id:d84f5c35
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Connected 1 cameras
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Sending BOOT_LOAD to CSE
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Sending AUTHENTICATE_RUN to CSE
+Mar 11 22:36:54 p13 kernel: ov5675 i2c-OVTI5675:00: resolved xvclk provider via common clock framework at 19200000 Hz
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: CSE authenticate_run done
+Mar 11 22:36:54 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: bind ov5675 10-0036 nlanes is 2 port is 0

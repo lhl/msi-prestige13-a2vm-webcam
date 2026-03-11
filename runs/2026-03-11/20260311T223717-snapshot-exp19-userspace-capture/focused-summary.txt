@@ -1,0 +1,123 @@
+Source: scripts/04-userspace-capture-check.sh
+Purpose: capture the first userspace streaming result on the positive exp18 branch
+
+Capture start time:
+2026-03-11 22:37:19
+
+Userspace capture target:
+video_device=/dev/video0
+media_device=/dev/media0
+stream_count=4
+stream_buffers=4
+stream_timeout_s=20
+raw_output=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-11/20260311T223717-snapshot-exp19-userspace-capture/userspace-capture/video0-stream.raw
+
+High-level result:
+no confirmed userspace frames captured
+
+Selected media-graph lines:
+            device node name /dev/video0
+		<- "Intel IPU7 CSI2 0":1 []
+		<- "Intel IPU7 CSI2 0":2 []
+		<- "Intel IPU7 CSI2 0":3 []
+		<- "Intel IPU7 CSI2 0":4 []
+		<- "Intel IPU7 CSI2 0":5 []
+		<- "Intel IPU7 CSI2 0":6 []
+		<- "Intel IPU7 CSI2 0":7 []
+		<- "Intel IPU7 CSI2 0":8 []
+- entity 129: Intel IPU7 CSI2 0 (9 pads, 9 links, 0 routes)
+              device node name /dev/v4l-subdev0
+		<- "ov5675 10-0036":0 [ENABLED,IMMUTABLE]
+- entity 233: ov5675 10-0036 (1 pad, 1 link, 0 routes)
+		-> "Intel IPU7 CSI2 0":0 [ENABLED,IMMUTABLE]
+
+Current v4l-subdev nodes:
+/dev/v4l-subdev0
+/dev/v4l-subdev1
+/dev/v4l-subdev2
+/dev/v4l-subdev3
+/dev/v4l-subdev4
+
+Selected V4L2 node lines:
+	Driver name      : isys
+	Card type        : ipu7
+	Capabilities     : 0xa4200001
+		Device Capabilities
+	Driver name      : intel-ipu7
+Entity Info:
+	Name             : Intel IPU7 ISYS Capture 0
+Video input : 0 (Intel IPU7 ISYS Capture 0: ok)
+	Width/Height      : 1920/1080
+	Pixel Format      : 'BG12' (12-bit Bayer BGBG/GRGR)
+	Size Image        : 4151040
+
+Stream exit status:
+0
+
+Raw capture size bytes:
+0
+
+Stream log:
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-11/20260311T223717-snapshot-exp19-userspace-capture/userspace-capture/video0-stream.txt
+
+Stream log tail:
+CMD: timeout 20s v4l2-ctl -d /dev/video0 --stream-mmap=4 --stream-count=4 --stream-poll --stream-to=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-11/20260311T223717-snapshot-exp19-userspace-capture/userspace-capture/video0-stream.raw --verbose
+		VIDIOC_REQBUFS returned 0 (Success)
+		VIDIOC_CREATE_BUFS returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_G_FMT returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_STREAMON returned -1 (Link has been severed)
+VIDIOC_QUERYCAP: ok
+
+EXIT_STATUS: 0
+
+Kernel journal lines since capture start:
+(none matched)
+
+Raw capture first 64 bytes:
+(raw capture file missing or empty)
+
+Experiment workflow:
+id: exp19
+title: MS-13Q3 userspace capture validation on exp18 branch
+doc: docs/pmic-followup-experiments.md
+default patch: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ms13q3-daisy-chain-standard-vsio-v1.patch
+recorded patch: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ms13q3-daisy-chain-standard-vsio-v1.patch
+
+Experiment-specific boot lines (Found supported sensor|Connected 1 cameras|sensor identified on attempt|failed to find sensor|probe with driver ov5675 failed|ov5675|intel-ipu7|v4l-subdev):
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: enabling device (0000 -> 0002)
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Device 0x645d (rev: 0x4)
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 PCI BAR0 base 0x0000003014000000 BAR2 base 0x0000003016336000
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 PCI BAR0 mapped at 00000000cc0e9568
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: IPU7 SKU 0 in secure mode mask 0x0
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: firmware cpd file: intel/ipu/ipu7_fw.bin
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: FW binary0 info:
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Name:  psys
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Version:  1.1.9.240627135220
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Timestamp:  build_id:331942702
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Commit:  commit_id:d84f5c35
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: FW binary1 info:
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Name:  isys
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Version:  1.1.9.240627135318
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Timestamp:  build_id:3823931988
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Commit:  commit_id:d84f5c35
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Connected 1 cameras
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Sending BOOT_LOAD to CSE
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: Sending AUTHENTICATE_RUN to CSE
+Mar 11 22:36:54 p13 kernel: ov5675 i2c-OVTI5675:00: resolved xvclk provider via common clock framework at 19200000 Hz
+Mar 11 22:36:54 p13 kernel: intel-ipu7 0000:00:05.0: CSE authenticate_run done
+Mar 11 22:36:54 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: bind ov5675 10-0036 nlanes is 2 port is 0
+
+Userspace capture artifacts:
+capture_dir=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-11/20260311T223717-snapshot-exp19-userspace-capture/userspace-capture
+stream_log=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-11/20260311T223717-snapshot-exp19-userspace-capture/userspace-capture/video0-stream.txt
+raw_output=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-11/20260311T223717-snapshot-exp19-userspace-capture/userspace-capture/video0-stream.raw
+capture_journal=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-11/20260311T223717-snapshot-exp19-userspace-capture/userspace-capture/journal-since-capture.txt

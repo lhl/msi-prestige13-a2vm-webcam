@@ -5,7 +5,7 @@ Updated: 2026-03-11
 This note turns the current ordered PMIC follow-up list into repeatable
 update-and-verify workflows.
 
-As of the completed `2026-03-11` `exp18` follow-up and the staged `exp19`
+As of the completed `2026-03-11` `exp18` follow-up and the completed `exp19`
 capture/userspace validation:
 
 - `exp1` through `exp18` are completed historical experiments
@@ -13,8 +13,12 @@ capture/userspace validation:
   - stock regulator-side `VSIO` enable read back cleanly as `0x03`
   - the old timeout storm did not return
   - the media graph gained `ov5675 10-0036`
-- `exp19` reuses that exact `exp18` patch and shifts the next check to raw
-  userspace capture instead of more PMIC-state guessing
+- `exp19` reused that exact `exp18` patch and answered the first raw userspace
+  capture question:
+  - `/dev/video0` opened cleanly
+  - buffer allocation and queueing succeeded
+  - `VIDIOC_STREAMON` failed with `Link has been severed`
+  - the raw output file stayed at `0` bytes
 - `exp10` remains the best older PMIC control baseline
 - `exp11` was the first late-phase `BIT(0)` experiment and came back negative
 - `exp12` was the first Antti-inspired daisy-chain cross-check and came back
@@ -882,8 +886,11 @@ Implemented workflow shape:
   - relevant kernel log lines since the capture started
 
 Current status:
-- staged on `2026-03-11`
-- not run yet
+- completed on `2026-03-11`
+- update run:
+  - `runs/2026-03-11/20260311T223549-ms13q3-userspace-capture-validation-update/`
+- verify run:
+  - `runs/2026-03-11/20260311T223717-snapshot-exp19-userspace-capture/`
 
 Minimum useful success:
 - `v4l2-ctl --stream-mmap` completes and writes a non-empty raw file
@@ -895,6 +902,26 @@ Useful negative:
 - that would narrow the remaining blocker to capture-path configuration,
   permissions, or userspace-facing driver behavior rather than first sensor
   bind
+
+Observed outcome:
+- negative, but high-signal
+- the media graph still showed `ov5675 10-0036` linked into
+  `Intel IPU7 CSI2 0`
+- `/dev/video0` still reported capture and streaming capability
+- `VIDIOC_REQBUFS`, `VIDIOC_CREATE_BUFS`, `VIDIOC_QUERYBUF`, `VIDIOC_G_FMT`,
+  and all four `VIDIOC_QBUF` calls succeeded
+- `VIDIOC_STREAMON` then failed with `Link has been severed`
+- `v4l2-ctl` exited `0` anyway, but the raw output file stayed at `0` bytes
+- no matching kernel journal lines were emitted during the capture attempt
+
+Interpretation:
+- `exp19` proves the current blocker is no longer first bind or basic node
+  presence
+- the remaining gap is now in the actual capture path:
+  - media routing or format setup
+  - userspace-facing `isys` behavior
+  - or a deeper `STREAMON`-time pipeline requirement that current userspace is
+    not satisfying
 
 ## Typical usage
 
@@ -976,10 +1003,10 @@ and the completed `exp18` follow-up according to the current evidence:
    - standard `VSIO` now reads back cleanly as `0x03`
    - the old timeout storm does not return
    - the media graph now contains `ov5675 10-0036`
-2. Stage and run `exp19` as the first capture/userspace validation step on top
-   of that branch.
-   - use `scripts/04-userspace-capture-check.sh`
-   - default to `/dev/video0`
+2. Treat `exp19` as completed evidence.
+   - `/dev/video0` opened and queued buffers successfully
+   - `VIDIOC_STREAMON` failed with `Link has been severed`
+   - the raw output file stayed empty
 3. Treat `exp11` as a completed negative, not as a baseline.
 4. Treat `exp12` as a completed negative that proved the current `GPIO1` /
    `GPIO2` lookup model immediately collides with Antti-style daisy-chain
@@ -1007,8 +1034,8 @@ and the completed `exp18` follow-up according to the current evidence:
    - the verify-side PMIC dump still came back all `ERROR`
 11. Use `exp1` through `exp9` as the historical evidence chain that narrowed
    the problem to `S_I2C_CTL` behavior and competing GPIO interpretations.
-12. Treat PMIC dump visibility as secondary until the `exp19` capture result is
-    known.
+12. Treat PMIC dump visibility as secondary to the new `STREAMON` failure
+    until the capture-path result is understood.
 
 That ordering still matches the current source-backed assessment in:
 

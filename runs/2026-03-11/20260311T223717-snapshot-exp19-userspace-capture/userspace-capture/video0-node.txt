@@ -1,0 +1,4 @@
+CMD: ls -l /dev/video0
+crw-rw----+ 1 root video 81, 0 Mar 11 22:37 /dev/video0
+
+EXIT_STATUS: 0

@@ -1,0 +1,8 @@
+CMD: git_safe status --short
+?? runs/2026-03-11/20260311T212552-ms13q3-daisy-chain-standard-vsio-update/
+?? runs/2026-03-11/20260311T213322-ms13q3-daisy-chain-standard-vsio-update/
+?? runs/2026-03-11/20260311T222537-ms13q3-userspace-capture-validation-update/
+?? runs/2026-03-11/20260311T223549-ms13q3-userspace-capture-validation-update/
+?? runs/2026-03-11/20260311T223717-snapshot-exp19-userspace-capture/
+
+EXIT_STATUS: 0

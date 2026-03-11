@@ -31,7 +31,9 @@ with strong evidence.
   - the media graph gained `ov5675 10-0036`
   - `/dev/v4l-subdev0` now exists
 - the remaining blocker is no longer first sensor bind:
-  - there is still no recorded successful userspace capture from `/dev/video*`
+  - the first raw `/dev/video0` stream now fails at `VIDIOC_STREAMON` with
+    `Link has been severed`
+  - the raw output file stays at `0` bytes
   - the post-boot PMIC dump path still returns `ERROR` for every register
 - completed negative branches:
   - `GPIO1` / `GPIO2` role swap
@@ -126,19 +128,22 @@ with strong evidence.
   - the current-driver two-line `GPIO9` / `GPIO7` approximation is active,
     but still insufficient
   - the late clean-branch `BIT(0)` re-test is safe, but still insufficient
-  - `exp18` proved standard `VSIO` is safe once the clean daisy-chain branch
-    is in place
-  - the next high-value discriminator is whether userspace can actually stream
-    from the positive `exp18` branch
+- `exp18` proved standard `VSIO` is safe once the clean daisy-chain branch
+  is in place
+- `exp19` proved the first userspace stream fails later at `STREAMON`, not at
+  sensor bind
+- the next high-value discriminator is whether that severed-link failure is
+  caused by missing media setup or by a deeper capture-path gap
 
 ## Workstreams
 
 ### 1. Capture and userspace validation
 
-- [ ] Stage and run `exp19` on top of the positive `exp18` patch.
-- [ ] Determine whether raw `v4l2-ctl` streaming on `/dev/video0` succeeds,
+- [x] Stage and run `exp19` on top of the positive `exp18` patch.
+- [x] Determine whether raw `v4l2-ctl` streaming on `/dev/video0` succeeds,
   times out, or fails with a userspace-visible pipeline error.
-- [ ] If raw capture succeeds, record the smallest repeatable userspace path.
+- [ ] Determine whether the `VIDIOC_STREAMON` `Link has been severed` failure
+  is caused by missing route/format setup or by a deeper capture-path gap.
 
 ### 2. Post-boot PMIC visibility
 
@@ -185,48 +190,50 @@ with strong evidence.
    - standard `VSIO` now reads back cleanly as `0x03`
    - the old timeout storm does not return
    - the media graph now contains `ov5675 10-0036`
-2. Stage and run `exp19` as the first capture/userspace validation on top of
-   that branch.
-   - use `scripts/04-userspace-capture-check.sh`
-   - default to `/dev/video0`
-3. Treat `exp12` as completed collision evidence, not as a direct test of
+2. Treat `exp19` as completed evidence.
+   - `/dev/video0` opened and queued buffers successfully
+   - `VIDIOC_STREAMON` failed with `Link has been severed`
+   - the raw output file stayed empty
+3. Investigate whether that severed-link failure is caused by missing media
+   routing or format setup, or by a deeper `isys` capture-path gap.
+4. Treat `exp12` as completed collision evidence, not as a direct test of
    Antti's working model.
-4. Treat `exp13` as completed evidence, not as the next branch to run.
+5. Treat `exp13` as completed evidence, not as the next branch to run.
    - it proved Linux can leave `GPIO1` / `GPIO2` in Antti-style
      daisy-chain input mode for the observed probe window
    - it did not improve the flat repeated `-121` chip-ID failure
-5. Treat `exp14` as completed evidence, not as the next branch to run.
+6. Treat `exp14` as completed evidence, not as the next branch to run.
    - it proved `GPIO9` is active
    - it also proved `GPIO9` alone is insufficient
-6. Treat `exp15` as completed evidence, not as the next branch to run.
+7. Treat `exp15` as completed evidence, not as the next branch to run.
    - it proved `GPIO7` is active
    - it also proved `GPIO7` alone is insufficient
-7. Treat `exp16` as completed evidence, not as the next branch to run.
+8. Treat `exp16` as completed evidence, not as the next branch to run.
    - it proved the current two-line approximation drives both remote lines
    - it also proved that combined remote-line activity still stays flat at
      repeated `-121`
-8. Treat `exp17` as completed evidence, not as a future branch.
+9. Treat `exp17` as completed evidence, not as a future branch.
    - it proved the clean remote-line branch can tolerate one later
      `S_I2C_CTL BIT(0)` assertion
    - the observed late write read back cleanly as `0x03`
    - the sensor still stayed flat at repeated `-121`
    - the old timeout storm did not return
-9. Treat `exp18` as completed evidence, not as a future branch.
+10. Treat `exp18` as completed evidence, not as a future branch.
    - standard regulator-side `VSIO` enable read back cleanly as `0x03`
    - the old timeout storm did not return
    - the media graph gained `ov5675 10-0036` linked to `Intel IPU7 CSI2 0`
    - the verify-side PMIC dump still came back all `ERROR`
-10. Treat post-boot PMIC visibility as secondary until the capture result is
-    known.
-11. Fix or replace the post-boot PMIC dump path so PMIC state remains visible
+11. Treat post-boot PMIC visibility as secondary to the new `STREAMON`
+    failure until the capture-path result is understood.
+12. Fix or replace the post-boot PMIC dump path so PMIC state remains visible
     after a successful sensor bind.
-12. Keep using:
+13. Keep using:
    - `scripts/patch-kernel.sh`
    - `scripts/exp*-*-update.sh`
    - `scripts/exp*-*-verify.sh`
    - `scripts/01-clean-boot-check.sh`
    to keep evidence reproducible
-13. Keep the broader Windows config-path and any remaining Antti-parity cleanup
+14. Keep the broader Windows config-path and any remaining Antti-parity cleanup
     questions open, but do not let them delay capture validation on the now
     positive `exp18` branch.
 
@@ -236,9 +243,9 @@ with strong evidence.
   PMIC readback collapses to `-110`?
 - With `exp13` proving no reclaim, why does the clean daisy-chain-isolated
   branch still end at flat repeated `-121` chip-ID failures?
-- Now that `exp18` binds `ov5675` into the media graph, does raw userspace
-  streaming on `/dev/video0` succeed, or does the remaining blocker sit in the
-  capture path, pipeline configuration, or userspace-facing driver behavior?
+- Why does raw `/dev/video0` capture now reach `VIDIOC_STREAMON` but fail there
+  with `Link has been severed` while the media graph still shows
+  `ov5675 10-0036` linked into `Intel IPU7 CSI2 0`?
 - Where, if anywhere, does this board actually want the later `BIT(0)`
   transition once the regulator-phase PMIC/I2C path is already healthy and one
   late `sensor-gpio.9` write can already read back as `0x03`?
