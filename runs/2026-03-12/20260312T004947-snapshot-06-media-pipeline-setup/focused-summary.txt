@@ -1,0 +1,92 @@
+Source: scripts/06-media-pipeline-setup.sh
+Purpose: test whether explicit media-ctl route/link/format setup removes the STREAMON severed-link failure
+
+Setup start time:
+2026-03-12 00:49:48
+
+Pipeline configuration:
+media_device=/dev/media0
+video_device=/dev/video0
+csi2_entity=Intel IPU7 CSI2 0
+sensor_entity=ov5675 10-0036
+capture_entity=Intel IPU7 ISYS Capture 0
+sensor_format=SGRBG10_1X10/2592x1944
+node_pixel_format=BA10
+stream_count=4
+stream_buffers=4
+stream_timeout_s=20
+
+Setup step results:
+step1_route:          exit=1  cmd: media-ctl -R "Intel IPU7 CSI2 0" [0/0 -> 1/0 [1]]
+step2_csi2_sink_fmt:  exit=0  cmd: media-ctl -V "Intel IPU7 CSI2 0":0/0 [fmt:SGRBG10_1X10/2592x1944]
+step3_csi2_src_fmt:   exit=0  cmd: media-ctl -V "Intel IPU7 CSI2 0":1/0 [fmt:SGRBG10_1X10/2592x1944]
+step4_link_enable:    exit=0  cmd: media-ctl -l "Intel IPU7 CSI2 0":1 -> "Intel IPU7 ISYS Capture 0":0 [1]
+step5_node_fmt:       exit=0  cmd: v4l2-ctl --set-fmt-video=width=2592,height=1944,pixelformat=BA10
+
+All setup steps succeeded: NO
+
+Post-setup link state:
+(link to Intel IPU7 ISYS Capture 0 not found as ENABLED in post-setup media graph)
+
+High-level capture result:
+stream command completed and wrote a non-empty raw file (40310784 bytes)
+
+Stream exit status:
+0
+
+Raw capture size bytes:
+40310784
+
+Stream log tail:
+		VIDIOC_REQBUFS returned 0 (Success)
+		VIDIOC_CREATE_BUFS returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_G_FMT returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_STREAMON returned 0 (Success)
+cap dqbuf: 0 seq:      0 bytesused: 10077696 ts: 7980.237470 field: None (ts-monotonic, ts-src-eof)
+cap dqbuf: 1 seq:      1 bytesused: 10077696 ts: 7980.270860 delta: 33.390 ms field: None (ts-monotonic, ts-src-eof)
+cap dqbuf: 2 seq:      2 bytesused: 10077696 ts: 7980.304250 delta: 33.390 ms field: None (ts-monotonic, ts-src-eof)
+cap dqbuf: 3 seq:      3 bytesused: 10077696 ts: 7980.337640 delta: 33.390 ms field: None (ts-monotonic, ts-src-eof)
+
+VIDIOC_QUERYCAP: ok
+
+EXIT_STATUS: 0
+
+Current v4l-subdev nodes:
+/dev/v4l-subdev0
+/dev/v4l-subdev1
+/dev/v4l-subdev2
+/dev/v4l-subdev3
+/dev/v4l-subdev4
+
+Kernel journal lines since setup start:
+Mar 12 00:49:49 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 00:49:49 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 00:49:49 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 00:49:49 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 00:49:49 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+
+Raw capture first 64 bytes:
+ 48 00 46 00 48 00 44 00 46 00 46 00 48 00 4a 00
+ 46 00 48 00 46 00 47 00 46 00 49 00 48 00 49 00
+ 4a 00 48 00 48 00 47 00 47 00 48 00 49 00 47 00
+ 49 00 48 00 49 00 48 00 48 00 47 00 47 00 48 00
+
+Artifacts:
+pipeline_dir=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T004947-snapshot-06-media-pipeline-setup/pipeline-setup
+pre_media=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T004947-snapshot-06-media-pipeline-setup/pipeline-setup/media-ctl-pre.txt
+post_media=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T004947-snapshot-06-media-pipeline-setup/pipeline-setup/media-ctl-post.txt
+route_log=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T004947-snapshot-06-media-pipeline-setup/pipeline-setup/step1-route.txt
+sink_fmt_log=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T004947-snapshot-06-media-pipeline-setup/pipeline-setup/step2-csi2-sink-fmt.txt
+src_fmt_log=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T004947-snapshot-06-media-pipeline-setup/pipeline-setup/step3-csi2-src-fmt.txt
+link_log=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T004947-snapshot-06-media-pipeline-setup/pipeline-setup/step4-link-enable.txt
+node_fmt_log=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T004947-snapshot-06-media-pipeline-setup/pipeline-setup/step5-node-fmt.txt
+stream_log=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T004947-snapshot-06-media-pipeline-setup/pipeline-setup/video0-stream.txt
+raw_output=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T004947-snapshot-06-media-pipeline-setup/pipeline-setup/video0-stream.raw

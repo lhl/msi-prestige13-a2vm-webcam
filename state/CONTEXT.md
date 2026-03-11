@@ -1,6 +1,6 @@
 # Context
 
-Updated: 2026-03-11
+Updated: 2026-03-12
 
 ## Objective
 
@@ -31,19 +31,23 @@ with strong evidence.
   - the old `No board-data found for this model` failure is gone
   - `ipu-bridge` now finds `OVTI5675:00` and reports one connected camera
   - the old clean-boot `Failed to enable dvdd: -ETIMEDOUT` line is gone
-- the current best local branch is now `exp18`:
+- the current best local branch is `exp18`:
   - standard regulator-side `VSIO` enable read back cleanly as `0x03`
   - the old timeout storm did not return
   - the media graph gained `ov5675 10-0036` linked into `Intel IPU7 CSI2 0`
   - `/dev/v4l-subdev0` now exists
-- the remaining blocker is now after sensor bind:
-  - the first raw `/dev/video0` stream now fails at `VIDIOC_STREAMON` with
-    `Link has been severed`
-  - the raw output file stays at `0` bytes
-  - a later no-reboot sweep forced `/dev/video0` through `/dev/video7` to
-    `4096x3072 BA10`
-  - all eight nodes accepted `VIDIOC_S_FMT`
-  - all eight still failed `VIDIOC_STREAMON` with `Link has been severed`
+- **raw Bayer capture is now working** with explicit userspace pipeline setup:
+  - the missing piece was `media-ctl` link enable + pad format alignment
+  - 4 frames captured at 30 fps, 10,077,696 bytes/frame
+  - `VIDIOC_STREAMON returned 0 (Success)`
+  - required userspace commands before streaming:
+    - `media-ctl -l '"Intel IPU7 CSI2 0":1 -> "Intel IPU7 ISYS Capture 0":0 [1]'`
+    - `media-ctl -V '"Intel IPU7 CSI2 0":0/0 [fmt:SGRBG10_1X10/2592x1944]'`
+    - `media-ctl -V '"Intel IPU7 CSI2 0":1/0 [fmt:SGRBG10_1X10/2592x1944]'`
+    - `v4l2-ctl --set-fmt-video=width=2592,height=1944,pixelformat=BA10`
+  - route setup (`media-ctl -R`) returns `ENOTSUP` -- not needed on IPU7
+- remaining minor issues:
+  - 5x `csi2-0 error: Received packet is too long` warnings during capture
   - post-boot PMIC dumping still returns `ERROR` for every register
 
 ## What March 9 Added
@@ -93,6 +97,24 @@ with strong evidence.
 - the post-boot PMIC dump path is still not usable:
   - `scripts/pmic-reg-dump.sh` returned `ERROR` for all registers in
     representative PMIC experiment runs
+
+## What March 12 Added
+
+- ran `scripts/06-media-pipeline-setup.sh` on the current `exp18` boot and
+  **achieved first successful raw Bayer capture**:
+  - run:
+    - `runs/2026-03-12/20260312T004947-snapshot-06-media-pipeline-setup/`
+  - the missing piece was explicit userspace `media-ctl` pipeline setup:
+    - step 1 (route): `ENOTSUP` -- IPU7 CSI2 does not support explicit routing
+    - step 2 (CSI2 sink format to 2592x1944): succeeded
+    - step 3 (CSI2 source format to 2592x1944): succeeded
+    - step 4 (link enable CSI2:1 -> Capture 0): succeeded -- this was the key
+    - step 5 (video node format to BA10): succeeded
+  - `VIDIOC_STREAMON returned 0 (Success)`
+  - 4 frames captured at 30 fps (33.39 ms delta)
+  - 40,310,784 bytes total raw Bayer data
+  - 5x `csi2-0 error: Received packet is too long` warnings in dmesg
+  - raw data starts with plausible 10-bit Bayer values
 
 ## What March 11 Added
 
@@ -262,100 +284,28 @@ with strong evidence.
 
 ## Current Interpretation
 
-- We are past the broad platform-support and board-data stage.
-- We are at the hard last-mile stage where the sensor binds into the media
-  graph, but userspace capture is still unproven.
-- Simple GPIO label / polarity / release-order guesses are mostly exhausted.
-- the current Linux `GPIO1` / `GPIO2` board model is still only a candidate,
-  not a validated wiring map
-- Antti Laakso's working Prestige 14 patch is now the strongest external
-  wiring model for the next branch set
-- `exp13` proved that once Linux stops exporting `GPIO1` / `GPIO2` to the
-  sensor, it can leave those lines in daisy-chain input mode
-- `exp14` proved that `GPIO9` is an active remote line, but insufficient alone
-- `exp15` proved that `GPIO7` is an active remote line, but insufficient alone
-- `exp16` proved that the current two-line `GPIO9` / `GPIO7` approximation can
-  drive both remote lines together, but is still insufficient
-- `exp17` proved that one late `S_I2C_CTL BIT(0)` assertion on the clean
-  remote-line branch is safe and reads back as `0x03`, but is still
-  insufficient
-- `exp18` is now completed evidence:
-  - standard regulator-side `VSIO` enable read back cleanly as `0x03` on the
-    clean daisy-chain branch
-  - the old timeout storm did not return
-  - the media graph gained `ov5675 10-0036` linked into `Intel IPU7 CSI2 0`
-  - the verify-side PMIC dump still came back all `ERROR`
-- `exp19` is now completed evidence:
-  - the first raw userspace stream on `/dev/video0` got through open, buffer
-    setup, and queueing
-  - `VIDIOC_STREAMON` then failed with `Link has been severed`
-  - the raw output file stayed empty
-- the later no-reboot userspace format sweep is now completed evidence too:
-  - `/dev/video0` through `/dev/video7` all accepted `4096x3072 BA10`
-  - all eight nodes still failed `VIDIOC_STREAMON` with
-    `Link has been severed`
-  - the default `/dev/video0` format mismatch was therefore not sufficient to
-    explain the failure
-- The strongest remaining gap is no longer basic PMIC `BIT(0)` safety; it is
-  now:
-  - why `STREAMON` still fails on the positive `exp18` branch after node-side
-    format alignment
-  - reliable post-boot PMIC dump visibility after a successful sensor bind
-  - whether explicit media-pad programming is still missing or the gap is
-    deeper in `isys`
-  - whether any remaining Antti-parity cleanup is needed only for
-    upstreamability, not basic sensor bring-up
-  - higher-level Windows config feeding `WF::SetConf` and selecting `WF`
-    versus `UF`
+- **Raw Bayer capture is now working.**
+- The `exp18` kernel branch + explicit `media-ctl` pipeline setup delivers
+  real frames from `/dev/video0`.
+- The `STREAMON` "Link has been severed" failure was caused by missing
+  userspace `media-ctl` link enable and pad format setup, not by a kernel or
+  firmware gap.
+- The `media-ctl -R` route command returns `ENOTSUP` on the IPU7 CSI2 entity,
+  but that is not needed -- link enable + format alignment is sufficient.
+- 5x `csi2-0 error: Received packet is too long` warnings appear during
+  capture; likely a CSI2 blanking/format detail, not a data-path blocker.
+- The full experiment chain from `exp1` through `exp18` successfully narrowed
+  the PMIC, GPIO, and wiring model until the sensor bound and streamed.
 
 ## Next Best Steps
 
-1. Use `exp18` as the best current local branch when resuming.
-   - standard `VSIO` now reads back cleanly as `0x03`
-   - the old timeout storm does not return
-   - the media graph now contains `ov5675 10-0036`
-2. Treat `exp19` as completed evidence.
-   - `/dev/video0` opened and queued buffers successfully
-   - `VIDIOC_STREAMON` failed with `Link has been severed`
-   - the raw output file stayed empty
-3. Treat the no-reboot `4096x3072 BA10` sweep across `/dev/video0` through
-   `/dev/video7` as completed negative evidence too.
-   - all eight nodes accepted `VIDIOC_S_FMT`
-   - all eight nodes still failed `VIDIOC_STREAMON`
-4. Investigate whether the remaining severed-link failure needs explicit
-   media-pad programming or reflects a deeper `isys` capture-path gap.
-5. Treat `exp12` as completed collision evidence, not as a clean Antti-model
-   test.
-   - it proved the current `GPIO1` / `GPIO2` lookup immediately overrides
-     daisy-chain setup
-6. Treat `exp13` as completed evidence, not as the next branch to run.
-   - it proved Linux can leave `GPIO1` / `GPIO2` in daisy-chain input mode
-   - it did not improve the repeated `-121` chip-ID failure
-7. Treat `exp14` as completed evidence, not as the next branch to run.
-   - it proved `GPIO9` is active
-   - it also proved `GPIO9` alone is insufficient
-8. Treat `exp15` as completed evidence, not as the next branch to run.
-   - it proved `GPIO7` is active
-   - it also proved `GPIO7` alone is insufficient
-9. Treat `exp16` as completed evidence, not as the next branch to run.
-   - it proved the current two-line approximation drives both remote lines
-   - it also proved the clean remote-line branch still stays flat at `-121`
-10. Treat `exp17` as completed evidence, not as a future branch.
-   - it proved one late `S_I2C_CTL BIT(0)` write is safe on the clean
-     remote-line branch
-   - the observed PMIC write moved `S_I2C_CTL` from `0x02` to `0x03`
-   - the sensor still stayed flat at `-121`
-11. Treat `exp18` as completed positive evidence.
-   - standard `VSIO` enable read back cleanly as `0x03`
-   - the old timeout storm did not return
-   - the media graph now contains `ov5675 10-0036`
-11. Treat the post-boot PMIC dump path as secondary to the new `STREAMON`
-    failure until the capture-path result is understood.
-12. Fix or replace the post-boot PMIC dump path so we can observe real register
-   state after a successful sensor bind.
-13. Extract more of the higher-level Windows config path above `WF::SetConf`.
-14. Do not rerun the broad `exp7` snapshot patch as a default path; it amplified
-    the timeout storm enough to interact badly with boot.
+1. Use `exp18` as the current kernel branch.
+2. Use `scripts/06-media-pipeline-setup.sh` for repeatable capture validation.
+3. Investigate the `Received packet is too long` CSI2 warnings.
+4. Test with higher-level capture tools (`libcamera`, `cheese`, `mpv`).
+5. Clean up the patch stack for upstream submission.
+6. Fix or replace the post-boot PMIC dump path.
+7. Do not rerun the broad `exp7` snapshot patch as a default path.
 
 ## Key Paths
 

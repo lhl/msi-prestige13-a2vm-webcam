@@ -1,6 +1,6 @@
 # Numbered Test Routines
 
-Updated: 2026-03-11
+Updated: 2026-03-12
 
 These scripts sit on top of `scripts/webcam-run.sh` and provide stable,
 numbered checkpoints for the current MSI webcam bring-up workflow.
@@ -189,6 +189,51 @@ Interpretation note:
   out as the main explanation
 - when that happens, the next remaining userspace question is explicit
   media-pad programming versus a deeper `isys` capture-path gap
+
+## `scripts/06-media-pipeline-setup.sh`
+
+Use this after `scripts/05-userspace-format-sweep.sh` proves that node-side
+format alignment alone is insufficient, and you want to test whether explicit
+`media-ctl` route, link, and format setup removes the `VIDIOC_STREAMON`
+severed-link failure.
+
+What it does:
+
+- captures a standard snapshot run
+- records the pre-setup media graph
+- attempts five pipeline setup steps in order:
+  1. route on CSI2 subdev (may return `ENOTSUP` on IPU7 -- that is OK)
+  2. CSI2 sink pad format to match sensor output
+  3. CSI2 source pad format to match sensor output
+  4. link enable from CSI2 source pad to capture node
+  5. video node format to match sensor output
+- records each setup command result (exit status and output)
+- records the post-setup media graph
+- attempts a raw `v4l2-ctl` streaming capture
+- writes a focused summary with all step results
+
+Default targets:
+
+- `/dev/video0`
+- sensor format `SGRBG10_1X10/2592x1944`
+- pixel format `BA10`
+
+Example:
+
+```bash
+scripts/06-media-pipeline-setup.sh
+```
+
+Interpretation note:
+
+- this is the first no-reboot follow-up that actually achieved successful raw
+  Bayer capture
+- the route step (`media-ctl -R`) returns `ENOTSUP` on IPU7 CSI2 entities;
+  this is expected and does not prevent streaming
+- the critical step is link enable (step 4); without it, `STREAMON` fails with
+  `Link has been severed`
+- 5x `csi2-0 error: Received packet is too long` warnings may appear during
+  capture; frames still arrive
 
 ## Current interpretation rule
 

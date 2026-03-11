@@ -1,0 +1,24 @@
+CMD: find /sys/bus/i2c/devices -maxdepth 1 2>/dev/null | sort || true
+/sys/bus/i2c/devices
+/sys/bus/i2c/devices/i2c-0
+/sys/bus/i2c/devices/i2c-1
+/sys/bus/i2c/devices/i2c-10
+/sys/bus/i2c/devices/i2c-11
+/sys/bus/i2c/devices/i2c-12
+/sys/bus/i2c/devices/i2c-13
+/sys/bus/i2c/devices/i2c-14
+/sys/bus/i2c/devices/i2c-15
+/sys/bus/i2c/devices/i2c-2
+/sys/bus/i2c/devices/i2c-3
+/sys/bus/i2c/devices/i2c-4
+/sys/bus/i2c/devices/i2c-5
+/sys/bus/i2c/devices/i2c-6
+/sys/bus/i2c/devices/i2c-7
+/sys/bus/i2c/devices/i2c-8
+/sys/bus/i2c/devices/i2c-9
+/sys/bus/i2c/devices/i2c-HIMX1092:00
+/sys/bus/i2c/devices/i2c-INT3472:06
+/sys/bus/i2c/devices/i2c-OVTI5675:00
+/sys/bus/i2c/devices/i2c-PNP0C50:04
+
+EXIT_STATUS: 0

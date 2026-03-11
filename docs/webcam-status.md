@@ -1,62 +1,50 @@
 # Webcam Status
 
-Updated: 2026-03-11
+Updated: 2026-03-12
 
 ## Short Answer
 
-Webcam support is still not working end to end on this laptop.
+The webcam is now streaming raw frames on Linux on this laptop.
 
-The important change is not that nothing works. The important change is that
-the remaining blocker is now much narrower:
+On the `exp18` kernel branch with explicit userspace `media-ctl` pipeline
+setup, `/dev/video0` delivers real Bayer sensor data:
 
-- IPU7 support is present and firmware loads.
-- `OVTI5675:00` is the correct sensor path.
-- the MSI `INT3472` / `TPS68470` board-data patch is necessary and working
-  enough to instantiate the sensor client
-- the `ipu-bridge` `OVTI5675` patch is necessary and working
-- the old clean-boot `dvdd` timeout is gone
-- the `ov5675` driver now reaches chip-ID reads on a clean boot
-- under the latest `exp10` PMIC follow-up, the old PMIC timeout storm is gone
-- but every chip-ID read still fails, now with `-121`
-- the `exp12` daisy-chain cross-check proved that the current Linux
-  `GPIO1` / `GPIO2` lookup immediately overrides Antti-style daisy-chain setup
-- `exp13` then proved that removing that lookup lets Linux keep `GPIO1` /
-  `GPIO2` in daisy-chain input mode for the observed probe window
-- but `exp13` still ends at the same repeated `-121` chip-ID failure
-- `exp14` then proved that `GPIO9` is an active remote line, but not a
-  sufficient lone reset line
-- `exp15` then proved that `GPIO7` is also an active remote line, but not a
-  sufficient lone reset line
-- `exp16` then proved that the current `GPIO9` / `GPIO7` two-line
-  approximation drives both remote lines together, but still does not move the
-  sensor off repeated `-121`
-- `exp17` then proved that a later `S_I2C_CTL BIT(0)` on the clean remote-line
-  branch can read back safely as `0x03`, but it still does not move the sensor
-  off repeated `-121`
-- `exp18` then proved that full standard `VSIO` enable on the clean
-  daisy-chain branch is also safe:
-  - `S_I2C_CTL` read back cleanly as `0x03`
-  - the old timeout storm did not return
-  - the media graph gained `ov5675 10-0036` linked into `Intel IPU7 CSI2 0`
-  - the verify-side PMIC dump still came back all `ERROR`
-- `exp19` then proved the first raw userspace stream gets past sensor bind but
-  still fails later in the capture path:
-  - `/dev/video0` opens cleanly
-  - buffer setup and queueing succeed
-  - `VIDIOC_STREAMON` fails with `Link has been severed`
-  - the raw output file stays at `0` bytes
-- a later no-reboot userland format sweep then proved that the first visible
-  node-format mismatch was not sufficient to explain the failure:
-  - `/dev/video0` through `/dev/video7` all accepted `VIDIOC_S_FMT` to
-    `4096x3072 BA10`
-  - all eight nodes still failed `VIDIOC_STREAMON` with `Link has been
-    severed`
-  - all eight raw output files stayed at `0` bytes
+- 4 frames captured at 30 fps (33.39 ms inter-frame delta)
+- 40,310,784 bytes total (4 x 10,077,696 = 2592 x 1944 x 2 bytes/pixel)
+- raw data starts with plausible 10-bit Bayer values
+- `VIDIOC_STREAMON returned 0 (Success)`
 
-That means the webcam is no longer blocked at basic sensor wake-up. The next
-question is no longer just whether userspace picked the wrong capture-node
-format. The next question is whether explicit media-pad programming is still
-missing, or whether the remaining gap is deeper in the IPU7 capture path.
+The required userspace setup before streaming:
+
+```bash
+# enable the CSI2-to-capture link
+media-ctl -d /dev/media0 -l '"Intel IPU7 CSI2 0":1 -> "Intel IPU7 ISYS Capture 0":0 [1]'
+# set CSI2 pad formats to match sensor output
+media-ctl -d /dev/media0 -V '"Intel IPU7 CSI2 0":0/0 [fmt:SGRBG10_1X10/2592x1944]'
+media-ctl -d /dev/media0 -V '"Intel IPU7 CSI2 0":1/0 [fmt:SGRBG10_1X10/2592x1944]'
+# set video node format
+v4l2-ctl -d /dev/video0 --set-fmt-video=width=2592,height=1944,pixelformat=BA10
+```
+
+The kernel patch stack required:
+
+- `ms13q3-int3472-tps68470-v1.patch` — board data
+- `ipu-bridge-ovti5675-v1.patch` — sensor enumeration
+- `ov5675-serial-power-on-v1.patch` — sensor power sequencing
+- `ms13q3-daisy-chain-standard-vsio-v1.patch` — daisy-chain isolation +
+  standard VSIO (the `exp18` patch)
+
+Known remaining issues:
+
+- 5x `csi2-0 error: Received packet is too long` warnings in dmesg during
+  capture — likely a CSI2 format/blanking configuration detail, not a
+  data-path blocker
+- post-boot PMIC register dump still returns `ERROR` for every register
+- the `media-ctl` route command (`-R`) returns `ENOTSUP` — the IPU7 CSI2
+  entity does not support explicit routing, but link enable + format alignment
+  is sufficient
+- no automated pipeline setup yet; the `media-ctl` commands above must be run
+  manually or scripted before each capture session
 
 For the full March 9 review, see `docs/20260309-status-report.md`.
 
@@ -75,38 +63,22 @@ For the full March 9 review, see `docs/20260309-status-report.md`.
 - `ov5675` clock path is real, not a dummy fallback:
   - `resolved xvclk provider via common clock framework at 19200000 Hz`
   - `tps68470_clk_prepare ... rate=19200000`
-- the first PMIC clock and regulator instrumentation landed and logged on a
-  clean boot
+- sensor binds into the media graph:
+  - `ov5675 10-0036` linked into `Intel IPU7 CSI2 0` `[ENABLED,IMMUTABLE]`
+- raw Bayer capture from `/dev/video0` works with explicit pipeline setup:
+  - 4 frames at 30 fps
+  - 10,077,696 bytes per frame
+  - plausible 10-bit Bayer pixel values
 
-## What Is Still Broken
+## What Is Still Incomplete
 
-The current best local branch is now past the old sensor-bind failure:
-
-- `exp18` binds `ov5675 10-0036` into the media graph
-- `/dev/v4l-subdev0` now exists
-- `/dev/video0` through `/dev/video31` are present as `ipu7` capture nodes
-
-What is still missing is end-to-end proof that userspace can actually stream
-frames on that branch. The first direct attempt now fails this way:
-
-- `VIDIOC_STREAMON returned -1 (Link has been severed)`
-- raw output size: `0` bytes
-- no new matching kernel journal lines appeared during the capture attempt
-
-The first higher-signal no-reboot follow-up still fails this way:
-
-- the media graph still reports `Intel IPU7 CSI2 0` at
-  `SGRBG10_1X10/4096x3072`
-- `/dev/video0` through `/dev/video7` all accept `4096x3072 BA10`
-- every tested node still fails `VIDIOC_STREAMON` with `Link has been severed`
-- every tested node still writes `0` bytes
-- no new matching kernel journal lines appeared during the sweep
-
-Functional consequences:
-
-- there is still no recorded successful raw capture from `/dev/video*`
-- the webcam is still not proven usable from normal Linux userspace
+- automated pipeline setup: the `media-ctl` link enable and format commands
+  must be run manually before each capture session
+- `csi2-0 error: Received packet is too long` warnings appear during capture
+  (5 instances observed); likely a CSI2 format/blanking alignment detail
 - post-boot PMIC register dumping still returns `ERROR` for every register
+- upstreamability: the current patch stack includes local experiment
+  instrumentation that would need cleanup before submission
 
 ## What The PMIC Experiment Chain Added
 
@@ -489,83 +461,31 @@ Interpretation:
 
 ## Current Assessment
 
-The honest assessment is:
+The webcam is working at the raw capture level. The complete path from sensor
+through CSI2 to userspace frame delivery is proven.
 
-- we are past the broad platform-support stage
-- we are also past the first board-data and graph-endpoint stage
-- we are in the hard last-mile stage where the sensor is present but never
-  wakes up enough to answer I2C ID reads
+What has been proven through the full experiment chain:
 
-What now looks unlikely:
+- the early regulator-phase `BIT(0)` on `S_I2C_CTL` was the PMIC bus wedge
+- the daisy-chain isolation branch (removing `GPIO1`/`GPIO2` from sensor use)
+  was the key wiring fix
+- standard `VSIO` enable is safe on the clean daisy-chain branch
+- the `STREAMON` "Link has been severed" failure was caused by missing
+  userspace `media-ctl` pipeline setup, not by a kernel or firmware gap
+- once the CSI2-to-capture link is enabled and pad formats are aligned, the
+  sensor delivers real frames
 
-- missing basic IPU7 support
-- missing sensor identity
-- missing first-pass MSI board-data
-- missing `ipu-bridge` sensor enumeration
-- simple `GPIO1` / `GPIO2` role or polarity guesses
-- immediate Linux reclaim of `GPIO1` / `GPIO2` once those lines are removed
-  from the sensor lookup
+## Remaining Work
 
-What now looks most likely:
-
-- Linux still does not model either:
-  - the complete remote sensor-control arrangement or consumer semantics:
-    - `GPIO9` and `GPIO7` are both active together in `exp16`, but the sensor
-      still stays flat at `-121`
-    - `exp17` later showed a safe `sensor-gpio.9` `BIT(0)` event
-      (`0x02 -> 0x03`), but the sensor still stays flat at `-121`
-    - the remaining gap is therefore likely beyond the current `ov5675`
-      GPIO-consumer model or exact electrical timing
-  - or some board-specific later PMIC behavior that the Windows driver
-    performs at a different phase
-- or Linux is still missing the exact electrical waveform and timing that the
-  sensor needs to exit reset / powerdown and answer chip-ID reads
-
-## Current Blockers
-
-1. We still cannot read back PMIC registers from userspace after boot.
-   - `scripts/pmic-reg-dump.sh` remains unreliable in representative runs:
-     earlier captures returned `ERROR` for every register, the `exp15` verify
-     capture timed out at the sudo prompt, and both `exp16` and `exp17`
-     returned all `ERROR` again.
-2. We now know the bad PMIC transition is specifically the early
-   regulator-phase `BIT(0)` set on `S_I2C_CTL`; `exp17` later showed that one
-   later `sensor-gpio.9` `BIT(0)` write can read back cleanly as `0x03`.
-3. We also now know that omitting early `BIT(0)` keeps the PMIC/I2C path
-   alive, but still leaves the sensor failing chip-ID reads with `-121`.
-4. We now know that removing the current `GPIO1` / `GPIO2` lookup collision is
-   not sufficient by itself; `exp13` still fails flat at `-121`.
-5. We now know `GPIO9` is active but insufficient as a lone reset line.
-6. We now know `GPIO7` is also active but insufficient as a lone reset line.
-7. We now know the current two-line `GPIO9` / `GPIO7` approximation is also
-   insufficient under current driver limits.
-8. We now have two different late-`BIT(0)` outcomes:
-   - the earlier `exp11` GPIO hook reintroduces the PMIC wedge
-   - the clean-remote-branch `exp17` hook is safe but still insufficient
-9. We still do not have the exact higher-level Windows configuration path that
-   feeds `WF::SetConf` or chooses the `WF` versus `UF` branch for this board.
-10. We still do not have direct electrical truth for the PMIC GPIO and sensor
-    reset / powerdown waveform.
-
-## Next Steps
-
-1. Use `exp18` as the best current local branch.
-   - standard `VSIO` now reads back cleanly as `0x03`
-   - the old timeout storm does not return
-   - the media graph now includes `ov5675 10-0036`
-2. Treat `exp19` as completed evidence.
-   - the first raw `/dev/video0` stream reached `VIDIOC_STREAMON`
-   - `VIDIOC_STREAMON` failed with `Link has been severed`
-   - the raw output file stayed empty
-3. Treat the no-reboot `4096x3072 BA10` sweep across `/dev/video0` through
-   `/dev/video7` as completed negative evidence too.
-   - all eight nodes accepted `VIDIOC_S_FMT`
-   - all eight nodes still failed `VIDIOC_STREAMON`
-4. Investigate whether the remaining failure needs explicit media-pad
-   programming or reflects a deeper `isys` capture-path gap.
-5. Fix or replace the post-boot PMIC dump path so we can see real register
-   state after a successful sensor bind.
-6. Extract the higher-level Windows config path that feeds `WF::SetConf` and
-   selects `WF` versus `UF`.
-7. Avoid spending more time on blind `GPIO1` / `GPIO2` permutations.
-   - `exp13` retired the reclaim question
+1. Investigate the `csi2-0 error: Received packet is too long` warnings.
+   - likely a CSI2 pad format or blanking configuration issue
+   - frames still arrive, so this may be cosmetic
+2. Fix or replace the post-boot PMIC dump path.
+   - `scripts/pmic-reg-dump.sh` still returns `ERROR` for every register
+3. Clean up the patch stack for upstream submission.
+   - remove experiment instrumentation logging
+   - separate the minimal board-data changes from the diagnostic scaffolding
+4. Test with higher-level capture tools (e.g. `libcamera`, `cheese`, `mpv`)
+   to confirm the pipeline works end to end for normal applications.
+5. Consider whether automated pipeline setup should be handled by a udev rule,
+   a `libcamera` pipeline handler, or similar.

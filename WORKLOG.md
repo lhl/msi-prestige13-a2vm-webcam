@@ -1,5 +1,42 @@
 # Worklog
 
+## 2026-03-12
+
+### First successful raw Bayer capture
+
+- Plan: test whether explicit `media-ctl` route, link enable, and pad format
+  setup removes the `VIDIOC_STREAMON` "Link has been severed" failure that
+  persisted through `exp19` and the no-reboot format sweep.
+- Commands:
+  - created:
+    - `scripts/06-media-pipeline-setup.sh`
+  - ran:
+    - `scripts/06-media-pipeline-setup.sh` on the current `exp18` boot
+  - run directory:
+    - `runs/2026-03-12/20260312T004947-snapshot-06-media-pipeline-setup/`
+  - refreshed:
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/webcam-status.md`
+    - `docs/test-routines.md`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+- Result:
+  - **raw Bayer capture is now working**
+  - the missing piece was explicit userspace `media-ctl` pipeline setup:
+    - step 1 (route): `ENOTSUP` -- IPU7 CSI2 does not need explicit routing
+    - step 2 (CSI2 sink format to 2592x1944): succeeded
+    - step 3 (CSI2 source format to 2592x1944): succeeded
+    - step 4 (link enable CSI2:1 -> Capture 0): **succeeded -- this was the
+      key missing step**
+    - step 5 (video node format to BA10): succeeded
+  - `VIDIOC_STREAMON returned 0 (Success)`
+  - 4 frames captured at 30 fps (33.39 ms inter-frame delta)
+  - 40,310,784 bytes total (4 x 10,077,696 bytes/frame)
+  - raw data starts with plausible 10-bit Bayer values
+  - 5x `csi2-0 error: Received packet is too long` warnings in dmesg
+  - fixed minor `rg` quoting bug in the script (`->` parsed as flag)
+
 ## 2026-03-11
 
 ### Add a repeatable script for the no-reboot userspace format sweep

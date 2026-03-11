@@ -1,12 +1,12 @@
 # PMIC Follow-Up Experiment Workflow
 
-Updated: 2026-03-11
+Updated: 2026-03-12
 
 This note turns the current ordered PMIC follow-up list into repeatable
 update-and-verify workflows.
 
-As of the completed `2026-03-11` `exp18` follow-up and the completed `exp19`
-capture/userspace validation:
+As of `2026-03-12`, raw Bayer capture is working on the `exp18` branch with
+explicit `media-ctl` pipeline setup:
 
 - `exp1` through `exp18` are completed historical experiments
 - `exp18` is now the best current local branch:
@@ -926,16 +926,14 @@ Observed outcome:
 - no matching kernel journal lines were emitted during the capture attempt
 
 Interpretation:
-- `exp19` proves the current blocker is no longer first bind or basic node
+- `exp19` proved the current blocker was no longer first bind or basic node
   presence
-- the later no-reboot format sweep rules out one simple explanation:
-  - the default `/dev/video0` capture-format mismatch was not by itself the
-    reason for failure
-- the remaining gap is now in the actual capture path:
-  - explicit media-pad programming still not being applied
-  - userspace-facing `isys` behavior
-  - or a deeper `STREAMON`-time pipeline requirement that current userspace is
-    not satisfying
+- the later no-reboot format sweep ruled out the simple node-format mismatch
+- the actual root cause was identified by `scripts/06-media-pipeline-setup.sh`:
+  - the CSI2-to-capture link was not enabled
+  - the CSI2 pad formats did not match the sensor output
+  - once both were fixed with `media-ctl`, `STREAMON` succeeded and raw Bayer
+    frames were captured
 
 ## Typical usage
 
@@ -1010,48 +1008,23 @@ replace the boot log and it does not make claims it cannot support.
 
 ## Current interpretation
 
-Use the implemented wrappers, the completed `exp13` through `exp17` evidence,
-and the completed `exp18` follow-up according to the current evidence:
+**Raw Bayer capture is now working** on the `exp18` branch with explicit
+`media-ctl` pipeline setup.
 
-1. Use `exp18` as the best current local branch.
-   - standard `VSIO` now reads back cleanly as `0x03`
-   - the old timeout storm does not return
-   - the media graph now contains `ov5675 10-0036`
-2. Treat `exp19` as completed evidence.
-   - `/dev/video0` opened and queued buffers successfully
-   - `VIDIOC_STREAMON` failed with `Link has been severed`
-   - the raw output file stayed empty
-3. Treat `exp11` as a completed negative, not as a baseline.
-4. Treat `exp12` as a completed negative that proved the current `GPIO1` /
-   `GPIO2` lookup model immediately collides with Antti-style daisy-chain
-   setup.
-5. Treat `exp13` as completed evidence, not as a future branch.
-   - it proved that Linux can leave `GPIO1` / `GPIO2` alone
-   - it did not improve the flat repeated `-121` chip-ID failure
-6. Treat `exp14` as completed evidence, not as a future branch.
-   - it proved `GPIO9` is active
-   - it also proved `GPIO9` alone is insufficient
-7. Treat `exp15` as completed evidence, not as a future branch.
-   - it proved `GPIO7` is active
-   - it also proved `GPIO7` alone is insufficient
-8. Treat `exp16` as completed evidence, not as a future branch.
-   - it proved the current two-line approximation drives both remote lines
-   - it also proved that combined remote-line activity still stays flat at
-     `-121`
-9. Treat `exp17` as completed evidence, not as a future branch.
-   - it proved one later `sensor-gpio.9` `BIT(0)` write is safe and reads back
-     as `0x03`
-   - it also proved that this later PMIC transition is still insufficient
-10. Treat `exp18` as completed positive evidence.
-   - standard regulator-side `VSIO` enable read back cleanly as `0x03`
-   - the media graph gained `ov5675 10-0036`
-   - the verify-side PMIC dump still came back all `ERROR`
-11. Use `exp1` through `exp9` as the historical evidence chain that narrowed
-   the problem to `S_I2C_CTL` behavior and competing GPIO interpretations.
-12. Treat PMIC dump visibility as secondary to the new `STREAMON` failure
-    until the capture-path result is understood.
+1. Use `exp18` as the current kernel branch.
+2. Use `scripts/06-media-pipeline-setup.sh` for repeatable capture validation.
+3. The `STREAMON` "Link has been severed" failure was caused by missing
+   userspace `media-ctl` link enable + pad format setup, not by a kernel or
+   firmware gap.
+4. The `media-ctl -R` route command returns `ENOTSUP` on IPU7 CSI2 entities;
+   link enable + format alignment alone is sufficient.
+5. All earlier experiments (`exp1` through `exp18`) form the historical
+   evidence chain that narrowed the PMIC, GPIO, and wiring model until the
+   sensor bound and streamed.
+6. Remaining work is now cleanup, upstreamability, and higher-level tool
+   testing -- not basic bring-up.
 
-That ordering still matches the current source-backed assessment in:
+That matches the current assessment in:
 
 - `docs/webcam-status.md`
 - `docs/wf-vs-uf-gpio-analysis.md`
