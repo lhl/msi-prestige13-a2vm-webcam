@@ -1,0 +1,5 @@
+CMD: git_safe status --short
+?? runs/2026-03-11/20260311T184340-ms13q3-daisy-chain-isolation-update/
+?? runs/2026-03-11/20260311T184614-snapshot-exp13-clean-boot/
+
+EXIT_STATUS: 0

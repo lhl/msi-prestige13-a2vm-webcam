@@ -158,6 +158,18 @@ with strong evidence.
     `powerdown` index `0`
   - Antti's dual-reset board data therefore cannot be copied literally without
     either single-line candidate runs first or an `ov5675` consumer change
+- ran `exp13` and recorded the first clean daisy-chain-isolation result:
+  - update run:
+    - `runs/2026-03-11/20260311T184340-ms13q3-daisy-chain-isolation-update/`
+  - verify run:
+    - `runs/2026-03-11/20260311T184614-snapshot-exp13-clean-boot/`
+  - result:
+    - positive for wiring isolation, negative as a direct fix
+    - `probe-after gpio.1 ... ctl=0x00`
+    - `probe-after gpio.2 ... ctl=0x00`
+    - no later `direction-output-after gpio.1` / `gpio.2`
+    - no one-shot reclaim `dump_stack()`
+    - sensor failure remained flat at repeated `-121`
 
 ## Current Interpretation
 
@@ -169,10 +181,10 @@ with strong evidence.
   not a validated wiring map
 - Antti Laakso's working Prestige 14 patch is now the strongest external
   wiring model for the next branch set
+- `exp13` proved that once Linux stops exporting `GPIO1` / `GPIO2` to the
+  sensor, it can leave those lines in daisy-chain input mode
 - The strongest remaining gap is PMIC-side behavior Linux still does not model
   correctly, especially around:
-  - whether Linux should stop using `GPIO1` / `GPIO2` as direct sensor-control
-    outputs on this board
   - which remote line, `GPIO9` or `GPIO7`, is the first credible sensor
     control candidate under current `ov5675` limits
   - where the later `S_I2C_CTL` `BIT(0)` phase belongs, if anywhere, once the
@@ -191,29 +203,23 @@ with strong evidence.
    test.
    - it proved the current `GPIO1` / `GPIO2` lookup immediately overrides
      daisy-chain setup
-3. Run `exp13` next.
-   - keep daisy-chain on `GPIO1` / `GPIO2`
-   - remove `OVTI5675:00` use of those lines entirely
-   - prove whether Linux can leave them in input mode for the full probe
-   - use:
-     - `scripts/exp13-ms13q3-daisy-chain-isolation-update.sh`
-     - `scripts/exp13-ms13q3-daisy-chain-isolation-verify.sh`
-4. Run `exp14` and `exp15` after `exp13`.
+3. Treat `exp13` as completed evidence, not as the next branch to run.
+   - it proved Linux can leave `GPIO1` / `GPIO2` in daisy-chain input mode
+   - it did not improve the repeated `-121` chip-ID failure
+4. Run `exp14` and `exp15` next.
    - test `GPIO9` and `GPIO7` separately as the first remote control-line
      candidates under current `ov5675` driver constraints
 5. Run `exp16` only after the single-line branches.
    - use the clean daisy-chain branch plus the best two-line `GPIO7` / `GPIO9`
      approximation
-6. Keep `exp13` self-diagnosing.
-   - if reclaim still happens, the one-shot stack dump should identify the
-     output-driving call path immediately
-7. Run `exp17` after `exp13` proves no reclaim.
-   - re-test `S_I2C_CTL BIT(0)` only on top of the cleanest daisy-chain
-     branch from `exp13` through `exp16`
-8. Fix or replace the post-boot PMIC dump path so we can observe real register
+6. Run `exp17` only after carrying forward the cleanest remote-line branch.
+   - `exp13` already satisfied the no-reclaim prerequisite
+   - re-test `S_I2C_CTL BIT(0)` only on top of the cleanest branch from
+     `exp14` through `exp16`
+7. Fix or replace the post-boot PMIC dump path so we can observe real register
    state after a failed clean boot.
-9. Extract more of the higher-level Windows config path above `WF::SetConf`.
-10. Do not rerun the broad `exp7` snapshot patch as a default path; it amplified
+8. Extract more of the higher-level Windows config path above `WF::SetConf`.
+9. Do not rerun the broad `exp7` snapshot patch as a default path; it amplified
    the timeout storm enough to interact badly with boot.
 
 ## Key Paths

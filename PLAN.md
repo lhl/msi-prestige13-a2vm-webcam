@@ -2,8 +2,9 @@
 
 Updated: 2026-03-11
 
-This is the active plan after the completed March 9 PMIC experiment batch and
-the decision to prioritize the Antti-model `exp13`-`exp17` branch set.
+This is the active plan after the completed March 9 PMIC experiment batch, the
+completed `exp13` daisy-chain-isolation run, and the remaining Antti-model
+`exp14`-`exp17` branch set.
 
 ## Goal
 
@@ -72,6 +73,12 @@ with strong evidence.
   - the current `MS-13Q3` sensor lookup then immediately re-drives both lines
     back to output mode
   - the sensor failure shape still ends at `-121`
+- `exp13` came back positive for wiring isolation, but negative as a direct
+  fix:
+  - once Linux stops exporting `GPIO1` / `GPIO2` to `OVTI5675:00`, it leaves
+    them in daisy-chain input mode for the observed probe window
+  - the one-shot reclaim guard did not fire
+  - the sensor failure shape still ends at `-121`
 - the current `MS-13Q3` `GPIO1` / `GPIO2` board model is still only a
   candidate, not a validated wiring map:
   - the original board-data patch introduced it as a first-pass guess
@@ -84,9 +91,11 @@ with strong evidence.
 - current leading interpretation:
   - the remaining gap is PMIC-side behavior, not basic platform support
   - the early regulator-phase `BIT(0)` write was wrong
-  - the current Linux `GPIO1` / `GPIO2` board model may also be wrong
-  - the next high-value work is to test the Antti-style daisy-chain model
-    without immediately re-overriding it in Linux
+  - the old direct-use `GPIO1` / `GPIO2` Linux board model was wrong as a
+    clean Antti-style branch
+  - the next high-value work is to test which remote line, `GPIO9` or
+    `GPIO7`, is the first credible sensor-control candidate on top of the
+    clean daisy-chain branch
 
 ## Workstreams
 
@@ -140,39 +149,35 @@ with strong evidence.
    set.
 2. Treat `exp12` as completed collision evidence, not as a direct test of
    Antti's working model.
-3. Run `exp13` first.
-   - prove whether Linux can leave `GPIO1` / `GPIO2` in Antti-style
-     daisy-chain input mode for the full probe window
+3. Treat `exp13` as completed evidence, not as the next branch to run.
+   - it proved Linux can leave `GPIO1` / `GPIO2` in Antti-style
+     daisy-chain input mode for the observed probe window
+   - it did not improve the flat repeated `-121` chip-ID failure
 4. Use `exp14` and `exp15` to answer the next constrained question.
    - under current `ov5675` driver limits, is `GPIO9` or `GPIO7` the first
      credible remote control-line candidate
 5. Use `exp16` as the closest current-driver approximation of Antti's remote
    mapping only after the single-line branches have been isolated first.
-6. Use the self-diagnosing guard already staged in `exp13`.
-   - if `GPIO1` / `GPIO2` still get reclaimed, the one-shot stack dump should
-     identify the call path immediately
-7. Use `exp17` as the explicit PMIC-side follow-up after the wiring-model
-   collision is removed.
-   - only run it after `exp13` proves no reclaim
-   - carry forward the cleanest daisy-chain-isolated branch from `exp13`
-     through `exp16`
-8. Keep using:
+6. Use `exp17` as the explicit PMIC-side follow-up after the remote-line
+   question is better constrained.
+   - `exp13` already proved the no-reclaim prerequisite
+   - carry forward the cleanest remote-line branch from `exp14` through
+     `exp16`
+7. Keep using:
    - `scripts/patch-kernel.sh`
    - `scripts/exp*-*-update.sh`
    - `scripts/exp*-*-verify.sh`
    - `scripts/01-clean-boot-check.sh`
    to keep evidence reproducible
-9. Keep the broader Windows config-path and PMIC dump questions open, but do
+8. Keep the broader Windows config-path and PMIC dump questions open, but do
    not let them delay the next clean Antti-model branch tests.
 
 ## Open Questions
 
 - Why does the `S_I2C_CTL` `0x43` update path report success while immediate
   PMIC readback collapses to `-110`?
-- Can `exp13` prove that Linux no longer reclaims `GPIO1` / `GPIO2` once
-  daisy-chain mode is enabled?
-- If `exp13` still reclaims those lines, what exact call path does the new
-  one-shot stack dump point to?
+- With `exp13` proving no reclaim, why does the clean daisy-chain-isolated
+  branch still end at flat repeated `-121` chip-ID failures?
 - Under current `ov5675` consumer behavior, is `GPIO9` or `GPIO7` the first
   better remote control-line candidate?
 - If `exp16` is still negative, do we need an `ov5675` consumer change to
@@ -197,4 +202,5 @@ with strong evidence.
 - a full March 9 status report under `docs/`
 - reference-backed Windows PMIC notes under `reference/windows-driver-analysis/`
 - current support summary under `docs/webcam-status.md`
-- staged `exp13` through `exp17` patches and wrapper scripts
+- recorded `exp13` run evidence plus staged `exp14` through `exp17` patches
+  and wrapper scripts

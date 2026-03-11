@@ -149,25 +149,27 @@ msi-prestige13-a2vm-webcam/
    - three staged `ov5675` GPIO-release variants
    - `exp5` `WF` GPIO mode follow-up
    - `exp6` `UF` / `gpio.4` last resort
-4. Use the staged `exp13` through `exp17` entrypoints as the next ordered
+4. Treat `exp13` as completed wiring-isolation evidence.
+   - it proved Linux can leave `GPIO1` / `GPIO2` in daisy-chain input mode
+   - it did not improve the flat repeated `-121` chip-ID failure
+5. Use the staged `exp14` through `exp17` entrypoints as the next ordered
    experiment branch set:
-   - `exp13`: keep `exp10`, enable daisy-chain, and stop exposing `GPIO1` /
-     `GPIO2` to `OVTI5675:00`
-   - `exp14`: carry that branch forward and test `GPIO9` as the first remote
-     control-line candidate
+   - `exp14`: carry the clean daisy-chain branch forward and test `GPIO9` as
+     the first remote control-line candidate
    - `exp15`: carry that branch forward and test `GPIO7` as the alternate
      remote control-line candidate
    - `exp16`: carry the clean daisy-chain branch forward and test the best
      current-driver `GPIO7` / `GPIO9` approximation
    - `exp17`: re-test `S_I2C_CTL BIT(0)` only after a clean daisy-chain branch
      exists
-5. Keep `exp10` as the PMIC baseline while running that branch set.
+6. Keep `exp10` as the PMIC baseline while running that remaining branch set.
    - `exp11` showed that one modeled late `BIT(0)` hook still re-wedges PMIC
      access
    - `exp12` showed that the low-effort Antti-inspired daisy-chain setup is
      immediately overridden by the current Linux `GPIO1` / `GPIO2` lookup
-   - do not spend more time on `GPIO1` / `GPIO2` label-only follow-ups until
-     one of `exp13` through `exp16` has run cleanly
+   - `exp13` then proved the clean daisy-chain-isolation branch is real, so the
+     next question is remote-line identity rather than more `GPIO1` /
+     `GPIO2` label-only follow-ups
 
 ## Related Docs
 

@@ -2,6 +2,52 @@
 
 ## 2026-03-11
 
+### Review `exp13` and confirm clean daisy-chain isolation without a fix
+
+- Plan: inspect the first real `exp13` update and clean-boot verification
+  artifacts, determine whether Linux still reclaimed `GPIO1` / `GPIO2`, and
+  update the control docs if the daisy-chain-isolation branch changed the
+  branch ordering.
+- Commands:
+  - reviewed:
+    - `runs/2026-03-11/20260311T184340-ms13q3-daisy-chain-isolation-update/metadata.env`
+    - `runs/2026-03-11/20260311T184614-snapshot-exp13-clean-boot/focused-summary.txt`
+    - `runs/2026-03-11/20260311T184614-snapshot-exp13-clean-boot/experiment-journal.txt`
+    - `runs/2026-03-11/20260311T184614-snapshot-exp13-clean-boot/pmic-reg-dump.txt`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `README.md`
+    - `docs/README.md`
+    - `docs/webcam-status.md`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+  - refreshed:
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/README.md`
+    - `docs/webcam-status.md`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+- Result:
+  - `exp13` is positive for wiring isolation, but negative as a direct fix
+  - Linux no longer reclaimed `GPIO1` / `GPIO2` once they were removed from
+    the `OVTI5675:00` lookup model:
+    - `exp13_daisy: probe-after gpio.1 ... ctl=0x00`
+    - `exp13_daisy: probe-after gpio.2 ... ctl=0x00`
+    - no later `direction-output-after gpio.1` or `gpio.2`
+  - the self-diagnosing guard stayed quiet:
+    - no reclaim warning
+    - no one-shot `dump_stack()`
+  - the clean-boot sensor result did not improve:
+    - `chip id read attempt 1/5 failed: -121`
+    - `...`
+    - `chip id read attempt 5/5 failed: -121`
+    - `failed to find sensor: -121`
+  - the main branch question is no longer whether Linux reclaims the
+    daisy-chain lines; it is now which remote line, `GPIO9` or `GPIO7`, is the
+    first credible sensor-control candidate under current `ov5675` limits
+
 ### Stage runnable `exp13` through `exp17` artifacts and validate them
 
 - Plan: turn the planned Antti-model follow-up sequence into actual patch

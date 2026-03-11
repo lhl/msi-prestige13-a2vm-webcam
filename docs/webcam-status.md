@@ -20,7 +20,10 @@ the remaining blocker is now much narrower:
 - but every chip-ID read still fails, now with `-121`
 - the `exp12` daisy-chain cross-check proved that the current Linux
   `GPIO1` / `GPIO2` lookup immediately overrides Antti-style daisy-chain setup
-- the repo now has staged `exp13` through `exp17` patch plus wrapper pairs for
+- `exp13` then proved that removing that lookup lets Linux keep `GPIO1` /
+  `GPIO2` in daisy-chain input mode for the observed probe window
+- but `exp13` still ends at the same repeated `-121` chip-ID failure
+- the repo now has staged `exp14` through `exp17` patch plus wrapper pairs for
   the next Antti-model run set
 
 That means the webcam is now blocked at sensor wake-up / later-stage PMIC
@@ -63,7 +66,7 @@ Functional consequences:
 - the media graph still lacks a working sensor entity
 - the webcam is still not usable from normal Linux userspace
 
-## What The March 9 PMIC Batch Added
+## What The PMIC Experiment Chain Added
 
 ### `exp1` PMIC instrumentation
 
@@ -297,6 +300,29 @@ Interpretation:
 - a serious daisy-chain branch would need different sensor-GPIO modeling, not
   just daisy-chain enable on top of the current lookup table
 
+### `exp13` daisy-chain isolation
+
+What it proved:
+
+- once Linux stops exporting `GPIO1` / `GPIO2` to `OVTI5675:00`, it can leave
+  both lines in daisy-chain input mode for the full observed probe window
+- the one-shot reclaim guard did not fire
+- the sensor failure shape still ends at repeated `-121`
+
+Key lines:
+
+- `exp13_daisy: probe-after gpio.1 ... ctl=0x00`
+- `exp13_daisy: probe-after gpio.2 ... ctl=0x00`
+- `pmic_focus: enable-bit1-only VSIO reg=S_I2C_CTL(0x43) ... after=0x02`
+- `ov5675 ... chip id read attempt 5/5 failed: -121`
+
+Interpretation:
+
+- `exp13` is positive for wiring isolation, but negative as a direct fix
+- the main question is no longer "does Linux still reclaim `GPIO1` / `GPIO2`?"
+- the next constrained question is which remote line, `GPIO9` or `GPIO7`, is
+  the first credible Linux-visible control line under current `ov5675` limits
+
 ## Current Assessment
 
 The honest assessment is:
@@ -313,11 +339,15 @@ What now looks unlikely:
 - missing first-pass MSI board-data
 - missing `ipu-bridge` sensor enumeration
 - simple `GPIO1` / `GPIO2` role or polarity guesses
+- immediate Linux reclaim of `GPIO1` / `GPIO2` once those lines are removed
+  from the sensor lookup
 
 What now looks most likely:
 
-- Linux still does not model some board-specific `WF` PMIC behavior that the
-  Windows driver performs
+- Linux still does not model either:
+  - the correct remote sensor-control line choice between `GPIO9` and `GPIO7`
+  - or some board-specific later PMIC behavior that the Windows driver
+    performs
 - or Linux is still missing the exact electrical waveform and timing that the
   sensor needs to exit reset / powerdown and answer chip-ID reads
 
@@ -330,11 +360,15 @@ What now looks most likely:
    on `S_I2C_CTL` after `BIT(1)` has already read back cleanly as `0x02`.
 3. We also now know that omitting `BIT(0)` keeps the PMIC/I2C path alive, but
    still leaves the sensor failing chip-ID reads with `-121`.
-4. We now have one negative result for a late `BIT(0)` hook tied to the
+4. We now know that removing the current `GPIO1` / `GPIO2` lookup collision is
+   not sufficient by itself; `exp13` still fails flat at `-121`.
+5. We still do not know whether `GPIO9` or `GPIO7` is the first better remote
+   control-line candidate under current `ov5675` limits.
+6. We now have one negative result for a late `BIT(0)` hook tied to the
    current GPIO-active implementation: it reintroduces the PMIC wedge.
-5. We still do not have the exact higher-level Windows configuration path that
+7. We still do not have the exact higher-level Windows configuration path that
    feeds `WF::SetConf` or chooses the `WF` versus `UF` branch for this board.
-6. We still do not have direct electrical truth for the PMIC GPIO and sensor
+8. We still do not have direct electrical truth for the PMIC GPIO and sensor
    reset / powerdown waveform.
 
 ## Next Steps
@@ -342,14 +376,19 @@ What now looks most likely:
 1. Keep `exp10` as the best functional PMIC state for now.
    - do not reintroduce `BIT(0)` in the early regulator path
    - do not treat the current `exp11` GPIO hook as a likely fix
-2. When resuming, narrow the later-phase question further.
-   - determine why the observed late `BIT(0)` event only showed up on
-     `sensor-gpio.1`
-   - determine whether Windows ties `SetVSIOCtl_GPIO` to a different GPIO
-     phase than our current hook
-3. Fix or replace the post-boot PMIC dump path so we can see real register
+2. Run `exp14` and `exp15` next.
+   - test `GPIO9` and `GPIO7` separately as the first remote-line candidates
+     now that `exp13` proved the daisy-chain lines can stay isolated
+3. Run `exp16` only after the single-line branches.
+   - use it as the best current-driver two-line approximation, not as the
+     first remote-line test
+4. Keep `exp17` gated behind the clean daisy-chain branch.
+   - `exp13` already answered the no-reclaim prerequisite
+   - carry forward the cleanest remote-line branch from `exp14` through
+     `exp16`
+5. Fix or replace the post-boot PMIC dump path so we can see real register
    state after a failed clean boot.
-4. Extract the higher-level Windows config path that feeds `WF::SetConf` and
+6. Extract the higher-level Windows config path that feeds `WF::SetConf` and
    selects `WF` versus `UF`.
-5. Avoid spending more time on blind GPIO permutations until the PMIC
-   pass-through and register-state questions are answered.
+7. Avoid spending more time on blind `GPIO1` / `GPIO2` permutations.
+   - `exp13` retired the reclaim question
