@@ -1,0 +1,3125 @@
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6341E38AC82;
+	Tue, 10 Mar 2026 12:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773146706; cv=none; b=GpyxX3DBeYww6QPXgwDvbZgt1aB5uAdJ7EeKbaIVqUCQ+nx5FPcJzoLQxYEUuPiTOUaIX7Wpw6mXxbO8BSv00qJEBFtQr0pJf2NlGurr7UFA59fT1j5GKz/OXrFrnIOaCQ7L0EwLnHySd/5wq19zfN8AInA6Nig2yzFf1NdQVts=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773146706; c=relaxed/simple;
+	bh=V/tjGRK2XwfIHYXozIh+ONiswzwZY6ml6Vm7sXIhbeo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LVO+Ia8EDa7N0p1qZ2K9cQm/1A2EMbk4LP0/QXkLdKS5eaU37kAVxQPx1Mv+zx+f2rqz5QC2wZmRlpZaAaYiQw7ZxJ161Thm+ajMHlcJ3dD1SdgqFc8gc8uMCA+MhoGJQv0Cc7xxSOn+r24MnREsMGAa70Wo8lViHhEdPXwBQc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kcuIkrw1; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kcuIkrw1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1773146705; x=1804682705;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=V/tjGRK2XwfIHYXozIh+ONiswzwZY6ml6Vm7sXIhbeo=;
+  b=kcuIkrw1WfI0flgj/1R7UirbthJUklHEdk/uFwpS2tJrwKQ0IlA3CfMa
+   GBnMa2V68ViOY8vCgCALS1wGHiLxUPgt+gab/IsPCUhdctrDC93aMjvno
+   R5vc/aj72cQJxn0JUC4Gg7STmXNSnhf5/SgA3E/GA4QYzJl6Du/smpFM+
+   RxvTp+GmcaKCzjawf8xWq7JMPGr9W65QFcG5yZdfx11iDtD7vRlBvdMSX
+   /FS9xwHqt+0cjYBaOuqS7TPyCap7AnyfVQuE7XcIMOTcWLIxUpzbzcCgI
+   h41XpzndT06X9HvkeLB9V6NXjsXvXYvquEVIJql/xXAI8Q2ySx77eY20r
+   A==;
+X-CSE-ConnectionGUID: MddQbK+ETqqQ1fbSyimYaQ==
+X-CSE-MsgGUID: j6JxUlgUT5ijx9o2E3SKRw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11724"; a="74268916"
+X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; 
+   d="scan'208";a="74268916"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2026 05:45:05 -0700
+X-CSE-ConnectionGUID: 3leC/Ll2SQSy2JT5fYwCwA==
+X-CSE-MsgGUID: WrAGrw+MTrSMqSyhrAl+6g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; 
+   d="scan'208";a="225040186"
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO alaakso-DESK.kioski) ([10.245.246.41])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2026 05:44:59 -0700
+From: Antti Laakso <antti.laakso@linux.intel.com>
+To: linux-media@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linusw@kernel.org,
+	brgl@kernel.org,
+	sakari.ailus@linux.intel.com,
+	mchehab@kernel.org,
+	dan.scally@ideasonboard.com,
+	hansg@kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	hverkuil+cisco@kernel.org,
+	sre@kernel.org,
+	hao.yao@intel.com,
+	jason.z.chen@intel.com,
+	jimmy.su@intel.com,
+	miguel.vadillo@intel.com,
+	kees@kernel.org,
+	ribalda@chromium.org
+Subject: [PATCH 0/5] platform: int3472: Add MSI prestige 14 AI EVO data
+Date: Tue, 10 Mar 2026 14:44:22 +0200
+Message-ID: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+X-Mailer: git-send-email 2.53.0
+Precedence: bulk
+X-Mailing-List: linux-media@vger.kernel.org
+List-Id: <linux-media.vger.kernel.org>
+List-Subscribe: <mailto:linux-media+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-media+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+
+This adds camera support for the MSI Prestige 14 AI EVO laptop, which uses
+a TPS68470 PMIC to power an OV5675 sensor.
+
+If ok, including a GPIO patch to this series. The GPIO patch enables the
+TPS68470's I2C daisy chain functionality.
+
+Antti Laakso (5):
+  media: i2c: ov5675: Wait for endpoint
+  media:ipu-bridge: Add ov5675 sensor
+  platform: int3472: Add gpio platform data
+  gpio: tps68470: Add i2c daisy chain support
+  platform: int3472: Add MSI prestige board data
+
+ drivers/gpio/gpio-tps68470.c                  | 23 ++++-
+ drivers/media/i2c/ov5675.c                    | 16 ++-
+ drivers/media/pci/intel/ipu-bridge.c          |  2 +
+ drivers/platform/x86/intel/int3472/tps68470.c |  2 +
+ drivers/platform/x86/intel/int3472/tps68470.h |  1 +
+ .../x86/intel/int3472/tps68470_board_data.c   | 97 +++++++++++++++++++
+ include/linux/platform_data/tps68470.h        |  4 +
+ 7 files changed, 135 insertions(+), 10 deletions(-)
+
+-- 
+2.53.0
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D403B47FF;
+	Tue, 10 Mar 2026 12:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773146712; cv=none; b=gxUBzMqlWEJnumHu1WvMnP7E1vznbGEe2o9rdVQKwN91NsQnAZYW7mAgJkstzBE1hijwrFnWDr80HyhtkAKKkyB1jfPya+xj1Q5FrNXCi1sZz6EOYYYB+fbRSX3Bbbg/Kilh8ooVqjL33whoDTON3l/UxfMm2egCuieKFq9QrXg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773146712; c=relaxed/simple;
+	bh=1rn86nhgBECvZOeO619kSGbXp+mZw09nRb53WGmwnUM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=WfFgF/IwtLXT1c+eQRWQuYkxJ6PFwWj5G0by+GFx3r7O1BApDtoqp+uzBMnIPtIf2i+sHRM7E1kG0kUdJsM1FDC5rzG9qwF27H6eiZh8ihoq9YYPCvoGpYFISGJgXyehNLqsW1zy8cEVooiSbsnRxqlHpCh5tAY+vf/W7WM5znM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iM/o/ptV; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iM/o/ptV"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1773146711; x=1804682711;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=1rn86nhgBECvZOeO619kSGbXp+mZw09nRb53WGmwnUM=;
+  b=iM/o/ptVDZjr7HtImb9uXHSsc6Bn9Y1eBeGI6TZPhCixw4TIEQQMMIYn
+   Qe01LyhoUda1EuaiYbF0ufWfIzABbLkr0t7Jcg9RnEmKp74tKY8cy/tuR
+   /7rl2EvDSvAPxuQ7AupEUjjhw2sVThwJCLRcu3uB89vGSooCFoOg+1DSa
+   okaJ0FGhXoMgJsYvkseIdQ0o/JwnhRdBqiuhNFBDPkKjn/h1p0vQygETM
+   lJywEpXTfyqA+fIeNipW2wAdup1kZsyCqIwGG7yuwBkTq2yeBcsC7XtZw
+   M2S15Um+iYurcfmKrXYlikjgpSBnreVibi3ugwpdTTuNurKFOvN+j8LHx
+   A==;
+X-CSE-ConnectionGUID: Ec2qmTfJTxOeP6ebA9mOfw==
+X-CSE-MsgGUID: zXjZonyHQQWRsyja/EHo8Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11724"; a="74268922"
+X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; 
+   d="scan'208";a="74268922"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2026 05:45:11 -0700
+X-CSE-ConnectionGUID: h4kBjhnPRYOrIw6SkbvxBw==
+X-CSE-MsgGUID: XPnHU+I9TLqlqZ1g+tswNA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; 
+   d="scan'208";a="225040211"
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO alaakso-DESK.kioski) ([10.245.246.41])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2026 05:45:05 -0700
+From: Antti Laakso <antti.laakso@linux.intel.com>
+To: linux-media@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linusw@kernel.org,
+	brgl@kernel.org,
+	sakari.ailus@linux.intel.com,
+	mchehab@kernel.org,
+	dan.scally@ideasonboard.com,
+	hansg@kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	hverkuil+cisco@kernel.org,
+	sre@kernel.org,
+	hao.yao@intel.com,
+	jason.z.chen@intel.com,
+	jimmy.su@intel.com,
+	miguel.vadillo@intel.com,
+	kees@kernel.org,
+	ribalda@chromium.org
+Subject: [PATCH 1/5] media: i2c: ov5675: Wait for endpoint
+Date: Tue, 10 Mar 2026 14:44:23 +0200
+Message-ID: <20260310124427.693625-2-antti.laakso@linux.intel.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+References: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+Precedence: bulk
+X-Mailing-List: linux-media@vger.kernel.org
+List-Id: <linux-media.vger.kernel.org>
+List-Subscribe: <mailto:linux-media+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-media+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+
+Defer probe if endpoint is not yet available. And do it before acquiring
+clock, gpio and regulators.
+
+Signed-off-by: Antti Laakso <antti.laakso@linux.intel.com>
+---
+ drivers/media/i2c/ov5675.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/media/i2c/ov5675.c b/drivers/media/i2c/ov5675.c
+index ea26df328189..81916fa8c117 100644
+--- a/drivers/media/i2c/ov5675.c
++++ b/drivers/media/i2c/ov5675.c
+@@ -1181,6 +1181,13 @@ static int ov5675_get_hwcfg(struct ov5675 *ov5675)
+ 	if (!fwnode)
+ 		return -ENXIO;
+ 
++	ep = fwnode_graph_get_endpoint_by_id(fwnode, 0, 0,
++					     FWNODE_GRAPH_ENDPOINT_NEXT);
++	ret = v4l2_fwnode_endpoint_alloc_parse(ep, &bus_cfg);
++	fwnode_handle_put(ep);
++	if (ret)
++		return ret;
++
+ 	ov5675->xvclk = devm_v4l2_sensor_clk_get(dev, NULL);
+ 	if (IS_ERR(ov5675->xvclk))
+ 		return dev_err_probe(dev, PTR_ERR(ov5675->xvclk),
+@@ -1210,15 +1217,6 @@ static int ov5675_get_hwcfg(struct ov5675 *ov5675)
+ 	if (ret)
+ 		return ret;
+ 
+-	ep = fwnode_graph_get_next_endpoint(fwnode, NULL);
+-	if (!ep)
+-		return -ENXIO;
+-
+-	ret = v4l2_fwnode_endpoint_alloc_parse(ep, &bus_cfg);
+-	fwnode_handle_put(ep);
+-	if (ret)
+-		return ret;
+-
+ 	if (bus_cfg.bus.mipi_csi2.num_data_lanes != OV5675_DATA_LANES) {
+ 		dev_err(dev, "number of CSI2 data lanes %d is not supported",
+ 			bus_cfg.bus.mipi_csi2.num_data_lanes);
+-- 
+2.53.0
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034333E314F;
+	Tue, 10 Mar 2026 12:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773146718; cv=none; b=El7J7uXeA1zA9acJiMvvHAcB/uy5q2ybJy5Ml/bHxpKmynbrCZigYk2a6W1/HIey98Fb3FIzHaEm70INt19mQpLnbI2pQk+rt5hNstUDRaCrciYhKXej9ah1gaqmdK3RIUZhumtFiP3kSRTM95HEBINVdGWK++4EaPZXy8AanrQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773146718; c=relaxed/simple;
+	bh=b7v4/4OAx2WNxqk0TKlPa4hNxFa/e/M/YBXjcSP7gTQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HKtz9/B4EQS6rIq8rUx0WaS1rh3FYeLq51oCYdVH1UETyFjNHtSU+I8dfyVbKJoJ2GuB8gYxEa1pt64/0Ew47vZkyIoUBk3FMZifivWY2Cn1pmUMk6TCmOaqPU+rhS+XFsPq8VRTJqh8tAC4I1YBUcMzV/GYePS7/QOr2xAMF6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l23bakWS; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l23bakWS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1773146717; x=1804682717;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=b7v4/4OAx2WNxqk0TKlPa4hNxFa/e/M/YBXjcSP7gTQ=;
+  b=l23bakWSnahkG0LO0BGWNpeIzuTwYcDlJuMHd3d15EGN0H4YHmcwEkro
+   JyTrt3UNzM+DmyBta9xI15/P2aVP74Y0lXnqXPDXjliqHf4J4SdhVQa5k
+   Oit3tiDKIrRHPMV0sfc709zlLfWTk7jBcgyWIJU6EKJPRJijnttEebmOg
+   isNwsZvBavEOP/DGToUatTGS8RXVAWvR8e9zDfeSZuNAeDfmKxCIdPTeS
+   Rru9Tw4PGZlbB6TtG1dBB0NXA1vRKoxhgnSa0wboKIR7dPtDCy2sOQTo8
+   M0jg0IEvrDjd5+QTcm3wZaSxZUKC4hZdeJdYcrR+FIgaSjZT8hPqSX01m
+   g==;
+X-CSE-ConnectionGUID: F5lVDaI8TA6979RMtvNRMQ==
+X-CSE-MsgGUID: LmmOsOkTQFCxUoLyHBCjyg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11724"; a="74268930"
+X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; 
+   d="scan'208";a="74268930"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2026 05:45:17 -0700
+X-CSE-ConnectionGUID: WbrudWFxS5avYnIudslaug==
+X-CSE-MsgGUID: //ZeLKUSRTCUfGiKQpnEpQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; 
+   d="scan'208";a="225040229"
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO alaakso-DESK.kioski) ([10.245.246.41])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2026 05:45:11 -0700
+From: Antti Laakso <antti.laakso@linux.intel.com>
+To: linux-media@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linusw@kernel.org,
+	brgl@kernel.org,
+	sakari.ailus@linux.intel.com,
+	mchehab@kernel.org,
+	dan.scally@ideasonboard.com,
+	hansg@kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	hverkuil+cisco@kernel.org,
+	sre@kernel.org,
+	hao.yao@intel.com,
+	jason.z.chen@intel.com,
+	jimmy.su@intel.com,
+	miguel.vadillo@intel.com,
+	kees@kernel.org,
+	ribalda@chromium.org
+Subject: [PATCH 2/5] media: ipu-bridge: Add ov5675 sensor
+Date: Tue, 10 Mar 2026 14:44:24 +0200
+Message-ID: <20260310124427.693625-3-antti.laakso@linux.intel.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+References: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+Precedence: bulk
+X-Mailing-List: linux-media@vger.kernel.org
+List-Id: <linux-media.vger.kernel.org>
+List-Subscribe: <mailto:linux-media+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-media+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+
+The Omnivision ov5675 is found from MSI prestige
+14 AI EVO laptop, for example.
+
+Signed-off-by: Antti Laakso <antti.laakso@linux.intel.com>
+---
+ drivers/media/pci/intel/ipu-bridge.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/media/pci/intel/ipu-bridge.c b/drivers/media/pci/intel/ipu-bridge.c
+index c895584e25a0..ee070d44d5f1 100644
+--- a/drivers/media/pci/intel/ipu-bridge.c
++++ b/drivers/media/pci/intel/ipu-bridge.c
+@@ -91,6 +91,8 @@ static const struct ipu_sensor_config ipu_supported_sensors[] = {
+ 	IPU_SENSOR_CONFIG("OVTIDB10", 1, 560000000),
+ 	/* Omnivision OV2680 */
+ 	IPU_SENSOR_CONFIG("OVTI2680", 1, 331200000),
++	/* Omnivision OV5675 */
++	IPU_SENSOR_CONFIG("OVTI5675", 1, 450000000),
+ 	/* Omnivision OV8856 */
+ 	IPU_SENSOR_CONFIG("OVTI8856", 3, 180000000, 360000000, 720000000),
+ 	/* Sony IMX471 */
+-- 
+2.53.0
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13CE13E4C9C;
+	Tue, 10 Mar 2026 12:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773146724; cv=none; b=uCCYhorEikjqjEZoeO9NGFxxwgXF5/MQkKGVAB8IZ0JRw28tldOiEpayPerE3DS75G9W73+Rgx2QmGPc0ksqJOf6kxsOdWHpQMTa38Nc+iAC4JyIA5HtK8klO8Du6kpcUCQdBQpf9fvTsVtfdewnfxEX9MbD/C/Lcn/aewG2X40=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773146724; c=relaxed/simple;
+	bh=xDxGFiNie59RzGUcXIKy3fyvwvGWfgbZbYPZS7gRRQY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bP3x6ROgP33g/6luFknwR5TJu1jsSoy0jKNk5MoBxx7vuA9fiVFoqhnOH8DHvQi77gQhvCzn12HidkN76GApWYOJOwzkFw6QZtl0QrIc3rMlVNomS/8/n8U3u6f3mP1Y6gaK6pbPpL9lDbjKU6K7dJ+XdwjGLW7gkj8RMrzSfv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i0D8TZNd; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i0D8TZNd"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1773146723; x=1804682723;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=xDxGFiNie59RzGUcXIKy3fyvwvGWfgbZbYPZS7gRRQY=;
+  b=i0D8TZNdfrS/hV+hP4YGEKlHJkZuH/vVI05MW3S+FXqhWQupedmqK0Cw
+   UpppgGUWFsEZM4iDakNH5B0SeqnrXWT4L+cZtwrYw6rxrLDNRWWZuqZiK
+   ERdk/bXTkI8daENFhVbTzgPp1PcxOVLvvY6Od0l64YLCMQGXTfd3yYTMF
+   L0uAvImfOEnqML/3Y0PQvAs7urjGZoa6mh9wLSpsQ45Duy832142NwlWZ
+   inRTchwTs+JdRFMWDunZCErUx9AKXKo90LF+QSMwGywYEJXerSdyYa1vq
+   0IQtu/I6ZfIYMFNRBC0rhXF12PyXgz7lJZjKi23lAmg8UiHBKZF4UvPlj
+   w==;
+X-CSE-ConnectionGUID: MnD0P4dwT8GwSad73KhA2A==
+X-CSE-MsgGUID: NnvxHOhmQBCskfTSqOlSqQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11724"; a="74268945"
+X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; 
+   d="scan'208";a="74268945"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2026 05:45:23 -0700
+X-CSE-ConnectionGUID: SDlUvSDxTm28XrkAKyzAlw==
+X-CSE-MsgGUID: Uogk5UlcQUSLOS0dheK27g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; 
+   d="scan'208";a="225040241"
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO alaakso-DESK.kioski) ([10.245.246.41])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2026 05:45:17 -0700
+From: Antti Laakso <antti.laakso@linux.intel.com>
+To: linux-media@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linusw@kernel.org,
+	brgl@kernel.org,
+	sakari.ailus@linux.intel.com,
+	mchehab@kernel.org,
+	dan.scally@ideasonboard.com,
+	hansg@kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	hverkuil+cisco@kernel.org,
+	sre@kernel.org,
+	hao.yao@intel.com,
+	jason.z.chen@intel.com,
+	jimmy.su@intel.com,
+	miguel.vadillo@intel.com,
+	kees@kernel.org,
+	ribalda@chromium.org
+Subject: [PATCH 3/5] platform: int3472: Add gpio platform data
+Date: Tue, 10 Mar 2026 14:44:25 +0200
+Message-ID: <20260310124427.693625-4-antti.laakso@linux.intel.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+References: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+Precedence: bulk
+X-Mailing-List: linux-media@vger.kernel.org
+List-Id: <linux-media.vger.kernel.org>
+List-Subscribe: <mailto:linux-media+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-media+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+
+The tps68470 supports i2c daisy chain, which need to be configured by
+gpio-tps68470 driver. Add daisy chain information to platform data.
+
+Signed-off-by: Antti Laakso <antti.laakso@linux.intel.com>
+---
+ drivers/platform/x86/intel/int3472/tps68470.c | 2 ++
+ drivers/platform/x86/intel/int3472/tps68470.h | 1 +
+ include/linux/platform_data/tps68470.h        | 4 ++++
+ 3 files changed, 7 insertions(+)
+
+diff --git a/drivers/platform/x86/intel/int3472/tps68470.c b/drivers/platform/x86/intel/int3472/tps68470.c
+index a496075c0d2a..b02bc675cabe 100644
+--- a/drivers/platform/x86/intel/int3472/tps68470.c
++++ b/drivers/platform/x86/intel/int3472/tps68470.c
+@@ -197,6 +197,8 @@ static int skl_int3472_tps68470_probe(struct i2c_client *client)
+ 		cells[1].platform_data = (void *)board_data->tps68470_regulator_pdata;
+ 		cells[1].pdata_size = sizeof(struct tps68470_regulator_platform_data);
+ 		cells[2].name = "tps68470-gpio";
++		cells[2].platform_data = (void *)board_data->tps68470_gpio_pdata;
++		cells[2].pdata_size = sizeof(*board_data->tps68470_gpio_pdata);
+ 
+ 		for (i = 0; i < board_data->n_gpiod_lookups; i++)
+ 			gpiod_add_lookup_table(board_data->tps68470_gpio_lookup_tables[i]);
+diff --git a/drivers/platform/x86/intel/int3472/tps68470.h b/drivers/platform/x86/intel/int3472/tps68470.h
+index 35915e701593..c1c4290eb6d5 100644
+--- a/drivers/platform/x86/intel/int3472/tps68470.h
++++ b/drivers/platform/x86/intel/int3472/tps68470.h
+@@ -17,6 +17,7 @@ struct tps68470_regulator_platform_data;
+ struct int3472_tps68470_board_data {
+ 	const char *dev_name;
+ 	const struct tps68470_regulator_platform_data *tps68470_regulator_pdata;
++	const struct tps68470_gpio_platform_data *tps68470_gpio_pdata;
+ 	unsigned int n_gpiod_lookups;
+ 	struct gpiod_lookup_table *tps68470_gpio_lookup_tables[];
+ };
+diff --git a/include/linux/platform_data/tps68470.h b/include/linux/platform_data/tps68470.h
+index e605a2cab07f..7330dab7a711 100644
+--- a/include/linux/platform_data/tps68470.h
++++ b/include/linux/platform_data/tps68470.h
+@@ -27,6 +27,10 @@ struct tps68470_regulator_platform_data {
+ 	const struct regulator_init_data *reg_init_data[TPS68470_NUM_REGULATORS];
+ };
+ 
++struct tps68470_gpio_platform_data {
++	const bool daisy_chain_enable;
++};
++
+ struct tps68470_clk_consumer {
+ 	const char *consumer_dev_name;
+ 	const char *consumer_con_id;
+-- 
+2.53.0
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF313E63B9;
+	Tue, 10 Mar 2026 12:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773146730; cv=none; b=OrKEf7/uu4rguNpGXzBxkZPDyfb7RJZHaEdt2FdAuogNfVutsfLx/Z3d9sTQNn8mSxa5i7CwJpulffGh+4Ng8eupTRsS7VO222Qmgq6RcpJZKkedOamGyTZiuDy9urawY4mP8cpKCvDHz2R6vqOv6s1pUYpfAU9RnXwRyI6ldEE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773146730; c=relaxed/simple;
+	bh=1pDp3Qkly2VVJyn5uS1f5Qf9t0lTLCceyj74xLhq9BM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DDSpRJ5p/apovDleOVDDeyJg3nOkeymp+ufgJ0FLYARQA8UkoyQ9E8hSEzdT/OIBBcip7WgX29PwjlSWhxgp8IOvA/KFM+Ng7lvyuB47fT5kUwSeXknbFWGKrMflyZbtfjx7yFEyUKmtkjjqOTVioFkBuPe9a+9b38KJF31Zdrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SsfDmMyy; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SsfDmMyy"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1773146729; x=1804682729;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=1pDp3Qkly2VVJyn5uS1f5Qf9t0lTLCceyj74xLhq9BM=;
+  b=SsfDmMyyQZui5n92ZiFRjIr2GBJ4rmPn5mkESfc77mkpzC39wTG+7GEU
+   m2iJHLLvjes2INSCj/Yp+Y6Acr7Vh5zSqyXnbokzp+XYsaPCOnV8kV590
+   kexVEqGBaO54yjQOFxhxfX2qq5WetGRhVV7MciIo+SNnirUjAJIhuCjV9
+   d587cLchGsYmNcrhLsVKs76fdzh+XgM5+YUp9Pd0CBwsG9ZjrR/u9KNma
+   Bqzml7KFU98qUaXpzYD1kLqhsVg4ddW4vIy+8LWqTEi8RXE4VKXEuurCw
+   FJXeQMxnRnrJd+JXI4Wbrbcw/DdOgjbE9fCWm2iTQ7JCylRbVy6PRL1Il
+   w==;
+X-CSE-ConnectionGUID: 4JB3aOucS7+rRZPmD3w4zQ==
+X-CSE-MsgGUID: 2r4bhMYSS6qxlPILqncLig==
+X-IronPort-AV: E=McAfee;i="6800,10657,11724"; a="74268953"
+X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; 
+   d="scan'208";a="74268953"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2026 05:45:29 -0700
+X-CSE-ConnectionGUID: c51sHKIOTzGhiEjpaRNb7Q==
+X-CSE-MsgGUID: DPpL6UDMRDmj5McuKSlZ0w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; 
+   d="scan'208";a="225040250"
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO alaakso-DESK.kioski) ([10.245.246.41])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2026 05:45:23 -0700
+From: Antti Laakso <antti.laakso@linux.intel.com>
+To: linux-media@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linusw@kernel.org,
+	brgl@kernel.org,
+	sakari.ailus@linux.intel.com,
+	mchehab@kernel.org,
+	dan.scally@ideasonboard.com,
+	hansg@kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	hverkuil+cisco@kernel.org,
+	sre@kernel.org,
+	hao.yao@intel.com,
+	jason.z.chen@intel.com,
+	jimmy.su@intel.com,
+	miguel.vadillo@intel.com,
+	kees@kernel.org,
+	ribalda@chromium.org
+Subject: [PATCH 4/5] gpio: tps68470: Add i2c daisy chain support
+Date: Tue, 10 Mar 2026 14:44:26 +0200
+Message-ID: <20260310124427.693625-5-antti.laakso@linux.intel.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+References: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+Precedence: bulk
+X-Mailing-List: linux-media@vger.kernel.org
+List-Id: <linux-media.vger.kernel.org>
+List-Subscribe: <mailto:linux-media+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-media+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+
+The tps68470 daisy chain make use of gpio 1 and 2. When in use, these
+gpios must be configured as inputs without pull-up.
+
+Signed-off-by: Antti Laakso <antti.laakso@linux.intel.com>
+---
+ drivers/gpio/gpio-tps68470.c | 23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-tps68470.c b/drivers/gpio/gpio-tps68470.c
+index d4fbdf90e190..729ad8e397fc 100644
+--- a/drivers/gpio/gpio-tps68470.c
++++ b/drivers/gpio/gpio-tps68470.c
+@@ -14,6 +14,7 @@
+ #include <linux/gpio/driver.h>
+ #include <linux/mfd/tps68470.h>
+ #include <linux/module.h>
++#include <linux/platform_data/tps68470.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ 
+@@ -120,6 +121,17 @@ static int tps68470_gpio_input(struct gpio_chip *gc, unsigned int offset)
+ 				   TPS68470_GPIO_MODE_MASK, 0x00);
+ }
+ 
++static int tps68470_enable_i2c_daisy_chain(struct gpio_chip *gc)
++{
++	int ret;
++
++	ret = tps68470_gpio_input(gc, 1);
++	if (ret)
++		return ret;
++
++	return tps68470_gpio_input(gc, 2);
++}
++
+ static const char *tps68470_names[TPS68470_N_GPIO] = {
+ 	"gpio.0", "gpio.1", "gpio.2", "gpio.3",
+ 	"gpio.4", "gpio.5", "gpio.6",
+@@ -129,6 +141,8 @@ static const char *tps68470_names[TPS68470_N_GPIO] = {
+ static int tps68470_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct tps68470_gpio_data *tps68470_gpio;
++	struct tps68470_gpio_platform_data *pdata = dev_get_platdata(&pdev->dev);
++	int ret = 0;
+ 
+ 	tps68470_gpio = devm_kzalloc(&pdev->dev, sizeof(*tps68470_gpio),
+ 				     GFP_KERNEL);
+@@ -149,7 +163,14 @@ static int tps68470_gpio_probe(struct platform_device *pdev)
+ 	tps68470_gpio->gc.base = -1;
+ 	tps68470_gpio->gc.parent = &pdev->dev;
+ 
+-	return devm_gpiochip_add_data(&pdev->dev, &tps68470_gpio->gc, tps68470_gpio);
++	ret = devm_gpiochip_add_data(&pdev->dev, &tps68470_gpio->gc, tps68470_gpio);
++	if (ret)
++		return ret;
++
++	if (pdata && pdata->daisy_chain_enable)
++		ret = tps68470_enable_i2c_daisy_chain(&tps68470_gpio->gc);
++
++	return ret;
+ }
+ 
+ static struct platform_driver tps68470_gpio_driver = {
+-- 
+2.53.0
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017DB3E8041;
+	Tue, 10 Mar 2026 12:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773146736; cv=none; b=ec6Ot0NfJKnK2geL8J8cNXW0qUAh8Rnc3gMHDBOlEqmSv73u3E4Vdc1+OzgRzAzQuJ4VnqGl3jYbIpjX7dxKlghn5L0XHsBk2Kl1s28kT9ZwDoGBymHLtCXB3TE2aHa/9JMOab9IJE3/KF00ZdN/293gR8Sl+cRngLBijdG3Z98=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773146736; c=relaxed/simple;
+	bh=tN03Ua8cWGsA+NSmKC8Zbhm98icOQ5fcOhlqL+PjwTo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FMSmlkX3x3B96Y/Ngp7L0NQpvc9wbTfaWl88AALVD4oZp635tFbwgxVZOr9b9mwqhNSTI834djQULp5UnQwirz0KCfh07nzFqOp3sxKvnf9yAaqIHOJJyw6XixYnuDwdZna+gK4298H5iyXZij7W1q/P7s/WFmHjTU8uphmot4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lAx2Cju4; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lAx2Cju4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1773146735; x=1804682735;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=tN03Ua8cWGsA+NSmKC8Zbhm98icOQ5fcOhlqL+PjwTo=;
+  b=lAx2Cju4ZKk4fwZ+1IggXmo2ESen23Wc8VjU3ZkqQcC8S0gQCZn7FQTS
+   QnhEUM9S0yMDWW5fuZMpVRUT7AnoF7QINg/RNj0lklEdZ4SC/eYD/JLA1
+   vMhAHnN5xqIaU3mUvDEavJGB6rSMwcnrO5UXoGdnO0Kt0JB9nDjMs4wQN
+   wBi+MdJ2VPl/ceaeRhuT+HEER+cLXtJm1fBBjXxagSomhW12kp7OYNmrn
+   CxPgbmsvgBuEM7J+NEfP9Fbqc+K/ARbSnAdKXI4x8xVdaqfKladRbtGvh
+   gEKqx2V/ByI9BG42U0SSxYEciR/pm/r43hlXHUOU/LLEIrBOt0DuZPrDM
+   w==;
+X-CSE-ConnectionGUID: iikKAxMqQMmZM6HJ09VdhA==
+X-CSE-MsgGUID: oSh6zKcyQ6GpRfsRfpS0NQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11724"; a="74268969"
+X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; 
+   d="scan'208";a="74268969"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2026 05:45:35 -0700
+X-CSE-ConnectionGUID: dR14lY+ATVqzMmAjTzTJeg==
+X-CSE-MsgGUID: M5oRJc/rTEOduIzLV4DDuw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; 
+   d="scan'208";a="225040264"
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO alaakso-DESK.kioski) ([10.245.246.41])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2026 05:45:29 -0700
+From: Antti Laakso <antti.laakso@linux.intel.com>
+To: linux-media@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linusw@kernel.org,
+	brgl@kernel.org,
+	sakari.ailus@linux.intel.com,
+	mchehab@kernel.org,
+	dan.scally@ideasonboard.com,
+	hansg@kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	hverkuil+cisco@kernel.org,
+	sre@kernel.org,
+	hao.yao@intel.com,
+	jason.z.chen@intel.com,
+	jimmy.su@intel.com,
+	miguel.vadillo@intel.com,
+	kees@kernel.org,
+	ribalda@chromium.org
+Subject: [PATCH 5/5] platform: int3472: Add MSI prestige board data
+Date: Tue, 10 Mar 2026 14:44:27 +0200
+Message-ID: <20260310124427.693625-6-antti.laakso@linux.intel.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+References: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+Precedence: bulk
+X-Mailing-List: linux-media@vger.kernel.org
+List-Id: <linux-media.vger.kernel.org>
+List-Subscribe: <mailto:linux-media+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-media+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+
+Define regulators and gpios for MSI Prestige 14 AI EVO+ laptop.
+
+Signed-off-by: Antti Laakso <antti.laakso@linux.intel.com>
+---
+ .../x86/intel/int3472/tps68470_board_data.c   | 97 +++++++++++++++++++
+ 1 file changed, 97 insertions(+)
+
+diff --git a/drivers/platform/x86/intel/int3472/tps68470_board_data.c b/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+index 71357a036292..fe7c23e72d66 100644
+--- a/drivers/platform/x86/intel/int3472/tps68470_board_data.c
++++ b/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+@@ -232,6 +232,73 @@ static const struct tps68470_regulator_platform_data dell_7212_tps68470_pdata =
+ 	},
+ };
+ 
++/* Settings for MSI Prestige 14 laptop. */
++
++static struct regulator_consumer_supply ovti5675_avdd_consumer_supplies[] = {
++	REGULATOR_SUPPLY("avdd", "i2c-OVTI5675:00"),
++};
++
++static struct regulator_consumer_supply ovti5675_dovdd_consumer_supplies[] = {
++	REGULATOR_SUPPLY("dovdd", "i2c-OVTI5675:00"),
++};
++
++static struct regulator_consumer_supply ovti5675_dvdd_consumer_supplies[] = {
++	REGULATOR_SUPPLY("dvdd", "i2c-OVTI5675:00"),
++};
++
++static const struct regulator_init_data msi_p14_ai_evo_tps68470_core_reg_init_data = {
++	.constraints = {
++		.min_uV = 1200000,
++		.max_uV = 1200000,
++		.apply_uV = 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++	},
++	.num_consumer_supplies = ARRAY_SIZE(ovti5675_dvdd_consumer_supplies),
++	.consumer_supplies = ovti5675_dvdd_consumer_supplies,
++};
++
++static const struct regulator_init_data msi_p14_ai_evo_tps68470_ana_reg_init_data = {
++	.constraints = {
++		.min_uV = 2815200,
++		.max_uV = 2815200,
++		.apply_uV = 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++	},
++	.num_consumer_supplies = ARRAY_SIZE(ovti5675_avdd_consumer_supplies),
++	.consumer_supplies = ovti5675_avdd_consumer_supplies,
++};
++
++static const struct regulator_init_data msi_p14_ai_evo_tps68470_vio_reg_init_data = {
++	.constraints = {
++		.min_uV = 1800600,
++		.max_uV = 1800600,
++		.apply_uV = 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++	},
++	.num_consumer_supplies = 0,
++	.consumer_supplies = NULL,
++};
++
++static const struct regulator_init_data msi_p14_ai_evo_tps68470_vsio_reg_init_data = {
++	.constraints = {
++		.min_uV = 1800600,
++		.max_uV = 1800600,
++		.apply_uV = 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++	},
++	.num_consumer_supplies = ARRAY_SIZE(ovti5675_dovdd_consumer_supplies),
++	.consumer_supplies = ovti5675_dovdd_consumer_supplies,
++};
++
++static const struct tps68470_regulator_platform_data msi_p14_ai_evo_tps68470_pdata = {
++	.reg_init_data = {
++		[TPS68470_CORE] = &msi_p14_ai_evo_tps68470_core_reg_init_data,
++		[TPS68470_ANA]  = &msi_p14_ai_evo_tps68470_ana_reg_init_data,
++		[TPS68470_VIO]  = &msi_p14_ai_evo_tps68470_vio_reg_init_data,
++		[TPS68470_VSIO] = &msi_p14_ai_evo_tps68470_vsio_reg_init_data,
++	},
++};
++
+ static struct gpiod_lookup_table surface_go_int347a_gpios = {
+ 	.dev_id = "i2c-INT347A:00",
+ 	.table = {
+@@ -258,6 +325,19 @@ static struct gpiod_lookup_table dell_7212_int3479_gpios = {
+ 	}
+ };
+ 
++static struct gpiod_lookup_table msi_p14_ai_evo_ovti5675_gpios = {
++	.dev_id = "i2c-OVTI5675:00",
++	.table = {
++		GPIO_LOOKUP_IDX("tps68470-gpio", 9, "reset", 0, GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP_IDX("tps68470-gpio", 7, "reset", 1, GPIO_ACTIVE_LOW),
++		{ }
++	}
++};
++
++static const struct tps68470_gpio_platform_data msi_p14_ai_evo_tps68470_gpio_pdata = {
++	.daisy_chain_enable = true,
++};
++
+ static const struct int3472_tps68470_board_data surface_go_tps68470_board_data = {
+ 	.dev_name = "i2c-INT3472:05",
+ 	.tps68470_regulator_pdata = &surface_go_tps68470_pdata,
+@@ -287,6 +367,16 @@ static const struct int3472_tps68470_board_data dell_7212_tps68470_board_data =
+ 	},
+ };
+ 
++static const struct int3472_tps68470_board_data msi_p14_ai_evo_tps68470_board_data = {
++	.dev_name = "i2c-INT3472:06",
++	.tps68470_regulator_pdata = &msi_p14_ai_evo_tps68470_pdata,
++	.tps68470_gpio_pdata = &msi_p14_ai_evo_tps68470_gpio_pdata,
++	.n_gpiod_lookups = 1,
++	.tps68470_gpio_lookup_tables = {
++		&msi_p14_ai_evo_ovti5675_gpios,
++	},
++};
++
+ static const struct dmi_system_id int3472_tps68470_board_data_table[] = {
+ 	{
+ 		.matches = {
+@@ -316,6 +406,13 @@ static const struct dmi_system_id int3472_tps68470_board_data_table[] = {
+ 		},
+ 		.driver_data = (void *)&dell_7212_tps68470_board_data,
+ 	},
++	{
++		.matches = {
++			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Micro-Star International Co., Ltd."),
++			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Prestige 14 AI+ Evo C2VMG"),
++		},
++		.driver_data = (void *)&msi_p14_ai_evo_tps68470_board_data,
++	},
+ 	{ }
+ };
+ 
+-- 
+2.53.0
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA5D3B27DE;
+	Tue, 10 Mar 2026 13:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773147815; cv=none; b=hfqKWP+1BdmRJrqqChjS1TnTjYVF2SnnwjGGqX8lg9EdGTL0+2t/84eFmBhxsHpYB8pDAXIzpDziytlvyxpK0QzGZW3u6X9WzOYay9eldflX7xkcoPP32lAxBQENvdcTARNYaLm6rkbPkexwdmu0RaoHVQVTPD+2H8PqgXy1Hb8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773147815; c=relaxed/simple;
+	bh=MfEXy1ctseopp63FSBOa0UQ1m/J7vCPfW+SR5dSkFkU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dwDeD9bWlJnySMqzO2inI1CeZ5zcv5BDvjaLB6dV6fB+X0xygYXQBPH7jT0CspYfSd8rgyWiLtpZ+wPztZ58avZpdv/DD6BkeJ77kT3cLOh2ta7Bixs44ldblWCGLFHoT0VKXwc7rzVfyyurXdEMUq5ANadmiMj4rYddTb/Up3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ln1xstyJ; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ln1xstyJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F28BC2BCB1;
+	Tue, 10 Mar 2026 13:03:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773147815;
+	bh=MfEXy1ctseopp63FSBOa0UQ1m/J7vCPfW+SR5dSkFkU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ln1xstyJp0BoYpFoSFJnSctWSbgDDiJ7aiAs5vss36QOCCOhspsj2Qv0a8Q3PhdTe
+	 bO4PisEawqrnMt3l21W/NfkFxjsx++INMM9ohMS64akIcobdMkUYpzIsOqboD4lNkg
+	 WpXvAdiN+7wlDiCIyBTc19BiyE30eEoD84Cr3+bGgIkP620QaiTR/nRSr45/TV38N8
+	 KlG/ZOFE/TLKACO3XPepuyv4z03JLf1Uq0KsKGir6bajteaqjo4l3VJm7rFvcsE5Gj
+	 HC1Fjr8XiVcWKAhbYd0ok58jqDVweCBhb4fzOylpxo7IMHhIeceOodHOSYfv35pbHe
+	 44mLuSEDyPpPA==
+Message-ID: <14af1139-cb61-4519-a769-23796ecca3e2@kernel.org>
+Date: Tue, 10 Mar 2026 14:03:30 +0100
+Precedence: bulk
+X-Mailing-List: linux-media@vger.kernel.org
+List-Id: <linux-media.vger.kernel.org>
+List-Subscribe: <mailto:linux-media+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-media+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] media: i2c: ov5675: Wait for endpoint
+To: Antti Laakso <antti.laakso@linux.intel.com>, linux-media@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linusw@kernel.org, brgl@kernel.org, sakari.ailus@linux.intel.com,
+ mchehab@kernel.org, dan.scally@ideasonboard.com,
+ ilpo.jarvinen@linux.intel.com, hverkuil+cisco@kernel.org, sre@kernel.org,
+ hao.yao@intel.com, jason.z.chen@intel.com, jimmy.su@intel.com,
+ miguel.vadillo@intel.com, kees@kernel.org, ribalda@chromium.org
+References: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+ <20260310124427.693625-2-antti.laakso@linux.intel.com>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <20260310124427.693625-2-antti.laakso@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Hi,
+
+Thank you for your patches for this, cool to see someone working
+on supporting this!
+
+On 10-Mar-26 13:44, Antti Laakso wrote:
+> Defer probe if endpoint is not yet available. And do it before acquiring
+> clock, gpio and regulators.
+> 
+> Signed-off-by: Antti Laakso <antti.laakso@linux.intel.com>
+> ---
+>  drivers/media/i2c/ov5675.c | 16 +++++++---------
+>  1 file changed, 7 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/ov5675.c b/drivers/media/i2c/ov5675.c
+> index ea26df328189..81916fa8c117 100644
+> --- a/drivers/media/i2c/ov5675.c
+> +++ b/drivers/media/i2c/ov5675.c
+> @@ -1181,6 +1181,13 @@ static int ov5675_get_hwcfg(struct ov5675 *ov5675)
+>  	if (!fwnode)
+>  		return -ENXIO;
+>  
+> +	ep = fwnode_graph_get_endpoint_by_id(fwnode, 0, 0,
+> +					     FWNODE_GRAPH_ENDPOINT_NEXT);
+> +	ret = v4l2_fwnode_endpoint_alloc_parse(ep, &bus_cfg);
+> +	fwnode_handle_put(ep);
+> +	if (ret)
+> +		return ret;
+
+This should be:
+
+		return dev_err_probe(dev, ret, "failed to parse endpoint\n");
+
+
+> +
+>  	ov5675->xvclk = devm_v4l2_sensor_clk_get(dev, NULL);
+>  	if (IS_ERR(ov5675->xvclk))
+
+and here and in all other error-exit paths you now need to do:
+
+	if (IS_ERR(ov5675->xvclk)) {
+		ret = dev_err_probe(dev, PTR_ERR(ov5675->xvclk), "failed to get xvclk\n");
+		goto check_hwcfg_error;
+	}
+
+So that the v4l2_fwnode_endpoint_free(&bus_cfg); get called.
+Note in this case I also dropped the %pe print because dev_err_probe()
+already prints the errno value from its second argument.
+
+You will need to add a similar ret = ...; goto check_hwcfg_error;
+to all other error-exits below this point.
+
+Regards,
+
+Hans
+
+
+
+
+>  		return dev_err_probe(dev, PTR_ERR(ov5675->xvclk),
+
+> @@ -1210,15 +1217,6 @@ static int ov5675_get_hwcfg(struct ov5675 *ov5675)
+>  	if (ret)
+>  		return ret;
+>  
+> -	ep = fwnode_graph_get_next_endpoint(fwnode, NULL);
+> -	if (!ep)
+> -		return -ENXIO;
+> -
+> -	ret = v4l2_fwnode_endpoint_alloc_parse(ep, &bus_cfg);
+> -	fwnode_handle_put(ep);
+> -	if (ret)
+> -		return ret;
+> -
+>  	if (bus_cfg.bus.mipi_csi2.num_data_lanes != OV5675_DATA_LANES) {
+>  		dev_err(dev, "number of CSI2 data lanes %d is not supported",
+>  			bus_cfg.bus.mipi_csi2.num_data_lanes);
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7DE3A16B0;
+	Tue, 10 Mar 2026 13:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773147980; cv=none; b=Q3g6+O+7Cucxt9j5TQQYfpcA28Cyuoue5jSOXl8Wu71+PAKY8r50XFAAnhCjz+U4HRblSd/ukz30qUEP5x01ovuxTn9UuEa5W9u889BqcX7OubmCJGMyV1KSVMXBu3lZm1XuQpYkbso4xJGl+33B6Lb5zYXlnDN21WjXP8HmKm0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773147980; c=relaxed/simple;
+	bh=NCYv3ScJeZIYKDGxml+7ADHwSUlm9Yy8y11GpVGfHFA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VU13pkvgiMdUnwYfxPOKfy4WHAjDIpja70uRjICvkWZ0O4zl7bf+HYWX6Ypio37N1zXLIn6QHf9PjNTGKCPH0EJ9f0vauS9uQoRx9MfupWlyK+fbreyNmi4qoOqgXODMp57IAWJpHvB2cW70l49LSPG5x7fvN6nlgMcxWJVYGaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d5c3Pn7+; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d5c3Pn7+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C362C19423;
+	Tue, 10 Mar 2026 13:06:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773147979;
+	bh=NCYv3ScJeZIYKDGxml+7ADHwSUlm9Yy8y11GpVGfHFA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=d5c3Pn7+UTTTF4bW+a2+KDmhfMGoH3jJqEbF6gSEYw+eTQjXZnOumVLcbyiGS8i5c
+	 guOTM1rhQQeBDNJjmnhfeG/2wUOlAtUZXNqnN8un4q1ZksaKhf/1hoWKlbsM/d8cRm
+	 sI7EnD6/5R+kK5EwiRL6meJxVAhF7hLRIPJgeydiLrqHVOHEso3MlDD7M8FJAjKBGI
+	 0xgRUzsiDPbAjMy027WhaUP/jQvdVrtvMHZwkJqPnNZ0AeI7iDQ43LWjRygFUufcXU
+	 GMrmotuFgcrL3l92nlynbs4ezDYBSkPsf1X/OPY5jN8Brp62afYXBdYlyOoUFE/k7T
+	 WoSRhKdSFPlzA==
+Message-ID: <13f615e9-f543-4630-8dc9-dd9c954ea921@kernel.org>
+Date: Tue, 10 Mar 2026 14:06:14 +0100
+Precedence: bulk
+X-Mailing-List: linux-media@vger.kernel.org
+List-Id: <linux-media.vger.kernel.org>
+List-Subscribe: <mailto:linux-media+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-media+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] media: ipu-bridge: Add ov5675 sensor
+To: Antti Laakso <antti.laakso@linux.intel.com>, linux-media@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linusw@kernel.org, brgl@kernel.org, sakari.ailus@linux.intel.com,
+ mchehab@kernel.org, dan.scally@ideasonboard.com,
+ ilpo.jarvinen@linux.intel.com, hverkuil+cisco@kernel.org, sre@kernel.org,
+ hao.yao@intel.com, jason.z.chen@intel.com, jimmy.su@intel.com,
+ miguel.vadillo@intel.com, kees@kernel.org, ribalda@chromium.org
+References: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+ <20260310124427.693625-3-antti.laakso@linux.intel.com>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <20260310124427.693625-3-antti.laakso@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Hi,
+
+On 10-Mar-26 13:44, Antti Laakso wrote:
+> The Omnivision ov5675 is found from MSI prestige
+> 14 AI EVO laptop, for example.
+> 
+> Signed-off-by: Antti Laakso <antti.laakso@linux.intel.com>
+
+Thanks, patch looks good to me:
+
+Reviewed-by: Hans de Goede <johannes.goede@oss.qualcomm.com>
+
+Regards,
+
+Hans
+
+
+
+
+> ---
+>  drivers/media/pci/intel/ipu-bridge.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/media/pci/intel/ipu-bridge.c b/drivers/media/pci/intel/ipu-bridge.c
+> index c895584e25a0..ee070d44d5f1 100644
+> --- a/drivers/media/pci/intel/ipu-bridge.c
+> +++ b/drivers/media/pci/intel/ipu-bridge.c
+> @@ -91,6 +91,8 @@ static const struct ipu_sensor_config ipu_supported_sensors[] = {
+>  	IPU_SENSOR_CONFIG("OVTIDB10", 1, 560000000),
+>  	/* Omnivision OV2680 */
+>  	IPU_SENSOR_CONFIG("OVTI2680", 1, 331200000),
+> +	/* Omnivision OV5675 */
+> +	IPU_SENSOR_CONFIG("OVTI5675", 1, 450000000),
+>  	/* Omnivision OV8856 */
+>  	IPU_SENSOR_CONFIG("OVTI8856", 3, 180000000, 360000000, 720000000),
+>  	/* Sony IMX471 */
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348E43BBA13;
+	Tue, 10 Mar 2026 13:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773148001; cv=none; b=mWi7PxpChuvGCD93VK3gi2tIeI1KDSkaPxrdO/rWN+jKPVVdZZsWA6T0NSuIvVra1KkPkU6fqFvf/edbOWfNRryuMMG/dcr+QhsOS6HPl/qZww0yKEeAz9mBl7QVw/04CgdJ3P+2Oq2Txz7UxNdW1+RL4eG3niR6kbS70xdXhfo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773148001; c=relaxed/simple;
+	bh=tYTbD082D1CjxqxR44nlGdmxEU587BQeuKM+nasQ8+A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dxwGXjpzoZWZt+CyXuWW4C9R6a43RR0ZWHO3GRGcMP4011fqSXur3bwIENpLco16Ow28DbY/fHBNJRLQUA3cvJvqByqx7GwyIKBctnu0Zr3xfgjWwIOxtFJJwv7Be0yMv93OndSsgIOhgtp/9kH61HCLTyGXXgkXxjersZxRiTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oc8GyeyJ; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oc8GyeyJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D441FC19423;
+	Tue, 10 Mar 2026 13:06:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773148001;
+	bh=tYTbD082D1CjxqxR44nlGdmxEU587BQeuKM+nasQ8+A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Oc8GyeyJ1vmpZn0eYmrG8pjpah+JVHDX2OxSocjT+0aQu0HS4J0SWRXE5ukdwIBX2
+	 7r1no646YjnBViXfhwqIHOaxb+xLNOUClqEq5Y2/NZ4Hkyljr0pwfOO1i9SAPQKTsV
+	 kIxFN/vfNa92X3GBg+r64933vAgI8UpbdYFhYmAzu2T5cXT7MsdavMM3wNSpPAeyih
+	 oZTGSTuGv/wx2C8A8Fz8ocqSkw18KRB1Ct6PV1IzspCMcRvg+bka7DCjs26Vn5GmER
+	 e+zpgn/FSC+5/T4ErgJRAJZ/8361lOO3JAndFIDA1hHdMc43goW6tBjiFz9nC/p4O6
+	 /sWoJsZan2N4Q==
+Message-ID: <5b955e4c-4206-44f7-b680-9b8a99d75a74@kernel.org>
+Date: Tue, 10 Mar 2026 14:06:36 +0100
+Precedence: bulk
+X-Mailing-List: linux-media@vger.kernel.org
+List-Id: <linux-media.vger.kernel.org>
+List-Subscribe: <mailto:linux-media+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-media+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/5] platform: int3472: Add gpio platform data
+To: Antti Laakso <antti.laakso@linux.intel.com>, linux-media@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linusw@kernel.org, brgl@kernel.org, sakari.ailus@linux.intel.com,
+ mchehab@kernel.org, dan.scally@ideasonboard.com,
+ ilpo.jarvinen@linux.intel.com, hverkuil+cisco@kernel.org, sre@kernel.org,
+ hao.yao@intel.com, jason.z.chen@intel.com, jimmy.su@intel.com,
+ miguel.vadillo@intel.com, kees@kernel.org, ribalda@chromium.org
+References: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+ <20260310124427.693625-4-antti.laakso@linux.intel.com>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <20260310124427.693625-4-antti.laakso@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Hi,
+
+On 10-Mar-26 13:44, Antti Laakso wrote:
+> The tps68470 supports i2c daisy chain, which need to be configured by
+> gpio-tps68470 driver. Add daisy chain information to platform data.
+> 
+> Signed-off-by: Antti Laakso <antti.laakso@linux.intel.com>
+
+Thanks, patch looks good to me:
+
+Reviewed-by: Hans de Goede <johannes.goede@oss.qualcomm.com>
+
+Regards,
+
+Hans
+
+
+
+> ---
+>  drivers/platform/x86/intel/int3472/tps68470.c | 2 ++
+>  drivers/platform/x86/intel/int3472/tps68470.h | 1 +
+>  include/linux/platform_data/tps68470.h        | 4 ++++
+>  3 files changed, 7 insertions(+)
+> 
+> diff --git a/drivers/platform/x86/intel/int3472/tps68470.c b/drivers/platform/x86/intel/int3472/tps68470.c
+> index a496075c0d2a..b02bc675cabe 100644
+> --- a/drivers/platform/x86/intel/int3472/tps68470.c
+> +++ b/drivers/platform/x86/intel/int3472/tps68470.c
+> @@ -197,6 +197,8 @@ static int skl_int3472_tps68470_probe(struct i2c_client *client)
+>  		cells[1].platform_data = (void *)board_data->tps68470_regulator_pdata;
+>  		cells[1].pdata_size = sizeof(struct tps68470_regulator_platform_data);
+>  		cells[2].name = "tps68470-gpio";
+> +		cells[2].platform_data = (void *)board_data->tps68470_gpio_pdata;
+> +		cells[2].pdata_size = sizeof(*board_data->tps68470_gpio_pdata);
+>  
+>  		for (i = 0; i < board_data->n_gpiod_lookups; i++)
+>  			gpiod_add_lookup_table(board_data->tps68470_gpio_lookup_tables[i]);
+> diff --git a/drivers/platform/x86/intel/int3472/tps68470.h b/drivers/platform/x86/intel/int3472/tps68470.h
+> index 35915e701593..c1c4290eb6d5 100644
+> --- a/drivers/platform/x86/intel/int3472/tps68470.h
+> +++ b/drivers/platform/x86/intel/int3472/tps68470.h
+> @@ -17,6 +17,7 @@ struct tps68470_regulator_platform_data;
+>  struct int3472_tps68470_board_data {
+>  	const char *dev_name;
+>  	const struct tps68470_regulator_platform_data *tps68470_regulator_pdata;
+> +	const struct tps68470_gpio_platform_data *tps68470_gpio_pdata;
+>  	unsigned int n_gpiod_lookups;
+>  	struct gpiod_lookup_table *tps68470_gpio_lookup_tables[];
+>  };
+> diff --git a/include/linux/platform_data/tps68470.h b/include/linux/platform_data/tps68470.h
+> index e605a2cab07f..7330dab7a711 100644
+> --- a/include/linux/platform_data/tps68470.h
+> +++ b/include/linux/platform_data/tps68470.h
+> @@ -27,6 +27,10 @@ struct tps68470_regulator_platform_data {
+>  	const struct regulator_init_data *reg_init_data[TPS68470_NUM_REGULATORS];
+>  };
+>  
+> +struct tps68470_gpio_platform_data {
+> +	const bool daisy_chain_enable;
+> +};
+> +
+>  struct tps68470_clk_consumer {
+>  	const char *consumer_dev_name;
+>  	const char *consumer_con_id;
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2A33A75B9;
+	Tue, 10 Mar 2026 13:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773148040; cv=none; b=E2mKnXWwS0ozhmrC17LVgITDEeCrqumioqCQd6vwtfDg9kPWoBApONHDvwXunvYaQrXroBUgfmLF4lOU5ghqf7oQQGIzN9M6PDMXikWTzyOFvuVj5mv4zotVsRUHIkh+QEMGLyO6HAfH3nRBlU+JQZdegzEdkcYL5V6VthZZxzU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773148040; c=relaxed/simple;
+	bh=PKZXbPYgvJTKRqt2jl+pa3m2GFfmeYgaiCcXYSCsdwk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ct+1hEUagB9JIwU8xcWm9ivmlI2dJqpxRtVO22tNQWTMbzTAsSGTZufD9oBBtxFOmBfUnQMcLXLig/sbUP5a6C+QLscuyVw5heyEjZ3itj0h2b+qZRyDM20lOe15OVdsfMl86E1FvoC8LLoHRrdRn2MZFAP81U/Nd6r66xwsAqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IVW4mxee; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IVW4mxee"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A775C19423;
+	Tue, 10 Mar 2026 13:07:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773148039;
+	bh=PKZXbPYgvJTKRqt2jl+pa3m2GFfmeYgaiCcXYSCsdwk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IVW4mxeeQng902Q13MtxcFuNpfTXHl6MynBUSVoWsggxojQkEhmhl7zn5OS+yxVJr
+	 608WPctMs8HySBWOd7dbvdDk+nxa5OZh7uFqqSkToRSecivCNZPWfsVMt8lbA3EbTH
+	 LY7lIxGp1i98s0Rg/VD8VR21Y17OvlbBWZ6r0HiI+DncI8qXdd0qLa36oJeX/tTxJA
+	 OiryYLjNMbxdhTwAs8d8XPd++9fh+kD6AgGQ/QhOV8eaat0u2OFU5KcFsLSzoQzOhK
+	 ztMDN0NRce64ZoAkUCmBw7ZxZXmjGUom1UIv/JhR09XMJfTV+REe+sgek+g7lKu56l
+	 u233V9YDXskVQ==
+Message-ID: <44b921d8-9ee9-46a2-b24a-0ba60b4fd0a2@kernel.org>
+Date: Tue, 10 Mar 2026 14:07:14 +0100
+Precedence: bulk
+X-Mailing-List: linux-media@vger.kernel.org
+List-Id: <linux-media.vger.kernel.org>
+List-Subscribe: <mailto:linux-media+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-media+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5] gpio: tps68470: Add i2c daisy chain support
+To: Antti Laakso <antti.laakso@linux.intel.com>, linux-media@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linusw@kernel.org, brgl@kernel.org, sakari.ailus@linux.intel.com,
+ mchehab@kernel.org, dan.scally@ideasonboard.com,
+ ilpo.jarvinen@linux.intel.com, hverkuil+cisco@kernel.org, sre@kernel.org,
+ hao.yao@intel.com, jason.z.chen@intel.com, jimmy.su@intel.com,
+ miguel.vadillo@intel.com, kees@kernel.org, ribalda@chromium.org
+References: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+ <20260310124427.693625-5-antti.laakso@linux.intel.com>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <20260310124427.693625-5-antti.laakso@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Hi,
+
+On 10-Mar-26 13:44, Antti Laakso wrote:
+> The tps68470 daisy chain make use of gpio 1 and 2. When in use, these
+> gpios must be configured as inputs without pull-up.
+> 
+> Signed-off-by: Antti Laakso <antti.laakso@linux.intel.com>
+
+Thanks, patch looks good to me:
+
+Reviewed-by: Hans de Goede <johannes.goede@oss.qualcomm.com>
+
+Regards,
+
+Hans
+
+
+> ---
+>  drivers/gpio/gpio-tps68470.c | 23 ++++++++++++++++++++++-
+>  1 file changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-tps68470.c b/drivers/gpio/gpio-tps68470.c
+> index d4fbdf90e190..729ad8e397fc 100644
+> --- a/drivers/gpio/gpio-tps68470.c
+> +++ b/drivers/gpio/gpio-tps68470.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/gpio/driver.h>
+>  #include <linux/mfd/tps68470.h>
+>  #include <linux/module.h>
+> +#include <linux/platform_data/tps68470.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regmap.h>
+>  
+> @@ -120,6 +121,17 @@ static int tps68470_gpio_input(struct gpio_chip *gc, unsigned int offset)
+>  				   TPS68470_GPIO_MODE_MASK, 0x00);
+>  }
+>  
+> +static int tps68470_enable_i2c_daisy_chain(struct gpio_chip *gc)
+> +{
+> +	int ret;
+> +
+> +	ret = tps68470_gpio_input(gc, 1);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return tps68470_gpio_input(gc, 2);
+> +}
+> +
+>  static const char *tps68470_names[TPS68470_N_GPIO] = {
+>  	"gpio.0", "gpio.1", "gpio.2", "gpio.3",
+>  	"gpio.4", "gpio.5", "gpio.6",
+> @@ -129,6 +141,8 @@ static const char *tps68470_names[TPS68470_N_GPIO] = {
+>  static int tps68470_gpio_probe(struct platform_device *pdev)
+>  {
+>  	struct tps68470_gpio_data *tps68470_gpio;
+> +	struct tps68470_gpio_platform_data *pdata = dev_get_platdata(&pdev->dev);
+> +	int ret = 0;
+>  
+>  	tps68470_gpio = devm_kzalloc(&pdev->dev, sizeof(*tps68470_gpio),
+>  				     GFP_KERNEL);
+> @@ -149,7 +163,14 @@ static int tps68470_gpio_probe(struct platform_device *pdev)
+>  	tps68470_gpio->gc.base = -1;
+>  	tps68470_gpio->gc.parent = &pdev->dev;
+>  
+> -	return devm_gpiochip_add_data(&pdev->dev, &tps68470_gpio->gc, tps68470_gpio);
+> +	ret = devm_gpiochip_add_data(&pdev->dev, &tps68470_gpio->gc, tps68470_gpio);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (pdata && pdata->daisy_chain_enable)
+> +		ret = tps68470_enable_i2c_daisy_chain(&tps68470_gpio->gc);
+> +
+> +	return ret;
+>  }
+>  
+>  static struct platform_driver tps68470_gpio_driver = {
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14813BC698;
+	Tue, 10 Mar 2026 13:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773148100; cv=none; b=goy28rnOTZXtBpBm2rnhTnYio4QIfJ1tJlZgbtSoRJ+zoEw81EPiNf9nqfO5UxlkYBOeN6FhFhKuCq0GVCDbzRxdyYeY2ad+ptSaQwC70gFqLPyaiT55lzqoMoW6xwJ0F6zOfwqmKwJSo8msW0x2LYS0ERDoLYHKoHeoH0ZCHRE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773148100; c=relaxed/simple;
+	bh=PNtPF+6+9BLZdw7Fv51u3Gdscr7W/mh2J0X5wUWuSV8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dbQ3QYvmuQ70whAVU9dbD92wOFuYmHVsR6B0OQsVxd/HDQup8BQI4HiuNUVkBmbC4n3XzRK3DvZIQ9gKk4YynOVm1/smkvQh/5EQ0WnFRCkV7ke5QpO4ZwP2g7RW+7jyghbNf6IHG3qYHxNgMmDdQ5JRz38j5Ay4tn1ptDntVCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DycqRz8L; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DycqRz8L"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1773148099; x=1804684099;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PNtPF+6+9BLZdw7Fv51u3Gdscr7W/mh2J0X5wUWuSV8=;
+  b=DycqRz8L0Jxp/TMgJCBE8/GtiYnosXRRsRQ5ijPqhwb+BM7p+SQcdQnb
+   23biqQjAcc4EO/pk5KT2UUZi5Iws9er87Bvcu1P3ef7Mndo1HNa8+qSgm
+   CH3j55bwi7e8hUAm3pmJ/sPPcD05VfsE4P/08hTSsck6l+Vr5FmXMrRAR
+   e2bDGXj7yRm/ig27nzg4BoVd0ulveCBCboI75QE8/Qff2ySDRtq4Xaafs
+   MWozr3bHBLJCemkKyRqT3BM+cTLVeIJKHGZs5hy6BDmhXexsO0d74q5cG
+   SfSw2a245TbdiLaS6ZcWhmfPVYbzCIflZdeWp8JoLADkJPIIjLT5TO+zi
+   w==;
+X-CSE-ConnectionGUID: /EzJ6+91Qqepr6jrjudhHA==
+X-CSE-MsgGUID: +TEIV0crSbOf5JlhK2xsYA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11725"; a="78072000"
+X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; 
+   d="scan'208";a="78072000"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2026 06:08:18 -0700
+X-CSE-ConnectionGUID: U8h2QeN8RhWWdTYnuKiEng==
+X-CSE-MsgGUID: wbLoUW1OQZGAP/W00ccuEw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; 
+   d="scan'208";a="216889957"
+Received: from ncintean-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.26])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2026 06:08:14 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 7676A121D13;
+	Tue, 10 Mar 2026 15:08:45 +0200 (EET)
+Date: Tue, 10 Mar 2026 15:08:45 +0200
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Hans de Goede <hansg@kernel.org>
+Cc: Antti Laakso <antti.laakso@linux.intel.com>,
+	linux-media@vger.kernel.org, linux-gpio@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org, linusw@kernel.org,
+	brgl@kernel.org, mchehab@kernel.org, dan.scally@ideasonboard.com,
+	ilpo.jarvinen@linux.intel.com, hverkuil+cisco@kernel.org,
+	sre@kernel.org, hao.yao@intel.com, jason.z.chen@intel.com,
+	jimmy.su@intel.com, miguel.vadillo@intel.com, kees@kernel.org,
+	ribalda@chromium.org
+Subject: Re: [PATCH 1/5] media: i2c: ov5675: Wait for endpoint
+Message-ID: <abAX3WVzKgTIynW7@kekkonen.localdomain>
+References: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+ <20260310124427.693625-2-antti.laakso@linux.intel.com>
+ <14af1139-cb61-4519-a769-23796ecca3e2@kernel.org>
+Precedence: bulk
+X-Mailing-List: linux-media@vger.kernel.org
+List-Id: <linux-media.vger.kernel.org>
+List-Subscribe: <mailto:linux-media+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-media+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <14af1139-cb61-4519-a769-23796ecca3e2@kernel.org>
+
+Hi Hans,
+
+On Tue, Mar 10, 2026 at 02:03:30PM +0100, Hans de Goede wrote:
+> Hi,
+> 
+> Thank you for your patches for this, cool to see someone working
+> on supporting this!
+> 
+> On 10-Mar-26 13:44, Antti Laakso wrote:
+> > Defer probe if endpoint is not yet available. And do it before acquiring
+> > clock, gpio and regulators.
+> > 
+> > Signed-off-by: Antti Laakso <antti.laakso@linux.intel.com>
+> > ---
+> >  drivers/media/i2c/ov5675.c | 16 +++++++---------
+> >  1 file changed, 7 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/drivers/media/i2c/ov5675.c b/drivers/media/i2c/ov5675.c
+> > index ea26df328189..81916fa8c117 100644
+> > --- a/drivers/media/i2c/ov5675.c
+> > +++ b/drivers/media/i2c/ov5675.c
+> > @@ -1181,6 +1181,13 @@ static int ov5675_get_hwcfg(struct ov5675 *ov5675)
+> >  	if (!fwnode)
+> >  		return -ENXIO;
+> >  
+> > +	ep = fwnode_graph_get_endpoint_by_id(fwnode, 0, 0,
+> > +					     FWNODE_GRAPH_ENDPOINT_NEXT);
+> > +	ret = v4l2_fwnode_endpoint_alloc_parse(ep, &bus_cfg);
+> > +	fwnode_handle_put(ep);
+> > +	if (ret)
+> > +		return ret;
+> 
+> This should be:
+> 
+> 		return dev_err_probe(dev, ret, "failed to parse endpoint\n");
+
+I'd keep it as-is; see
+<URL:https://lore.kernel.org/linux-media/20260310080038.1182695-1-sakari.ailus@linux.intel.com/T/#u>.
+V4l2-fwnode also prints errors (albeit on debug level) on failures.
+
+-- 
+Kind regards,
+
+Sakari Ailus
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713103B6BF3;
+	Tue, 10 Mar 2026 13:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773148200; cv=none; b=SIt6yGp4rer+XQf0wpgJO1kO3WczngswX9ybeXUbCO6K7Xvv91BiCyCY0U17tVoqwahsDJaMdJ9EakhyfXJd9+0SZT2HlfoG9clgnOPfalA83omc/HhUy5S2K4Kr3v9m19fxuJQiBKNq4u4nMR9DAtLlViRQcL/aTnEXR1MKrdA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773148200; c=relaxed/simple;
+	bh=9bbyHAo5UlFGJh9WK+HAzpZhWv7uXoauyswz2qbH8yY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=foQPBdutuNWDBDuw1pl5wJmeCN7t/hcE3yKaxgwTfkXOzqZOxI1+9CxxAAW/WW8CzHNWs00VGxG6HX2UDjP8MKjMZVg2agEvHQszvHJrQZKPBEfB8Zq4K50J5mN5BDmOcXyjMm5B5u/h5C81un6al8EJNYWvbpKIb5asCpY66os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F3KvJIod; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F3KvJIod"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2839C19423;
+	Tue, 10 Mar 2026 13:09:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773148200;
+	bh=9bbyHAo5UlFGJh9WK+HAzpZhWv7uXoauyswz2qbH8yY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=F3KvJIodLzmaTHS8DH2uWY/4vmWMKDpPIDYAXTkbdljQ+/BFxQI18Q/TvfYiVF3yR
+	 0yKCYqWKOR3uBds0lHM80dMBNW2M1Srtqot7L6i/77t5Sg0fLQj413MHbYtPGa79Y3
+	 bMMgbg15C5TgfWb0rc/uai73kTfOF+Q2RVXIie1IcOGCkyMT+24uIcUqjzA/sw3WYf
+	 9spQqMm1l+4t4zBnCfRhIJ331t+/QPEtScbfAD/+pVtWBO2g7Z4vYLDspEtzV0GtMQ
+	 GWhlLDOzQrQ31QoPFE0Eg2CmIscwyHyMJh9WEYxnmUm7GK6iidWUhsvDF/CPUztwUF
+	 CdOBkzLYPPt1Q==
+Message-ID: <8a197d9b-bec1-4c8f-be53-ee35c8bbb2dc@kernel.org>
+Date: Tue, 10 Mar 2026 14:09:54 +0100
+Precedence: bulk
+X-Mailing-List: linux-media@vger.kernel.org
+List-Id: <linux-media.vger.kernel.org>
+List-Subscribe: <mailto:linux-media+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-media+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] platform: int3472: Add MSI prestige board data
+To: Antti Laakso <antti.laakso@linux.intel.com>, linux-media@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linusw@kernel.org, brgl@kernel.org, sakari.ailus@linux.intel.com,
+ mchehab@kernel.org, dan.scally@ideasonboard.com,
+ ilpo.jarvinen@linux.intel.com, hverkuil+cisco@kernel.org, sre@kernel.org,
+ hao.yao@intel.com, jason.z.chen@intel.com, jimmy.su@intel.com,
+ miguel.vadillo@intel.com, kees@kernel.org, ribalda@chromium.org
+References: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+ <20260310124427.693625-6-antti.laakso@linux.intel.com>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <20260310124427.693625-6-antti.laakso@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Hi,
+
+On 10-Mar-26 13:44, Antti Laakso wrote:
+> Define regulators and gpios for MSI Prestige 14 AI EVO+ laptop.
+> 
+> Signed-off-by: Antti Laakso <antti.laakso@linux.intel.com>
+> ---
+>  .../x86/intel/int3472/tps68470_board_data.c   | 97 +++++++++++++++++++
+>  1 file changed, 97 insertions(+)
+> 
+> diff --git a/drivers/platform/x86/intel/int3472/tps68470_board_data.c b/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+> index 71357a036292..fe7c23e72d66 100644
+> --- a/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+> +++ b/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+> @@ -232,6 +232,73 @@ static const struct tps68470_regulator_platform_data dell_7212_tps68470_pdata =
+>  	},
+>  };
+>  
+> +/* Settings for MSI Prestige 14 laptop. */
+> +
+> +static struct regulator_consumer_supply ovti5675_avdd_consumer_supplies[] = {
+> +	REGULATOR_SUPPLY("avdd", "i2c-OVTI5675:00"),
+> +};
+> +
+> +static struct regulator_consumer_supply ovti5675_dovdd_consumer_supplies[] = {
+> +	REGULATOR_SUPPLY("dovdd", "i2c-OVTI5675:00"),
+> +};
+> +
+> +static struct regulator_consumer_supply ovti5675_dvdd_consumer_supplies[] = {
+> +	REGULATOR_SUPPLY("dvdd", "i2c-OVTI5675:00"),
+> +};
+> +
+> +static const struct regulator_init_data msi_p14_ai_evo_tps68470_core_reg_init_data = {
+> +	.constraints = {
+> +		.min_uV = 1200000,
+> +		.max_uV = 1200000,
+> +		.apply_uV = 1,
+> +		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
+> +	},
+> +	.num_consumer_supplies = ARRAY_SIZE(ovti5675_dvdd_consumer_supplies),
+> +	.consumer_supplies = ovti5675_dvdd_consumer_supplies,
+> +};
+> +
+> +static const struct regulator_init_data msi_p14_ai_evo_tps68470_ana_reg_init_data = {
+> +	.constraints = {
+> +		.min_uV = 2815200,
+> +		.max_uV = 2815200,
+> +		.apply_uV = 1,
+> +		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
+> +	},
+> +	.num_consumer_supplies = ARRAY_SIZE(ovti5675_avdd_consumer_supplies),
+> +	.consumer_supplies = ovti5675_avdd_consumer_supplies,
+> +};
+> +
+> +static const struct regulator_init_data msi_p14_ai_evo_tps68470_vio_reg_init_data = {
+> +	.constraints = {
+> +		.min_uV = 1800600,
+> +		.max_uV = 1800600,
+> +		.apply_uV = 1,
+> +		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
+> +	},
+> +	.num_consumer_supplies = 0,
+> +	.consumer_supplies = NULL,
+> +};
+> +
+> +static const struct regulator_init_data msi_p14_ai_evo_tps68470_vsio_reg_init_data = {
+> +	.constraints = {
+> +		.min_uV = 1800600,
+> +		.max_uV = 1800600,
+> +		.apply_uV = 1,
+> +		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
+> +	},
+> +	.num_consumer_supplies = ARRAY_SIZE(ovti5675_dovdd_consumer_supplies),
+> +	.consumer_supplies = ovti5675_dovdd_consumer_supplies,
+> +};
+> +
+> +static const struct tps68470_regulator_platform_data msi_p14_ai_evo_tps68470_pdata = {
+> +	.reg_init_data = {
+> +		[TPS68470_CORE] = &msi_p14_ai_evo_tps68470_core_reg_init_data,
+> +		[TPS68470_ANA]  = &msi_p14_ai_evo_tps68470_ana_reg_init_data,
+> +		[TPS68470_VIO]  = &msi_p14_ai_evo_tps68470_vio_reg_init_data,
+> +		[TPS68470_VSIO] = &msi_p14_ai_evo_tps68470_vsio_reg_init_data,
+> +	},
+> +};
+> +
+>  static struct gpiod_lookup_table surface_go_int347a_gpios = {
+>  	.dev_id = "i2c-INT347A:00",
+>  	.table = {
+> @@ -258,6 +325,19 @@ static struct gpiod_lookup_table dell_7212_int3479_gpios = {
+>  	}
+>  };
+>  
+> +static struct gpiod_lookup_table msi_p14_ai_evo_ovti5675_gpios = {
+> +	.dev_id = "i2c-OVTI5675:00",
+> +	.table = {
+> +		GPIO_LOOKUP_IDX("tps68470-gpio", 9, "reset", 0, GPIO_ACTIVE_LOW),
+> +		GPIO_LOOKUP_IDX("tps68470-gpio", 7, "reset", 1, GPIO_ACTIVE_LOW),
+> +		{ }
+> +	}
+> +};
+> +
+> +static const struct tps68470_gpio_platform_data msi_p14_ai_evo_tps68470_gpio_pdata = {
+> +	.daisy_chain_enable = true,
+> +};
+> +
+>  static const struct int3472_tps68470_board_data surface_go_tps68470_board_data = {
+>  	.dev_name = "i2c-INT3472:05",
+>  	.tps68470_regulator_pdata = &surface_go_tps68470_pdata,
+> @@ -287,6 +367,16 @@ static const struct int3472_tps68470_board_data dell_7212_tps68470_board_data =
+>  	},
+>  };
+>  
+> +static const struct int3472_tps68470_board_data msi_p14_ai_evo_tps68470_board_data = {
+> +	.dev_name = "i2c-INT3472:06",
+> +	.tps68470_regulator_pdata = &msi_p14_ai_evo_tps68470_pdata,
+> +	.tps68470_gpio_pdata = &msi_p14_ai_evo_tps68470_gpio_pdata,
+> +	.n_gpiod_lookups = 1,
+> +	.tps68470_gpio_lookup_tables = {
+> +		&msi_p14_ai_evo_ovti5675_gpios,
+> +	},
+> +};
+> +
+>  static const struct dmi_system_id int3472_tps68470_board_data_table[] = {
+>  	{
+>  		.matches = {
+> @@ -316,6 +406,13 @@ static const struct dmi_system_id int3472_tps68470_board_data_table[] = {
+>  		},
+>  		.driver_data = (void *)&dell_7212_tps68470_board_data,
+>  	},
+> +	{
+> +		.matches = {
+> +			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Micro-Star International Co., Ltd."),
+> +			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Prestige 14 AI+ Evo C2VMG"),
+
+I think this match might be a bit to specific, e.g. there also is a C1M model where
+this might also apply? See:
+
+https://www.msi.com/Business-Productivity/Prestige-14-AI-Evo-C1MX
+
+or maybe these are really different ?
+
+If you can look into that somehow that would be great. If you cannot find
+out if other models are compatible we should probably play it safe and
+keep the specific match you've above for now.
+
+Reviewed-by: Hans de Goede <johannes.goede@oss.qualcomm.com>
+
+Regards,
+
+Hans
+
+
+
+
+> +		},
+> +		.driver_data = (void *)&msi_p14_ai_evo_tps68470_board_data,
+> +	},
+>  	{ }
+>  };
+>  
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2CC13B47F4;
+	Tue, 10 Mar 2026 13:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773148339; cv=none; b=DHKyxhlzpuTxas+J/zcB12zZcUuabPFMOeQO3mhyFfU/8imi39uSiQBVbaXhbQOV6vVZZn8TCrgtykxy34uQWfPr2/ZEx8EB9XbW20ZYEdyq8M7VWbAek4u7uL0xbbIP3h6ihr/2e4MzRdjZwVY/ezPR6Ftyo3eCSgJYv5uPi7A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773148339; c=relaxed/simple;
+	bh=UCrvqDTE2mWQSmNtDW+IFhtr5uMp361BypDKZD3F6VM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ayaEAgIYGZq4JpEKU5vO0k13XmWrAlKi+AKVUKCPiL1D8iE6SYkkgNE4W+Bq09dBhWo5dHkKL5cRneWAgNH8Nofo9iPgfW+jezajai9xjNoFWZIde5kY5uFPUkFb3pVnj9WfIupjynE3Vst67PC59WF02cP2h6e/WBls/z+18k0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n01BZbqc; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n01BZbqc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C6E1C19423;
+	Tue, 10 Mar 2026 13:12:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773148339;
+	bh=UCrvqDTE2mWQSmNtDW+IFhtr5uMp361BypDKZD3F6VM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=n01BZbqcf6lH6Y9t6V/Wa3cFb8JZRMl33wuesviLVbgqilaPOBuRtP2evqc3VKSb0
+	 fRtJGvDZH+eLvat1XrTo6eD8aafqI4CwsT/gkrEJs0m8T/O7+gED1eGPx9+/d1Dluf
+	 z8AutcQFDk6jqYBxLktI1QS+u5LSEHmG5CzVobloM8ErK5YXPTPc//XnHU4olp6SJ/
+	 b6Gkl6+UVxATwr5b+wXxLovICSPnR/riG8xjro1M2GrA45/dWxeu56UWyG9wqbADN6
+	 uR2IZDQ20umCVIcvA8xJe3nd4ey09YX0hHFPL/zD2W4Chg7Ihq1f97avExQTZVJSFy
+	 JSAlaNFPcrBUg==
+Message-ID: <d17261f5-a423-433b-8595-0de63200011b@kernel.org>
+Date: Tue, 10 Mar 2026 14:12:14 +0100
+Precedence: bulk
+X-Mailing-List: linux-media@vger.kernel.org
+List-Id: <linux-media.vger.kernel.org>
+List-Subscribe: <mailto:linux-media+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-media+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] media: i2c: ov5675: Wait for endpoint
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Antti Laakso <antti.laakso@linux.intel.com>, linux-media@vger.kernel.org,
+ linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linusw@kernel.org, brgl@kernel.org, mchehab@kernel.org,
+ dan.scally@ideasonboard.com, ilpo.jarvinen@linux.intel.com,
+ hverkuil+cisco@kernel.org, sre@kernel.org, hao.yao@intel.com,
+ jason.z.chen@intel.com, jimmy.su@intel.com, miguel.vadillo@intel.com,
+ kees@kernel.org, ribalda@chromium.org
+References: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+ <20260310124427.693625-2-antti.laakso@linux.intel.com>
+ <14af1139-cb61-4519-a769-23796ecca3e2@kernel.org>
+ <abAX3WVzKgTIynW7@kekkonen.localdomain>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <abAX3WVzKgTIynW7@kekkonen.localdomain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Hi,
+
+On 10-Mar-26 14:08, Sakari Ailus wrote:
+> Hi Hans,
+> 
+> On Tue, Mar 10, 2026 at 02:03:30PM +0100, Hans de Goede wrote:
+>> Hi,
+>>
+>> Thank you for your patches for this, cool to see someone working
+>> on supporting this!
+>>
+>> On 10-Mar-26 13:44, Antti Laakso wrote:
+>>> Defer probe if endpoint is not yet available. And do it before acquiring
+>>> clock, gpio and regulators.
+>>>
+>>> Signed-off-by: Antti Laakso <antti.laakso@linux.intel.com>
+>>> ---
+>>>  drivers/media/i2c/ov5675.c | 16 +++++++---------
+>>>  1 file changed, 7 insertions(+), 9 deletions(-)
+>>>
+>>> diff --git a/drivers/media/i2c/ov5675.c b/drivers/media/i2c/ov5675.c
+>>> index ea26df328189..81916fa8c117 100644
+>>> --- a/drivers/media/i2c/ov5675.c
+>>> +++ b/drivers/media/i2c/ov5675.c
+>>> @@ -1181,6 +1181,13 @@ static int ov5675_get_hwcfg(struct ov5675 *ov5675)
+>>>  	if (!fwnode)
+>>>  		return -ENXIO;
+>>>  
+>>> +	ep = fwnode_graph_get_endpoint_by_id(fwnode, 0, 0,
+>>> +					     FWNODE_GRAPH_ENDPOINT_NEXT);
+>>> +	ret = v4l2_fwnode_endpoint_alloc_parse(ep, &bus_cfg);
+>>> +	fwnode_handle_put(ep);
+>>> +	if (ret)
+>>> +		return ret;
+>>
+>> This should be:
+>>
+>> 		return dev_err_probe(dev, ret, "failed to parse endpoint\n");
+> 
+> I'd keep it as-is; see
+> <URL:https://lore.kernel.org/linux-media/20260310080038.1182695-1-sakari.ailus@linux.intel.com/T/#u>.
+> V4l2-fwnode also prints errors (albeit on debug level) on failures.
+
+Ok, keeping this as is is fine with me.
+
+There still is the issue of adding the goto-s to properly free
+the bus_cfg on errors.
+
+Regards,
+
+Hans
+
+
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C564523B632;
+	Tue, 10 Mar 2026 13:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773148612; cv=none; b=T0troXpyOVQw98oS9PUgbhVVhgPBax21sneBvdKw/7lVzVW1q1bJR9Cu772qAvYoYfszjvPGMaYsOmGapPBnaN9t/8i49h8IkObLR7APU8fbren6XPJ/ldAQ9NGsF3/9PybIWlc9d6iV1DzP+9UmorRlYILawfeb+ExMkj0W9T0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773148612; c=relaxed/simple;
+	bh=cCmQdY4UierAE+qEcpR1PCyef/t4/x4hQ6yLMcOL3o8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U2osd338tHjfehJkJIPu3bxhApVvrgIG1krGcfNosyxMu7ZGMCdEr0UkICfw51k4KFWpRm8rUmBx3LlJOsIr6fhY69w+2eS76g+EeCcd7/n5xlgyNz45ncxWqg92gxoChQBYXSd8oBtpVA06nmiFd6PhKJkL37OaLsNRdY0D6yM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KRtzAfJ8; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KRtzAfJ8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1773148611; x=1804684611;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=cCmQdY4UierAE+qEcpR1PCyef/t4/x4hQ6yLMcOL3o8=;
+  b=KRtzAfJ8C6BBmQhidKcwZTMCy5UfN7YPNNPS901sR55JTGWJOrHFn2fN
+   UU9rvXtk9alvKjKPDaM9sRLKYlczIFOIaVUGnA1YcOTHQKNBOROL+SujE
+   ei+/bXtLvLqLxxsMY4HbDg5uByv+dKfrpdIS8s9MPiNZVnzDROoIoiSmm
+   /P0fH/NfXuUmo1iRDpBa5PldnIPAPzGGBOUagZqWB0z/ceao6wfMjKnP3
+   XSuK/Y8GkJkkdEMOiXa8JKEM3W+c8IJONpwrbnCRQU07P+6SsceArenuW
+   iGzcxUUDzl/W7bbvAorJymBGMRxEjnUufKYfE8LLFkG3ubJqRuAuHsi6h
+   g==;
+X-CSE-ConnectionGUID: A89oGl6ERB+3GoLkx8ScwA==
+X-CSE-MsgGUID: F1d8pObjTcWrdfGed4MMsg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11725"; a="74112075"
+X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; 
+   d="scan'208";a="74112075"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2026 06:16:50 -0700
+X-CSE-ConnectionGUID: 9UtF/sf0RHC46DKpmgGKCw==
+X-CSE-MsgGUID: 802VRIaGTLqCOewS144ZiQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; 
+   d="scan'208";a="215488380"
+Received: from ncintean-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.26])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2026 06:16:46 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id AA131121D13;
+	Tue, 10 Mar 2026 15:17:17 +0200 (EET)
+Date: Tue, 10 Mar 2026 15:17:17 +0200
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Hans de Goede <hansg@kernel.org>
+Cc: Antti Laakso <antti.laakso@linux.intel.com>,
+	linux-media@vger.kernel.org, linux-gpio@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org, linusw@kernel.org,
+	brgl@kernel.org, mchehab@kernel.org, dan.scally@ideasonboard.com,
+	ilpo.jarvinen@linux.intel.com, hverkuil+cisco@kernel.org,
+	sre@kernel.org, hao.yao@intel.com, jason.z.chen@intel.com,
+	jimmy.su@intel.com, miguel.vadillo@intel.com, kees@kernel.org,
+	ribalda@chromium.org
+Subject: Re: [PATCH 5/5] platform: int3472: Add MSI prestige board data
+Message-ID: <abAZ3ZJk3jpoKG8m@kekkonen.localdomain>
+References: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+ <20260310124427.693625-6-antti.laakso@linux.intel.com>
+ <8a197d9b-bec1-4c8f-be53-ee35c8bbb2dc@kernel.org>
+Precedence: bulk
+X-Mailing-List: linux-media@vger.kernel.org
+List-Id: <linux-media.vger.kernel.org>
+List-Subscribe: <mailto:linux-media+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-media+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8a197d9b-bec1-4c8f-be53-ee35c8bbb2dc@kernel.org>
+
+Hi Hans,
+
+On Tue, Mar 10, 2026 at 02:09:54PM +0100, Hans de Goede wrote:
+> Hi,
+> 
+> On 10-Mar-26 13:44, Antti Laakso wrote:
+> > Define regulators and gpios for MSI Prestige 14 AI EVO+ laptop.
+> > 
+> > Signed-off-by: Antti Laakso <antti.laakso@linux.intel.com>
+> > ---
+> >  .../x86/intel/int3472/tps68470_board_data.c   | 97 +++++++++++++++++++
+> >  1 file changed, 97 insertions(+)
+> > 
+> > diff --git a/drivers/platform/x86/intel/int3472/tps68470_board_data.c b/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+> > index 71357a036292..fe7c23e72d66 100644
+> > --- a/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+> > +++ b/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+> > @@ -232,6 +232,73 @@ static const struct tps68470_regulator_platform_data dell_7212_tps68470_pdata =
+> >  	},
+> >  };
+> >  
+> > +/* Settings for MSI Prestige 14 laptop. */
+> > +
+> > +static struct regulator_consumer_supply ovti5675_avdd_consumer_supplies[] = {
+> > +	REGULATOR_SUPPLY("avdd", "i2c-OVTI5675:00"),
+> > +};
+> > +
+> > +static struct regulator_consumer_supply ovti5675_dovdd_consumer_supplies[] = {
+> > +	REGULATOR_SUPPLY("dovdd", "i2c-OVTI5675:00"),
+> > +};
+> > +
+> > +static struct regulator_consumer_supply ovti5675_dvdd_consumer_supplies[] = {
+> > +	REGULATOR_SUPPLY("dvdd", "i2c-OVTI5675:00"),
+> > +};
+> > +
+> > +static const struct regulator_init_data msi_p14_ai_evo_tps68470_core_reg_init_data = {
+> > +	.constraints = {
+> > +		.min_uV = 1200000,
+> > +		.max_uV = 1200000,
+> > +		.apply_uV = 1,
+> > +		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
+> > +	},
+> > +	.num_consumer_supplies = ARRAY_SIZE(ovti5675_dvdd_consumer_supplies),
+> > +	.consumer_supplies = ovti5675_dvdd_consumer_supplies,
+> > +};
+> > +
+> > +static const struct regulator_init_data msi_p14_ai_evo_tps68470_ana_reg_init_data = {
+> > +	.constraints = {
+> > +		.min_uV = 2815200,
+> > +		.max_uV = 2815200,
+> > +		.apply_uV = 1,
+> > +		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
+> > +	},
+> > +	.num_consumer_supplies = ARRAY_SIZE(ovti5675_avdd_consumer_supplies),
+> > +	.consumer_supplies = ovti5675_avdd_consumer_supplies,
+> > +};
+> > +
+> > +static const struct regulator_init_data msi_p14_ai_evo_tps68470_vio_reg_init_data = {
+> > +	.constraints = {
+> > +		.min_uV = 1800600,
+> > +		.max_uV = 1800600,
+> > +		.apply_uV = 1,
+> > +		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
+> > +	},
+> > +	.num_consumer_supplies = 0,
+> > +	.consumer_supplies = NULL,
+> > +};
+> > +
+> > +static const struct regulator_init_data msi_p14_ai_evo_tps68470_vsio_reg_init_data = {
+> > +	.constraints = {
+> > +		.min_uV = 1800600,
+> > +		.max_uV = 1800600,
+> > +		.apply_uV = 1,
+> > +		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
+> > +	},
+> > +	.num_consumer_supplies = ARRAY_SIZE(ovti5675_dovdd_consumer_supplies),
+> > +	.consumer_supplies = ovti5675_dovdd_consumer_supplies,
+> > +};
+> > +
+> > +static const struct tps68470_regulator_platform_data msi_p14_ai_evo_tps68470_pdata = {
+> > +	.reg_init_data = {
+> > +		[TPS68470_CORE] = &msi_p14_ai_evo_tps68470_core_reg_init_data,
+> > +		[TPS68470_ANA]  = &msi_p14_ai_evo_tps68470_ana_reg_init_data,
+> > +		[TPS68470_VIO]  = &msi_p14_ai_evo_tps68470_vio_reg_init_data,
+> > +		[TPS68470_VSIO] = &msi_p14_ai_evo_tps68470_vsio_reg_init_data,
+> > +	},
+> > +};
+> > +
+> >  static struct gpiod_lookup_table surface_go_int347a_gpios = {
+> >  	.dev_id = "i2c-INT347A:00",
+> >  	.table = {
+> > @@ -258,6 +325,19 @@ static struct gpiod_lookup_table dell_7212_int3479_gpios = {
+> >  	}
+> >  };
+> >  
+> > +static struct gpiod_lookup_table msi_p14_ai_evo_ovti5675_gpios = {
+> > +	.dev_id = "i2c-OVTI5675:00",
+> > +	.table = {
+> > +		GPIO_LOOKUP_IDX("tps68470-gpio", 9, "reset", 0, GPIO_ACTIVE_LOW),
+> > +		GPIO_LOOKUP_IDX("tps68470-gpio", 7, "reset", 1, GPIO_ACTIVE_LOW),
+> > +		{ }
+> > +	}
+> > +};
+> > +
+> > +static const struct tps68470_gpio_platform_data msi_p14_ai_evo_tps68470_gpio_pdata = {
+> > +	.daisy_chain_enable = true,
+> > +};
+> > +
+> >  static const struct int3472_tps68470_board_data surface_go_tps68470_board_data = {
+> >  	.dev_name = "i2c-INT3472:05",
+> >  	.tps68470_regulator_pdata = &surface_go_tps68470_pdata,
+> > @@ -287,6 +367,16 @@ static const struct int3472_tps68470_board_data dell_7212_tps68470_board_data =
+> >  	},
+> >  };
+> >  
+> > +static const struct int3472_tps68470_board_data msi_p14_ai_evo_tps68470_board_data = {
+> > +	.dev_name = "i2c-INT3472:06",
+> > +	.tps68470_regulator_pdata = &msi_p14_ai_evo_tps68470_pdata,
+> > +	.tps68470_gpio_pdata = &msi_p14_ai_evo_tps68470_gpio_pdata,
+> > +	.n_gpiod_lookups = 1,
+> > +	.tps68470_gpio_lookup_tables = {
+> > +		&msi_p14_ai_evo_ovti5675_gpios,
+> > +	},
+> > +};
+> > +
+> >  static const struct dmi_system_id int3472_tps68470_board_data_table[] = {
+> >  	{
+> >  		.matches = {
+> > @@ -316,6 +406,13 @@ static const struct dmi_system_id int3472_tps68470_board_data_table[] = {
+> >  		},
+> >  		.driver_data = (void *)&dell_7212_tps68470_board_data,
+> >  	},
+> > +	{
+> > +		.matches = {
+> > +			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Micro-Star International Co., Ltd."),
+> > +			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Prestige 14 AI+ Evo C2VMG"),
+> 
+> I think this match might be a bit to specific, e.g. there also is a C1M model where
+> this might also apply? See:
+> 
+> https://www.msi.com/Business-Productivity/Prestige-14-AI-Evo-C1MX
+> 
+> or maybe these are really different ?
+> 
+> If you can look into that somehow that would be great. If you cannot find
+> out if other models are compatible we should probably play it safe and
+> keep the specific match you've above for now.
+
+This one is MTL whereas Antti's patch adds support for an LNL laptop. It'd
+be great if we could get a confirmation from MSI the PMIC configuration in
+these models would match Presige 14 AI+ (or that it's different). There's
+also a very similar model with a 13" display... Without a confirmation I
+wouldn't relax the DMI check.
+
+That being said, the risk of smoke being released might be small on a wrong
+regulator (or GPIO) configuration but it can't be ruled out.
+
+> 
+> Reviewed-by: Hans de Goede <johannes.goede@oss.qualcomm.com>
+
+-- 
+Regards,
+
+Sakari Ailus
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D118640DFA5
+	for <linux-media@vger.kernel.org>; Tue, 10 Mar 2026 13:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773149554; cv=none; b=Th7HJELB30V/NDArKbtDGsUh/NHWmgcHdeoXPXWyjXHZlQ+YWlFpl0jEca1Ybd9kYYUpsbGplGPEOwT47BJ16YxODPm8EmG8H74ni13z0+fIPXppsxhMk3oR48QQWqfeOZlZe4OCakvdjTeJ1rx/47U4Zp7t/hWF6Yd2a4d0Kt0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773149554; c=relaxed/simple;
+	bh=cd1CqG8SphS5TtuoNj9lyLAQ6Zpjm3fsXjlr5r1vZqg=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H6+VyamlN7ahM//H9zyG5Nkgec0qQbx5vYqtyr44+N+ZKeE6vnxWaoJjd+2IUSFQ+sFNs4WtYMMATtcOOVCO4+5KEUQtfEdpHuMTnYiaT/YguxspMGfXo8iSLh8mQKBgOT2HVNup0nIOECAIopJgyP2rL78DoGpNCF9MZRl1+pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PhkXpVjj; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PhkXpVjj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 854E4C2BC9E
+	for <linux-media@vger.kernel.org>; Tue, 10 Mar 2026 13:32:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773149554;
+	bh=cd1CqG8SphS5TtuoNj9lyLAQ6Zpjm3fsXjlr5r1vZqg=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc:From;
+	b=PhkXpVjjgKLIP0dGAzp90OdIiumLQJHVzNt418oNMapTR4LdNPHnhU09ECEwywbbn
+	 F1tXhnwwwmnXUNQ6bwKdd+gAE67BGXvtPWlvh6RlGdTWO6CB9okYSmgMw4Qg2lbJEB
+	 aispKYQLYpqCGUtpH+8CaVnQVM7zFFTFQ8v3KOaJLkIrwdee1pWyXZubLGUSMqNeQV
+	 WCc7uFq7mQp1LuDplUj2G4PPcI3DXoy8IjhGF7tT7CsSOcphtCZEVjHtaaoKyYgYNF
+	 yX6G+dMGvyIKyHwwwEPmrWNwVj1XjopPhC9DYP1tZh01ohVY7dDfRv4a6SEpO2ZWyT
+	 heNQQtUm3kybw==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5a126c8aab9so7355680e87.0
+        for <linux-media@vger.kernel.org>; Tue, 10 Mar 2026 06:32:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXCJQAEGyckwxB1zf69H6e2WhPvxpkJCHz15+Y5WDp3F+0rlvqHoHptnWEwDyllpg3bpBQJytoLpVuTrg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNVvT6vtyB3qkilLDnJ9gAhr1MdvEmXLvIuU+1IJYERAn+kjM8
+	qgTnVcDGV//LPg3wsynpBYQ0rkY/WPM+K7ZFX7abu0fxLSl33eoX/SsnAoHPdZzhykEHNGHrRLd
+	6nNprQjkQb2iotBdtoTNqkELALjKIxRVzMHTYBDPYPg==
+X-Received: by 2002:a05:6512:138e:b0:5a1:3d65:81b9 with SMTP id
+ 2adb3069b0e04-5a13d65824amr5823246e87.36.1773149553164; Tue, 10 Mar 2026
+ 06:32:33 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 10 Mar 2026 06:32:32 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 10 Mar 2026 06:32:31 -0700
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <20260310124427.693625-4-antti.laakso@linux.intel.com>
+Precedence: bulk
+X-Mailing-List: linux-media@vger.kernel.org
+List-Id: <linux-media.vger.kernel.org>
+List-Subscribe: <mailto:linux-media+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-media+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20260310124427.693625-1-antti.laakso@linux.intel.com> <20260310124427.693625-4-antti.laakso@linux.intel.com>
+Date: Tue, 10 Mar 2026 06:32:31 -0700
+X-Gmail-Original-Message-ID: <CAMRc=Me73BrokqUnPmWa59_rCnAM-cu+2Kpu8qxc7pbN6kN5+Q@mail.gmail.com>
+X-Gm-Features: AaiRm50J59ZskMyVrRnMKlbxEJEzpw1QrqP0hIZaEYmu23W1XYHuby3geXy15OQ
+Message-ID: <CAMRc=Me73BrokqUnPmWa59_rCnAM-cu+2Kpu8qxc7pbN6kN5+Q@mail.gmail.com>
+Subject: Re: [PATCH 3/5] platform: int3472: Add gpio platform data
+To: Antti Laakso <antti.laakso@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+	linusw@kernel.org, brgl@kernel.org, sakari.ailus@linux.intel.com, 
+	mchehab@kernel.org, dan.scally@ideasonboard.com, hansg@kernel.org, 
+	ilpo.jarvinen@linux.intel.com, hverkuil+cisco@kernel.org, sre@kernel.org, 
+	hao.yao@intel.com, jason.z.chen@intel.com, jimmy.su@intel.com, 
+	miguel.vadillo@intel.com, kees@kernel.org, ribalda@chromium.org, 
+	linux-media@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+
+On Tue, 10 Mar 2026 13:44:25 +0100, Antti Laakso
+<antti.laakso@linux.intel.com> said:
+> The tps68470 supports i2c daisy chain, which need to be configured by
+> gpio-tps68470 driver. Add daisy chain information to platform data.
+>
+> Signed-off-by: Antti Laakso <antti.laakso@linux.intel.com>
+> ---
+>  drivers/platform/x86/intel/int3472/tps68470.c | 2 ++
+>  drivers/platform/x86/intel/int3472/tps68470.h | 1 +
+>  include/linux/platform_data/tps68470.h        | 4 ++++
+>  3 files changed, 7 insertions(+)
+>
+> diff --git a/drivers/platform/x86/intel/int3472/tps68470.c b/drivers/platform/x86/intel/int3472/tps68470.c
+> index a496075c0d2a..b02bc675cabe 100644
+> --- a/drivers/platform/x86/intel/int3472/tps68470.c
+> +++ b/drivers/platform/x86/intel/int3472/tps68470.c
+> @@ -197,6 +197,8 @@ static int skl_int3472_tps68470_probe(struct i2c_client *client)
+>  		cells[1].platform_data = (void *)board_data->tps68470_regulator_pdata;
+>  		cells[1].pdata_size = sizeof(struct tps68470_regulator_platform_data);
+>  		cells[2].name = "tps68470-gpio";
+> +		cells[2].platform_data = (void *)board_data->tps68470_gpio_pdata;
+> +		cells[2].pdata_size = sizeof(*board_data->tps68470_gpio_pdata);
+>
+>  		for (i = 0; i < board_data->n_gpiod_lookups; i++)
+>  			gpiod_add_lookup_table(board_data->tps68470_gpio_lookup_tables[i]);
+> diff --git a/drivers/platform/x86/intel/int3472/tps68470.h b/drivers/platform/x86/intel/int3472/tps68470.h
+> index 35915e701593..c1c4290eb6d5 100644
+> --- a/drivers/platform/x86/intel/int3472/tps68470.h
+> +++ b/drivers/platform/x86/intel/int3472/tps68470.h
+> @@ -17,6 +17,7 @@ struct tps68470_regulator_platform_data;
+>  struct int3472_tps68470_board_data {
+>  	const char *dev_name;
+>  	const struct tps68470_regulator_platform_data *tps68470_regulator_pdata;
+> +	const struct tps68470_gpio_platform_data *tps68470_gpio_pdata;
+>  	unsigned int n_gpiod_lookups;
+>  	struct gpiod_lookup_table *tps68470_gpio_lookup_tables[];
+>  };
+> diff --git a/include/linux/platform_data/tps68470.h b/include/linux/platform_data/tps68470.h
+> index e605a2cab07f..7330dab7a711 100644
+> --- a/include/linux/platform_data/tps68470.h
+> +++ b/include/linux/platform_data/tps68470.h
+> @@ -27,6 +27,10 @@ struct tps68470_regulator_platform_data {
+>  	const struct regulator_init_data *reg_init_data[TPS68470_NUM_REGULATORS];
+>  };
+>
+> +struct tps68470_gpio_platform_data {
+> +	const bool daisy_chain_enable;
+> +};
+> +
+>  struct tps68470_clk_consumer {
+>  	const char *consumer_dev_name;
+>  	const char *consumer_con_id;
+> --
+> 2.53.0
+>
+>
+
+I know this is the pattern used in this driver but why not start converting
+it gradually to more modern APIs?
+
+You could do:
+
+static const struct property_entry tps68470_gpio_props[] = {
+	PROPERTY_ENTRY_BOOL("daisy-chain-enable"),
+	{ }
+};
+
+static const struct software_node tps68470_gpio_swnode = {
+	.properties = tps68470_gpio_props,
+};
+
+static int skl_int3472_tps68470_probe(struct i2c_client *client)
+{
+	...
+	cells[2].swnode = &tps68470_gpio_swnode;
+	...
+}
+
+And avoid both modifying the public header as well as using ugly platform
+data. In the GPIO driver you'd just need:
+
+	if (device_property_present(&pdev->dev, "daisy-chain-enable"))
+
+Bartosz
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E574F39DBE1;
+	Tue, 10 Mar 2026 13:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773149704; cv=none; b=qabgjgD3oLsFqWkMJWb2R79l9VjiS/KB4X2psM1eEq4ELJyfGRA+rzlCZAlaz+Y+u4C8NHPq0Y6CCqOv6xyL+AJYn3H87y9MRXxdBRD/S0CP/Gxzu7anFsPkrM5kwNeOwgho2p086MtsP/laJSibTJs7Nd1LF8QKiCmzP0EaIfw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773149704; c=relaxed/simple;
+	bh=pKqOkKX7CRXooHok80H4ZPwmfTHqEJgEysyE6k/X15M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hv2osxnS2cHKd+8/sFFA3/+tLFuhsrSgLsVHwzsT0lj2Y13x71LTsQEz9/RDIDSOkpb0JeclbOYB0yGUs94w/2N3KqcECnBA8NpL+Ha1OJCqXYpt0PtY4t/V77CTwCtuDpYF7TyrN5H2gAkSln2idJKVN0KmH5s7jGboJV/htEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=FJOkBcAn; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FJOkBcAn"
+Received: from [192.168.0.43] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net [86.13.91.161])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 31D30594;
+	Tue, 10 Mar 2026 14:24:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1773149063;
+	bh=pKqOkKX7CRXooHok80H4ZPwmfTHqEJgEysyE6k/X15M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FJOkBcAnFkYe4vPe4YH9cnkLWKl6ov27QakdWzdeus+itKJqMNGhBMwF+PtqlDg1D
+	 RY5AlL0Oh/lV4Ifhn52mK/6NDuAsAhHs/DKPW2fRO+zOGpvovl3WStW4tk0lWfunNg
+	 eN2CFS8bgHJ2e3gkwBWoCH/Nhxs7deBB3uioHFXo=
+Message-ID: <e41212f3-5a55-4c14-85fb-91cdaa5e6786@ideasonboard.com>
+Date: Tue, 10 Mar 2026 13:25:26 +0000
+Precedence: bulk
+X-Mailing-List: linux-media@vger.kernel.org
+List-Id: <linux-media.vger.kernel.org>
+List-Subscribe: <mailto:linux-media+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-media+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] media: ipu-bridge: Add ov5675 sensor
+To: Antti Laakso <antti.laakso@linux.intel.com>, linux-media@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linusw@kernel.org, brgl@kernel.org, sakari.ailus@linux.intel.com,
+ mchehab@kernel.org, hansg@kernel.org, ilpo.jarvinen@linux.intel.com,
+ hverkuil+cisco@kernel.org, sre@kernel.org, hao.yao@intel.com,
+ jason.z.chen@intel.com, jimmy.su@intel.com, miguel.vadillo@intel.com,
+ kees@kernel.org, ribalda@chromium.org
+References: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+ <20260310124427.693625-3-antti.laakso@linux.intel.com>
+Content-Language: en-US
+From: Dan Scally <dan.scally@ideasonboard.com>
+In-Reply-To: <20260310124427.693625-3-antti.laakso@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Hi Antti, thanks for the patches
+
+On 10/03/2026 12:44, Antti Laakso wrote:
+> The Omnivision ov5675 is found from MSI prestige
+> 14 AI EVO laptop, for example.
+> 
+> Signed-off-by: Antti Laakso <antti.laakso@linux.intel.com>
+> ---
+
+Looks ok to me:
+
+Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
+
+>   drivers/media/pci/intel/ipu-bridge.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/media/pci/intel/ipu-bridge.c b/drivers/media/pci/intel/ipu-bridge.c
+> index c895584e25a0..ee070d44d5f1 100644
+> --- a/drivers/media/pci/intel/ipu-bridge.c
+> +++ b/drivers/media/pci/intel/ipu-bridge.c
+> @@ -91,6 +91,8 @@ static const struct ipu_sensor_config ipu_supported_sensors[] = {
+>   	IPU_SENSOR_CONFIG("OVTIDB10", 1, 560000000),
+>   	/* Omnivision OV2680 */
+>   	IPU_SENSOR_CONFIG("OVTI2680", 1, 331200000),
+> +	/* Omnivision OV5675 */
+> +	IPU_SENSOR_CONFIG("OVTI5675", 1, 450000000),
+>   	/* Omnivision OV8856 */
+>   	IPU_SENSOR_CONFIG("OVTI8856", 3, 180000000, 360000000, 720000000),
+>   	/* Sony IMX471 */
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D472D9484;
+	Tue, 10 Mar 2026 14:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773152673; cv=none; b=D/qD2bkpNgDnZW0CwifZv7b5S/581ZoM/uC37w5jTc9fRRuK3onjt+tFirEXZMj6IVGTyBUD4mnizhknG/wH0I/faAGQ5cg0KpyjeJJqlvc8kN6KzDIelshvJetGj91vVct2eQPh0X73ymfUHTZ+5hYnoBoMyZJ12vLhDZA2xwA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773152673; c=relaxed/simple;
+	bh=CFoCR118i40wo7sBqnnZfsTax4L/eF3uiyirmp+0F24=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=njGn6pCSlDB2teaNR6l9k2jRMntBoS6UfbuVudqNtdBbs/LwW46zhsd7BZ9PrhNFd4ixq1f5mcGO7SdOR01FrdsB8a30GxHHxbCcJGFEaCC5wQdr3PsmsGT0qaCltpoxWmt+M3KxdancvxttIlBeJlJd5smYD/TzM+q4DoMNc/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uk79Lry0; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uk79Lry0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F8C1C19423;
+	Tue, 10 Mar 2026 14:24:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773152672;
+	bh=CFoCR118i40wo7sBqnnZfsTax4L/eF3uiyirmp+0F24=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Uk79Lry0Dyh33YaiSBz9t2xFwAdJITm3m5JzDLYAaQMEn8tZCMDtvS0sIJeymR++y
+	 rITQj3ciseZmKjEyfoe4N+euE/F2zf30VC9ahJ8cOr3Y28GPOQaRq4yQDT+TxhnRB8
+	 scAcfHB7sW+qVcI7yIn7GcmT4K5GdDv5mHv15R0qJFcbhJ8JWfXzZeIQtBhV7agTEm
+	 t+k+lO2wmT2jjWahziKazNO74eu8SbUpTIFLLoSy/USqZBEItlrE+FGC1S2eyCtKVE
+	 XkZbs6+9RdpBOorNY4c2WkG7lbrbD7YNdKvt2L1GwWLDnAwnOK+NKjJHPEEhhUrgAH
+	 HpD4LnCm99S1g==
+Message-ID: <54ed9147-e5e8-4419-9bb5-63e77de34fda@kernel.org>
+Date: Tue, 10 Mar 2026 15:24:27 +0100
+Precedence: bulk
+X-Mailing-List: linux-media@vger.kernel.org
+List-Id: <linux-media.vger.kernel.org>
+List-Subscribe: <mailto:linux-media+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-media+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] platform: int3472: Add MSI prestige board data
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Antti Laakso <antti.laakso@linux.intel.com>, linux-media@vger.kernel.org,
+ linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linusw@kernel.org, brgl@kernel.org, mchehab@kernel.org,
+ dan.scally@ideasonboard.com, ilpo.jarvinen@linux.intel.com,
+ hverkuil+cisco@kernel.org, sre@kernel.org, hao.yao@intel.com,
+ jason.z.chen@intel.com, jimmy.su@intel.com, miguel.vadillo@intel.com,
+ kees@kernel.org, ribalda@chromium.org
+References: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+ <20260310124427.693625-6-antti.laakso@linux.intel.com>
+ <8a197d9b-bec1-4c8f-be53-ee35c8bbb2dc@kernel.org>
+ <abAZ3ZJk3jpoKG8m@kekkonen.localdomain>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <abAZ3ZJk3jpoKG8m@kekkonen.localdomain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Hi,
+
+On 10-Mar-26 14:17, Sakari Ailus wrote:
+> Hi Hans,
+> 
+> On Tue, Mar 10, 2026 at 02:09:54PM +0100, Hans de Goede wrote:
+>> Hi,
+>>
+>> On 10-Mar-26 13:44, Antti Laakso wrote:
+>>> Define regulators and gpios for MSI Prestige 14 AI EVO+ laptop.
+>>>
+>>> Signed-off-by: Antti Laakso <antti.laakso@linux.intel.com>
+>>> ---
+>>>  .../x86/intel/int3472/tps68470_board_data.c   | 97 +++++++++++++++++++
+>>>  1 file changed, 97 insertions(+)
+>>>
+>>> diff --git a/drivers/platform/x86/intel/int3472/tps68470_board_data.c b/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+>>> index 71357a036292..fe7c23e72d66 100644
+>>> --- a/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+>>> +++ b/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+>>> @@ -232,6 +232,73 @@ static const struct tps68470_regulator_platform_data dell_7212_tps68470_pdata =
+>>>  	},
+>>>  };
+>>>  
+>>> +/* Settings for MSI Prestige 14 laptop. */
+>>> +
+>>> +static struct regulator_consumer_supply ovti5675_avdd_consumer_supplies[] = {
+>>> +	REGULATOR_SUPPLY("avdd", "i2c-OVTI5675:00"),
+>>> +};
+>>> +
+>>> +static struct regulator_consumer_supply ovti5675_dovdd_consumer_supplies[] = {
+>>> +	REGULATOR_SUPPLY("dovdd", "i2c-OVTI5675:00"),
+>>> +};
+>>> +
+>>> +static struct regulator_consumer_supply ovti5675_dvdd_consumer_supplies[] = {
+>>> +	REGULATOR_SUPPLY("dvdd", "i2c-OVTI5675:00"),
+>>> +};
+>>> +
+>>> +static const struct regulator_init_data msi_p14_ai_evo_tps68470_core_reg_init_data = {
+>>> +	.constraints = {
+>>> +		.min_uV = 1200000,
+>>> +		.max_uV = 1200000,
+>>> +		.apply_uV = 1,
+>>> +		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
+>>> +	},
+>>> +	.num_consumer_supplies = ARRAY_SIZE(ovti5675_dvdd_consumer_supplies),
+>>> +	.consumer_supplies = ovti5675_dvdd_consumer_supplies,
+>>> +};
+>>> +
+>>> +static const struct regulator_init_data msi_p14_ai_evo_tps68470_ana_reg_init_data = {
+>>> +	.constraints = {
+>>> +		.min_uV = 2815200,
+>>> +		.max_uV = 2815200,
+>>> +		.apply_uV = 1,
+>>> +		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
+>>> +	},
+>>> +	.num_consumer_supplies = ARRAY_SIZE(ovti5675_avdd_consumer_supplies),
+>>> +	.consumer_supplies = ovti5675_avdd_consumer_supplies,
+>>> +};
+>>> +
+>>> +static const struct regulator_init_data msi_p14_ai_evo_tps68470_vio_reg_init_data = {
+>>> +	.constraints = {
+>>> +		.min_uV = 1800600,
+>>> +		.max_uV = 1800600,
+>>> +		.apply_uV = 1,
+>>> +		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
+>>> +	},
+>>> +	.num_consumer_supplies = 0,
+>>> +	.consumer_supplies = NULL,
+>>> +};
+>>> +
+>>> +static const struct regulator_init_data msi_p14_ai_evo_tps68470_vsio_reg_init_data = {
+>>> +	.constraints = {
+>>> +		.min_uV = 1800600,
+>>> +		.max_uV = 1800600,
+>>> +		.apply_uV = 1,
+>>> +		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
+>>> +	},
+>>> +	.num_consumer_supplies = ARRAY_SIZE(ovti5675_dovdd_consumer_supplies),
+>>> +	.consumer_supplies = ovti5675_dovdd_consumer_supplies,
+>>> +};
+>>> +
+>>> +static const struct tps68470_regulator_platform_data msi_p14_ai_evo_tps68470_pdata = {
+>>> +	.reg_init_data = {
+>>> +		[TPS68470_CORE] = &msi_p14_ai_evo_tps68470_core_reg_init_data,
+>>> +		[TPS68470_ANA]  = &msi_p14_ai_evo_tps68470_ana_reg_init_data,
+>>> +		[TPS68470_VIO]  = &msi_p14_ai_evo_tps68470_vio_reg_init_data,
+>>> +		[TPS68470_VSIO] = &msi_p14_ai_evo_tps68470_vsio_reg_init_data,
+>>> +	},
+>>> +};
+>>> +
+>>>  static struct gpiod_lookup_table surface_go_int347a_gpios = {
+>>>  	.dev_id = "i2c-INT347A:00",
+>>>  	.table = {
+>>> @@ -258,6 +325,19 @@ static struct gpiod_lookup_table dell_7212_int3479_gpios = {
+>>>  	}
+>>>  };
+>>>  
+>>> +static struct gpiod_lookup_table msi_p14_ai_evo_ovti5675_gpios = {
+>>> +	.dev_id = "i2c-OVTI5675:00",
+>>> +	.table = {
+>>> +		GPIO_LOOKUP_IDX("tps68470-gpio", 9, "reset", 0, GPIO_ACTIVE_LOW),
+>>> +		GPIO_LOOKUP_IDX("tps68470-gpio", 7, "reset", 1, GPIO_ACTIVE_LOW),
+>>> +		{ }
+>>> +	}
+>>> +};
+>>> +
+>>> +static const struct tps68470_gpio_platform_data msi_p14_ai_evo_tps68470_gpio_pdata = {
+>>> +	.daisy_chain_enable = true,
+>>> +};
+>>> +
+>>>  static const struct int3472_tps68470_board_data surface_go_tps68470_board_data = {
+>>>  	.dev_name = "i2c-INT3472:05",
+>>>  	.tps68470_regulator_pdata = &surface_go_tps68470_pdata,
+>>> @@ -287,6 +367,16 @@ static const struct int3472_tps68470_board_data dell_7212_tps68470_board_data =
+>>>  	},
+>>>  };
+>>>  
+>>> +static const struct int3472_tps68470_board_data msi_p14_ai_evo_tps68470_board_data = {
+>>> +	.dev_name = "i2c-INT3472:06",
+>>> +	.tps68470_regulator_pdata = &msi_p14_ai_evo_tps68470_pdata,
+>>> +	.tps68470_gpio_pdata = &msi_p14_ai_evo_tps68470_gpio_pdata,
+>>> +	.n_gpiod_lookups = 1,
+>>> +	.tps68470_gpio_lookup_tables = {
+>>> +		&msi_p14_ai_evo_ovti5675_gpios,
+>>> +	},
+>>> +};
+>>> +
+>>>  static const struct dmi_system_id int3472_tps68470_board_data_table[] = {
+>>>  	{
+>>>  		.matches = {
+>>> @@ -316,6 +406,13 @@ static const struct dmi_system_id int3472_tps68470_board_data_table[] = {
+>>>  		},
+>>>  		.driver_data = (void *)&dell_7212_tps68470_board_data,
+>>>  	},
+>>> +	{
+>>> +		.matches = {
+>>> +			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Micro-Star International Co., Ltd."),
+>>> +			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Prestige 14 AI+ Evo C2VMG"),
+>>
+>> I think this match might be a bit too specific, e.g. there also is a C1M model where
+>> this might also apply? See:
+>>
+>> https://www.msi.com/Business-Productivity/Prestige-14-AI-Evo-C1MX
+>>
+>> or maybe these are really different ?
+>>
+>> If you can look into that somehow that would be great. If you cannot find
+>> out if other models are compatible we should probably play it safe and
+>> keep the specific match you've above for now.
+> 
+> This one is MTL whereas Antti's patch adds support for an LNL laptop. It'd
+> be great if we could get a confirmation from MSI the PMIC configuration in
+> these models would match Presige 14 AI+ (or that it's different). There's
+> also a very similar model with a 13" display... Without a confirmation I
+> wouldn't relax the DMI check.
+> 
+> That being said, the risk of smoke being released might be small on a wrong
+> regulator (or GPIO) configuration but it can't be ruled out.
+
+Ack, lets keep the match as is for now then.
+
+Regards,
+
+Hans
+
+
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 367BA26CE05;
+	Tue, 10 Mar 2026 14:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773152869; cv=none; b=B4l39uZI4xewl5iF3PLfw7yL0VA+BgjfLhhZBFdpTcJNE5uil8BQKH8mdytlgCq+T7i/Mjp2xM9MUN6FvaCFGp8u+NcneyHFkwGOfubm9qGHFbt1xWrzdd5h3HDJEdYcOPKlfX2m/J+M34BLEhXywqq/fZlnk/jXD9bdJkcxg7o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773152869; c=relaxed/simple;
+	bh=8CFG28gHb1nwNSNq43O8008M+si6bdbaTHlzaj2Z2N4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l/pgtDNPChxlZwSXeOMqiPDL2Bl/24hlNgZk+JJ3VJTi/AsvKqBjM/0j4tOG7znamCVacq35eND2yczOyOgQ5enn8aJcIzNRH/s7x84q7k7n56AErBIpLYIUe+BaxHhe6okGc+A5ma+kzTHDp64ALtcSvLzJ/kw+4KezXS0Jj94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=dcsObDIp; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="dcsObDIp"
+Received: from [192.168.0.43] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net [86.13.91.161])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8BAF5250;
+	Tue, 10 Mar 2026 15:26:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1773152799;
+	bh=8CFG28gHb1nwNSNq43O8008M+si6bdbaTHlzaj2Z2N4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dcsObDIpdkW5gvdG4HQwopcs+D3tJvdCm4WyIztIyonmBeyc/InkXTckGBVBhOhIn
+	 K3zwWZgVxqT1im92leN2cZQX7D2719TYLQYhr5FoekhoLW4gUkzOusj99HeUT3oV8l
+	 UgH4nqKVz2+VoX8YUNLuTV7h+KUMdnPhem+Ro16U=
+Message-ID: <2074841b-5d38-4696-ab0d-f7ace1923980@ideasonboard.com>
+Date: Tue, 10 Mar 2026 14:27:42 +0000
+Precedence: bulk
+X-Mailing-List: linux-media@vger.kernel.org
+List-Id: <linux-media.vger.kernel.org>
+List-Subscribe: <mailto:linux-media+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-media+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/5] platform: int3472: Add gpio platform data
+To: Antti Laakso <antti.laakso@linux.intel.com>, linux-media@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linusw@kernel.org, brgl@kernel.org, sakari.ailus@linux.intel.com,
+ mchehab@kernel.org, hansg@kernel.org, ilpo.jarvinen@linux.intel.com,
+ hverkuil+cisco@kernel.org, sre@kernel.org, hao.yao@intel.com,
+ jason.z.chen@intel.com, jimmy.su@intel.com, miguel.vadillo@intel.com,
+ kees@kernel.org, ribalda@chromium.org
+References: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+ <20260310124427.693625-4-antti.laakso@linux.intel.com>
+Content-Language: en-US
+From: Dan Scally <dan.scally@ideasonboard.com>
+In-Reply-To: <20260310124427.693625-4-antti.laakso@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Hi Antti
+
+On 10/03/2026 12:44, Antti Laakso wrote:
+> The tps68470 supports i2c daisy chain, which need to be configured by
+> gpio-tps68470 driver. Add daisy chain information to platform data.
+> 
+> Signed-off-by: Antti Laakso <antti.laakso@linux.intel.com>
+> ---
+
+I think this change is good, so:
+
+Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
+
+However I think Bartosz' suggestion has a lot of merit, so if you wanted to revise the patch in that 
+direction, that would be even more welcome.
+
+Thanks
+Dan
+
+>   drivers/platform/x86/intel/int3472/tps68470.c | 2 ++
+>   drivers/platform/x86/intel/int3472/tps68470.h | 1 +
+>   include/linux/platform_data/tps68470.h        | 4 ++++
+>   3 files changed, 7 insertions(+)
+> 
+> diff --git a/drivers/platform/x86/intel/int3472/tps68470.c b/drivers/platform/x86/intel/int3472/tps68470.c
+> index a496075c0d2a..b02bc675cabe 100644
+> --- a/drivers/platform/x86/intel/int3472/tps68470.c
+> +++ b/drivers/platform/x86/intel/int3472/tps68470.c
+> @@ -197,6 +197,8 @@ static int skl_int3472_tps68470_probe(struct i2c_client *client)
+>   		cells[1].platform_data = (void *)board_data->tps68470_regulator_pdata;
+>   		cells[1].pdata_size = sizeof(struct tps68470_regulator_platform_data);
+>   		cells[2].name = "tps68470-gpio";
+> +		cells[2].platform_data = (void *)board_data->tps68470_gpio_pdata;
+> +		cells[2].pdata_size = sizeof(*board_data->tps68470_gpio_pdata);
+>   
+>   		for (i = 0; i < board_data->n_gpiod_lookups; i++)
+>   			gpiod_add_lookup_table(board_data->tps68470_gpio_lookup_tables[i]);
+> diff --git a/drivers/platform/x86/intel/int3472/tps68470.h b/drivers/platform/x86/intel/int3472/tps68470.h
+> index 35915e701593..c1c4290eb6d5 100644
+> --- a/drivers/platform/x86/intel/int3472/tps68470.h
+> +++ b/drivers/platform/x86/intel/int3472/tps68470.h
+> @@ -17,6 +17,7 @@ struct tps68470_regulator_platform_data;
+>   struct int3472_tps68470_board_data {
+>   	const char *dev_name;
+>   	const struct tps68470_regulator_platform_data *tps68470_regulator_pdata;
+> +	const struct tps68470_gpio_platform_data *tps68470_gpio_pdata;
+>   	unsigned int n_gpiod_lookups;
+>   	struct gpiod_lookup_table *tps68470_gpio_lookup_tables[];
+>   };
+> diff --git a/include/linux/platform_data/tps68470.h b/include/linux/platform_data/tps68470.h
+> index e605a2cab07f..7330dab7a711 100644
+> --- a/include/linux/platform_data/tps68470.h
+> +++ b/include/linux/platform_data/tps68470.h
+> @@ -27,6 +27,10 @@ struct tps68470_regulator_platform_data {
+>   	const struct regulator_init_data *reg_init_data[TPS68470_NUM_REGULATORS];
+>   };
+>   
+> +struct tps68470_gpio_platform_data {
+> +	const bool daisy_chain_enable;
+> +};
+> +
+>   struct tps68470_clk_consumer {
+>   	const char *consumer_dev_name;
+>   	const char *consumer_con_id;
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8532EC562;
+	Tue, 10 Mar 2026 14:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773153183; cv=none; b=Le7wanm6uYJiUkRK3ayhPr1hFg4Z492unyA0bzkTiP7hcQkXxmiSPdVviia+z0powXysNy/bAlxsLogUQpTeLwI/QpeLgAkuQa0034oFQcMJGrtA2bEQvP2nOvl7gP1zT2kc3EIi5WHQKvmsM5W0pHZT7fXBkIUOagwJzWAGp0o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773153183; c=relaxed/simple;
+	bh=tyPlqVoMdHp8hj8vOFa9QVD3tcexWKEchvFfLl/zht0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eFlvl9KKlp5ycMiUHLR0wG8EjgMUhyzS13yRU7Y0P85pMgMKAutP+6PuwoFv8o/MRXDW2uHmCL7ilPHEqhI3rPnvaa76zB2ut53peeZjVDjOgugNRCXJybB0k1dbVEtaMQBtcVHkszFWbcovoE97LojSbskbrxWQX0xtJatg6aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Irki6hZy; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Irki6hZy"
+Received: from [192.168.0.43] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net [86.13.91.161])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 12A36250;
+	Tue, 10 Mar 2026 15:31:52 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1773153112;
+	bh=tyPlqVoMdHp8hj8vOFa9QVD3tcexWKEchvFfLl/zht0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Irki6hZy0ek7Tuep1wtlw/DC+NaNLMiY1ZlX69Ozhx6jM6Xwvw1qS47FWaD6USypy
+	 1fV8v7fPqqrOdospxJUu1Xi+H5kS0ru6C0SICz+K6dkBih3k2+EuADIlA8OX7K2dya
+	 01/J1yq/dvE9L8oJV42FV6U+wnDyF2hP4+m7xclc=
+Message-ID: <db7b4eeb-1054-4b7c-9f91-810be504124d@ideasonboard.com>
+Date: Tue, 10 Mar 2026 14:32:56 +0000
+Precedence: bulk
+X-Mailing-List: linux-media@vger.kernel.org
+List-Id: <linux-media.vger.kernel.org>
+List-Subscribe: <mailto:linux-media+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-media+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] platform: int3472: Add MSI prestige board data
+To: Antti Laakso <antti.laakso@linux.intel.com>, linux-media@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linusw@kernel.org, brgl@kernel.org, sakari.ailus@linux.intel.com,
+ mchehab@kernel.org, hansg@kernel.org, ilpo.jarvinen@linux.intel.com,
+ hverkuil+cisco@kernel.org, sre@kernel.org, hao.yao@intel.com,
+ jimmy.su@intel.com, miguel.vadillo@intel.com, kees@kernel.org,
+ ribalda@chromium.org
+References: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+ <20260310124427.693625-6-antti.laakso@linux.intel.com>
+Content-Language: en-US
+From: Dan Scally <dan.scally@ideasonboard.com>
+In-Reply-To: <20260310124427.693625-6-antti.laakso@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Hi Antti
+
+On 10/03/2026 12:44, Antti Laakso wrote:
+> Define regulators and gpios for MSI Prestige 14 AI EVO+ laptop.
+> 
+> Signed-off-by: Antti Laakso <antti.laakso@linux.intel.com>
+> ---
+>   .../x86/intel/int3472/tps68470_board_data.c   | 97 +++++++++++++++++++
+>   1 file changed, 97 insertions(+)
+> 
+> diff --git a/drivers/platform/x86/intel/int3472/tps68470_board_data.c b/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+> index 71357a036292..fe7c23e72d66 100644
+> --- a/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+> +++ b/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+> @@ -232,6 +232,73 @@ static const struct tps68470_regulator_platform_data dell_7212_tps68470_pdata =
+>   	},
+>   };
+>   
+> +/* Settings for MSI Prestige 14 laptop. */
+> +
+> +static struct regulator_consumer_supply ovti5675_avdd_consumer_supplies[] = {
+> +	REGULATOR_SUPPLY("avdd", "i2c-OVTI5675:00"),
+> +};
+> +
+> +static struct regulator_consumer_supply ovti5675_dovdd_consumer_supplies[] = {
+> +	REGULATOR_SUPPLY("dovdd", "i2c-OVTI5675:00"),
+> +};
+> +
+> +static struct regulator_consumer_supply ovti5675_dvdd_consumer_supplies[] = {
+> +	REGULATOR_SUPPLY("dvdd", "i2c-OVTI5675:00"),
+> +};
+> +
+> +static const struct regulator_init_data msi_p14_ai_evo_tps68470_core_reg_init_data = {
+> +	.constraints = {
+> +		.min_uV = 1200000,
+> +		.max_uV = 1200000,
+> +		.apply_uV = 1,
+> +		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
+> +	},
+> +	.num_consumer_supplies = ARRAY_SIZE(ovti5675_dvdd_consumer_supplies),
+> +	.consumer_supplies = ovti5675_dvdd_consumer_supplies,
+> +};
+> +
+> +static const struct regulator_init_data msi_p14_ai_evo_tps68470_ana_reg_init_data = {
+> +	.constraints = {
+> +		.min_uV = 2815200,
+> +		.max_uV = 2815200,
+> +		.apply_uV = 1,
+> +		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
+> +	},
+> +	.num_consumer_supplies = ARRAY_SIZE(ovti5675_avdd_consumer_supplies),
+> +	.consumer_supplies = ovti5675_avdd_consumer_supplies,
+> +};
+> +
+> +static const struct regulator_init_data msi_p14_ai_evo_tps68470_vio_reg_init_data = {
+> +	.constraints = {
+> +		.min_uV = 1800600,
+> +		.max_uV = 1800600,
+> +		.apply_uV = 1,
+> +		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
+> +	},
+> +	.num_consumer_supplies = 0,
+> +	.consumer_supplies = NULL,
+> +};
+> +
+> +static const struct regulator_init_data msi_p14_ai_evo_tps68470_vsio_reg_init_data = {
+> +	.constraints = {
+> +		.min_uV = 1800600,
+> +		.max_uV = 1800600,
+> +		.apply_uV = 1,
+> +		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
+> +	},
+> +	.num_consumer_supplies = ARRAY_SIZE(ovti5675_dovdd_consumer_supplies),
+> +	.consumer_supplies = ovti5675_dovdd_consumer_supplies,
+> +};
+> +
+> +static const struct tps68470_regulator_platform_data msi_p14_ai_evo_tps68470_pdata = {
+> +	.reg_init_data = {
+> +		[TPS68470_CORE] = &msi_p14_ai_evo_tps68470_core_reg_init_data,
+> +		[TPS68470_ANA]  = &msi_p14_ai_evo_tps68470_ana_reg_init_data,
+> +		[TPS68470_VIO]  = &msi_p14_ai_evo_tps68470_vio_reg_init_data,
+> +		[TPS68470_VSIO] = &msi_p14_ai_evo_tps68470_vsio_reg_init_data,
+> +	},
+> +};
+> +
+>   static struct gpiod_lookup_table surface_go_int347a_gpios = {
+>   	.dev_id = "i2c-INT347A:00",
+>   	.table = {
+> @@ -258,6 +325,19 @@ static struct gpiod_lookup_table dell_7212_int3479_gpios = {
+>   	}
+>   };
+>   
+> +static struct gpiod_lookup_table msi_p14_ai_evo_ovti5675_gpios = {
+> +	.dev_id = "i2c-OVTI5675:00",
+> +	.table = {
+> +		GPIO_LOOKUP_IDX("tps68470-gpio", 9, "reset", 0, GPIO_ACTIVE_LOW),
+> +		GPIO_LOOKUP_IDX("tps68470-gpio", 7, "reset", 1, GPIO_ACTIVE_LOW),
+
+The ov5675 driver seems only to look for a single gpio, so I think the second entry would never be 
+accessed here...should there be an accompanying driver change?
+
+Thanks
+Dan
+
+> +		{ }
+> +	}
+> +};
+> +
+> +static const struct tps68470_gpio_platform_data msi_p14_ai_evo_tps68470_gpio_pdata = {
+> +	.daisy_chain_enable = true,
+> +};
+> +
+>   static const struct int3472_tps68470_board_data surface_go_tps68470_board_data = {
+>   	.dev_name = "i2c-INT3472:05",
+>   	.tps68470_regulator_pdata = &surface_go_tps68470_pdata,
+> @@ -287,6 +367,16 @@ static const struct int3472_tps68470_board_data dell_7212_tps68470_board_data =
+>   	},
+>   };
+>   
+> +static const struct int3472_tps68470_board_data msi_p14_ai_evo_tps68470_board_data = {
+> +	.dev_name = "i2c-INT3472:06",
+> +	.tps68470_regulator_pdata = &msi_p14_ai_evo_tps68470_pdata,
+> +	.tps68470_gpio_pdata = &msi_p14_ai_evo_tps68470_gpio_pdata,
+> +	.n_gpiod_lookups = 1,
+> +	.tps68470_gpio_lookup_tables = {
+> +		&msi_p14_ai_evo_ovti5675_gpios,
+> +	},
+> +};
+> +
+>   static const struct dmi_system_id int3472_tps68470_board_data_table[] = {
+>   	{
+>   		.matches = {
+> @@ -316,6 +406,13 @@ static const struct dmi_system_id int3472_tps68470_board_data_table[] = {
+>   		},
+>   		.driver_data = (void *)&dell_7212_tps68470_board_data,
+>   	},
+> +	{
+> +		.matches = {
+> +			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Micro-Star International Co., Ltd."),
+> +			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Prestige 14 AI+ Evo C2VMG"),
+> +		},
+> +		.driver_data = (void *)&msi_p14_ai_evo_tps68470_board_data,
+> +	},
+>   	{ }
+>   };
+>   
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3044E2D0C63;
+	Tue, 10 Mar 2026 14:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773153244; cv=none; b=PuX7yx2G9XRYsvI3t3sgBX8WSo3LgikSFVPTozUl2J4/gMbIpmxcm+jI3fkvIu7wRgfbWgjxfPnZhbYljlhs7UaWcynKONOi195veXaHgw+wrU/m76q6e5SyyE1prKcKoR34EhnqgwrshsfXCNQqpIsSbMIFiOOhV6ah3mOvMA8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773153244; c=relaxed/simple;
+	bh=en8zy/sckVOY0F1xKRSThzPbRxMSB+5Nfupj5w0twTo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m6U0FZ0Ox+ixvRZYITUSEig1U5p54zul7PF0kgPd0mSwlLPZ1elk5E6ClJt1AHE6P1BMZJh2a13kcltnzo/A1R8PH17qjrZwVYppFApNdRgp02kMlCLzfMENQ1cQ4HIgFNH9KsNMFIAJcWitiiNPs0ig/6eVmc3pEn+e6OpFkwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=UN9V9OwM; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="UN9V9OwM"
+Received: from [192.168.0.43] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net [86.13.91.161])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6502D250;
+	Tue, 10 Mar 2026 15:32:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1773153175;
+	bh=en8zy/sckVOY0F1xKRSThzPbRxMSB+5Nfupj5w0twTo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UN9V9OwM5nHzxHfdkdjzjSf/8Yb1sKtLFNVM/q5Pl370Ij6BV2VWwrBkvWNH7MUc+
+	 GauE9o+N0bNVNTEY5stNoy3qAJL7y7ogFcpFGMSaMVvj8hBlBEkA0sqoXgGpZX1ECr
+	 i7HM2U/1b7PWVx4VYR4zqL1jah7jU4l1y0hlzy1s=
+Message-ID: <49b787d2-f5e6-47a7-863c-ac3ee24dca86@ideasonboard.com>
+Date: Tue, 10 Mar 2026 14:33:58 +0000
+Precedence: bulk
+X-Mailing-List: linux-media@vger.kernel.org
+List-Id: <linux-media.vger.kernel.org>
+List-Subscribe: <mailto:linux-media+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-media+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5] gpio: tps68470: Add i2c daisy chain support
+To: Antti Laakso <antti.laakso@linux.intel.com>, linux-media@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linusw@kernel.org, brgl@kernel.org, sakari.ailus@linux.intel.com,
+ mchehab@kernel.org, hansg@kernel.org, ilpo.jarvinen@linux.intel.com,
+ hverkuil+cisco@kernel.org, sre@kernel.org, hao.yao@intel.com,
+ jason.z.chen@intel.com, jimmy.su@intel.com, miguel.vadillo@intel.com,
+ kees@kernel.org, ribalda@chromium.org
+References: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+ <20260310124427.693625-5-antti.laakso@linux.intel.com>
+Content-Language: en-US
+From: Dan Scally <dan.scally@ideasonboard.com>
+In-Reply-To: <20260310124427.693625-5-antti.laakso@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Hi Antti
+
+On 10/03/2026 12:44, Antti Laakso wrote:
+> The tps68470 daisy chain make use of gpio 1 and 2. When in use, these
+> gpios must be configured as inputs without pull-up.
+> 
+> Signed-off-by: Antti Laakso <antti.laakso@linux.intel.com>
+> ---
+
+Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
+
+>   drivers/gpio/gpio-tps68470.c | 23 ++++++++++++++++++++++-
+>   1 file changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-tps68470.c b/drivers/gpio/gpio-tps68470.c
+> index d4fbdf90e190..729ad8e397fc 100644
+> --- a/drivers/gpio/gpio-tps68470.c
+> +++ b/drivers/gpio/gpio-tps68470.c
+> @@ -14,6 +14,7 @@
+>   #include <linux/gpio/driver.h>
+>   #include <linux/mfd/tps68470.h>
+>   #include <linux/module.h>
+> +#include <linux/platform_data/tps68470.h>
+>   #include <linux/platform_device.h>
+>   #include <linux/regmap.h>
+>   
+> @@ -120,6 +121,17 @@ static int tps68470_gpio_input(struct gpio_chip *gc, unsigned int offset)
+>   				   TPS68470_GPIO_MODE_MASK, 0x00);
+>   }
+>   
+> +static int tps68470_enable_i2c_daisy_chain(struct gpio_chip *gc)
+> +{
+> +	int ret;
+> +
+> +	ret = tps68470_gpio_input(gc, 1);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return tps68470_gpio_input(gc, 2);
+> +}
+> +
+>   static const char *tps68470_names[TPS68470_N_GPIO] = {
+>   	"gpio.0", "gpio.1", "gpio.2", "gpio.3",
+>   	"gpio.4", "gpio.5", "gpio.6",
+> @@ -129,6 +141,8 @@ static const char *tps68470_names[TPS68470_N_GPIO] = {
+>   static int tps68470_gpio_probe(struct platform_device *pdev)
+>   {
+>   	struct tps68470_gpio_data *tps68470_gpio;
+> +	struct tps68470_gpio_platform_data *pdata = dev_get_platdata(&pdev->dev);
+> +	int ret = 0;
+>   
+>   	tps68470_gpio = devm_kzalloc(&pdev->dev, sizeof(*tps68470_gpio),
+>   				     GFP_KERNEL);
+> @@ -149,7 +163,14 @@ static int tps68470_gpio_probe(struct platform_device *pdev)
+>   	tps68470_gpio->gc.base = -1;
+>   	tps68470_gpio->gc.parent = &pdev->dev;
+>   
+> -	return devm_gpiochip_add_data(&pdev->dev, &tps68470_gpio->gc, tps68470_gpio);
+> +	ret = devm_gpiochip_add_data(&pdev->dev, &tps68470_gpio->gc, tps68470_gpio);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (pdata && pdata->daisy_chain_enable)
+> +		ret = tps68470_enable_i2c_daisy_chain(&tps68470_gpio->gc);
+> +
+> +	return ret;
+>   }
+>   
+>   static struct platform_driver tps68470_gpio_driver = {
+
+
+From mboxrd@z Thu Jan  1 00:00:00 1970
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2533033F6;
+	Tue, 10 Mar 2026 15:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773154956; cv=none; b=V8mQcK2LZ6WaBNy3ZBgd9IOZiCRHOv0RHfmLnHc+UsHFEInZhA4qQKwrNzumZKvKktU4r88gP3gYzITk/vVC6z7pd1ciTTAt2/UTf3EhkndeUh6k6mSo/wCQnbxRkM249lMDFXWTFge7bdcpKLJ1cwj3HKQ99PMEDEIaxTdpEos=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773154956; c=relaxed/simple;
+	bh=B3yjZ2PtytN8s2XAoFhnIPvCWCLkJ9uFzDhkRyQNxoE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s2td0aaQXKZsjsmX9FNYARjbPuWNuuR8kXsCfN2CFfTSviZOCTMSWKSyI4bA+gNIUpDcMmIeLi3Evy2Zw4ArbqkR0Ky7EnrGMEXTejtNSb1r4JuJWEbSP4UFfzqItgwUH/FBVs8HpLcPqYNWHaU7j4RfWLSNFR/h0H979iI9/KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uLvXYw4r; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uLvXYw4r"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0758AC19423;
+	Tue, 10 Mar 2026 15:02:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773154956;
+	bh=B3yjZ2PtytN8s2XAoFhnIPvCWCLkJ9uFzDhkRyQNxoE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uLvXYw4ructNr51kyC6fpYMf9FWkvdcq+POKkbbgueINM1DnoZSq+JSx0B0O1goRl
+	 h9y8MuotvH6LYAVnCyr0zVw9MvWKv11VUiJOb2rwpXR/7UgC5vZaVOl9w3TwUBuldq
+	 eio1Th41A1BAms4BHdcHTdKROjDaaLIfT+Zb+BbKcfzyVyNPlZtZsZIrr+M1t7/mh4
+	 s3Mbak+AfkCyhDYm5syG9WrFtErJuQsFBtOPm0bdolUDv2FCxPBNvseZxGf1ZTnkIA
+	 U4QJH4nwkKDdTNRfUub6EvYgQyd2RbH7Xoi0Etm0y/LplxPflK2SdW4fx/HJm/GhI+
+	 9Uk22rU9bCd9g==
+Message-ID: <cc274ba7-cae4-47b0-90d3-124ceae6a51b@kernel.org>
+Date: Tue, 10 Mar 2026 16:02:31 +0100
+Precedence: bulk
+X-Mailing-List: linux-media@vger.kernel.org
+List-Id: <linux-media.vger.kernel.org>
+List-Subscribe: <mailto:linux-media+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-media+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] platform: int3472: Add MSI prestige board data
+To: Dan Scally <dan.scally@ideasonboard.com>,
+ Antti Laakso <antti.laakso@linux.intel.com>, linux-media@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linusw@kernel.org, brgl@kernel.org, sakari.ailus@linux.intel.com,
+ mchehab@kernel.org, ilpo.jarvinen@linux.intel.com,
+ hverkuil+cisco@kernel.org, sre@kernel.org, hao.yao@intel.com,
+ jimmy.su@intel.com, miguel.vadillo@intel.com, kees@kernel.org,
+ ribalda@chromium.org
+References: <20260310124427.693625-1-antti.laakso@linux.intel.com>
+ <20260310124427.693625-6-antti.laakso@linux.intel.com>
+ <db7b4eeb-1054-4b7c-9f91-810be504124d@ideasonboard.com>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <db7b4eeb-1054-4b7c-9f91-810be504124d@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Hi,
+
+On 10-Mar-26 15:32, Dan Scally wrote:
+> Hi Antti
+> 
+> On 10/03/2026 12:44, Antti Laakso wrote:
+>> Define regulators and gpios for MSI Prestige 14 AI EVO+ laptop.
+>>
+>> Signed-off-by: Antti Laakso <antti.laakso@linux.intel.com>
+>> ---
+>>   .../x86/intel/int3472/tps68470_board_data.c   | 97 +++++++++++++++++++
+>>   1 file changed, 97 insertions(+)
+>>
+>> diff --git a/drivers/platform/x86/intel/int3472/tps68470_board_data.c b/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+>> index 71357a036292..fe7c23e72d66 100644
+>> --- a/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+>> +++ b/drivers/platform/x86/intel/int3472/tps68470_board_data.c
+>> @@ -232,6 +232,73 @@ static const struct tps68470_regulator_platform_data dell_7212_tps68470_pdata =
+>>       },
+>>   };
+>>   +/* Settings for MSI Prestige 14 laptop. */
+>> +
+>> +static struct regulator_consumer_supply ovti5675_avdd_consumer_supplies[] = {
+>> +    REGULATOR_SUPPLY("avdd", "i2c-OVTI5675:00"),
+>> +};
+>> +
+>> +static struct regulator_consumer_supply ovti5675_dovdd_consumer_supplies[] = {
+>> +    REGULATOR_SUPPLY("dovdd", "i2c-OVTI5675:00"),
+>> +};
+>> +
+>> +static struct regulator_consumer_supply ovti5675_dvdd_consumer_supplies[] = {
+>> +    REGULATOR_SUPPLY("dvdd", "i2c-OVTI5675:00"),
+>> +};
+>> +
+>> +static const struct regulator_init_data msi_p14_ai_evo_tps68470_core_reg_init_data = {
+>> +    .constraints = {
+>> +        .min_uV = 1200000,
+>> +        .max_uV = 1200000,
+>> +        .apply_uV = 1,
+>> +        .valid_ops_mask = REGULATOR_CHANGE_STATUS,
+>> +    },
+>> +    .num_consumer_supplies = ARRAY_SIZE(ovti5675_dvdd_consumer_supplies),
+>> +    .consumer_supplies = ovti5675_dvdd_consumer_supplies,
+>> +};
+>> +
+>> +static const struct regulator_init_data msi_p14_ai_evo_tps68470_ana_reg_init_data = {
+>> +    .constraints = {
+>> +        .min_uV = 2815200,
+>> +        .max_uV = 2815200,
+>> +        .apply_uV = 1,
+>> +        .valid_ops_mask = REGULATOR_CHANGE_STATUS,
+>> +    },
+>> +    .num_consumer_supplies = ARRAY_SIZE(ovti5675_avdd_consumer_supplies),
+>> +    .consumer_supplies = ovti5675_avdd_consumer_supplies,
+>> +};
+>> +
+>> +static const struct regulator_init_data msi_p14_ai_evo_tps68470_vio_reg_init_data = {
+>> +    .constraints = {
+>> +        .min_uV = 1800600,
+>> +        .max_uV = 1800600,
+>> +        .apply_uV = 1,
+>> +        .valid_ops_mask = REGULATOR_CHANGE_STATUS,
+>> +    },
+>> +    .num_consumer_supplies = 0,
+>> +    .consumer_supplies = NULL,
+>> +};
+>> +
+>> +static const struct regulator_init_data msi_p14_ai_evo_tps68470_vsio_reg_init_data = {
+>> +    .constraints = {
+>> +        .min_uV = 1800600,
+>> +        .max_uV = 1800600,
+>> +        .apply_uV = 1,
+>> +        .valid_ops_mask = REGULATOR_CHANGE_STATUS,
+>> +    },
+>> +    .num_consumer_supplies = ARRAY_SIZE(ovti5675_dovdd_consumer_supplies),
+>> +    .consumer_supplies = ovti5675_dovdd_consumer_supplies,
+>> +};
+>> +
+>> +static const struct tps68470_regulator_platform_data msi_p14_ai_evo_tps68470_pdata = {
+>> +    .reg_init_data = {
+>> +        [TPS68470_CORE] = &msi_p14_ai_evo_tps68470_core_reg_init_data,
+>> +        [TPS68470_ANA]  = &msi_p14_ai_evo_tps68470_ana_reg_init_data,
+>> +        [TPS68470_VIO]  = &msi_p14_ai_evo_tps68470_vio_reg_init_data,
+>> +        [TPS68470_VSIO] = &msi_p14_ai_evo_tps68470_vsio_reg_init_data,
+>> +    },
+>> +};
+>> +
+>>   static struct gpiod_lookup_table surface_go_int347a_gpios = {
+>>       .dev_id = "i2c-INT347A:00",
+>>       .table = {
+>> @@ -258,6 +325,19 @@ static struct gpiod_lookup_table dell_7212_int3479_gpios = {
+>>       }
+>>   };
+>>   +static struct gpiod_lookup_table msi_p14_ai_evo_ovti5675_gpios = {
+>> +    .dev_id = "i2c-OVTI5675:00",
+>> +    .table = {
+>> +        GPIO_LOOKUP_IDX("tps68470-gpio", 9, "reset", 0, GPIO_ACTIVE_LOW),
+>> +        GPIO_LOOKUP_IDX("tps68470-gpio", 7, "reset", 1, GPIO_ACTIVE_LOW),
+> 
+> The ov5675 driver seems only to look for a single gpio, so I think the second entry would never be accessed here...should there be an accompanying driver change?
+
+Ah I missed this, yes having 2 entries mapping to the same label is not
+useful. The first entry (with index 0) will simply always be used in that
+case.
+
+Also this should use plain GPIO_LOOKUP() since the index part (the only
+difference here) is never used in sensor drivers.
+
+Regards,
+
+Hans
+
+
+
+
+
+> 
+> Thanks
+> Dan
+> 
+>> +        { }
+>> +    }
+>> +};
+>> +
+>> +static const struct tps68470_gpio_platform_data msi_p14_ai_evo_tps68470_gpio_pdata = {
+>> +    .daisy_chain_enable = true,
+>> +};
+>> +
+>>   static const struct int3472_tps68470_board_data surface_go_tps68470_board_data = {
+>>       .dev_name = "i2c-INT3472:05",
+>>       .tps68470_regulator_pdata = &surface_go_tps68470_pdata,
+>> @@ -287,6 +367,16 @@ static const struct int3472_tps68470_board_data dell_7212_tps68470_board_data =
+>>       },
+>>   };
+>>   +static const struct int3472_tps68470_board_data msi_p14_ai_evo_tps68470_board_data = {
+>> +    .dev_name = "i2c-INT3472:06",
+>> +    .tps68470_regulator_pdata = &msi_p14_ai_evo_tps68470_pdata,
+>> +    .tps68470_gpio_pdata = &msi_p14_ai_evo_tps68470_gpio_pdata,
+>> +    .n_gpiod_lookups = 1,
+>> +    .tps68470_gpio_lookup_tables = {
+>> +        &msi_p14_ai_evo_ovti5675_gpios,
+>> +    },
+>> +};
+>> +
+>>   static const struct dmi_system_id int3472_tps68470_board_data_table[] = {
+>>       {
+>>           .matches = {
+>> @@ -316,6 +406,13 @@ static const struct dmi_system_id int3472_tps68470_board_data_table[] = {
+>>           },
+>>           .driver_data = (void *)&dell_7212_tps68470_board_data,
+>>       },
+>> +    {
+>> +        .matches = {
+>> +            DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Micro-Star International Co., Ltd."),
+>> +            DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Prestige 14 AI+ Evo C2VMG"),
+>> +        },
+>> +        .driver_data = (void *)&msi_p14_ai_evo_tps68470_board_data,
+>> +    },
+>>       { }
+>>   };
+>>   
+> 
+
+

@@ -21,6 +21,7 @@ KNOWN_EXPERIMENT_PATCHES=(
   "reference/patches/pmic-si2c-ctl-split-step-trace-v1.patch"
   "reference/patches/pmic-si2c-ctl-bit1-only-v1.patch"
   "reference/patches/pmic-si2c-ctl-late-gpio-bit0-v1.patch"
+  "reference/patches/ms13q3-daisy-chain-crosscheck-v1.patch"
 )
 BASE_BUILD_DIRS=(
   "drivers/platform/x86/intel/int3472"

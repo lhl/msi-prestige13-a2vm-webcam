@@ -1,0 +1,18 @@
+CMD: git_safe status --short
+ M PLAN.md
+ M README.md
+ M WORKLOG.md
+ M docs/README.md
+ M docs/pmic-followup-experiments.md
+ M reference/README.md
+ M scripts/lib-experiment-workflow.sh
+ M state/CONTEXT.md
+?? docs/antti-prestige14-thread-review.md
+?? reference/antti-patch/
+?? reference/patches/ms13q3-daisy-chain-crosscheck-v1.patch
+?? runs/2026-03-09/20260309T174955-s-i2c-ctl-bit1-only-update/
+?? runs/2026-03-11/
+?? scripts/exp12-ms13q3-daisy-chain-crosscheck-update.sh
+?? scripts/exp12-ms13q3-daisy-chain-crosscheck-verify.sh
+
+EXIT_STATUS: 0

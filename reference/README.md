@@ -4,6 +4,10 @@ Captured upstream sources relevant to webcam bring-up on the MSI Prestige 13 AI+
 
 ## Current References
 
+- `reference/antti-patch/README.md`
+  - Local mailbox archive of Antti Laakso's March 10, 2026 MSI Prestige 14
+    `OV5675` / `TPS68470` patch thread, including the daisy-chain sub-series
+  - Captured locally: 2026-03-11
 - `reference/greymouser-summit-13-ai-evo-a2vm.md`
   - Related MSI Summit 13 AI+ Evo A2VMTG repo with Linux IIO sensor and LED control work
   - Captured: 2026-03-08

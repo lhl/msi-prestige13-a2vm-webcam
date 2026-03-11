@@ -1,0 +1,23 @@
+Mar 11 06:44:57 p13 kernel: tps68470-gpio tps68470-gpio: exp12_daisy: enabling Antti-inspired daisy-chain cross-check on gpio.1/gpio.2
+Mar 11 06:44:57 p13 kernel: tps68470-gpio tps68470-gpio: exp12_daisy: probe-before gpio.1 ctl_ret=0 ctl=0x01 gpdo_ret=0 gpdo=0x00
+Mar 11 06:44:57 p13 kernel: tps68470-gpio tps68470-gpio: exp12_daisy: probe-before gpio.2 ctl_ret=0 ctl=0x01 gpdo_ret=0 gpdo=0x00
+Mar 11 06:44:57 p13 kernel: tps68470-gpio tps68470-gpio: exp12_daisy: direction-output-before gpio.1 ctl_ret=0 ctl=0x01 gpdo_ret=0 gpdo=0x00
+Mar 11 06:44:57 p13 kernel: tps68470-gpio tps68470-gpio: exp12_daisy: probe-after gpio.1 ctl_ret=0 ctl=0x00 gpdo_ret=0 gpdo=0x00
+Mar 11 06:44:57 p13 kernel: tps68470-gpio tps68470-gpio: exp12_daisy: set-after gpio.1 ctl_ret=0 ctl=0x00 gpdo_ret=0 gpdo=0x00
+Mar 11 06:44:57 p13 kernel: tps68470-gpio tps68470-gpio: exp12_daisy: probe-after gpio.2 ctl_ret=0 ctl=0x00 gpdo_ret=0 gpdo=0x00
+Mar 11 06:44:57 p13 kernel: tps68470-gpio tps68470-gpio: exp12_daisy: direction-output-after gpio.1 ctl_ret=0 ctl=0x02 gpdo_ret=0 gpdo=0x00
+Mar 11 06:44:57 p13 kernel: tps68470-gpio tps68470-gpio: exp12_daisy: direction-output-before gpio.2 ctl_ret=0 ctl=0x00 gpdo_ret=0 gpdo=0x00
+Mar 11 06:44:57 p13 kernel: tps68470-gpio tps68470-gpio: exp12_daisy: set-after gpio.2 ctl_ret=0 ctl=0x00 gpdo_ret=0 gpdo=0x00
+Mar 11 06:44:57 p13 kernel: tps68470-gpio tps68470-gpio: exp12_daisy: direction-output-after gpio.2 ctl_ret=0 ctl=0x02 gpdo_ret=0 gpdo=0x00
+Mar 11 06:44:57 p13 kernel: tps68470-gpio tps68470-gpio: exp12_daisy: set-after gpio.1 ctl_ret=0 ctl=0x02 gpdo_ret=0 gpdo=0x00
+Mar 11 06:44:57 p13 kernel: tps68470-gpio tps68470-gpio: exp12_daisy: set-after gpio.2 ctl_ret=0 ctl=0x02 gpdo_ret=0 gpdo=0x00
+Mar 11 06:44:57 p13 kernel: tps68470-gpio tps68470-gpio: exp12_daisy: set-after gpio.2 ctl_ret=0 ctl=0x02 gpdo_ret=0 gpdo=0x04
+Mar 11 06:44:57 p13 kernel: tps68470-gpio tps68470-gpio: exp12_daisy: set-after gpio.1 ctl_ret=0 ctl=0x02 gpdo_ret=0 gpdo=0x06
+Mar 11 06:44:57 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -121
+Mar 11 06:44:57 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -121
+Mar 11 06:44:57 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -121
+Mar 11 06:44:57 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -121
+Mar 11 06:44:57 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -121
+Mar 11 06:44:57 p13 kernel: ov5675 i2c-OVTI5675:00: failed to find sensor: -121
+Mar 11 06:44:57 p13 kernel: tps68470-gpio tps68470-gpio: exp12_daisy: set-after gpio.1 ctl_ret=0 ctl=0x02 gpdo_ret=0 gpdo=0x04
+Mar 11 06:44:57 p13 kernel: tps68470-gpio tps68470-gpio: exp12_daisy: set-after gpio.2 ctl_ret=0 ctl=0x02 gpdo_ret=0 gpdo=0x00
