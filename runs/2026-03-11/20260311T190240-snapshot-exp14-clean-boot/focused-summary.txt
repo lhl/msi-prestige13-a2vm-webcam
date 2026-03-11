@@ -1,0 +1,60 @@
+Source: scripts/01-clean-boot-check.sh
+Purpose: capture the clean-boot checkpoint for the webcam bring-up path
+
+High-value boot log lines:
+Mar 11 18:59:32 p13 kernel: intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00
+Mar 11 18:59:32 p13 kernel: intel-ipu7 0000:00:05.0: Connected 1 cameras
+Mar 11 18:59:32 p13 kernel: int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21
+Mar 11 18:59:32 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -121
+Mar 11 18:59:32 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -121
+Mar 11 18:59:32 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -121
+Mar 11 18:59:32 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -121
+Mar 11 18:59:32 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -121
+Mar 11 18:59:32 p13 kernel: ov5675 i2c-OVTI5675:00: failed to find sensor: -121
+Mar 11 18:59:32 p13 kernel: ov5675 i2c-OVTI5675:00: probe with driver ov5675 failed with error -121
+
+INT3472 driver state:
+/sys/bus/i2c/drivers/int3472-tps68470
+
+OV5675 driver state:
+ov5675-unbound
+
+v4l-subdev nodes:
+(none)
+
+Experiment workflow:
+id: exp14
+title: MS-13Q3 daisy-chain plus GPIO9 reset
+doc: docs/pmic-followup-experiments.md
+default patch: /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/reference/patches/ms13q3-daisy-chain-gpio9-reset-v1.patch
+
+Experiment-specific boot lines (pmic_focus:|exp14_daisy:|controller timed out|failed to power on|failed to find sensor|chip id read attempt|sensor identified on attempt):
+Mar 11 18:59:32 p13 kernel: tps68470-gpio tps68470-gpio: exp14_daisy: enabling daisy-chain isolation on gpio.1/gpio.2 and exposing gpio.9 as reset
+Mar 11 18:59:32 p13 kernel: tps68470-gpio tps68470-gpio: exp14_daisy: probe-before gpio.1 ctl_ret=0 ctl=0x01 gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+Mar 11 18:59:32 p13 kernel: tps68470-gpio tps68470-gpio: exp14_daisy: direction-output-before gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+Mar 11 18:59:32 p13 kernel: tps68470-gpio tps68470-gpio: exp14_daisy: probe-before gpio.2 ctl_ret=0 ctl=0x01 gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+Mar 11 18:59:32 p13 kernel: tps68470-gpio tps68470-gpio: exp14_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+Mar 11 18:59:32 p13 kernel: tps68470-gpio tps68470-gpio: exp14_daisy: probe-before gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+Mar 11 18:59:32 p13 kernel: tps68470-gpio tps68470-gpio: exp14_daisy: direction-output-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+Mar 11 18:59:32 p13 kernel: tps68470-gpio tps68470-gpio: exp14_daisy: probe-before gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+Mar 11 18:59:32 p13 kernel: tps68470-gpio tps68470-gpio: exp14_daisy: probe-after gpio.1 ctl_ret=0 ctl=0x00 gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+Mar 11 18:59:32 p13 kernel: tps68470-gpio tps68470-gpio: exp14_daisy: probe-after gpio.2 ctl_ret=0 ctl=0x00 gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+Mar 11 18:59:32 p13 kernel: tps68470-gpio tps68470-gpio: exp14_daisy: probe-after gpio.7 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+Mar 11 18:59:32 p13 kernel: tps68470-gpio tps68470-gpio: exp14_daisy: probe-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+Mar 11 18:59:32 p13 kernel: tps68470-gpio tps68470-gpio: exp14_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+Mar 11 18:59:32 p13 kernel: regulator regulator.2: pmic_focus: enable ANA reg=VACTL(0x47) mask=0x01 value=0x01 before_ret=0 before=0x00 update_ret=0 after_ret=0 after=0x01
+Mar 11 18:59:32 p13 kernel: regulator regulator.1: pmic_focus: enable CORE reg=VDCTL(0x48) mask=0x01 value=0x01 before_ret=0 before=0x04 update_ret=0 after_ret=0 after=0x05
+Mar 11 18:59:32 p13 kernel: regulator regulator.5: pmic_focus: enable-bit1-only VSIO reg=S_I2C_CTL(0x43) mask=0x02 value=0x02 before_ret=0 before=0x00 update_ret=0 after_ret=0 after=0x02
+Mar 11 18:59:32 p13 kernel: tps68470-gpio tps68470-gpio: exp14_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x04
+Mar 11 18:59:32 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 1/5 failed: -121
+Mar 11 18:59:32 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 2/5 failed: -121
+Mar 11 18:59:32 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 3/5 failed: -121
+Mar 11 18:59:32 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 4/5 failed: -121
+Mar 11 18:59:32 p13 kernel: ov5675 i2c-OVTI5675:00: chip id read attempt 5/5 failed: -121
+Mar 11 18:59:32 p13 kernel: ov5675 i2c-OVTI5675:00: failed to find sensor: -121
+Mar 11 18:59:32 p13 kernel: tps68470-gpio tps68470-gpio: exp14_daisy: set-after gpio.9 ctl_ret=-22 ctl=0xff gpdo_ret=0 gpdo=0x00 sgpo_ret=0 sgpo=0x00
+Mar 11 18:59:32 p13 kernel: regulator regulator.5: pmic_focus: disable-bit1-only VSIO reg=S_I2C_CTL(0x43) mask=0x02 value=0x00 before_ret=0 before=0x02 update_ret=0 after_ret=0 after=0x00
+Mar 11 18:59:32 p13 kernel: regulator regulator.2: pmic_focus: disable ANA reg=VACTL(0x47) mask=0x01 value=0x00 before_ret=0 before=0x01 update_ret=0 after_ret=0 after=0x00
+
+PMIC dump:
+/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-11/20260311T190240-snapshot-exp14-clean-boot/pmic-reg-dump.txt

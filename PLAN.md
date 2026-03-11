@@ -3,8 +3,8 @@
 Updated: 2026-03-11
 
 This is the active plan after the completed March 9 PMIC experiment batch, the
-completed `exp13` daisy-chain-isolation run, and the remaining Antti-model
-`exp14`-`exp17` branch set.
+completed `exp13` / `exp14` Antti-model runs, and the remaining
+`exp15`-`exp17` branch set.
 
 ## Goal
 
@@ -79,6 +79,12 @@ with strong evidence.
     them in daisy-chain input mode for the observed probe window
   - the one-shot reclaim guard did not fire
   - the sensor failure shape still ends at `-121`
+- `exp14` came back positive for remote-line activation, but negative as a
+  direct fix:
+  - `GPIO9` is now an observed Linux-visible remote control line
+  - `GPIO1` / `GPIO2` remained isolated in daisy-chain input mode
+  - `GPIO9` reached observed `SGPO = 0x04` during probe
+  - the sensor failure shape still ends at `-121`
 - the current `MS-13Q3` `GPIO1` / `GPIO2` board model is still only a
   candidate, not a validated wiring map:
   - the original board-data patch introduced it as a first-pass guess
@@ -93,9 +99,10 @@ with strong evidence.
   - the early regulator-phase `BIT(0)` write was wrong
   - the old direct-use `GPIO1` / `GPIO2` Linux board model was wrong as a
     clean Antti-style branch
-  - the next high-value work is to test which remote line, `GPIO9` or
-    `GPIO7`, is the first credible sensor-control candidate on top of the
-    clean daisy-chain branch
+  - `GPIO9` is active, but insufficient alone
+  - the next high-value work is to test whether `GPIO7` is the missing
+    primary line or the missing companion line on top of the clean daisy-chain
+    branch
 
 ## Workstreams
 
@@ -153,23 +160,26 @@ with strong evidence.
    - it proved Linux can leave `GPIO1` / `GPIO2` in Antti-style
      daisy-chain input mode for the observed probe window
    - it did not improve the flat repeated `-121` chip-ID failure
-4. Use `exp14` and `exp15` to answer the next constrained question.
-   - under current `ov5675` driver limits, is `GPIO9` or `GPIO7` the first
-     credible remote control-line candidate
-5. Use `exp16` as the closest current-driver approximation of Antti's remote
-   mapping only after the single-line branches have been isolated first.
-6. Use `exp17` as the explicit PMIC-side follow-up after the remote-line
+4. Treat `exp14` as completed evidence, not as the next branch to run.
+   - it proved `GPIO9` is active
+   - it also proved `GPIO9` alone is insufficient
+5. Run `exp15` as the next constrained discriminator.
+   - under current `ov5675` driver limits, does `GPIO7` outperform or
+     complement the now-proven-active `GPIO9` line
+6. Use `exp16` as the closest current-driver approximation of Antti's remote
+   mapping after `exp15`, preserving `GPIO9` as the current default `reset`
+   side unless `exp15` clearly outperforms it.
+7. Use `exp17` as the explicit PMIC-side follow-up after the remote-line
    question is better constrained.
    - `exp13` already proved the no-reclaim prerequisite
-   - carry forward the cleanest remote-line branch from `exp14` through
-     `exp16`
-7. Keep using:
+   - carry forward the cleanest branch from `exp15` through `exp16`
+8. Keep using:
    - `scripts/patch-kernel.sh`
    - `scripts/exp*-*-update.sh`
    - `scripts/exp*-*-verify.sh`
    - `scripts/01-clean-boot-check.sh`
    to keep evidence reproducible
-8. Keep the broader Windows config-path and PMIC dump questions open, but do
+9. Keep the broader Windows config-path and PMIC dump questions open, but do
    not let them delay the next clean Antti-model branch tests.
 
 ## Open Questions
@@ -178,8 +188,8 @@ with strong evidence.
   PMIC readback collapses to `-110`?
 - With `exp13` proving no reclaim, why does the clean daisy-chain-isolated
   branch still end at flat repeated `-121` chip-ID failures?
-- Under current `ov5675` consumer behavior, is `GPIO9` or `GPIO7` the first
-  better remote control-line candidate?
+- With `exp14` proving `GPIO9` is active but insufficient, is `GPIO7` the
+  missing primary line or the missing companion line?
 - If `exp16` is still negative, do we need an `ov5675` consumer change to
   model Antti's dual-reset style more faithfully?
 - Once a clean daisy-chain branch exists, does `BIT(0)` become safe there or
@@ -202,5 +212,5 @@ with strong evidence.
 - a full March 9 status report under `docs/`
 - reference-backed Windows PMIC notes under `reference/windows-driver-analysis/`
 - current support summary under `docs/webcam-status.md`
-- recorded `exp13` run evidence plus staged `exp14` through `exp17` patches
-  and wrapper scripts
+- recorded `exp13` / `exp14` run evidence plus staged `exp15` through `exp17`
+  patches and wrapper scripts

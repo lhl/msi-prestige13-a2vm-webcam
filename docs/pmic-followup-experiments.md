@@ -5,14 +5,14 @@ Updated: 2026-03-11
 This note turns the current ordered PMIC follow-up list into repeatable
 update-and-verify workflows.
 
-As of the completed `2026-03-11` `exp13` follow-up and the staged
-`exp14`-`exp17` branch set:
+As of the completed `2026-03-11` `exp14` follow-up and the staged
+`exp15`-`exp17` branch set:
 
-- `exp1` through `exp13` are completed historical experiments
-- `exp14` through `exp17` are now staged repo-local experiments:
+- `exp1` through `exp14` are completed historical experiments
+- `exp15` through `exp17` are now staged repo-local experiments:
   - patch files exist under `reference/patches/`
   - matching `update` / `verify` wrappers exist under `scripts/`
-  - none of those four staged branches has been run yet
+  - none of those three staged branches has been run yet
 - `exp10` remains the best current PMIC state
 - `exp11` was the first late-phase `BIT(0)` experiment and came back negative
 - `exp12` was the first Antti-inspired daisy-chain cross-check and came back
@@ -37,6 +37,10 @@ As of the completed `2026-03-11` `exp13` follow-up and the staged
   - yes, once Linux stops exporting `GPIO1` / `GPIO2` to `OVTI5675:00`, it
     leaves them in daisy-chain input mode for the full observed probe window
   - no, that alone does not wake the sensor; the failure shape still ends at
+    repeated `-121`
+- `exp14` answered the first remote-line question:
+  - yes, `GPIO9` becomes an active Linux-visible remote line
+  - no, `GPIO9` alone is not sufficient; the failure shape still ends at
     repeated `-121`
 
 ## Goal
@@ -536,27 +540,32 @@ Implemented patch shape:
 - keep the `GPIO1` / `GPIO2` / `GPIO7` / `GPIO9` instrumentation
 
 Current status:
-- staged only
-- not yet run
+- completed on `2026-03-11`
+- update run:
+  - `runs/2026-03-11/20260311T185841-ms13q3-daisy-chain-gpio9-reset-update/`
+- verify run:
+  - `runs/2026-03-11/20260311T190240-snapshot-exp14-clean-boot/`
 
-Why `GPIO9` first:
-- Antti's working Prestige 14 series uses `GPIO_LOOKUP_IDX(..., 9, "reset", 0,
-  ...)`
-- current `ov5675` only consumes `reset` index `0` plus optional `powerdown`
-  index `0`, so `GPIO9` is the closest literal first test of that model
+Observed outcome:
+- positive for remote-line activation, negative as a direct fix
+- `GPIO1` / `GPIO2` stayed in daisy-chain input mode
+- `GPIO9` was actively driven by Linux during probe
+- `GPIO9` reached observed `SGPO = 0x04` during the identify window
+- chip-ID behavior still stayed flat at repeated `-121`
 
-Minimum useful success:
-- `GPIO9` toggles during sensor power-on
-- `GPIO1` / `GPIO2` stay in daisy-chain mode
-- the result improves beyond a flat repeated `-121` read failure
-
-Useful negative:
-- behavior stays at `-121`, but `GPIO9` clearly becomes the active Linux
-  control line and `GPIO1` / `GPIO2` remain untouched
+Key lines:
+- `exp14_daisy: direction-output-after gpio.9 ...`
+- `exp14_daisy: set-after gpio.9 ... sgpo_ret=0 sgpo=0x04`
+- `exp14_daisy: probe-after gpio.1 ... ctl=0x00`
+- `exp14_daisy: probe-after gpio.2 ... ctl=0x00`
+- `ov5675 ... chip id read attempt 5/5 failed: -121`
 
 Interpretation:
-- a flat negative here means "GPIO9 alone is insufficient" more than
-  "Antti's whole model is wrong"
+- `GPIO9` is now an observed Linux-visible remote control line on this board
+- `GPIO9` alone is insufficient as the only reset line under current driver
+  limits
+- `exp16` should keep `GPIO9` as the current default `reset` line unless
+  `exp15` produces clearly stronger contrary evidence
 
 ### 15. Daisy-chain plus `GPIO7` as the alternate remote control-line candidate
 
@@ -627,6 +636,9 @@ Implemented patch shape:
 - current default mapping:
   - `reset` => `GPIO9`
   - `powerdown` => `GPIO7`
+- current evidence note:
+  - `exp14` already showed `GPIO9` is active but insufficient alone, so it
+    remains the default `reset` side unless `exp15` clearly outperforms it
 - if `exp14` or `exp15` produces a clearly stronger line candidate, preserve
   that line as `reset` and use the other as `powerdown`
 - keep the same four-line instrumentation
@@ -787,14 +799,15 @@ current evidence:
 4. Treat `exp13` as completed evidence, not as a future branch.
    - it proved that Linux can leave `GPIO1` / `GPIO2` alone
    - it did not improve the flat repeated `-121` chip-ID failure
-5. Run `exp14` and `exp15` next as the first remote-line candidate branches.
-   - `exp14` tests `GPIO9`
-   - `exp15` tests `GPIO7`
-6. Run `exp16` after the single-line branches as the closest current-driver
-   approximation of Antti's working remote-line model.
-7. Run `exp17` as the explicit PMIC-side follow-up after carrying forward the
+5. Treat `exp14` as completed evidence, not as a future branch.
+   - it proved `GPIO9` is active
+   - it also proved `GPIO9` alone is insufficient
+6. Run `exp15` next as the alternate single-line remote candidate branch.
+7. Run `exp16` after `exp15`, keeping `GPIO9` as the current default
+   `reset` side unless `exp15` clearly outperforms it.
+8. Run `exp17` as the explicit PMIC-side follow-up after carrying forward the
    cleanest remote-line branch.
-8. Use `exp1` through `exp9` as the historical evidence chain that narrowed
+9. Use `exp1` through `exp9` as the historical evidence chain that narrowed
    the problem to `S_I2C_CTL` behavior and competing GPIO interpretations.
 
 That ordering still matches the current source-backed assessment in:

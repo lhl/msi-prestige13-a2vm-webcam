@@ -1,0 +1,5 @@
+CMD: git_safe status --short
+?? runs/2026-03-11/20260311T185841-ms13q3-daisy-chain-gpio9-reset-update/
+?? runs/2026-03-11/20260311T190240-snapshot-exp14-clean-boot/
+
+EXIT_STATUS: 0

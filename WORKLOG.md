@@ -2,6 +2,51 @@
 
 ## 2026-03-11
 
+### Review `exp14` and confirm that `GPIO9` is active but insufficient
+
+- Plan: inspect the first real `exp14` update and clean-boot verification
+  artifacts, determine whether `GPIO9` became the first active remote line
+  under the clean daisy-chain branch, and update the next-step docs if the
+  result sharpened the `exp15` / `exp16` ordering.
+- Commands:
+  - reviewed:
+    - `runs/2026-03-11/20260311T185841-ms13q3-daisy-chain-gpio9-reset-update/metadata.env`
+    - `runs/2026-03-11/20260311T190240-snapshot-exp14-clean-boot/focused-summary.txt`
+    - `runs/2026-03-11/20260311T190240-snapshot-exp14-clean-boot/experiment-journal.txt`
+    - `runs/2026-03-11/20260311T190240-snapshot-exp14-clean-boot/pmic-reg-dump.txt`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `README.md`
+    - `docs/README.md`
+    - `docs/webcam-status.md`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+  - refreshed:
+    - `README.md`
+    - `PLAN.md`
+    - `state/CONTEXT.md`
+    - `docs/README.md`
+    - `docs/webcam-status.md`
+    - `docs/pmic-followup-experiments.md`
+    - `WORKLOG.md`
+- Result:
+  - `exp14` is positive for remote-line activation, but negative as a direct
+    fix
+  - Linux actively drove `GPIO9` under the clean daisy-chain branch:
+    - `exp14_daisy: direction-output-after gpio.9 ...`
+    - `exp14_daisy: set-after gpio.9 ... sgpo=0x04`
+  - the `GPIO1` / `GPIO2` daisy-chain isolation from `exp13` stayed intact:
+    - `exp14_daisy: probe-after gpio.1 ... ctl=0x00`
+    - `exp14_daisy: probe-after gpio.2 ... ctl=0x00`
+  - the clean-boot sensor result still did not improve:
+    - `chip id read attempt 1/5 failed: -121`
+    - `...`
+    - `chip id read attempt 5/5 failed: -121`
+    - `failed to find sensor: -121`
+  - the next question is no longer whether `GPIO9` is active; it is whether
+    `GPIO7` is the missing primary line or the missing companion line in the
+    two-line branch
+
 ### Review `exp13` and confirm clean daisy-chain isolation without a fix
 
 - Plan: inspect the first real `exp13` update and clean-boot verification

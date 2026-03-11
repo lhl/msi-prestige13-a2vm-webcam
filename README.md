@@ -149,15 +149,14 @@ msi-prestige13-a2vm-webcam/
    - three staged `ov5675` GPIO-release variants
    - `exp5` `WF` GPIO mode follow-up
    - `exp6` `UF` / `gpio.4` last resort
-4. Treat `exp13` as completed wiring-isolation evidence.
-   - it proved Linux can leave `GPIO1` / `GPIO2` in daisy-chain input mode
-   - it did not improve the flat repeated `-121` chip-ID failure
-5. Use the staged `exp14` through `exp17` entrypoints as the next ordered
+4. Treat `exp13` and `exp14` as completed evidence.
+   - `exp13` proved Linux can leave `GPIO1` / `GPIO2` in daisy-chain input
+     mode
+   - `exp14` proved `GPIO9` is active, but insufficient as a lone reset line
+5. Use the staged `exp15` through `exp17` entrypoints as the next ordered
    experiment branch set:
-   - `exp14`: carry the clean daisy-chain branch forward and test `GPIO9` as
-     the first remote control-line candidate
-   - `exp15`: carry that branch forward and test `GPIO7` as the alternate
-     remote control-line candidate
+   - `exp15`: carry the clean daisy-chain branch forward and test `GPIO7` as
+     the alternate remote control-line candidate
    - `exp16`: carry the clean daisy-chain branch forward and test the best
      current-driver `GPIO7` / `GPIO9` approximation
    - `exp17`: re-test `S_I2C_CTL BIT(0)` only after a clean daisy-chain branch
@@ -167,9 +166,9 @@ msi-prestige13-a2vm-webcam/
      access
    - `exp12` showed that the low-effort Antti-inspired daisy-chain setup is
      immediately overridden by the current Linux `GPIO1` / `GPIO2` lookup
-   - `exp13` then proved the clean daisy-chain-isolation branch is real, so the
-     next question is remote-line identity rather than more `GPIO1` /
-     `GPIO2` label-only follow-ups
+   - `exp13` and `exp14` then showed the clean daisy-chain branch is real and
+     `GPIO9` is active, so the next question is whether `GPIO7` or the two-line
+     model adds the missing control
 
 ## Related Docs
 

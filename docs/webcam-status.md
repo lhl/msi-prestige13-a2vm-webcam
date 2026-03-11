@@ -23,7 +23,9 @@ the remaining blocker is now much narrower:
 - `exp13` then proved that removing that lookup lets Linux keep `GPIO1` /
   `GPIO2` in daisy-chain input mode for the observed probe window
 - but `exp13` still ends at the same repeated `-121` chip-ID failure
-- the repo now has staged `exp14` through `exp17` patch plus wrapper pairs for
+- `exp14` then proved that `GPIO9` is an active remote line, but not a
+  sufficient lone reset line
+- the repo now has staged `exp15` through `exp17` patch plus wrapper pairs for
   the next Antti-model run set
 
 That means the webcam is now blocked at sensor wake-up / later-stage PMIC
@@ -323,6 +325,30 @@ Interpretation:
 - the next constrained question is which remote line, `GPIO9` or `GPIO7`, is
   the first credible Linux-visible control line under current `ov5675` limits
 
+### `exp14` daisy-chain plus `GPIO9` reset
+
+What it proved:
+
+- `GPIO9` becomes an active Linux-visible remote control line on this board
+- `GPIO1` / `GPIO2` still stay isolated in daisy-chain input mode
+- `GPIO9` alone still does not move the sensor off the flat repeated `-121`
+  identify failure
+
+Key lines:
+
+- `exp14_daisy: direction-output-after gpio.9 ...`
+- `exp14_daisy: set-after gpio.9 ... sgpo_ret=0 sgpo=0x04`
+- `exp14_daisy: probe-after gpio.1 ... ctl=0x00`
+- `exp14_daisy: probe-after gpio.2 ... ctl=0x00`
+- `ov5675 ... chip id read attempt 5/5 failed: -121`
+
+Interpretation:
+
+- `GPIO9` is real and active, not just a theoretical Antti-derived candidate
+- `GPIO9` alone is insufficient under current driver limits
+- the next discriminator is whether `GPIO7` helps more by itself or only as
+  the second line in the two-line approximation
+
 ## Current Assessment
 
 The honest assessment is:
@@ -345,7 +371,9 @@ What now looks unlikely:
 What now looks most likely:
 
 - Linux still does not model either:
-  - the correct remote sensor-control line choice between `GPIO9` and `GPIO7`
+  - the complete remote sensor-control arrangement:
+    - `GPIO9` is active, but insufficient alone
+    - `GPIO7` may still be the missing primary or companion line
   - or some board-specific later PMIC behavior that the Windows driver
     performs
 - or Linux is still missing the exact electrical waveform and timing that the
@@ -362,13 +390,14 @@ What now looks most likely:
    still leaves the sensor failing chip-ID reads with `-121`.
 4. We now know that removing the current `GPIO1` / `GPIO2` lookup collision is
    not sufficient by itself; `exp13` still fails flat at `-121`.
-5. We still do not know whether `GPIO9` or `GPIO7` is the first better remote
-   control-line candidate under current `ov5675` limits.
-6. We now have one negative result for a late `BIT(0)` hook tied to the
+5. We now know `GPIO9` is active but insufficient as a lone reset line.
+6. We still do not know whether `GPIO7` is the missing primary line or the
+   missing second line in the two-line approximation.
+7. We now have one negative result for a late `BIT(0)` hook tied to the
    current GPIO-active implementation: it reintroduces the PMIC wedge.
-7. We still do not have the exact higher-level Windows configuration path that
+8. We still do not have the exact higher-level Windows configuration path that
    feeds `WF::SetConf` or chooses the `WF` versus `UF` branch for this board.
-8. We still do not have direct electrical truth for the PMIC GPIO and sensor
+9. We still do not have direct electrical truth for the PMIC GPIO and sensor
    reset / powerdown waveform.
 
 ## Next Steps
@@ -376,16 +405,15 @@ What now looks most likely:
 1. Keep `exp10` as the best functional PMIC state for now.
    - do not reintroduce `BIT(0)` in the early regulator path
    - do not treat the current `exp11` GPIO hook as a likely fix
-2. Run `exp14` and `exp15` next.
-   - test `GPIO9` and `GPIO7` separately as the first remote-line candidates
-     now that `exp13` proved the daisy-chain lines can stay isolated
-3. Run `exp16` only after the single-line branches.
-   - use it as the best current-driver two-line approximation, not as the
-     first remote-line test
-4. Keep `exp17` gated behind the clean daisy-chain branch.
+2. Run `exp15` next.
+   - determine whether `GPIO7` is a stronger single-line candidate than the
+     now-proven-but-insufficient `GPIO9`
+3. Run `exp16` after `exp15`.
+   - keep `GPIO9` as the current default `reset` side unless `exp15` clearly
+     outperforms it
+4. Keep `exp17` gated behind the clean remote-line branch.
    - `exp13` already answered the no-reclaim prerequisite
-   - carry forward the cleanest remote-line branch from `exp14` through
-     `exp16`
+   - carry forward the cleanest branch from `exp15` through `exp16`
 5. Fix or replace the post-boot PMIC dump path so we can see real register
    state after a failed clean boot.
 6. Extract the higher-level Windows config path that feeds `WF::SetConf` and
