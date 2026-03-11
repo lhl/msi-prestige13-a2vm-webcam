@@ -4,152 +4,190 @@ MSI Prestige 13 AI+ Evo A2VMG — Linux webcam on kernel `exp18` (7.0.0-rc2 + pa
 
 ## Prerequisites
 
-- Kernel branch `exp18` with the three-patch stack booted
-- `gst-launch-1.0` (from `gstreamer` + `gst-plugins-bad` for `bayer2rgb`)
+- Kernel branch `exp18` with the four-patch stack booted
+- `libcamera` 0.7.0+, `libcamera-ipa`, `libcamera-tools` (for `cam`)
+- `pipewire-libcamera` (PipeWire camera integration)
 - `media-ctl`, `v4l2-ctl` (from `v4l-utils`)
-- Optional: `v4l2loopback-dkms` for exposing as a normal webcam device
+- Optional: `gstreamer` + `gst-plugins-bad` (for `bayer2rgb` preview script)
+- Optional: `v4l2loopback-dkms` (for apps that need a standard V4L2 device)
 
-## Quick Start
+## Quick Start (libcamera + PipeWire)
 
-### Live preview (direct window)
+This is the recommended path. libcamera handles media pipeline setup,
+debayering (GPU-accelerated via EGL), and auto-exposure automatically.
+PipeWire exposes the camera to browsers and apps.
 
-```bash
-./scripts/webcam-preview.sh
-```
-
-### Feed to v4l2loopback (for normal apps)
-
-```bash
-# One-time: create loopback device
-sudo modprobe v4l2loopback video_nr=42 card_label="MSI Webcam Bridge" exclusive_caps=1
-
-# Start the bridge (keep running)
-./scripts/webcam-preview.sh --loopback
-
-# Other apps can now use /dev/video42 as a webcam:
-#   ffplay -f v4l2 /dev/video42
-#   mpv av://v4l2:/dev/video42
-```
-
-### Single JPEG capture
+### Verify the camera is detected
 
 ```bash
-./scripts/webcam-preview.sh --snapshot photo.jpg
+cam -l
+# Expected: "1: Internal front camera (\_SB_.LNK0)"
 ```
 
-## Manual Pipeline Setup
-
-If you need to set up the media pipeline without the script:
+### Verify PipeWire sees it
 
 ```bash
-# 1. Enable the CSI2 -> Capture link
-media-ctl -l '"Intel IPU7 CSI2 0":1 -> "Intel IPU7 ISYS Capture 0":0 [1]'
-
-# 2. Set CSI2 pad formats to sensor native resolution
-media-ctl -V '"Intel IPU7 CSI2 0":0/0 [fmt:SGRBG10_1X10/2592x1944]'
-media-ctl -V '"Intel IPU7 CSI2 0":1/0 [fmt:SGRBG10_1X10/2592x1944]'
-
-# 3. Set capture node format
-v4l2-ctl -d /dev/video0 --set-fmt-video=width=2592,height=1944,pixelformat=BA10
+wpctl status | grep -A5 "Video"
+# Expected: "ov5675 [libcamera]" device and "Built-in Front Camera" source
 ```
 
-After this, `/dev/video0` delivers raw 10-bit Bayer frames at 30 fps.
+If PipeWire does not list it, restart PipeWire after installing
+`pipewire-libcamera`:
+
+```bash
+systemctl --user restart pipewire
+```
+
+### Test capture
+
+```bash
+cam -c1 --capture=5
+```
+
+Once PipeWire sees the camera, browsers and apps that use the PipeWire camera
+portal will discover it as "Built-in Front Camera" — no bridge or manual
+pipeline setup needed.
+
+## Browser Setup
+
+Browser webcam support on Linux goes through PipeWire and the XDG Desktop
+Portal:
+
+```
+Browser -> xdg-desktop-portal -> PipeWire -> libcamera -> ov5675
+```
+
+### Chrome / Chromium
+
+PipeWire camera support must be enabled manually:
+
+1. Open `chrome://flags/#enable-webrtc-pipewire-camera`
+2. Set **"PipeWire Camera support"** to **Enabled**
+3. Relaunch Chrome
+
+The camera appears as "Built-in Front Camera" in site permission prompts and
+`chrome://settings/content/camera`.
+
+### Firefox
+
+Firefox has PipeWire camera support via the `media.webrtc.camera.allow-pipewire`
+pref in `about:config`. Recent Firefox versions (148+) may have this enabled
+by default. If the camera does not appear:
+
+1. Open `about:config`
+2. Search for `media.webrtc.camera.allow-pipewire`
+3. Set it to `true`
 
 ## Exposure and Gain Control
 
-The image is dark by default because analogue and digital gain start at minimum.
-Controls are on `/dev/v4l-subdev4` (the ov5675 sensor):
+libcamera's SoftwareISP provides basic auto-exposure (range 4-2016, gain
+1-15.99) using the `uncalibrated.yaml` IPA profile. This means brightness
+should adjust automatically when using the camera through libcamera/PipeWire.
+
+For manual control (e.g., via the GStreamer preview script), the sensor controls
+are on `/dev/v4l-subdev4`:
 
 | Control | Min | Max | Default | Notes |
 |---------|-----|-----|---------|-------|
 | exposure | 4 | 2016 | 2016 | Already at max by default |
-| analogue_gain | 128 | 2047 | 128 | **This is why it's dark — crank it up** |
+| analogue_gain | 128 | 2047 | 128 | Main brightness control |
 | digital_gain | 1024 | 4095 | 1024 | Additional software gain |
 | vertical_blanking | 76 | 30823 | 76 | Affects max exposure range |
 | horizontal_flip | 0 | 1 | 0 | |
 | vertical_flip | 0 | 1 | 0 | |
 
-### Fix the dark image
-
 ```bash
-# Boost analogue gain (try 800–1200 for indoor lighting)
+# Manual gain adjustment (for the GStreamer preview script)
 v4l2-ctl -d /dev/v4l-subdev4 -c analogue_gain=800
-
-# Or boost digital gain too
 v4l2-ctl -d /dev/v4l-subdev4 -c digital_gain=2048
-
-# Can also be passed to the script:
-./scripts/webcam-preview.sh --gain 800 --dgain 2048
 ```
 
-You can adjust these while the stream is running — changes take effect on the next frame.
+## GStreamer Preview Script (alternative)
 
-### Read current values
+The `scripts/webcam-preview.sh` script provides a standalone GStreamer-based
+path that does not require libcamera. It does CPU-based debayering and has
+no auto-exposure — manual gain control is required. It also uses significant
+CPU power (~7W additional), so it is not suitable as a permanent background
+bridge.
 
 ```bash
-v4l2-ctl -d /dev/v4l-subdev4 -L
+# Live preview window
+./scripts/webcam-preview.sh --gain 800
+
+# Single JPEG capture
+./scripts/webcam-preview.sh --snapshot photo.jpg
+
+# v4l2loopback bridge at full resolution
+./scripts/webcam-preview.sh --loopback
+
+# v4l2loopback bridge at 1280x720 (for apps that need standard V4L2)
+./scripts/webcam-preview.sh --browser
+```
+
+The loopback bridge requires `v4l2loopback`:
+
+```bash
+sudo modprobe v4l2loopback video_nr=42 card_label="MSI Webcam Bridge" exclusive_caps=1
 ```
 
 ## Architecture
+
+### libcamera path (recommended)
 
 ```
 ov5675 sensor (2592x1944 SGRBG10)
     |
     v
-Intel IPU7 CSI2 0 (pad 0 sink -> pad 1 source)
+Intel IPU7 CSI2 0
     |
     v
 Intel IPU7 ISYS Capture 0 (/dev/video0, raw BA10)
     |
+    v  [libcamera simple pipeline handler + SoftwareISP]
+GPU-accelerated debayering (EGL/Mesa) + auto-exposure
+    |
+    v
+PipeWire ("Built-in Front Camera")
+    |
+    v
+Browser / app (via XDG Desktop Portal)
+```
+
+### GStreamer bridge path (fallback)
+
+```
+ov5675 sensor (2592x1944 SGRBG10)
+    |
+    v
+Intel IPU7 CSI2 0 -> ISYS Capture 0 (/dev/video0, raw BA10)
+    |
     v  [GStreamer userspace bridge]
-bayer2rgb -> videoconvert
+bayer2rgb (CPU) -> videoconvert -> [optional: videoscale]
     |
     v
 autovideosink (preview)  OR  v4l2sink -> /dev/video42 (loopback)
 ```
 
-The IPU7 ISYS only delivers raw Bayer — there is no hardware ISP path exposed
-yet in mainline. The GStreamer `bayer2rgb` element handles debayering in software.
+## Manual Pipeline Setup
 
-## Browser / Chrome Usage
-
-Browser webcam support on Linux goes through PipeWire and the XDG Desktop
-Portal, not V4L2 directly. The path is:
-
-```
-Browser -> xdg-desktop-portal -> PipeWire -> camera source
-```
-
-**Current status: working.** Chrome sees the webcam when the bridge is running
-in `--browser` mode.
-
-The default `--loopback` output (2592x1944) is rejected by browsers — they
-expect standard resolutions like 640x480, 1280x720, or 1920x1080. The
-`--browser` flag outputs 1280x720, which Chrome accepts.
+If you need raw Bayer access without libcamera (e.g., for debugging):
 
 ```bash
-# Start the bridge at 1280x720 (keep running while using the browser)
-./scripts/webcam-preview.sh --browser --gain 800
+media-ctl -d /dev/media0 -l '"Intel IPU7 CSI2 0":1 -> "Intel IPU7 ISYS Capture 0":0 [1]'
+media-ctl -d /dev/media0 -V '"Intel IPU7 CSI2 0":0/0 [fmt:SGRBG10_1X10/2592x1944]'
+media-ctl -d /dev/media0 -V '"Intel IPU7 CSI2 0":1/0 [fmt:SGRBG10_1X10/2592x1944]'
+v4l2-ctl -d /dev/video0 --set-fmt-video=width=2592,height=1944,pixelformat=BA10
 ```
-
-Then open Chrome and go to any WebRTC site or `chrome://settings/content/camera`
-to select "MSI Webcam Bridge".
-
-### Future: libcamera
-
-`libcamera` with its SoftwareISP pipeline handler could provide a cleaner
-long-term path: it can consume raw Bayer sensors directly, handle debayering,
-and provide auto-exposure and auto-white-balance. PipeWire has a native
-`libcamera` source module. This is untested — `libcamera` tools are not yet
-installed on this machine.
 
 ## Known Issues
 
 - `csi2-0 error: Received packet is too long` warnings appear in dmesg during
   capture (one-scanline mismatch, does not affect image data)
-- No auto-exposure or auto-white-balance — manual gain adjustment required
+- libcamera falls back to `uncalibrated.yaml` — no tuned IPA profile for ov5675
+  on this platform yet; auto-exposure works but may not be optimal
+- `cam -l` warns about missing sensor delays — using unverified defaults
 - Direct YUYV/RGB streaming from `/dev/video0` does not work (the advertised
-  converted formats fail at STREAMON)
-- `ffmpeg` and `mpv` cannot open `/dev/video0` directly (Broken pipe at
-  STREAMON); use the v4l2loopback bridge instead
+  converted formats fail at STREAMON); use libcamera or the GStreamer bridge
 - `cheese` does not work (tested, did not produce video)
+- The GStreamer bridge script uses ~7W additional CPU for software debayering;
+  libcamera's GPU-accelerated path is much more efficient

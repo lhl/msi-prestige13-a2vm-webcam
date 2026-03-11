@@ -4,39 +4,41 @@ Updated: 2026-03-12
 
 ## Short Answer
 
-The webcam **works** on Linux on this laptop.
+The webcam **works** on Linux on this laptop, including in Chrome and Firefox.
 
-Live preview, snapshot capture, and a normal-app-facing loopback device are all
-functional through a GStreamer userspace bridge that debayers the raw sensor
-output.
+`libcamera` 0.7.0 with its SoftwareISP pipeline handler provides the
+recommended path: GPU-accelerated debayering, auto-exposure, and automatic
+PipeWire integration. No manual bridge or background process is needed —
+browsers and apps discover the camera as "Built-in Front Camera" through the
+XDG Desktop Portal.
 
-See [`docs/webcam-usage.md`](./webcam-usage.md) for quick-start commands and
-exposure/gain tuning.
+See [`docs/webcam-usage.md`](./webcam-usage.md) for quick-start commands,
+browser setup, and exposure/gain tuning.
 
 ### What works today
 
-- **Live preview**: `./scripts/webcam-preview.sh` opens a window showing the
-  camera feed via GStreamer `bayer2rgb` + `autovideosink`
-- **v4l2loopback bridge**: `./scripts/webcam-preview.sh --loopback` feeds
-  `/dev/video42` as a standard YUYV webcam that `ffmpeg`, `mpv`, GStreamer,
-  and other V4L2 consumers can open
-- **Browser / Chrome webcam**: `./scripts/webcam-preview.sh --browser` outputs
-  1280x720 YUYV to `/dev/video42`, which Chrome picks up via PipeWire as
-  "MSI Webcam Bridge" — confirmed working for WebRTC
-- **Snapshot capture**: `./scripts/webcam-preview.sh --snapshot photo.jpg`
-- **Exposure/gain control**: analogue gain (128-2047) and digital gain
-  (1024-4095) on `/dev/v4l-subdev4`; the image is dark at defaults because
-  gain starts at minimum — see usage doc for tuning commands
+- **libcamera + PipeWire**: `cam -l` discovers the camera as
+  `Internal front camera (\_SB_.LNK0)` via the simple pipeline handler with
+  SoftwareISP; PipeWire exposes it as "Built-in Front Camera" with
+  `media.role = Camera`; GPU-accelerated debayering via EGL/Mesa
+- **Auto-exposure**: libcamera's SoftwareISP provides automatic exposure
+  control (range 4-2016, gain 1-15.99) using the generic `uncalibrated.yaml`
+  IPA profile
+- **Chrome**: works after enabling `chrome://flags/#enable-webrtc-pipewire-camera`
+- **Firefox**: works via `media.webrtc.camera.allow-pipewire` in `about:config`
+  (may be enabled by default in Firefox 148+)
+- **GStreamer preview**: `./scripts/webcam-preview.sh` for standalone live
+  preview, snapshot capture, and v4l2loopback bridge (fallback path)
 - **Raw Bayer capture**: `v4l2-ctl` streaming from `/dev/video0` at
   2592x1944 BA10, 30 fps
 
 ### What does not work yet
 
-- Direct plug-and-play usage from `/dev/video0` (apps like `ffmpeg`/`mpv`
-  cannot open it directly — they need the loopback bridge)
-- Auto-exposure / auto-white-balance (manual gain adjustment required)
-- `cheese` (tested, did not work with the loopback device)
-- `libcamera` tools (not installed locally; untested)
+- Direct plug-and-play usage from `/dev/video0` (apps that use V4L2 directly
+  cannot open it — they need libcamera/PipeWire or the loopback bridge)
+- `cheese` (tested, did not produce video)
+- Tuned IPA profile: libcamera falls back to `uncalibrated.yaml` — auto-exposure
+  works but is not optimized for this sensor/platform
 
 On the `exp18` kernel branch with explicit userspace `media-ctl` pipeline
 setup, `/dev/video0` delivers real Bayer sensor data:
@@ -158,21 +160,30 @@ For the full March 9 review, see `docs/20260309-status-report.md`.
   - the first local run (`033726`) was prerequisite-negative for both
   - the later local run (`040735`) proved the `v4l2loopback` path is
     consumer-facing through `/dev/video42`
+- **libcamera + PipeWire integration confirmed working**:
+  - `cam -l` discovers `Internal front camera (\_SB_.LNK0)` via the simple
+    pipeline handler with SoftwareISP
+  - `cam -c1 --capture=5` captured 5 frames at 30 fps, GPU-accelerated
+    debayering via EGL/Mesa, auto-exposure active (range 4-2016, gain 1-15.99)
+  - PipeWire exposes it as `Built-in Front Camera` (`media.role = Camera`,
+    `media.class = Video/Source`)
+  - Chrome works after enabling `chrome://flags/#enable-webrtc-pipewire-camera`
+  - Firefox works via `media.webrtc.camera.allow-pipewire` in `about:config`
+  - no manual bridge or background process needed
 
 ## What Is Still Incomplete
 
-- **no auto-exposure / auto-white-balance**: gain defaults are minimum, so
-  indoor images are very dark without manual `v4l2-ctl -c analogue_gain=...`
-  adjustment (see `docs/webcam-usage.md`)
-- **bridge must be started manually**: `./scripts/webcam-preview.sh --loopback`
-  must be running for apps to see `/dev/video42`; no udev rule or systemd
-  service automates this yet
-- **`cheese` does not work**: tested against the loopback device, did not
-  produce video
-- **`libcamera` untested**: `libcamera-*` / `cam` are not installed locally
+- **`cheese` does not work**: tested, did not produce video
+- **no tuned IPA profile**: libcamera uses `uncalibrated.yaml` fallback for
+  the ov5675; auto-exposure works but is not optimized
+- **`cam -l` sensor delay warning**: `No sensor delays found in static
+  properties. Assuming unverified defaults.` — cosmetic
+- **Chrome requires manual flag**: `chrome://flags/#enable-webrtc-pipewire-camera`
+  must be set to Enabled; not on by default
 - **direct `/dev/video0` plug-and-play is broken**: `ffmpeg` / `mpv` fail at
   `VIDIOC_STREAMON` with `Broken pipe`; GStreamer `v4l2src` fails buffer-pool
   activation / `not-negotiated`; the advertised `YUYV` direct path still fails
+  (use libcamera/PipeWire or the GStreamer bridge instead)
 - `csi2-0 error: Received packet is too long` warnings appear during capture
   (cosmetic; one-scanline mismatch between `bytesused` and `Size Image`)
 - post-boot PMIC register dumping still returns `ERROR` for every register
@@ -573,21 +584,19 @@ What has been proven through the full experiment chain:
   userspace `media-ctl` pipeline setup, not by a kernel or firmware gap
 - once the CSI2-to-capture link is enabled and pad formats are aligned, the
   sensor delivers real frames
+- libcamera's simple pipeline handler with SoftwareISP handles the full path
+  from raw Bayer to browser-ready video, including auto-exposure, with
+  GPU-accelerated debayering — no manual bridge needed
 
 ## Remaining Work
 
-1. **Automate bridge startup** — udev rule, systemd service, or login hook to
-   start the GStreamer loopback bridge automatically so apps discover
-   `/dev/video42` without manual intervention.
-2. **Auto-exposure / AWB** — either a userspace daemon or `libcamera` pipeline
-   handler to adjust gain dynamically; currently requires manual `v4l2-ctl`.
-3. Install and test `libcamera` — may provide a cleaner long-term path with
-   proper 3A (auto-exposure, auto-focus, auto-white-balance).
-4. Investigate why `cheese` does not work with the loopback device.
-5. Clean up the patch stack for upstream submission.
+1. Investigate why `cheese` does not work.
+2. Create a tuned `ov5675.yaml` IPA profile for better auto-exposure on this
+   platform (currently using generic `uncalibrated.yaml`).
+3. Clean up the patch stack for upstream submission.
    - remove experiment instrumentation logging
    - separate the minimal board-data changes from the diagnostic scaffolding
-6. Investigate the `csi2-0 error: Received packet is too long` warnings.
+4. Investigate the `csi2-0 error: Received packet is too long` warnings.
    - likely cosmetic: `Size Image - bytesused = 5,184` (one scanline)
-7. Investigate why direct `/dev/video0` plug-and-play still fails.
-8. Fix or replace the post-boot PMIC dump path.
+5. Investigate why direct `/dev/video0` plug-and-play still fails.
+6. Fix or replace the post-boot PMIC dump path.

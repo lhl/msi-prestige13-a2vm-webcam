@@ -5,29 +5,32 @@ the MSI Prestige 13 AI+ Evo A2VMG / A2VM family.
 
 ## Current Status
 
-**The webcam works on Linux, including in Chrome/browsers.**
+**The webcam works on Linux, including in Chrome and Firefox.**
+
+With `libcamera` + `pipewire-libcamera` installed, the camera is discovered
+automatically as "Built-in Front Camera" — no manual bridge or background
+process needed. libcamera's SoftwareISP handles debayering (GPU-accelerated)
+and auto-exposure.
 
 ```bash
-# Live preview window
-./scripts/webcam-preview.sh --gain 800
+# Verify camera detection
+cam -l    # -> "1: Internal front camera (\_SB_.LNK0)"
 
-# Browser-ready webcam at 1280x720 (run this, then open Chrome)
-./scripts/webcam-preview.sh --browser --gain 800
-
-# Feed a standard /dev/video42 webcam device at full resolution
-./scripts/webcam-preview.sh --loopback
+# Browser setup:
+#   Chrome: enable chrome://flags/#enable-webrtc-pipewire-camera
+#   Firefox: set media.webrtc.camera.allow-pipewire = true in about:config
 ```
 
 See [`docs/webcam-usage.md`](./docs/webcam-usage.md) for the full usage guide
-including exposure/gain tuning, browser setup, and manual pipeline details.
+including browser setup, exposure control, and the GStreamer fallback path.
 
 - **Requires**: kernel branch `exp18` (7.0.0-rc2 + 4-patch stack),
-  `gstreamer` + `gst-plugins-bad`, `v4l-utils`, `v4l2loopback-dkms`
-- **Working**: live preview, Chrome/browser WebRTC via `--browser` mode,
-  v4l2loopback bridge (`/dev/video42`), JPEG capture, raw Bayer streaming at
-  2592x1944 30fps, manual exposure/gain control
-- **Not yet working**: direct `/dev/video0` plug-and-play with standard apps,
-  auto-exposure/AWB, `cheese`, `libcamera` (untested/uninstalled)
+  `libcamera` + `libcamera-ipa` + `libcamera-tools`, `pipewire-libcamera`
+- **Working**: Chrome (with PipeWire flag), Firefox, auto-exposure via
+  SoftwareISP, GPU-accelerated debayering, PipeWire camera integration,
+  GStreamer live preview and snapshot capture
+- **Not yet working**: `cheese`, direct `/dev/video0` plug-and-play,
+  tuned IPA profile (using generic `uncalibrated.yaml`)
 - Technical details: [`docs/webcam-status.md`](./docs/webcam-status.md)
 - Full March 9 investigation report:
   [`docs/20260309-status-report.md`](./docs/20260309-status-report.md)
