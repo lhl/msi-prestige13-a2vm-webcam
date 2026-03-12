@@ -24,9 +24,12 @@ cam -l    # -> "1: Internal front camera (\_SB_.LNK0)"
 See [`docs/webcam-usage.md`](./docs/webcam-usage.md) for the full usage guide
 including browser setup, exposure control, and the GStreamer fallback path.
 
-- **Requires**: kernel branch `exp18` (7.0.0-rc2 + 4-patch stack),
-  `libcamera` + `libcamera-ipa` + `libcamera-tools`, `pipewire-libcamera`
-- **Working**: Chrome (with PipeWire flag), Firefox, auto-exposure via
+- **Requires**: a kernel with the cleaned upstream 6-patch series or the
+  older equivalent local bring-up stack booted; current local runtime
+  validation is on `7.0.0-rc2-1-mainline-dirty`, plus `libcamera` +
+  `libcamera-ipa` + `libcamera-tools`, `pipewire-libcamera`
+- **Working**: Chrome (with PipeWire flag), Firefox (with PipeWire camera
+  pref), auto-exposure via
   SoftwareISP, GPU-accelerated debayering, PipeWire camera integration,
   GStreamer live preview and snapshot capture
 - **Not yet working**: `cheese`, direct `/dev/video0` plug-and-play,

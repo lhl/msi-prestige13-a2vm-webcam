@@ -1,0 +1,40 @@
+CMD: modinfo v4l2loopback
+filename:       /lib/modules/7.0.0-rc2-1-mainline-dirty/updates/dkms/v4l2loopback.ko.zst
+alias:          char-major-10-255
+license:        GPL
+version:        0.15.3
+author:         Vasily Levin, IOhannes m zmoelnig <zmoelnig@iem.at>,Stefan Diewald,Anton Novikovet al.
+description:    V4L2 loopback video device
+srcversion:     B6EB1A691073DAF4F0D4902
+depends:        videodev
+name:           v4l2loopback
+retpoline:      Y
+vermagic:       7.0.0-rc2-1-mainline-dirty SMP preempt mod_unload 
+sig_id:         PKCS#7
+signer:         DKMS module signing key
+sig_key:        6A:C8:9E:46:55:B9:EC:24:21:58:DC:55:10:8C:F2:F1:CD:9F:9D:AF
+sig_hashalgo:   sha512
+signature:      35:3C:9C:74:0A:08:C3:BE:9C:00:76:03:9D:54:BB:AF:54:6A:54:64:
+		33:D0:B6:ED:4D:29:33:55:2E:DB:A8:B1:A2:B7:DB:08:AF:6E:B4:56:
+		A8:C6:77:4A:B8:3F:2F:1E:E9:FB:3A:D1:F3:1E:5E:D7:9D:EC:82:7E:
+		9A:B4:34:CF:BD:AC:D6:A0:3F:48:78:CF:58:B0:B8:E7:20:9A:0E:4C:
+		D6:38:A8:32:C8:78:09:F2:3F:A6:8E:CA:F2:85:AD:0E:AA:34:84:26:
+		25:3B:36:9F:F6:4D:BE:51:FB:20:46:E1:FC:97:F1:76:EB:9D:07:88:
+		BD:34:FF:4C:AF:B9:73:B1:B8:5E:53:24:38:15:2D:73:F5:14:F9:58:
+		BA:44:EA:28:EF:75:FA:91:F9:F4:59:38:BE:50:B0:43:90:78:BB:E7:
+		8D:66:76:5A:58:B6:1D:CB:05:3C:DE:79:67:18:79:24:7D:F0:89:1F:
+		EE:15:C6:27:92:31:AE:6A:DF:8B:FA:36:8F:CC:E4:95:99:2D:A3:30:
+		D6:93:96:38:BC:4E:A1:F3:1B:22:50:35:29:48:61:85:44:48:45:AA:
+		49:11:3F:87:08:CC:FD:28:17:BB:84:D0:F9:EF:9F:2D:51:12:F2:92:
+		CC:7A:03:44:6D:4A:83:C2:11:0A:CF:B8:C0:D8:80:CB
+parm:           debug:debugging level (higher values == more verbose) (int)
+parm:           max_buffers:how many buffers should be allocated [DEFAULT: 2] (int)
+parm:           max_openers:how many users can open the loopback device [DEFAULT: 10] (int)
+parm:           devices:how many devices should be created (int)
+parm:           video_nr:video device numbers (-1=auto, 0=/dev/video0, etc.) (array of int)
+parm:           card_label:card labels for each device (array of charp)
+parm:           exclusive_caps:whether to announce OUTPUT/CAPTURE capabilities exclusively or not  [DEFAULT: 0] (array of bool)
+parm:           max_width:maximum allowed frame width [DEFAULT: 8192] (int)
+parm:           max_height:maximum allowed frame height [DEFAULT: 8192] (int)
+
+EXIT_STATUS: 0

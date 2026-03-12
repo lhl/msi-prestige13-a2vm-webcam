@@ -1,0 +1,20 @@
+Source: scripts/01-clean-boot-check.sh
+Purpose: capture the clean-boot checkpoint for the webcam bring-up path
+
+High-value boot log lines:
+Mar 12 18:01:22 p13 kernel: intel-ipu7 0000:00:05.0: Found supported sensor OVTI5675:00
+Mar 12 18:01:22 p13 kernel: intel-ipu7 0000:00:05.0: Connected 1 cameras
+Mar 12 18:01:22 p13 kernel: int3472-tps68470 i2c-INT3472:06: TPS68470 REVID: 0x21
+
+INT3472 driver state:
+/sys/bus/i2c/drivers/int3472-tps68470
+
+OV5675 driver state:
+/sys/bus/i2c/drivers/ov5675
+
+v4l-subdev nodes:
+/dev/v4l-subdev0
+/dev/v4l-subdev1
+/dev/v4l-subdev2
+/dev/v4l-subdev3
+/dev/v4l-subdev4

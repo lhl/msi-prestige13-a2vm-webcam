@@ -1,10 +1,11 @@
 # Webcam Usage Guide
 
-MSI Prestige 13 AI+ Evo A2VMG — Linux webcam on kernel `exp18` (7.0.0-rc2 + patch stack).
+MSI Prestige 13 AI+ Evo A2VMG — Linux webcam on the cleaned upstream 6-patch
+series (current local runtime validation: `7.0.0-rc2-1-mainline-dirty`).
 
 ## Prerequisites
 
-- Kernel branch `exp18` with the four-patch stack booted
+- Kernel with the cleaned upstream 6-patch series booted
 - `libcamera` 0.7.0+, `libcamera-ipa`, `libcamera-tools` (for `cam`)
 - `pipewire-libcamera` (PipeWire camera integration)
 - `media-ctl`, `v4l2-ctl` (from `v4l-utils`)
@@ -71,12 +72,24 @@ The camera appears as "Built-in Front Camera" in site permission prompts and
 ### Firefox
 
 Firefox has PipeWire camera support via the `media.webrtc.camera.allow-pipewire`
-pref in `about:config`. Recent Firefox versions (148+) may have this enabled
-by default. If the camera does not appear:
+pref in `about:config`.
+
+On this machine, Firefox `148.0` still needed that pref set explicitly.
+Without it, Firefox enumerated a long list of raw `ipu7` V4L2 nodes instead of
+the single working PipeWire/libcamera camera.
+
+Set it manually:
 
 1. Open `about:config`
 2. Search for `media.webrtc.camera.allow-pipewire`
 3. Set it to `true`
+4. Fully restart Firefox
+
+Expected result:
+
+- Firefox should expose the same PipeWire camera Chrome uses:
+  `Built-in Front Camera`
+- it should stop listing the non-working raw `ipu7` nodes as webcam choices
 
 ## Exposure and Gain Control
 

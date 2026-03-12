@@ -1,0 +1,318 @@
+CMD: gst-inspect-1.0 v4l2sink
+Factory Details:
+  Rank                     none (0)
+  Long-name                Video (video4linux2) Sink
+  Klass                    Sink/Video
+  Description              Displays frames on a video4linux2 device
+  Author                   Rob Clark <rob@ti.com>,
+  Documentation            https://gstreamer.freedesktop.org/documentation/video4linux2/v4l2sink.html
+
+Plugin Details:
+  Name                     video4linux2
+  Description              elements for Video 4 Linux
+  Filename                 /usr/lib/gstreamer-1.0/libgstvideo4linux2.so
+  Version                  1.28.1
+  License                  LGPL
+  Source module            gst-plugins-good
+  Documentation            https://gstreamer.freedesktop.org/documentation/video4linux2/
+  Source release date      2026-02-26
+  Binary package           Arch Linux GStreamer 1.28.1-1
+  Origin URL               https://www.archlinux.org/
+
+GObject
+ +----GInitiallyUnowned
+       +----GstObject
+             +----GstElement
+                   +----GstBaseSink
+                         +----GstVideoSink
+                               +----GstV4l2Sink
+
+Implemented Interfaces:
+  GstTuner
+  GstColorBalance
+  GstVideoOrientation
+
+Element Flags:
+  - SINK
+
+Pad Templates:
+  SINK template: 'sink'
+    Availability: Always
+    Capabilities:
+      video/x-raw(memory:DMABuf)
+                 format: DMA_DRM (gchararray)
+             drm-format: { (string)RGB8, (string)AR15, (string)XR15_BE, (string)AR15_BE, (string)RG16, (string)RG16_BE, (string)RG24, (string)BG24, (string)AR24, (string)RA24, (string)RX24, (string)AB24, (string)XB24, (string)BA24, (string)AR30, (string)"R8\ \ ", (string)"R4\ \ ", (string)"R10\ ", (string)"R12\ ", (string)"R16\ ", (string)"R16\ _BE", (string)GR88, (string)YUV9, (string)YVU9, (string)YUYV, (string)UYVY, (string)VYUY, (string)YU11, (string)NV12:0x0400000000000001, (string)NV24, (string)NV42, (string)NV12:0x0b00000000000001, (string)P010, (string)NV61, (string)NV16, (string)NV21, (string)NV12:0x0400000000000002, (string)NV12, (string)YU16, (string)YVYU, (string)YV12, (string)YU12, (string)BX24, (string)XR24, (string)XR15 } (GstValueList)
+                  width: [ 1, 32768 ] (GstIntRange)
+                 height: [ 1, 32768 ] (GstIntRange)
+              framerate: [ 0/1, 2147483647/1 ] (GstFractionRange)
+      video/x-raw(memory:DMABuf, format:Interlaced)
+                 format: DMA_DRM (gchararray)
+             drm-format: { (string)RGB8, (string)AR15, (string)XR15_BE, (string)AR15_BE, (string)RG16, (string)RG16_BE, (string)RG24, (string)BG24, (string)AR24, (string)RA24, (string)RX24, (string)AB24, (string)XB24, (string)BA24, (string)AR30, (string)"R8\ \ ", (string)"R4\ \ ", (string)"R10\ ", (string)"R12\ ", (string)"R16\ ", (string)"R16\ _BE", (string)GR88, (string)YUV9, (string)YVU9, (string)YUYV, (string)UYVY, (string)VYUY, (string)YU11, (string)NV12:0x0400000000000001, (string)NV24, (string)NV42, (string)NV12:0x0b00000000000001, (string)P010, (string)NV61, (string)NV16, (string)NV21, (string)NV12:0x0400000000000002, (string)NV12, (string)YU16, (string)YVYU, (string)YV12, (string)YU12, (string)BX24, (string)XR24, (string)XR15 } (GstValueList)
+                  width: [ 1, 32768 ] (GstIntRange)
+                 height: [ 1, 32768 ] (GstIntRange)
+              framerate: [ 0/1, 2147483647/1 ] (GstFractionRange)
+         interlace-mode: alternate (gchararray)
+      image/jpeg
+                 parsed: true (gboolean)
+      video/mpeg
+            mpegversion: 4 (gint)
+           systemstream: false (gboolean)
+      video/mpeg
+            mpegversion: { (int)1, (int)2 } (GstValueList)
+      video/mpegts
+           systemstream: true (gboolean)
+      video/x-av1
+          stream-format: obu-stream (gchararray)
+              alignment: tu (gchararray)
+      video/x-bayer
+                 format: { (string)bggr, (string)gbrg, (string)grbg, (string)rggb, (string)bggr10le, (string)gbrg10le, (string)grbg10le, (string)rggb10le, (string)bggr12le, (string)gbrg12le, (string)grbg12le, (string)rggb12le, (string)bggr14le, (string)gbrg14le, (string)grbg14le, (string)rggb14le, (string)bggr16le, (string)gbrg16le, (string)grbg16le, (string)rggb16le } (GstValueList)
+                  width: [ 1, 32768 ] (GstIntRange)
+                 height: [ 1, 32768 ] (GstIntRange)
+              framerate: [ 0/1, 2147483647/1 ] (GstFractionRange)
+      video/x-dv
+           systemstream: true (gboolean)
+      video/x-fwht
+      video/x-h263
+                variant: itu (gchararray)
+      video/x-h264
+          stream-format: { (string)byte-stream, (string)avc } (GstValueList)
+              alignment: au (gchararray)
+      video/x-h265
+          stream-format: byte-stream (gchararray)
+              alignment: au (gchararray)
+      video/x-pwc1
+                  width: [ 1, 32768 ] (GstIntRange)
+                 height: [ 1, 32768 ] (GstIntRange)
+              framerate: [ 0/1, 2147483647/1 ] (GstFractionRange)
+      video/x-pwc2
+                  width: [ 1, 32768 ] (GstIntRange)
+                 height: [ 1, 32768 ] (GstIntRange)
+              framerate: [ 0/1, 2147483647/1 ] (GstFractionRange)
+      video/x-raw
+                 format: { (string)RGB16, (string)BGR, (string)RGB, (string)ABGR, (string)xBGR, (string)RGBA, (string)RGBx, (string)BGR10A2_LE, (string)BGR15, (string)GRAY8, (string)GRAY16_LE, (string)GRAY16_BE, (string)YUV9, (string)YVU9, (string)YUY2, (string)YVYU, (string)UYVY, (string)VYUY, (string)Y41B, (string)NV12_64Z32, (string)NV12_8L128, (string)NV12_10BE_8L128, (string)NV24, (string)NV12_16L32S, (string)P010_10LE, (string)NV61, (string)NV16, (string)NV21, (string)NV12, (string)Y42B, (string)YV12, (string)I420, (string)ARGB, (string)xRGB, (string)BGRA, (string)BGRx, (string)RGB15 } (GstValueList)
+                  width: [ 1, 32768 ] (GstIntRange)
+                 height: [ 1, 32768 ] (GstIntRange)
+              framerate: [ 0/1, 2147483647/1 ] (GstFractionRange)
+      video/x-sonix
+                  width: [ 1, 32768 ] (GstIntRange)
+                 height: [ 1, 32768 ] (GstIntRange)
+              framerate: [ 0/1, 2147483647/1 ] (GstFractionRange)
+      video/x-vp8
+      video/x-vp9
+      video/x-wmv
+             wmvversion: 3 (gint)
+                 format: { (string)WVC1, (string)WMV3 } (GstValueList)
+      video/x-raw(format:Interlaced)
+                 format: { (string)RGB16, (string)BGR, (string)RGB, (string)ABGR, (string)xBGR, (string)RGBA, (string)RGBx, (string)BGR10A2_LE, (string)BGR15, (string)GRAY8, (string)GRAY16_LE, (string)GRAY16_BE, (string)YUV9, (string)YVU9, (string)YUY2, (string)YVYU, (string)UYVY, (string)VYUY, (string)Y41B, (string)NV12_64Z32, (string)NV12_8L128, (string)NV12_10BE_8L128, (string)NV24, (string)NV12_16L32S, (string)P010_10LE, (string)NV61, (string)NV16, (string)NV21, (string)NV12, (string)Y42B, (string)YV12, (string)I420, (string)ARGB, (string)xRGB, (string)BGRA, (string)BGRx, (string)RGB15 } (GstValueList)
+                  width: [ 1, 32768 ] (GstIntRange)
+                 height: [ 1, 32768 ] (GstIntRange)
+              framerate: [ 0/1, 2147483647/1 ] (GstFractionRange)
+         interlace-mode: alternate (gchararray)
+
+Element has no clocking capabilities.
+Element has no URI handling capabilities.
+
+Pads:
+  SINK: 'sink'
+    Pad Template: 'sink'
+
+Element Properties:
+
+  async               : Go asynchronously to PAUSED
+                        flags: readable, writable
+                        Boolean. Default: true
+  
+  blocksize           : Size in bytes to pull per buffer (0 = default)
+                        flags: readable, writable
+                        Unsigned Integer. Range: 0 - 4294967295 Default: 4096 
+  
+  brightness          : Picture brightness, or more precisely, the black level
+                        flags: readable, writable, controllable
+                        Integer. Range: -2147483648 - 2147483647 Default: 0 
+  
+  contrast            : Picture contrast or luma gain
+                        flags: readable, writable, controllable
+                        Integer. Range: -2147483648 - 2147483647 Default: 0 
+  
+  crop-height         : The height of the video crop; default is equal to negotiated image height
+                        flags: readable, writable
+                        Unsigned Integer. Range: 0 - 4294967295 Default: 0 
+  
+  crop-left           : The leftmost (x) coordinate of the video crop; top left corner of image is 0,0
+                        flags: readable, writable
+                        Integer. Range: -2147483648 - 2147483647 Default: 0 
+  
+  crop-top            : The topmost (y) coordinate of the video crop; top left corner of image is 0,0
+                        flags: readable, writable
+                        Integer. Range: -2147483648 - 2147483647 Default: 0 
+  
+  crop-width          : The width of the video crop; default is equal to negotiated image width
+                        flags: readable, writable
+                        Unsigned Integer. Range: 0 - 4294967295 Default: 0 
+  
+  device              : Device location
+                        flags: readable, writable
+                        String. Default: "/dev/video1"
+  
+  device-fd           : File descriptor of the device
+                        flags: readable
+                        Integer. Range: -1 - 2147483647 Default: -1 
+  
+  device-name         : Name of the device
+                        flags: readable
+                        String. Default: null
+  
+  enable-last-sample  : Enable the last-sample property
+                        flags: readable, writable
+                        Boolean. Default: true
+  
+  extra-controls      : Extra v4l2 controls (CIDs) for the device
+                        flags: readable, writable
+                        Boxed pointer of type "GstStructure"
+  
+  flags               : Device type flags
+                        flags: readable
+                        Flags "GstV4l2DeviceTypeFlags" Default: 0x00000000, "(none)"
+                           (0x00000001): capture          - Device supports video capture
+                           (0x00000002): output           - Device supports video playback
+                           (0x00000004): overlay          - Device supports video overlay
+                           (0x00000010): vbi-capture      - Device supports the VBI capture
+                           (0x00000020): vbi-output       - Device supports the VBI output
+                           (0x00010000): tuner            - Device has a tuner or modulator
+                           (0x00020000): audio            - Device has audio inputs or outputs
+  
+  force-aspect-ratio  : When enabled, the pixel aspect ratio will be enforced
+                        flags: readable, writable
+                        Boolean. Default: true
+  
+  hue                 : Hue or color balance
+                        flags: readable, writable, controllable
+                        Integer. Range: -2147483648 - 2147483647 Default: 0 
+  
+  io-mode             : I/O mode
+                        flags: readable, writable
+                        Enum "GstV4l2IOMode" Default: 0, "auto"
+                           (0): auto             - GST_V4L2_IO_AUTO
+                           (1): rw               - GST_V4L2_IO_RW
+                           (2): mmap             - GST_V4L2_IO_MMAP
+                           (3): userptr          - GST_V4L2_IO_USERPTR
+                           (4): dmabuf           - GST_V4L2_IO_DMABUF
+                           (5): dmabuf-import    - GST_V4L2_IO_DMABUF_IMPORT
+  
+  last-sample         : The last sample received in the sink
+                        flags: readable
+                        Boxed pointer of type "GstSample"
+  
+  max-bitrate         : The maximum bits per second to render (0 = disabled)
+                        flags: readable, writable
+                        Unsigned Integer64. Range: 0 - 18446744073709551615 Default: 0 
+  
+  max-lateness        : Maximum number of nanoseconds that a buffer can be late before it is dropped (-1 unlimited)
+                        flags: readable, writable
+                        Integer64. Range: -1 - 9223372036854775807 Default: 5000000 
+  
+  name                : The name of the object
+                        flags: readable, writable
+                        String. Default: "v4l2sink0"
+  
+  norm                : video standard
+                        flags: readable, writable
+                        Enum "V4L2_TV_norms" Default: 0, "none"
+                           (0): none             - none
+                           (45056): NTSC             - NTSC
+                           (4096): NTSC-M           - NTSC-M
+                           (8192): NTSC-M-JP        - NTSC-M-JP
+                           (32768): NTSC-M-KR        - NTSC-M-KR
+                           (16384): NTSC-443         - NTSC-443
+                           (255): PAL              - PAL
+                           (7): PAL-BG           - PAL-BG
+                           (1): PAL-B            - PAL-B
+                           (2): PAL-B1           - PAL-B1
+                           (4): PAL-G            - PAL-G
+                           (8): PAL-H            - PAL-H
+                           (16): PAL-I            - PAL-I
+                           (224): PAL-DK           - PAL-DK
+                           (32): PAL-D            - PAL-D
+                           (64): PAL-D1           - PAL-D1
+                           (128): PAL-K            - PAL-K
+                           (256): PAL-M            - PAL-M
+                           (512): PAL-N            - PAL-N
+                           (1024): PAL-Nc           - PAL-Nc
+                           (2048): PAL-60           - PAL-60
+                           (16711680): SECAM            - SECAM
+                           (65536): SECAM-B          - SECAM-B
+                           (262144): SECAM-G          - SECAM-G
+                           (524288): SECAM-H          - SECAM-H
+                           (3276800): SECAM-DK         - SECAM-DK
+                           (131072): SECAM-D          - SECAM-D
+                           (1048576): SECAM-K          - SECAM-K
+                           (2097152): SECAM-K1         - SECAM-K1
+                           (4194304): SECAM-L          - SECAM-L
+                           (8388608): SECAM-Lc         - SECAM-Lc
+  
+  overlay-height      : The height of the video overlay; default is equal to negotiated image height
+                        flags: readable, writable
+                        Unsigned Integer. Range: 0 - 4294967295 Default: 0 
+  
+  overlay-left        : The leftmost (x) coordinate of the video overlay; top left corner of screen is 0,0
+                        flags: readable, writable
+                        Integer. Range: -2147483648 - 2147483647 Default: 0 
+  
+  overlay-top         : The topmost (y) coordinate of the video overlay; top left corner of screen is 0,0
+                        flags: readable, writable
+                        Integer. Range: -2147483648 - 2147483647 Default: 0 
+  
+  overlay-width       : The width of the video overlay; default is equal to negotiated image width
+                        flags: readable, writable
+                        Unsigned Integer. Range: 0 - 4294967295 Default: 0 
+  
+  parent              : The parent of the object
+                        flags: readable, writable
+                        Object of type "GstObject"
+  
+  pixel-aspect-ratio  : Overwrite the pixel aspect ratio of the device
+                        flags: readable, writable
+                        String. Default: null
+  
+  processing-deadline : Maximum processing time for a buffer in nanoseconds
+                        flags: readable, writable
+                        Unsigned Integer64. Range: 0 - 18446744073709551615 Default: 15000000 
+  
+  qos                 : Generate Quality-of-Service events upstream
+                        flags: readable, writable
+                        Boolean. Default: true
+  
+  render-delay        : Additional render delay of the sink in nanoseconds
+                        flags: readable, writable
+                        Unsigned Integer64. Range: 0 - 18446744073709551615 Default: 0 
+  
+  saturation          : Picture color saturation or chroma gain
+                        flags: readable, writable, controllable
+                        Integer. Range: -2147483648 - 2147483647 Default: 0 
+  
+  show-preroll-frame  : Whether to render video frames during preroll
+                        flags: readable, writable
+                        Boolean. Default: true
+  
+  stats               : Sink Statistics
+                        flags: readable
+                        Boxed pointer of type "GstStructure"
+                                                        average-rate: 0 (gdouble)
+                                                             dropped: 0 (guint64)
+                                                            rendered: 0 (guint64)
+
+  
+  sync                : Sync on the clock
+                        flags: readable, writable
+                        Boolean. Default: true
+  
+  throttle-time       : The time to keep between rendered buffers (0 = disabled)
+                        flags: readable, writable
+                        Unsigned Integer64. Range: 0 - 18446744073709551615 Default: 0 
+  
+  ts-offset           : Timestamp offset in nanoseconds
+                        flags: readable, writable
+                        Integer64. Range: -9223372036854775808 - 9223372036854775807 Default: 0 
+  
+
+EXIT_STATUS: 0

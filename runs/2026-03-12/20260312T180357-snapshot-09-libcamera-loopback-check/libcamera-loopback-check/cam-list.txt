@@ -1,0 +1,9 @@
+CMD: cam -l
+[0:02:42.811959509] [11995]  INFO Camera camera_manager.cpp:340 libcamera v0.7.0
+[0:02:42.826580999] [11996]  WARN CameraSensor camera_sensor_legacy.cpp:502 'ov5675 10-0036': No sensor delays found in static properties. Assuming unverified defaults.
+[0:02:42.844174303] [11996]  WARN IPAProxy ipa_proxy.cpp:192 Configuration file 'ov5675.yaml' not found for IPA module 'simple', falling back to '/usr/share/libcamera/ipa/simple/uncalibrated.yaml'
+[0:02:42.844379427] [11996]  INFO Camera camera_manager.cpp:223 Adding camera '\_SB_.LNK0' for pipeline handler simple
+Available cameras:
+1: Internal front camera (\_SB_.LNK0)
+
+EXIT_STATUS: 0

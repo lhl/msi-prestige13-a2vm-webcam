@@ -26,11 +26,22 @@ browser setup, and exposure/gain tuning.
   IPA profile
 - **Chrome**: works after enabling `chrome://flags/#enable-webrtc-pipewire-camera`
 - **Firefox**: works via `media.webrtc.camera.allow-pipewire` in `about:config`
-  (may be enabled by default in Firefox 148+)
+  on this machine; without that pref Firefox exposed many raw `ipu7` V4L2
+  nodes instead of the working PipeWire camera
 - **GStreamer preview**: `./scripts/webcam-preview.sh` for standalone live
   preview, snapshot capture, and v4l2loopback bridge (fallback path)
 - **Raw Bayer capture**: `v4l2-ctl` streaming from `/dev/video0` at
   2592x1944 BA10, 30 fps
+- **Current upstream-series retest**: the cleaned 6-patch upstream series is
+  now revalidated on the current local `linux-mainline`
+  `7.0.0-rc2-1-mainline-dirty` build:
+  - clean-boot bind still works (`01`)
+  - raw capture still works after explicit `media-ctl` setup (`06`)
+  - `cam -l` still discovers `Internal front camera (\_SB_.LNK0)` (`09`)
+  - `scripts/webcam-preview.sh` still works
+  - Chrome works on `webcamtests.com`
+  - Firefox works on `webcamtests.com` once
+    `media.webrtc.camera.allow-pipewire=true` is set
 
 ### What does not work yet
 
@@ -168,7 +179,10 @@ For the full March 9 review, see `docs/20260309-status-report.md`.
   - PipeWire exposes it as `Built-in Front Camera` (`media.role = Camera`,
     `media.class = Video/Source`)
   - Chrome works after enabling `chrome://flags/#enable-webrtc-pipewire-camera`
-  - Firefox works via `media.webrtc.camera.allow-pipewire` in `about:config`
+  - Firefox works after setting
+    `media.webrtc.camera.allow-pipewire=true` in `about:config`
+  - without that pref, Firefox exposed many raw `ipu7` V4L2 nodes that did
+    not work as normal webcam choices
   - no manual bridge or background process needed
 
 ## What Is Still Incomplete
@@ -193,8 +207,17 @@ For the full March 9 review, see `docs/20260309-status-report.md`.
     suggested in Antti's review thread
   - the series is `checkpatch.pl --strict` clean and `git am` clean against
     `4ae12d8bd9a8` (`v7.0-rc2-467-g4ae12d8bd9a8`)
+  - the same series also replays cleanly with plain `git am` against the
+    current local `linux-mainline` `v7.0-rc2` checkout base `11439c4635ed`
+  - the same series is now runtime-validated on the current local
+    `linux-mainline` `7.0.0-rc2-1-mainline-dirty` build:
+    - `runs/2026-03-12/20260312T180301-snapshot-01-clean-boot-check/`
+    - `runs/2026-03-12/20260312T180319-snapshot-06-media-pipeline-setup/`
+    - `runs/2026-03-12/20260312T180357-snapshot-09-libcamera-loopback-check/`
   - still pending before mailing-list submission:
-    - retest this exact 6-patch series on the laptop
+    - retest the same series after refreshing the local `linux-mainline`
+      checkout
+    - retest the same series on a current Linux `HEAD` build
     - send the first real `v1`
 
 ## What The PMIC Experiment Chain Added

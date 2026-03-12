@@ -1,0 +1,142 @@
+Source: scripts/09-libcamera-loopback-check.sh
+Purpose: document and probe both next normal-usage paths: libcamera and v4l2loopback
+
+Check start time:
+2026-03-12 18:03:59
+
+Configuration:
+media_device=/dev/media0
+video_device=/dev/video0
+loopback_device_effective=/dev/video42
+sensor_format=SGRBG10_1X10/2592x1944
+working_pixel_format=BA10
+gst_bayer_format=grbg10le
+bridge_output_format=YUY2
+bridge_output_ffmpeg_format=yuyv422
+
+Overall result:
+libcamera path has moved from pure prerequisite state into runnable evidence
+
+Known-good raw setup status:
+optional_route=ENOTSUP on IPU7 CSI2 (expected; route step not required)
+raw_refresh=ok
+raw_result=ok (40310784 bytes)
+geometry=bytesused=10077696; size_image=10082880; delta=5184 bytes; bytes_per_line=5184; extra_scanlines=1
+
+Libcamera path:
+status=camera discovery partially working
+cam_list=ok
+libcamera_hello_list=failed (exit=127)
+libcamera_still_list=failed (exit=127)
+libcamera_vid_list=failed (exit=127)
+libcamera_still_capture=failed (exit=127)
+
+v4l2loopback path:
+status=module surface present, but no loopback device configured
+modinfo=ok
+lsmod=failed (exit=1)
+loopback_device_exists=no
+bridge_refresh=not run
+bridge_producer=failed (exit=1)
+loopback_v4l2=failed (exit=1)
+loopback_ffmpeg=failed (exit=1)
+loopback_gstreamer=failed (exit=1)
+
+Manual follow-ups:
+libcamera next step:
+libcamera-family tools are present; rerun this script after any tool/package changes if discovery or capture still fails
+
+v4l2loopback next step:
+if v4l2loopback is installed for the running kernel, create a loopback node before rerunning:
+sudo modprobe v4l2loopback video_nr=42 card_label="MSI Webcam Bridge" exclusive_caps=1
+then rerun:
+scripts/09-libcamera-loopback-check.sh --loopback-device /dev/video42
+
+Higher-level tool presence:
+cam: present at /usr/bin/cam
+libcamera-hello: missing
+libcamera-still: missing
+libcamera-vid: missing
+gst-launch-1.0: present at /usr/bin/gst-launch-1.0
+gst-inspect-1.0: present at /usr/bin/gst-inspect-1.0
+ffmpeg: present at /usr/bin/ffmpeg
+v4l2-ctl: present at /usr/bin/v4l2-ctl
+modprobe: present at /usr/bin/modprobe
+modinfo: present at /usr/bin/modinfo
+lsmod: present at /usr/bin/lsmod
+
+Current v4l-subdev nodes:
+/dev/v4l-subdev0
+/dev/v4l-subdev1
+/dev/v4l-subdev2
+/dev/v4l-subdev3
+/dev/v4l-subdev4
+
+Raw BA10 stream tail:
+		VIDIOC_REQBUFS returned 0 (Success)
+		VIDIOC_CREATE_BUFS returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_QUERYBUF returned 0 (Success)
+		VIDIOC_G_FMT returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_QBUF returned 0 (Success)
+		VIDIOC_STREAMON returned 0 (Success)
+cap dqbuf: 0 seq:      0 bytesused: 10077696 ts: 162.496192 field: None (ts-monotonic, ts-src-eof)
+cap dqbuf: 1 seq:      1 bytesused: 10077696 ts: 162.529579 delta: 33.387 ms field: None (ts-monotonic, ts-src-eof)
+cap dqbuf: 2 seq:      2 bytesused: 10077696 ts: 162.562966 delta: 33.387 ms field: None (ts-monotonic, ts-src-eof)
+cap dqbuf: 3 seq:      3 bytesused: 10077696 ts: 162.596354 delta: 33.388 ms field: None (ts-monotonic, ts-src-eof)
+
+VIDIOC_QUERYCAP: ok
+
+EXIT_STATUS: 0
+
+cam -l tail:
+CMD: cam -l
+[0:02:42.811959509] [11995]  INFO Camera camera_manager.cpp:340 libcamera v0.7.0
+[0:02:42.826580999] [11996]  WARN CameraSensor camera_sensor_legacy.cpp:502 'ov5675 10-0036': No sensor delays found in static properties. Assuming unverified defaults.
+[0:02:42.844174303] [11996]  WARN IPAProxy ipa_proxy.cpp:192 Configuration file 'ov5675.yaml' not found for IPA module 'simple', falling back to '/usr/share/libcamera/ipa/simple/uncalibrated.yaml'
+[0:02:42.844379427] [11996]  INFO Camera camera_manager.cpp:223 Adding camera '\_SB_.LNK0' for pipeline handler simple
+Available cameras:
+1: Internal front camera (\_SB_.LNK0)
+
+EXIT_STATUS: 0
+
+libcamera-hello --list-cameras tail:
+libcamera-hello not installed
+EXIT_STATUS: 127
+
+libcamera-still capture tail:
+libcamera-still not installed
+EXIT_STATUS: 127
+
+v4l2loopback producer tail:
+loopback device /dev/video42 does not exist
+EXIT_STATUS: 1
+
+v4l2loopback ffmpeg tail:
+loopback device /dev/video42 does not exist
+EXIT_STATUS: 1
+
+v4l2loopback gstreamer tail:
+loopback device /dev/video42 does not exist
+EXIT_STATUS: 1
+
+Kernel journal lines since check start:
+Mar 12 18:03:59 p13 kernel: ipu7_isys_csi2_error: 76 callbacks suppressed
+Mar 12 18:03:59 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 18:03:59 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 18:03:59 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 18:03:59 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+Mar 12 18:03:59 p13 kernel: intel_ipu7_isys.isys intel_ipu7.isys.40: csi2-0 error: Received packet is too long
+
+Artifacts:
+check_dir=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T180357-snapshot-09-libcamera-loopback-check/libcamera-loopback-check
+raw_stream_log=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T180357-snapshot-09-libcamera-loopback-check/libcamera-loopback-check/video0-ba10-stream.txt
+libcamera_still_capture_log=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T180357-snapshot-09-libcamera-loopback-check/libcamera-loopback-check/libcamera-still-capture.txt
+loopback_bridge_log=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T180357-snapshot-09-libcamera-loopback-check/libcamera-loopback-check/loopback-bridge-producer.txt
+loopback_ffmpeg_log=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T180357-snapshot-09-libcamera-loopback-check/libcamera-loopback-check/loopback-ffmpeg.txt
+loopback_gstreamer_log=/home/lhl/github/lhl/msi-prestige13-a2vm-webcam/runs/2026-03-12/20260312T180357-snapshot-09-libcamera-loopback-check/libcamera-loopback-check/loopback-gstreamer.txt

@@ -2,6 +2,129 @@
 
 ## 2026-03-12
 
+### Record the current local upstream-series runtime retest and browser proof
+
+- Plan: preserve the first runtime validation pass for the cleaned upstream
+  6-patch series on the actual `linux-mainline` build we have been using for
+  experiments, then update the docs so the next gate is the refreshed tree and
+  Linux `HEAD`, not this already-completed local retest.
+- Commands:
+  - user-ran the prepared install flow, then rebuilt the mainline initramfs
+    and rebooted into the patched `linux-mainline` kernel
+  - ran:
+    - `scripts/01-clean-boot-check.sh`
+    - `scripts/06-media-pipeline-setup.sh`
+    - `scripts/09-libcamera-loopback-check.sh`
+  - user-ran:
+    - `scripts/webcam-preview.sh`
+    - Chrome against `webcamtests.com`
+    - Firefox against `webcamtests.com`
+  - refreshed:
+    - `README.md`
+    - `PLAN.md`
+    - `WORKLOG.md`
+    - `docs/webcam-status.md`
+    - `docs/webcam-usage.md`
+    - `state/CONTEXT.md`
+    - `upstream-patch/README.md`
+- Result:
+  - the cleaned upstream 6-patch series is now runtime-validated on the
+    current local `linux-mainline` `7.0.0-rc2-1-mainline-dirty` build
+  - clean-boot bind still works:
+    - `runs/2026-03-12/20260312T180301-snapshot-01-clean-boot-check/`
+    - key lines:
+      - `Found supported sensor OVTI5675:00`
+      - `Connected 1 cameras`
+      - `TPS68470 REVID: 0x21`
+  - raw capture still works after explicit `media-ctl` setup:
+    - `runs/2026-03-12/20260312T180319-snapshot-06-media-pipeline-setup/`
+    - `VIDIOC_STREAMON returned 0 (Success)`
+    - 4 frames, `40,310,784` bytes total
+  - libcamera discovery still works:
+    - `runs/2026-03-12/20260312T180357-snapshot-09-libcamera-loopback-check/`
+    - `cam -l` reports `Internal front camera (\_SB_.LNK0)`
+  - `scripts/webcam-preview.sh` still works on this kernel
+  - both browsers now have current local proof:
+    - Chrome works on `webcamtests.com`
+    - Firefox works on `webcamtests.com` once
+      `media.webrtc.camera.allow-pipewire=true` is set
+  - the next upstream-confidence gates are now narrower:
+    - rerun the same cleaned series after refreshing the local
+      `linux-mainline` checkout
+    - then rerun it on a current Linux `HEAD` build
+
+### Tighten Firefox docs to the confirmed local PipeWire requirement
+
+- Plan: replace the remaining "may already be enabled" Firefox wording with
+  the actual local result from the current browser test.
+- Commands:
+  - checked existing Firefox references in:
+    - `README.md`
+    - `docs/webcam-usage.md`
+    - `docs/webcam-status.md`
+    - `state/CONTEXT.md`
+  - refreshed:
+    - `README.md`
+    - `docs/webcam-usage.md`
+    - `docs/webcam-status.md`
+    - `state/CONTEXT.md`
+    - `WORKLOG.md`
+- Result:
+  - the docs now say explicitly that local Firefox required
+    `media.webrtc.camera.allow-pipewire=true`
+  - they now also preserve the concrete failure shape without that pref:
+    - Firefox exposed a long list of raw `ipu7` V4L2 nodes
+    - those nodes were not the working webcam path
+  - the documented expected good state is now aligned with Chrome:
+    - Firefox should expose the single PipeWire/libcamera camera
+    - user-facing label: `Built-in Front Camera`
+
+### Rebuild the upstream-series modules for the current running `mainline-dirty` kernel
+
+- Plan: rebuild only the touched webcam-path modules from the patched live
+  `linux-mainline` worktree, verify they still target the currently running
+  `7.0.0-rc2-1-mainline-dirty` kernel release, and stage ready-to-install
+  `.ko.zst` artifacts for the reboot test.
+- Commands:
+  - verified the current runtime and module config:
+    - `uname -r`
+    - `rg -n "CONFIG_(INTEL_SKL_INT3472|VIDEO_OV5675|IPU_BRIDGE|GPIO_TPS68470|REGULATOR_TPS68470)=" ~/.cache/paru/clone/linux-mainline/src/linux-mainline/.config`
+  - rebuilt the touched subtrees from the live patched tree:
+    - `make -j$(nproc) M=drivers/platform/x86/intel/int3472 modules`
+    - `make -j$(nproc) M=drivers/media/i2c modules`
+    - `make -j$(nproc) M=drivers/media/pci/intel modules`
+    - `make -j$(nproc) M=drivers/gpio modules`
+  - verified the release string and built artifacts:
+    - `make -s kernelrelease`
+    - `stat -c '%n %s bytes %y' .../*.ko`
+  - staged compressed install artifacts:
+    - `zstd -T0 -f .../intel_skl_int3472_tps68470.ko -o /tmp/ms13q3-upstream-modules-20260312/intel_skl_int3472_tps68470.ko.zst`
+    - `zstd -T0 -f .../ov5675.ko -o /tmp/ms13q3-upstream-modules-20260312/ov5675.ko.zst`
+    - `zstd -T0 -f .../ipu-bridge.ko -o /tmp/ms13q3-upstream-modules-20260312/ipu-bridge.ko.zst`
+    - `zstd -T0 -f .../gpio-tps68470.ko -o /tmp/ms13q3-upstream-modules-20260312/gpio-tps68470.ko.zst`
+    - `ls -lh /tmp/ms13q3-upstream-modules-20260312`
+  - refreshed:
+    - `WORKLOG.md`
+    - `state/CONTEXT.md`
+- Result:
+  - the running kernel is `7.0.0-rc2-1-mainline-dirty`
+  - all touched upstream-series components are still modules in this tree:
+    - `CONFIG_INTEL_SKL_INT3472=m`
+    - `CONFIG_VIDEO_OV5675=m`
+    - `CONFIG_IPU_BRIDGE=m`
+    - `CONFIG_GPIO_TPS68470=m`
+  - the module-only rebuild succeeded for the four touched subtrees
+  - `make -s kernelrelease` still reports
+    `7.0.0-rc2-1-mainline-dirty`, so the rebuilt modules match the currently
+    booted test kernel release
+  - ready-to-install compressed artifacts now exist under:
+    - `/tmp/ms13q3-upstream-modules-20260312/`
+  - still pending:
+    - user-run install into `/usr/lib/modules/7.0.0-rc2-1-mainline-dirty/`
+    - `depmod`
+    - reboot
+    - post-boot validation with `01` and `06`
+
 ### Add a dedicated post-mortem for the March 9 miss versus the later Antti-style branch
 
 - Plan: preserve the hindsight answer to "what did we miss before Antti's
@@ -44,6 +167,92 @@
   - `README.md` and `docs/README.md` now point to the new doc
   - the March 9 report and the Antti thread review now contain short forward
     links to the post-mortem
+
+### Restore the live `linux-mainline` worktree and reapply the upstream series as dirty changes
+
+- Plan: put the actual `~/.cache/paru/clone/linux-mainline/src/linux-mainline`
+  worktree back onto plain `v7.0-rc2` tracked content, then reapply the
+  upstream 6-patch series in the same dirty-worktree style as the earlier
+  experiment builds.
+- Commands:
+  - captured the pre-restore live-tree diff for safety:
+    - `git -C ~/.cache/paru/clone/linux-mainline/src/linux-mainline diff > /tmp/ms13q3-live-tree-restore-hL55Lh/pre-restore-live-tree.diff`
+  - generated a plain working-tree patch from the verified upstream replay:
+    - `git -C /tmp/ms13q3-upstream-apply-E9RTKE/linux-mainline-verify diff 11439c4635ed c2bd053becc4 > /tmp/ms13q3-live-tree-restore-hL55Lh/upstream-series-working-tree.patch`
+  - restored the live tree's tracked files to `HEAD` and removed stale
+    `.orig` leftovers:
+    - `git -C ~/.cache/paru/clone/linux-mainline/src/linux-mainline restore --source=HEAD --staged --worktree ...`
+    - `rm -f ~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/i2c/ov5675.c.orig ~/.cache/paru/clone/linux-mainline/src/linux-mainline/drivers/media/pci/intel/ipu-bridge.c.orig`
+  - checked the apply and then applied the upstream series as dirty changes:
+    - `git -C ~/.cache/paru/clone/linux-mainline/src/linux-mainline apply --check /tmp/ms13q3-live-tree-restore-hL55Lh/upstream-series-working-tree.patch`
+    - `git -C ~/.cache/paru/clone/linux-mainline/src/linux-mainline apply /tmp/ms13q3-live-tree-restore-hL55Lh/upstream-series-working-tree.patch`
+  - verified the resulting live-tree state:
+    - `git -C ~/.cache/paru/clone/linux-mainline/src/linux-mainline status -sb`
+    - `git -C ~/.cache/paru/clone/linux-mainline/src/linux-mainline diff --stat`
+    - `git -C ~/.cache/paru/clone/linux-mainline/src/linux-mainline describe --tags --always --dirty`
+  - refreshed:
+    - `WORKLOG.md`
+    - `state/CONTEXT.md`
+- Result:
+  - the live `linux-mainline` worktree is no longer carrying the older
+    broader experiment stack
+  - it is now restored to plain `v7.0-rc2` tracked content first and then
+    re-patched with the exact upstream-ready 6-file diff as uncommitted
+    working-tree changes
+  - current live-tree status matches the intended local-build shape:
+    - modified:
+      - `drivers/gpio/gpio-tps68470.c`
+      - `drivers/media/i2c/ov5675.c`
+      - `drivers/media/pci/intel/ipu-bridge.c`
+      - `drivers/platform/x86/intel/int3472/tps68470.c`
+      - `drivers/platform/x86/intel/int3472/tps68470.h`
+      - `drivers/platform/x86/intel/int3472/tps68470_board_data.c`
+    - untracked package-local files remain:
+      - `localversion.10-pkgrel`
+      - `localversion.20-pkgname`
+      - `version`
+  - `git describe --dirty` now reports `v7.0-rc2-dirty`
+  - diff summary matches the upstream series payload:
+    - `141` insertions
+    - `2` deletions
+    - `6` tracked files changed
+
+### Replay the upstream mailbox series onto the current local `linux-mainline` base
+
+- Plan: confirm the checked-in 6-patch upstream series still applies cleanly
+  to the current local `linux-mainline` checkout before attempting the
+  build/boot retest gate for submission.
+- Commands:
+  - checked the current local kernel source state:
+    - `git -C ~/.cache/paru/clone/linux-mainline/src/linux-mainline status -sb`
+    - `git -C ~/.cache/paru/clone/linux-mainline/src/linux-mainline rev-parse --short HEAD`
+    - `git -C ~/.cache/paru/clone/linux-mainline/src/linux-mainline describe --tags --always`
+  - cloned a disposable shared verification tree from that checkout:
+    - `git clone --shared ~/.cache/paru/clone/linux-mainline/src/linux-mainline /tmp/ms13q3-upstream-apply-E9RTKE/linux-mainline-verify`
+  - replayed the checked-in mailbox series there:
+    - `git -C /tmp/ms13q3-upstream-apply-E9RTKE/linux-mainline-verify switch -c verify-ms13q3-upstream`
+    - `git -C /tmp/ms13q3-upstream-apply-E9RTKE/linux-mainline-verify am /home/lhl/github/lhl/msi-prestige13-a2vm-webcam/upstream-patch/000*.patch`
+  - verified the resulting branch state:
+    - `git -C /tmp/ms13q3-upstream-apply-E9RTKE/linux-mainline-verify log --oneline --decorate -n 8`
+    - `git -C /tmp/ms13q3-upstream-apply-E9RTKE/linux-mainline-verify diff --stat HEAD~6 HEAD`
+  - refreshed:
+    - `upstream-patch/README.md`
+    - `docs/webcam-status.md`
+    - `PLAN.md`
+    - `WORKLOG.md`
+    - `state/CONTEXT.md`
+- Result:
+  - the current live `linux-mainline` checkout is `11439c4635ed`
+    (`v7.0-rc2`) and is still dirty with the local experiment stack, so it
+    was not safe to replay the upstream series directly in-place
+  - plain `git am` still replayed the checked-in 6-patch upstream bundle
+    cleanly on that exact local base in the disposable clone
+  - the resulting verification branch is a clean 6-commit stack touching the
+    expected 6 files (`141` insertions, `2` deletions)
+  - the remaining pre-send gate is unchanged:
+    - build / boot / runtime retest of this exact 6-patch series on the
+      laptop
+    - then send the first real `v1`
 
 ### Tighten the upstream README with the exact recipient set
 

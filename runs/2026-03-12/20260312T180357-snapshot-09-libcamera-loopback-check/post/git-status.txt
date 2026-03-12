@@ -1,0 +1,13 @@
+CMD: git_safe status --short
+ M PLAN.md
+ M WORKLOG.md
+ M docs/webcam-status.md
+ M state/CONTEXT.md
+ M upstream-patch/README.md
+?? runs/2026-03-12/20260312T180251-snapshot-01-clean-boot-check/
+?? runs/2026-03-12/20260312T180301-snapshot-01-clean-boot-check/
+?? runs/2026-03-12/20260312T180306-snapshot-06-media-pipeline-setup/
+?? runs/2026-03-12/20260312T180319-snapshot-06-media-pipeline-setup/
+?? runs/2026-03-12/20260312T180357-snapshot-09-libcamera-loopback-check/
+
+EXIT_STATUS: 0

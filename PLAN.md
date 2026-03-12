@@ -299,8 +299,21 @@ with strong evidence.
    - validated on `2026-03-12` with:
      - `checkpatch.pl --strict`
      - clean `git am` replay against `4ae12d8bd9a8`
+     - clean plain `git am` replay against the current local
+       `linux-mainline` `v7.0-rc2` checkout base `11439c4635ed`
+     - build / boot / runtime retest on the current local
+       `linux-mainline` `7.0.0-rc2-1-mainline-dirty` kernel:
+       - clean-boot bind (`01`): yes
+       - raw capture after pipeline setup (`06`): yes
+       - `cam -l` discovery (`09`): yes
+       - `webcam-preview.sh`: yes
+       - Chrome on `webcamtests.com`: yes
+       - Firefox on `webcamtests.com`: yes, with
+         `media.webrtc.camera.allow-pipewire=true`
    - still needs:
-     - hardware retest of this exact 6-patch series
+     - retest the exact same series after refreshing the local
+       `linux-mainline` checkout
+     - retest the exact same series on a current Linux `HEAD` build
      - actual mailing-list submission
 12. Fix or replace the post-boot PMIC dump path.
 13. Keep the broader Windows config-path questions open for upstreamability

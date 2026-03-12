@@ -8,12 +8,11 @@ diffs. They can be applied directly with `git am`.
 
 ## Current Status
 
-Local hardware proof remains the `exp18` bring-up branch plus explicit
-userspace `media-ctl` setup:
+Local hardware proof now covers both:
 
-- raw Bayer capture works at `2592x1944 @ 30 fps`
-- the sensor binds into the media graph
-- normal `/dev/video0` plug-and-play still is not the final app-facing path
+- the older `exp18` bring-up branch plus explicit userspace `media-ctl` setup
+- the cleaned upstream 6-patch series on the current local
+  `linux-mainline` `7.0.0-rc2-1-mainline-dirty` kernel
 
 This cleaned submission bundle was mechanically revalidated on
 `2026-03-12` against the current local `torvalds/linux` `origin/master`
@@ -27,10 +26,35 @@ Mechanical checks completed on that base:
 - `checkpatch.pl --strict`: clean
 - `git am`: replayed cleanly in a fresh clone
 
-One thing is still worth doing before the first real mailing-list send:
+It was also replayed on `2026-03-12` against the current local
+`linux-mainline` checkout base at:
 
-- retest this exact 6-patch series on the laptop, not just the older
-  `exp18` branch
+- commit: `11439c4635ed`
+- describe: `v7.0-rc2`
+
+That second check used a disposable shared clone of
+`~/.cache/paru/clone/linux-mainline/src/linux-mainline`, because the live
+worktree itself still carries local experiment edits in the same files this
+series touches.
+
+Current local runtime retest status for the cleaned 6-patch series:
+
+- clean-boot bind: confirmed
+  - `runs/2026-03-12/20260312T180301-snapshot-01-clean-boot-check/`
+- raw capture after explicit `media-ctl` setup: confirmed
+  - `runs/2026-03-12/20260312T180319-snapshot-06-media-pipeline-setup/`
+- `cam -l` discovery: confirmed
+  - `runs/2026-03-12/20260312T180357-snapshot-09-libcamera-loopback-check/`
+- `scripts/webcam-preview.sh`: user-confirmed working
+- Chrome on `webcamtests.com`: user-confirmed working
+- Firefox on `webcamtests.com`: user-confirmed working after setting
+  `media.webrtc.camera.allow-pipewire=true`
+
+Remaining local/runtime gates before the first real mailing-list send:
+
+- retest the exact same series after refreshing the local `linux-mainline`
+  checkout
+- retest the exact same series on a current Linux `HEAD` build
 
 ## Patch Series
 

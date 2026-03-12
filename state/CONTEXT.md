@@ -84,6 +84,10 @@ with strong evidence.
       - GStreamer `v4l2src device=/dev/video42 ! fakesink` also succeeded
   - `cheese`: present, but not yet exercised in a GUI session
   - post-boot PMIC dumping still returns `ERROR` for every register
+  - Firefox now has one additional local requirement:
+    - `media.webrtc.camera.allow-pipewire=true` must be set explicitly
+    - without that pref, Firefox 148 enumerated many raw `ipu7` V4L2 nodes
+      instead of the single working PipeWire camera
 
 ## What March 9 Added
 
@@ -442,32 +446,82 @@ with strong evidence.
     data
   - validated on `2026-03-12` with `checkpatch.pl --strict` and clean
     `git am` replay against `4ae12d8bd9a8`
-  - still needs: retest this exact 6-patch series on hardware, then send `v1`
+  - also replayed cleanly with plain `git am` against the current local
+    `linux-mainline` checkout base `11439c4635ed` (`v7.0-rc2`) in a
+    disposable shared clone, because the live worktree itself is still dirty
+  - now also runtime-validated on the current local
+    `linux-mainline` `7.0.0-rc2-1-mainline-dirty` build
+  - still needs:
+    - rerun the same series after refreshing the local `linux-mainline`
+      checkout
+    - rerun the same series on a current Linux `HEAD` build
+    - then send `v1`
+- the live `~/.cache/paru/clone/linux-mainline/src/linux-mainline` worktree
+  has now been restored to plain `v7.0-rc2` tracked content and re-patched
+  with the exact upstream 6-patch series as dirty working-tree changes:
+  - `git describe --dirty`: `v7.0-rc2-dirty`
+  - current diff summary:
+    - `6` tracked files changed
+    - `141` insertions
+    - `2` deletions
+  - this is the intended local build/boot retest starting point
+- the upstream-series module rebuild is now done for the current running
+  kernel release:
+  - `uname -r`: `7.0.0-rc2-1-mainline-dirty`
+  - `make -s kernelrelease`: `7.0.0-rc2-1-mainline-dirty`
+  - rebuilt subtrees:
+    - `drivers/platform/x86/intel/int3472`
+    - `drivers/media/i2c`
+    - `drivers/media/pci/intel`
+    - `drivers/gpio`
+  - ready-to-install compressed artifacts:
+    - `/tmp/ms13q3-upstream-modules-20260312/intel_skl_int3472_tps68470.ko.zst`
+    - `/tmp/ms13q3-upstream-modules-20260312/ov5675.ko.zst`
+    - `/tmp/ms13q3-upstream-modules-20260312/ipu-bridge.ko.zst`
+    - `/tmp/ms13q3-upstream-modules-20260312/gpio-tps68470.ko.zst`
+  - that install / `depmod` / `dracut` / reboot path has now been exercised
+    successfully on the current local tree
+- the cleaned upstream 6-patch series is now runtime-validated on the current
+  local `linux-mainline` `7.0.0-rc2-1-mainline-dirty` build:
+  - clean-boot bind still works:
+    - `runs/2026-03-12/20260312T180301-snapshot-01-clean-boot-check/`
+  - raw capture still works after explicit `media-ctl` setup:
+    - `runs/2026-03-12/20260312T180319-snapshot-06-media-pipeline-setup/`
+  - `cam -l` discovery still works through libcamera:
+    - `runs/2026-03-12/20260312T180357-snapshot-09-libcamera-loopback-check/`
+    - camera label: `Internal front camera (\_SB_.LNK0)`
+  - user-ran `scripts/webcam-preview.sh`: success
+  - user-tested `webcamtests.com`:
+    - Chrome: success
+    - Firefox: success once `media.webrtc.camera.allow-pipewire=true`
 
 ## Next Best Steps
 
-1. Use `exp18` as the current kernel branch.
-2. Use fresh-boot `scripts/06-media-pipeline-setup.sh` reruns as the capture
-   truth source for userspace-path changes.
-3. Use `scripts/07-normal-usage-check.sh` as the current auto-negotiated
-   higher-level client truth source.
-4. Use `scripts/08-userspace-bridge-check.sh` as the current explicit
-   userspace-bridge truth source.
-5. Use `scripts/09-libcamera-loopback-check.sh` as the current next-step
-   integration truth source for both `libcamera` and `v4l2loopback`.
-6. Install libcamera tools and rerun `09`.
-7. Package the now-working `v4l2loopback` bridge into a repeatable user-facing
-   path, then test apps against `/dev/video42`.
-8. Decide whether the long-term answer should still be `libcamera` / an
-   IPU7 pipeline handler rather than only a repo-local bridge.
-9. Determine why the advertised direct standard-pixel formats (`YUYV`,
+1. Refresh the local `linux-mainline` checkout and rerun the cleaned
+   `upstream-patch/` 6-patch series there.
+2. Use the local upstream-series deploy workflow to rebuild/install modules,
+   run `depmod`, regenerate both `dracut` initramfs images, reboot, and then
+   rerun:
+   - `scripts/01-clean-boot-check.sh`
+   - `scripts/06-media-pipeline-setup.sh`
+   - `scripts/09-libcamera-loopback-check.sh`
+   - `scripts/webcam-preview.sh`
+   - Chrome on `webcamtests.com`
+   - Firefox on `webcamtests.com`
+3. Retest the same series on a current Linux `HEAD` build.
+4. If both refreshed-tree and `HEAD` retests stay positive, send the first
+   real upstream `v1`.
+5. Keep `scripts/06-media-pipeline-setup.sh` as the capture truth source for
+   raw `/dev/video0` validation.
+6. Keep `scripts/09-libcamera-loopback-check.sh` as the current libcamera /
+   loopback integration checkpoint.
+7. Determine why the advertised direct standard-pixel formats (`YUYV`,
    `UYVY`, `BGR3`, etc.) are not actually streamable.
-10. Investigate the `Received packet is too long` CSI2 warnings and the
+8. Investigate the `Received packet is too long` CSI2 warnings and the
    one-scanline `Size Image` vs `bytesused` mismatch.
-11. Manually exercise `cheese` after one of the app-facing routes is ready.
-12. Retest and submit the current `upstream-patch/` 6-patch mailbox series.
-13. Fix or replace the post-boot PMIC dump path.
-14. Do not rerun the broad `exp7` snapshot patch as a default path.
+9. Manually exercise `cheese` after one of the app-facing routes is ready.
+10. Fix or replace the post-boot PMIC dump path.
+11. Do not rerun the broad `exp7` snapshot patch as a default path.
 
 ## Key Paths
 
