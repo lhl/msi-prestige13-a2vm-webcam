@@ -38,6 +38,14 @@ Primary artifacts:
 - Do not run long experiment/probe batches without updating `WORKLOG.md` and, if needed, `state/CONTEXT.md`.
 - If a probe could not be run, say so explicitly rather than implying a negative result.
 - Do not invent board-data details, sensor wiring, or vendor behavior without evidence.
+- In reverse-engineering notes, separate direct evidence, inference, and working assumption explicitly when they could be confused.
+- If evidence shows that a line or register is involved but does not prove ownership or semantic role, prefer at least one model-breaking experiment that removes or isolates that ownership before spending multiple iterations on within-model tweaks.
+- If a leading hypothesis absorbs multiple low-signal negatives or one direct collision result, stop and run a fresh-context challenge pass:
+  - restate what is proven vs assumed
+  - name at least one competing model
+  - define the next falsifier for the incumbent model
+  - if practical, get a second review from a fresh context rather than continuing inside the same framing
+- In experiment reviews, separate "negative as a direct fix" from "informative about the model". A branch that fails to fix the device may still be the strongest evidence that the incumbent model is wrong.
 
 ## Privilege and reboot boundaries
 

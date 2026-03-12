@@ -34,6 +34,8 @@ including browser setup, exposure control, and the GStreamer fallback path.
 - Technical details: [`docs/webcam-status.md`](./docs/webcam-status.md)
 - Full March 9 investigation report:
   [`docs/20260309-status-report.md`](./docs/20260309-status-report.md)
+- Post-mortem on the March 9 miss vs the later Antti-style working path:
+  [`docs/POST-MORTEM.md`](./docs/POST-MORTEM.md)
 
 Machine under test:
 
@@ -49,6 +51,9 @@ Machine under test:
   remaining issues
 - [`docs/20260309-status-report.md`](./docs/20260309-status-report.md) —
   complete March 9 reverse-engineering and experiment report
+- [`docs/POST-MORTEM.md`](./docs/POST-MORTEM.md) — hindsight note on what the
+  repo still had wrong by March 9, what Antti's working path got right, and
+  what `exp12` through `exp18` proved
 - [`docs/antti-prestige14-thread-review.md`](./docs/antti-prestige14-thread-review.md)
   — review of the March 10, 2026 Antti Laakso Prestige 14 patch thread and
   what its daisy-chain model means for this A2VMG
@@ -255,6 +260,8 @@ msi-prestige13-a2vm-webcam/
 
 - [`docs/20260309-status-report.md`](./docs/20260309-status-report.md) —
   complete March 9 status report with experiment results and next steps
+- [`docs/POST-MORTEM.md`](./docs/POST-MORTEM.md) — hindsight note on the
+  March 9 miss versus the later Antti-style working path
 - [`docs/webcam-status.md`](./docs/webcam-status.md) — short current Linux
   support assessment for this laptop
 - [`docs/antti-prestige14-thread-review.md`](./docs/antti-prestige14-thread-review.md)

@@ -8,12 +8,17 @@ Current focus:
 - Active work log: `../WORKLOG.md`
 - Short live status: `docs/webcam-status.md`
 - Full March 9 report: `docs/20260309-status-report.md`
+- Post-mortem on the March 9 miss vs Antti's working path:
+  `docs/POST-MORTEM.md`
 
 ## Core Docs
 
 - `docs/webcam-usage.md` — **quick-start usage guide**: live preview,
   v4l2loopback bridge, snapshot capture, exposure/gain tuning, architecture
   diagram
+- `docs/POST-MORTEM.md` — hindsight note on what the repo still had wrong by
+  March 9, what Antti's working Prestige 14 path got right, and what `exp12`
+  through `exp18` proved locally
 - `docs/antti-prestige14-thread-review.md` — review of the March 10, 2026
   Antti Laakso MSI Prestige 14 patch thread and what its daisy-chain model
   means for this A2VMG

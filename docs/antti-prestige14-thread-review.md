@@ -15,6 +15,11 @@ This note is based on the local mailbox mirror plus the current repo evidence.
 The live Lore thread URL could not be fetched directly from the current
 environment during this review.
 
+Follow-up:
+
+- for the repo-level hindsight answer to "what did we miss before the working
+  Antti-style branch?", see `docs/POST-MORTEM.md`
+
 ## Short Answer
 
 The thread is relevant, but not as a direct fix for the current A2VMG blocker.

@@ -2,6 +2,49 @@
 
 ## 2026-03-12
 
+### Add a dedicated post-mortem for the March 9 miss versus the later Antti-style branch
+
+- Plan: preserve the hindsight answer to "what did we miss before Antti's
+  working path?" in a dedicated doc, then link it from the main indexes and
+  from the two source notes it synthesizes.
+- Commands:
+  - refreshed:
+    - `docs/POST-MORTEM.md`
+    - `docs/README.md`
+    - `README.md`
+    - `docs/20260309-status-report.md`
+    - `docs/antti-prestige14-thread-review.md`
+    - `WORKLOG.md`
+- Result:
+  - the repo now has a dedicated retrospective note instead of leaving the
+    answer split across the March 9 report, the Antti thread review, and the
+    later experiment summaries
+  - the new note captures the main miss as a wrong GPIO
+    ownership/topology model:
+    - `GPIO1` / `GPIO2` were treated as direct sensor-control lines
+    - the later evidence supports daisy-chain ownership there instead, with
+      remote sensor control on `GPIO9` / `GPIO7`
+  - the note now also records what specifically led the repo astray:
+    - real Windows `WF` evidence pointed at `GPCTL1A` / `GPCTL2A`
+    - the repo then over-committed from "those lines are involved" to
+      "Linux should export them as direct sensor GPIOs"
+    - the early sweep budget stayed inside that one model, so some of the
+      role/polarity branches were lower-signal than they first looked
+  - the note now also records what should change next time:
+    - keep an explicit evidence / inference / assumption split
+    - define falsifiers and off-ramps before spending more experiment budget
+    - force a fresh-context challenge pass after a collision result like
+      `exp12`
+    - treat "negative as a direct fix" separately from "informative about the
+      model", so an `exp12`-style collision result cannot quietly preserve the
+      incumbent hypothesis
+  - `AGENTS.md` now encodes the same reverse-engineering guardrail so future
+    sessions are expected to distinguish assumptions from evidence and to
+    trigger a model-breaking review when a hypothesis becomes sticky
+  - `README.md` and `docs/README.md` now point to the new doc
+  - the March 9 report and the Antti thread review now contain short forward
+    links to the post-mortem
+
 ### Tighten the upstream README with the exact recipient set
 
 - Plan: replace the remaining generic mailing-list wording in

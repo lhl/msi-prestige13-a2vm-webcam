@@ -3,6 +3,11 @@
 This report is the complete March 9, 2026 assessment of the MSI Prestige 13
 AI+ Evo A2VMG webcam reverse-engineering effort.
 
+Postscript:
+
+- for the hindsight follow-up after Antti Laakso's later Prestige 14 thread
+  and the local `exp12` through `exp18` branch set, see `docs/POST-MORTEM.md`
+
 It covers:
 
 - what now works in Linux
